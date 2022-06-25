@@ -89,7 +89,6 @@ public class HardwareDrive
     public NormalizedColorSensor colorFloorSensor2;
 
 
-
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
     private ElapsedTime period  = new ElapsedTime();

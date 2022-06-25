@@ -26,19 +26,10 @@ public class BaseDrive extends OpMode{
     Constants constants = new Constants();
     private ElapsedTime runtime = new ElapsedTime();
 
-
-
-
-    Button capUpButton = new Button();
-    Button capDropButton = new Button();
-    Button capIntakeButton = new Button();
-    Button setCapMode = new Button();
-    Button carouselButton = new Button();
-    Button carouselButtonInverted = new Button();
-    Button lifterButton = new Button();
-    Button lifterBottomButton = new Button();
-    Button spinInFullButton = new Button();
-    Button spinOutFullButton = new Button();
+    Button x = new Button();
+    Button y = new Button();
+    Button a = new Button();
+    Button b = new Button();
 
     private boolean toggleButton = true;
 
@@ -78,15 +69,11 @@ public class BaseDrive extends OpMode{
 
         DriveTrainBase(drivePower);
         DriveTrainSpeed();
-        Capping();
         DriveMicroAdjust(0.4);
         //OscillateServo();
     }
 
     void UpdatePlayer2(){
-        Carousel();
-        Lifter();
-        SpinIntake();
     }
 
     void UpdateTelemetry(){
@@ -94,25 +81,11 @@ public class BaseDrive extends OpMode{
         telemetry.addData("X", gamepad1.left_stick_x);
         telemetry.addData("Y", -gamepad1.left_stick_y);
         telemetry.addData("R", gamepad1.right_stick_x);
-        telemetry.addData("Arm Position", robot.lifter.getCurrentPosition());
-
       //  telemetry.addData("Touch Sensor", robot.digitalTouch.getState());
         telemetry.update();
     }
 
     void UpdateButton(){
-        capDropButton.update(gamepad1.b);
-        capIntakeButton.update(gamepad1.a);
-        capUpButton.update(gamepad1.y);
-        setCapMode.update(gamepad1.x);
-
-
-        carouselButton.update(gamepad2.a);
-        carouselButtonInverted.update(gamepad2.b);
-        lifterButton.update(gamepad2.y);
-        lifterBottomButton.update(gamepad2.x);
-        spinInFullButton.update(gamepad2.dpad_down);
-        spinOutFullButton.update(gamepad2.dpad_up);
     }
 
     /*
@@ -195,101 +168,6 @@ public class BaseDrive extends OpMode{
 
 
         return drivePower;
-    }
-
-    void Lifter() {
-        int position = robot.lifter.getCurrentPosition();
-        if (lifterButton.is(Button.State.TAP)) {
-            if (position >= (constants.elevatorPositionTop - 10)) {
-                robot.lifter.setTargetPosition(constants.elevatorPositionDown + 10);
-                robot.lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.lifter.setPower(1);
-
-            } else {
-                robot.lifter.setTargetPosition(constants.elevatorPositionTop);
-                robot.lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.lifter.setPower(1);
-            }
-        }
-
-
-        if (!robot.digitalTouch.getState() && toggleButton) {
-            //Stop
-            robot.lifter.setPower(0);
-
-            //Reset
-            robot.lifter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.lifter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            robot.lifter.setTargetPosition(20);
-            robot.lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.lifter.setPower(0.1);
-            runtime.reset();
-        }
-
-        toggleButton = !(runtime.seconds() < 1);
-
-
-        if (lifterBottomButton.is(Button.State.TAP)){
-                if (position >= (constants.elevatorPositionBottom - 400)) {
-                    robot.lifter.setTargetPosition(constants.elevatorPositionDown - 390);
-                    robot.lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.lifter.setPower(1);
-                }
-                else {
-                    robot.lifter.setTargetPosition(constants.elevatorPositionBottom);
-                    robot.lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.lifter.setPower(1);
-                }
-        }
-
-        if (gamepad2.left_bumper) {
-            robot.lifter.setTargetPosition(position - 50);
-            robot.lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.lifter.setPower(0.25);
-        }
-        if (gamepad2.right_bumper) {
-            robot.lifter.setTargetPosition(position + 50);
-            robot.lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.lifter.setPower(-0.25);
-        }
-    }
-
-    void Carousel(){
-        if (carouselButton.is(Button.State.HELD)) {
-            robot.duckWheel.setVelocity(1600);
-        }
-        else if (carouselButtonInverted.is(Button.State.HELD)) {
-            robot.duckWheel.setVelocity(-1600);
-        }
-        robot.duckWheel.setPower(0);
-    }
-
-    void Capping(){
-        if (capIntakeButton.is(Button.State.TAP))
-            robot.cap.setPosition(constants.capPickUp);
-        if (capUpButton.is(Button.State.TAP))
-            robot.cap.setPosition(constants.capStart);
-        if (capDropButton.is(Button.State.TAP))
-            robot.cap.setPosition(constants.capAlmostDrop);
-        if (capDropButton.is(Button.State.DOUBLE_TAP))
-            robot.cap.setPosition(constants.capDrop);
-
-    }
-
-    void SpinIntake(){
-
-        if (spinInFullButton.is(Button.State.HELD)) // Spin In
-            robot.spin.setPower(1);
-        else if (spinOutFullButton.is(Button.State.HELD)) // Spin Out Med
-            robot.spin.setPower(-1);
-        else if (gamepad2.right_trigger == 1) // Spin In Slow
-            robot.spin.setPower(0.3);
-        else if (gamepad2.left_trigger == 1) // Spin Out Slow
-            robot.spin.setPower(-0.2);
-        else
-            robot.spin.setPower(0);
-
     }
 
     /*
