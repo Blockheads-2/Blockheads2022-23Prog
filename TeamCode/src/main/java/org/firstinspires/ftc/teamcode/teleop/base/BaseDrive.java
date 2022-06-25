@@ -49,8 +49,6 @@ public class BaseDrive extends OpMode{
 
     @Override
     public void init_loop() {
-        robot.lifter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.lifter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     @Override
@@ -69,7 +67,6 @@ public class BaseDrive extends OpMode{
 
         DriveTrainBase(drivePower);
         DriveTrainSpeed();
-        DriveMicroAdjust(0.4);
         //OscillateServo();
     }
 
@@ -116,50 +113,8 @@ public class BaseDrive extends OpMode{
 
     }
 
-    void DriveMicroAdjust(double power){
-        if (gamepad1.dpad_up){
-            robot.lf.setPower(power);
-            robot.rf.setPower(power);
-            robot.lb.setPower(power);
-            robot.rb.setPower(power);
-        }
-        else if (gamepad1.dpad_down){
-            robot.lf.setPower(-power);
-            robot.rf.setPower(-power);
-            robot.lb.setPower(-power);
-            robot.rb.setPower(-power);
-        }
-        else if (gamepad1.dpad_right){
-            robot.lf.setPower(power);
-            robot.rf.setPower(-power);
-            robot.lb.setPower(-power);
-            robot.rb.setPower(power);
-        }
-        else if (gamepad1.dpad_left){
-            robot.lf.setPower(-power);
-            robot.rf.setPower(power);
-            robot.lb.setPower(power);
-            robot.rb.setPower(-power);
-        }
-
-        if (gamepad1.left_trigger == 1){
-            robot.lf.setPower(-power);
-            robot.rf.setPower(power);
-            robot.lb.setPower(-power);
-            robot.rb.setPower(power);
-        }
-        else if (gamepad1.right_trigger == 1){
-            robot.lf.setPower(power);
-            robot.rf.setPower(-power);
-            robot.lb.setPower(power);
-            robot.rb.setPower(-power);
-        }
-    }
-
     double DriveTrainSpeed(){
         double drivePower = 0.75;
-
-
 
         if (gamepad1.right_bumper)
             drivePower = 1;
