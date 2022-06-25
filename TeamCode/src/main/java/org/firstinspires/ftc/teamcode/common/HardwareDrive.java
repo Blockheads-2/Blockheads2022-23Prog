@@ -127,7 +127,7 @@ public class HardwareDrive
         runUsingEncoders();
     }
 
-    void setMotorPower(double power){
+    public void setMotorPower(double power){
         if (power == 0.0){
             botL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
             botR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -141,28 +141,28 @@ public class HardwareDrive
         }
     }
 
-    void runUsingEncoders(){
+    public void runUsingEncoders(){
         botL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         botR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         topL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         topR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
     }
 
-    void runWithoutEncoders(){
+    public void runWithoutEncoders(){
         botL.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         botR.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         topL.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         topR.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    void runToEncoderPosition(){
+    public void runToEncoderPosition(){
         botL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         botR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         topL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         topR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
     }
 
-    void resetEncoders(){
+    public void resetEncoders(){
         botL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         botR.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         topL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
