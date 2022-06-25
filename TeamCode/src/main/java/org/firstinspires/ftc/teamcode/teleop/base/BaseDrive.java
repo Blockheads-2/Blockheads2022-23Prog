@@ -1,22 +1,15 @@
 package org.firstinspires.ftc.teamcode.teleop.base;
 
-import android.app.Activity;
 import android.view.View;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.SwitchableLight;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.common.Button;
 import org.firstinspires.ftc.teamcode.common.Constants;
 
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
-import org.firstinspires.ftc.teamcode.common.pid.CarouselPIDController;
 
 @TeleOp(name="Base Drive", group="Drive")
 //@Disabled
@@ -63,10 +56,8 @@ public class BaseDrive extends OpMode{
         UpdateTelemetry();
     }
     void UpdatePlayer1(){
-        double drivePower = DriveTrainSpeed();
 
-        DriveTrainBase(drivePower);
-        DriveTrainSpeed();
+        DriveTrainBase();
         //OscillateServo();
     }
 
@@ -85,44 +76,25 @@ public class BaseDrive extends OpMode{
     void UpdateButton(){
     }
 
-    /*
+    void DriveTrainBase(){
+        DriveTrainMove();
+    }
 
-        void OscillateServo(){
-        if (runtime.seconds() > 1){
-            if (countSmile % 2 == 0)
-                robot.cap.setPosition(constants.capPickUp);
-            else
-                robot.cap.setPosition(constants.capStart);
-            runtime.reset();
-            countSmile += 1;
+    private void DriveTrainMove(){
+        double x = gamepad1.left_stick_x;
+        double y = gamepad1.left_stick_y;
+        double distance = Math.sqrt(Math.pow(x,2) + Math.pow(y, 2)); //distance robot travels + the power inputted (x and y are already unit vecotrs)
+        double angle = Math.atan(y/x);
+
+        if (x != 0){
+            
         }
-    }
 
-     */
-
-    void DriveTrainBase(double drivePower){
-        double directionX = Math.pow(gamepad1.left_stick_x, 1); //Strafe
-        double directionY = -Math.pow(gamepad1.left_stick_y, 1); //Forward
-        double directionR = Math.pow(gamepad1.right_stick_x, 1); //Turn
-
-
-        robot.lf.setPower((directionY + directionR + directionX) * drivePower);
-        robot.rf.setPower((directionY - directionR - directionX) * drivePower);
-        robot.lb.setPower((directionY + directionR - directionX) * drivePower);
-        robot.rb.setPower((directionY - directionR + directionX) * drivePower);
-
-    }
-
-    double DriveTrainSpeed(){
-        double drivePower = 0.75;
-
-        if (gamepad1.right_bumper)
-            drivePower = 1;
-        else if (gamepad1.left_bumper)
-            drivePower = 0.25;
-
-
-        return drivePower;
+        robot.botR.setPower(-distance);
+        robot.botL.setPower(-distance);
+        robot.topR.setPower(distance);
+        robot.topL.setPower(distance);
+        //top gear of swerve module goes in opposite direction as the bottom gear for the wheel to spin
     }
 
     /*

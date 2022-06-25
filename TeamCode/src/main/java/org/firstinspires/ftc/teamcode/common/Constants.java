@@ -4,22 +4,17 @@ import org.checkerframework.checker.units.qual.C;
 
 public class Constants {
 
-    //Elevator Motor Positions
-    public int elevatorPositionDown = 0; //Rest
-    public int elevatorPositionTop = 3300; //Extended
-    public int elevatorPositionMid = 2700;
-    public int elevatorPositionBottom = 1980;
-    public int elevatorAcrossDrop = 2500;
-
-    //Capping Servo Positions
-    public double capStart = 0.6; //Straight Up Vertical
-    public double capPickUp = 0.12; //Touching Floor / Pick Up Capstone
-    public double capDrop = 0.38;
-    public double capAlmostDrop = 0.44;
-
     //Drive Train Constants
-    public double maxVelocityDT = 2700;
-    public double clicksPerInch = 45.285;
+    public double CLICKS_PER_REV = 384.5;
+    public double DIAMETER_OF_WHEEL = 96 / 25.4; //unit is in inches
+    public double CLICKS_PER_INCH = (384.5) / (Math.PI * DIAMETER_OF_WHEEL); //32.382 clicks per inch
+    public double INCHES_PER_CLICK = 1/CLICKS_PER_INCH; //0.031 inches per click
+    public double MAX_VELOCITY_DT = 2700; // unit is clicks/sec
+
+    //Swerve
+    public double TOP_CLICKS_PER_DEGREE;
+    public double BOT_CLICKS_PER_DEGREE;
+    public double DEGREES_PER_CLICK;
 
     //Degrees Per Inch Auto
     public double degree = 23.47/90;
@@ -28,7 +23,4 @@ public class Constants {
     public double horizontalDistanceOdo = 6.25;
     public double midDistanceOdo = 3.0;
 
-    //Velocity of Spin
-    public double spinClockwise = 1600;
-    public double spinCounterClockwise = - 1600;
 }
