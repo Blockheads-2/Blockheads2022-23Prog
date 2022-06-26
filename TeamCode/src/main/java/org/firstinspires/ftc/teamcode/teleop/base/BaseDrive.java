@@ -27,8 +27,14 @@ public class BaseDrive extends OpMode{
 
     private boolean toggleButton = true;
 
-    private double botRstartingClick = 0;
-    private double topRstartingClick = 0;
+    //used for determining how much the robot's wheels have rotated
+    private double botRstartingClick = 0.0;
+    private double topRstartingClick = 0.0;
+
+    //for resetting the robot's wheels' orientation
+    ElapsedTime resetTimer = new ElapsedTime();
+    private double startingMilliseconds;
+    private double totalTurned = 0.0; //a measure of how much the wheels have turned right
 
     /** The relativeLayout field is used to aid in providing interesting visual feedback
      * in this sample application; you probably *don't* need this when you use a color sensor on your
@@ -42,16 +48,19 @@ public class BaseDrive extends OpMode{
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();
 
+        resetTimer.reset();
+        startingMilliseconds = resetTimer.milliseconds();
+
     }
 
     @Override
     public void init_loop() {
+        robot.resetEncoders();
+        robot.runUsingEncoders();
     }
 
     @Override
     public void start() {
-        robot.resetEncoders();
-        robot.runUsingEncoders();
     }
 
     @Override
@@ -64,7 +73,7 @@ public class BaseDrive extends OpMode{
     void UpdatePlayer1(){
 
         DriveTrainBase();
-        //OscillateServo();
+
     }
 
     void UpdatePlayer2(){
@@ -103,6 +112,9 @@ public class BaseDrive extends OpMode{
         int topL_ENC_target;
         int topR_ENC_target;
 
+        botRstartingClick = robot.botR.getCurrentPosition();
+        topRstartingClick = robot.topR.getCurrentPosition();
+
         if (x != 0){ //rotates wheels (and only wheels), and then moves
             wheelHasFinishedRotating = false;
 
@@ -110,23 +122,20 @@ public class BaseDrive extends OpMode{
                 angle = 90 - (angle %= 90);
                 /*
                 Example:
-                If the wheels need to turn 150 degrees right, it's faster to turn 30 degrees left and then switch the direction the motor turns.
+                If the wheels need to turn 150 degrees right, it's faster to turn 30 degrees left and then switch the direction the motors turn.
 
-                According to the equation above, 90 - (150%90) = 90 - 60 = 30
+                According to the equation above, turning 150 degrees right = 90 - (150%90) = 90 - 60 = 30
                  */
             }
-            botL_ENC_target = robot.botL.getCurrentPosition() + (int)(angle * constants.BOT_CLICKS_PER_DEGREE);
-            botR_ENC_target = robot.botR.getCurrentPosition() + (int)(angle * constants.BOT_CLICKS_PER_DEGREE);
-            topL_ENC_target = robot.topL.getCurrentPosition() + (int)(angle * constants.TOP_CLICKS_PER_DEGREE);
-            topR_ENC_target = robot.topR.getCurrentPosition() + (int)(angle * constants.TOP_CLICKS_PER_DEGREE);
+            botL_ENC_target = robot.botL.getCurrentPosition() + (int)(angle * constants.TOP_CLICKS_PER_DEGREE); //turning both gears in the same direction
+            botR_ENC_target = robot.botR.getCurrentPosition() + (int)(angle * constants.TOP_CLICKS_PER_DEGREE); //at the same speed rotates the wheel
+            topL_ENC_target = robot.topL.getCurrentPosition() + (int)(angle * constants.TOP_CLICKS_PER_DEGREE); //without rotating the robot.
+            topR_ENC_target = robot.topR.getCurrentPosition() + (int)(angle * constants.TOP_CLICKS_PER_DEGREE); //Using 'TOP' because I'm assuming that top is faster. It's probably wrong, so do math later
 
-            robot.botL.setTargetPosition(botL_ENC_target);
-            robot.botR.setTargetPosition(botR_ENC_target);
-            robot.topL.setTargetPosition(topL_ENC_target);
-            robot.topR.setTargetPosition(topR_ENC_target);
-
-            botRstartingClick = robot.botR.getCurrentPosition();
-            topRstartingClick = robot.topR.getCurrentPosition();
+            robot.botL.setTargetPosition(botL_ENC_target * switchMotors);
+            robot.botR.setTargetPosition(botR_ENC_target * switchMotors);
+            robot.topL.setTargetPosition(topL_ENC_target * switchMotors);
+            robot.topR.setTargetPosition(topR_ENC_target * switchMotors);
 
             robot.runToEncoderPosition();
 
@@ -149,7 +158,7 @@ public class BaseDrive extends OpMode{
         //top gear of swerve module goes in opposite direction as the bottom gear for the wheel to spin
     }
 
-    private double deltaAngle(double botRstartingClick, double topRstartingClick){
+    private double deltaAngle(double botRstartingClick, double topRstartingClick){ //calculates how much a wheel turned
         /*
         based on the number of clicks the motor has ran, we will figure out how much it has turned.
          */
@@ -161,15 +170,21 @@ public class BaseDrive extends OpMode{
         return angleTurned;
     }
 
-    private boolean checkForActivity(){
-
+    private boolean checkForWheelMovement(){
+        return (botRstartingClick == robot.botR.getCurrentPosition() && topRstartingClick == robot.topL.getCurrentPosition());
     }
 
     private void reset(){
-        if (checkForActivity() == false){ //"If the gamepad has not been touched for __ milliseconds"
+        double deltaTime = Math.abs(resetTimer.milliseconds() - startingMilliseconds);
+        double the_amount_of_time_the_robot_must_wait_before_it_is_told_that_it_is_not_moving = 200; //200 is a placeholder. Decide time later.
+        if (checkForWheelMovement() == false && deltaTime >= the_amount_of_time_the_robot_must_wait_before_it_is_told_that_it_is_not_moving){ //"If the robot has not moved for __ milliseconds"
             robot.resetEncoders();
             robot.runUsingEncoders();
             //make robot's wheels face forward
+            /*
+            Ideas:
+            - stores how much the robot has turned since the last reset(). Based on this number, the robot will know how much it has to turn right/left to face forward
+             */
         }
     }
 

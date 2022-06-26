@@ -19,13 +19,13 @@ public class TurnPID {
         timer.reset();
     }
 
-    public double update(double currentAngle){
+    public double update(double angleTurned){
         //proportion
-        double error = targetAngle - currentAngle;
+        double error = targetAngle - angleTurned;
         error %= 360;   //ensures that error is between [-360, 360]
         error += 360;   //ensures that error is positive
         error %= 360;   //ensures that the error is still within [-360, 360], even after adding 360
-        if (error > 180) error -= 360; //if error goes over 180, it should go to -179. Keeps error between -179~180. (Gyro only ranges from -179~180).
+        if (error > 180) error -= 360; //if error goes over 180, it should go to -179. Keeps error between -179~180.
 
 
         //integral
