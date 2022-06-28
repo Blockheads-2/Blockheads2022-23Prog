@@ -12,9 +12,9 @@ public class Constants {
     public double MAX_VELOCITY_DT = 2700; // unit is clicks/sec
 
     //Swerve
-    public double TOP_CLICKS_PER_DEGREE;
-    public double BOT_CLICKS_PER_DEGREE;
-    public double DEGREES_PER_CLICK;
+    public double NUMBER_OF_CLICKS_FOR_GEAR_TO_MAKE_A_FULL_REVOLUTION;
+    public double DEGREES_PER_CLICK = 360.0 / NUMBER_OF_CLICKS_FOR_GEAR_TO_MAKE_A_FULL_REVOLUTION;
+    public double CLICKS_PER_DEGREE = 1/DEGREES_PER_CLICK;
 
     //Degrees Per Inch Auto
     public double degree = 23.47/90;

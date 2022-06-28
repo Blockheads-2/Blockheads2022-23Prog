@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.common.Button;
 import org.firstinspires.ftc.teamcode.common.Constants;
 
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
-import org.firstinspires.ftc.teamcode.common.pid.TurnPID;
+import org.firstinspires.ftc.teamcode.common.pid.RotateSwerveModulePID;
 
 @TeleOp(name="Base Drive", group="Drive")
 //@Disabled
@@ -24,8 +24,6 @@ public class BaseDrive extends OpMode{
     Button y = new Button();
     Button a = new Button();
     Button b = new Button();
-
-    private boolean toggleButton = true;
 
     //used for determining how much the robot's wheels have rotated
     private double botRstartingClick = 0.0;
@@ -96,28 +94,40 @@ public class BaseDrive extends OpMode{
     }
 
     private void DriveTrainMove(){
-        double x = gamepad1.left_stick_x; //returns a value between [-1, 1]
-        double y = gamepad1.left_stick_y; //returns a value between [-1, 1]
-        double power = Math.sqrt(Math.pow(x,2) + Math.pow(y, 2)); //the power inputted (x and y are already unit vecotrs)
-        double angle = Math.atan2(x, y);
+        //constant heading
+        double left_stick_x = gamepad1.left_stick_x; //returns a value between [-1, 1]
+        double left_stick_y = gamepad1.left_stick_y; //returns a value between [-1, 1]
+        double angle = Math.atan2(left_stick_x, left_stick_y);
 
-        boolean wheelHasFinishedRotating;
+        //spin robot's orientation
+        double right_stick_x = gamepad1.right_stick_x; //returns a value between [-1, 1]
+        double right_stick_y = gamepad1.right_stick_y; //returns a value between [-1, 1]
 
-        TurnPID rotateWheelPID = new TurnPID(angle, 0, 0, 0);
-        double angleCorrection;
+        //spline
+        double right_trigger = gamepad1.right_trigger; //returns a value between [0, 1]
+        double left_trigger = gamepad1.left_trigger; //returns a value between [0, 1]
 
-        int switchMotors = (angle <= 90 ? 1:-1); // is the the correct way to use a ternary expression?
-        int botL_ENC_target;
-        int botR_ENC_target;
-        int topL_ENC_target;
-        int topR_ENC_target;
 
-        botRstartingClick = robot.botR.getCurrentPosition();
-        topRstartingClick = robot.topR.getCurrentPosition();
+        //power
+        double spinPower = Math.sqrt(Math.pow(left_stick_x,2) + Math.pow(left_stick_y, 2)); //the power inputted (x and y are already unit vecotrs)
+        double rotatePower;
+        double translationPowerPercentage = 0.0; //0.5 is a placeholder.
+        double rotationPowerPercentage = 0.0;
 
-        if (x != 0){ //rotates wheels (and only wheels), and then moves
+        //checkover
+        boolean wheelHasFinishedRotating = true;
+
+        RotateSwerveModulePID rotateWheelPID = new RotateSwerveModulePID(angle, 0, 0, 0);
+
+        int switchMotors = (angle <= 90 ? 1:-1);
+
+        if (wheelHasFinishedRotating){
+            botRstartingClick = robot.botR.getCurrentPosition();
+            topRstartingClick = robot.topR.getCurrentPosition();
+        }
+
+        if (left_stick_x != 0 || right_stick_x != 0 || right_stick_y != 0 || right_trigger != 0 || left_trigger != 0){ //rotates wheels (and only wheels), and then moves
             wheelHasFinishedRotating = false;
-
             if (switchMotors == -1){
                 angle = 90 - (angle %= 90);
                 /*
@@ -127,51 +137,48 @@ public class BaseDrive extends OpMode{
                 According to the equation above, turning 150 degrees right = 90 - (150%90) = 90 - 60 = 30
                  */
             }
-            botL_ENC_target = robot.botL.getCurrentPosition() + (int)(angle * constants.TOP_CLICKS_PER_DEGREE); //turning both gears in the same direction
-            botR_ENC_target = robot.botR.getCurrentPosition() + (int)(angle * constants.TOP_CLICKS_PER_DEGREE); //at the same speed rotates the wheel
-            topL_ENC_target = robot.topL.getCurrentPosition() + (int)(angle * constants.TOP_CLICKS_PER_DEGREE); //without rotating the robot.
-            topR_ENC_target = robot.topR.getCurrentPosition() + (int)(angle * constants.TOP_CLICKS_PER_DEGREE); //Using 'TOP' because I'm assuming that top is faster. It's probably wrong, so do math later
+            translationPowerPercentage += (left_stick_x == 0 ?  : 0);
+            translationPowerPercentage += (right_stick_x == ? : 0);
+            translationPowerPercentage += (right_stick_y == ? : 0);
 
-            robot.botL.setTargetPosition(botL_ENC_target * switchMotors);
-            robot.botR.setTargetPosition(botR_ENC_target * switchMotors);
-            robot.topL.setTargetPosition(topL_ENC_target * switchMotors);
-            robot.topR.setTargetPosition(topR_ENC_target * switchMotors);
-
-            robot.runToEncoderPosition();
-
-            while(wheelHasFinishedRotating == false){
-                angleCorrection = rotateWheelPID.update(deltaAngle(botRstartingClick, topRstartingClick));
-                robot.botR.setPower(1 * angleCorrection * switchMotors);
-                robot.botL.setPower(1 * angleCorrection * switchMotors);
-                robot.topR.setPower(1 * angleCorrection * switchMotors); //goal is to turn really fast and accurately
-                robot.topL.setPower(1 * angleCorrection * switchMotors);
-
-                if (!robot.botL.isBusy() && !robot.botR.isBusy() && !robot.topL.isBusy() && !robot.topR.isBusy()) wheelHasFinishedRotating = true; //checks if the wheels have finished rotating to the desired angle
-            }
-            robot.setMotorPower(0); //Do we need this???  ? ?? ? ? ?? ? ? ?? ?? ? ?? ? ? ?? ?
+            rotationPowerPercentage = 1.0 - translationPowerPercentage;
         }
 
-        robot.botR.setPower(-power * switchMotors); //makes the robot move forward/backwards
-        robot.botL.setPower(-power * switchMotors);
-        robot.topR.setPower(power * switchMotors);
-        robot.topL.setPower(power * switchMotors);
-        //top gear of swerve module goes in opposite direction as the bottom gear for the wheel to spin
+        double angleTurned = deltaAngle() * constants.DEGREES_PER_CLICK;
+        rotatePower = rotateWheelPID.update(angleTurned);
+
+        double botMotorPower = (-1 * translationPowerPercentage * spinPower + translationPowerPercentage * rotatePower) * switchMotors;
+        double topMotorPower = (translationPowerPercentage * spinPower + translationPowerPercentage * rotatePower) * switchMotors;
+
+        robot.botR.setPower(botMotorPower);
+        robot.botL.setPower(botMotorPower);
+        robot.topR.setPower(topMotorPower);
+        robot.topL.setPower(topMotorPower);
     }
 
-    private double deltaAngle(double botRstartingClick, double topRstartingClick){ //calculates how much a wheel turned
+    private double deltaAngle(){ //calculates how many clicks were allocated to rotating the module
         /*
-        based on the number of clicks the motor has ran, we will figure out how much it has turned.
+        based on the number of clicks the motor has ran, this method figures out how much it has turned.
          */
         double clicksTOP = Math.abs(robot.topR.getCurrentPosition() - topRstartingClick);
         double clicksBOT = Math.abs(robot.botR.getCurrentPosition() - botRstartingClick);
-        //multiply these by whatever ratio to determine how much the robot has turned
-        double angleTurned = 0; //0 is a placeholder
 
-        return angleTurned;
+        double clicksSpun = (clicksTOP-clicksBOT) / 2;
+        double clicksRotated = Math.abs(clicksTOP) - clicksSpun;
+
+        return clicksRotated;
+    }
+
+    private double deltaSpun(){ //calculates how many clicks were allocated to spinning the module
+        double clicksTOP = Math.abs(robot.topR.getCurrentPosition() - topRstartingClick);
+        double clicksBOT = Math.abs(robot.botR.getCurrentPosition() - botRstartingClick);
+
+        double clicksSpun = (clicksTOP-clicksBOT) / 2;
+        return clicksSpun;
     }
 
     private boolean checkForWheelMovement(){
-        return (botRstartingClick == robot.botR.getCurrentPosition() && topRstartingClick == robot.topL.getCurrentPosition());
+        return (gamepad1.left_stick_x == 0 && gamepad1.left_stick_y == 0 && gamepad1.right_stick_x == 0 && gamepad1.right_stick_y && );
     }
 
     private void reset(){
