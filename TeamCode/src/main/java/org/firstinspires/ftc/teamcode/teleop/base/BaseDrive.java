@@ -32,7 +32,26 @@ public class BaseDrive extends OpMode{
     //for resetting the robot's wheels' orientation
     ElapsedTime resetTimer = new ElapsedTime();
     private double startingMilliseconds;
-    private double totalTurned = 0.0; //a measure of how much the wheels have turned right
+
+    //Used for tracking the robot's orientation and how much it needs to turn to return to it's original position
+    private double orientation = 0.0;
+
+    //robot's power
+    private double rotatePower = 0.0;
+    private double spinPower = 0.0;
+    private double translationPowerPercentage = 0.0;
+    private double rotationPowerPercentage = 0.0;
+
+    //module's orientation
+    private double targetOrientation = 0.0;
+    private double previousOrientation = 0.0;
+    private int switchMotors = 1;
+
+    //conditions
+    private boolean stutter = false;
+
+    //checkover
+    private boolean finishedTurning = true;
 
     /** The relativeLayout field is used to aid in providing interesting visual feedback
      * in this sample application; you probably *don't* need this when you use a color sensor on your
@@ -94,67 +113,76 @@ public class BaseDrive extends OpMode{
     }
 
     private void DriveTrainMove(){
-        //constant heading
+        constantHeading();
+    }
+
+    private void constantHeading(){
         double left_stick_x = gamepad1.left_stick_x; //returns a value between [-1, 1]
         double left_stick_y = gamepad1.left_stick_y; //returns a value between [-1, 1]
-        double angle = Math.atan2(left_stick_x, left_stick_y);
+        double targetOrientation = Math.atan2(left_stick_x, left_stick_y);
+        double previousOrientation = 0.0;
+        double targetAmountTurned = Math.abs(targetOrientation - previousOrientation);
 
-        //spin robot's orientation
-        double right_stick_x = gamepad1.right_stick_x; //returns a value between [-1, 1]
-        double right_stick_y = gamepad1.right_stick_y; //returns a value between [-1, 1]
+        if (previousOrientation > targetOrientation && targetOrientation < 90) targetOrientation += 360; //temporarily adds 360
+        switchMotors = (targetOrientation > previousOrientation ? -1 : 1); //determines whether or not the wheel will rotate right or left
+        switchMotors *= (targetAmountTurned <= 90 ? 1 : -1); //determines which way is faster to rotate to get to the desired orientation
+        if (targetAmountTurned > 90) targetAmountTurned = 90 - (targetAmountTurned%90);
+        targetOrientation -= 360;
 
-        //spline
-        double right_trigger = gamepad1.right_trigger; //returns a value between [0, 1]
-        double left_trigger = gamepad1.left_trigger; //returns a value between [0, 1]
-
-
-        //power
-        double spinPower = Math.sqrt(Math.pow(left_stick_x,2) + Math.pow(left_stick_y, 2)); //the power inputted (x and y are already unit vecotrs)
-        double rotatePower;
-        double translationPowerPercentage = 0.0; //0.5 is a placeholder.
-        double rotationPowerPercentage = 0.0;
-
-        //checkover
-        boolean wheelHasFinishedRotating = true;
-
-        RotateSwerveModulePID rotateWheelPID = new RotateSwerveModulePID(angle, 0, 0, 0);
-
-        int switchMotors = (angle <= 90 ? 1:-1);
-
-        if (wheelHasFinishedRotating){
+        //
+        if (finishedTurning){
             botRstartingClick = robot.botR.getCurrentPosition();
             topRstartingClick = robot.topR.getCurrentPosition();
         }
+        finishedTurning = (Math.abs(deltaAngle()) >= Math.abs(targetAmountTurned));
 
-        if (left_stick_x != 0 || right_stick_x != 0 || right_stick_y != 0 || right_trigger != 0 || left_trigger != 0){ //rotates wheels (and only wheels), and then moves
-            wheelHasFinishedRotating = false;
-            if (switchMotors == -1){
-                angle = 90 - (angle %= 90);
-                /*
-                Example:
-                If the wheels need to turn 150 degrees right, it's faster to turn 30 degrees left and then switch the direction the motors turn.
+        //module spin power
+        spinPower = Math.sqrt(Math.pow(left_stick_x,2) + Math.pow(left_stick_y, 2));
 
-                According to the equation above, turning 150 degrees right = 90 - (150%90) = 90 - 60 = 30
-                 */
-            }
-            translationPowerPercentage += (left_stick_x == 0 ?  : 0);
-            translationPowerPercentage += (right_stick_x == ? : 0);
-            translationPowerPercentage += (right_stick_y == ? : 0);
-
-            rotationPowerPercentage = 1.0 - translationPowerPercentage;
-        }
-
+        //module rotation power
+        RotateSwerveModulePID rotateWheelPID = new RotateSwerveModulePID(targetAmountTurned, 0, 0, 0);
         double angleTurned = deltaAngle() * constants.DEGREES_PER_CLICK;
+        orientation += angleTurned;
         rotatePower = rotateWheelPID.update(angleTurned);
 
-        double botMotorPower = (-1 * translationPowerPercentage * spinPower + translationPowerPercentage * rotatePower) * switchMotors;
-        double topMotorPower = (translationPowerPercentage * spinPower + translationPowerPercentage * rotatePower) * switchMotors;
+        if (targetAmountTurned <= 90){ //stop, snap, move
+            robot.setMotorPower(0); // <-- this needs to be fixed, because it'll stop the movement every loop
 
-        robot.botR.setPower(botMotorPower);
-        robot.botL.setPower(botMotorPower);
-        robot.topR.setPower(topMotorPower);
-        robot.topL.setPower(topMotorPower);
+            if (deltaAngle() < targetOrientation){ //rotate modules until target is hit
+                robot.botR.setPower(rotatePower * switchMotors);
+                robot.botL.setPower(rotatePower * switchMotors);
+                robot.topR.setPower(rotatePower * switchMotors);
+                robot.topL.setPower(rotatePower * switchMotors);
+            } else{ //once target is hit, move in linear motion
+                robot.botR.setPower(-1 * spinPower * switchMotors);
+                robot.botL.setPower(-1 * spinPower * switchMotors);
+                robot.topR.setPower(spinPower * switchMotors);
+                robot.topL.setPower(spinPower * switchMotors);
+            }
+        } else{ //spline
+            double throttle = Math.tanh(Math.abs(left_stick_y / (2 * left_stick_x)));
+            double botRightMotorPower = -1 * spinPower * switchMotors * throttle;
+            double topRightMotorPower = spinPower  * switchMotors * throttle;
+            double topLeftMotorPower = -1 * spinPower * switchMotors;
+            double botLeftMotorPower = spinPower * switchMotors;
+
+            if (switchMotors == -1){ //checks if robot needs to turn left (default is turning right)
+                botRightMotorPower = -1 * spinPower * switchMotors;
+                topRightMotorPower = spinPower  * switchMotors;
+                topLeftMotorPower = -1 * spinPower * switchMotors * throttle;
+                botLeftMotorPower = spinPower * switchMotors * throttle;
+            }
+        }
+        previousOrientation = targetOrientation;
     }
+
+    private void spin(){
+        double right_stick_x = gamepad1.right_stick_x; //returns a value between [-1, 1]
+        double right_stick_y = gamepad1.right_stick_y; //returns a value between [-1, 1]
+        double angle = Math.atan2(right_stick_x, right_stick_y);
+    }
+
+
 
     private double deltaAngle(){ //calculates how many clicks were allocated to rotating the module
         /*
@@ -177,14 +205,14 @@ public class BaseDrive extends OpMode{
         return clicksSpun;
     }
 
-    private boolean checkForWheelMovement(){
-        return (gamepad1.left_stick_x == 0 && gamepad1.left_stick_y == 0 && gamepad1.right_stick_x == 0 && gamepad1.right_stick_y && );
+    private boolean wheelsAreStopped(){
+        return (gamepad1.left_stick_x == 0 && gamepad1.left_stick_y == 0 && gamepad1.right_stick_x == 0 && gamepad1.right_stick_y == 0 && gamepad1.right_trigger == 0 && gamepad1.left_trigger == 0);
     }
 
     private void reset(){
         double deltaTime = Math.abs(resetTimer.milliseconds() - startingMilliseconds);
-        double the_amount_of_time_the_robot_must_wait_before_it_is_told_that_it_is_not_moving = 200; //200 is a placeholder. Decide time later.
-        if (checkForWheelMovement() == false && deltaTime >= the_amount_of_time_the_robot_must_wait_before_it_is_told_that_it_is_not_moving){ //"If the robot has not moved for __ milliseconds"
+        double gapTime = 200; //200 is a placeholder
+        if (wheelsAreStopped() && deltaTime > gapTime){ //"If the wheels have stopped for __ milliseconds"
             robot.resetEncoders();
             robot.runUsingEncoders();
             //make robot's wheels face forward
@@ -192,6 +220,10 @@ public class BaseDrive extends OpMode{
             Ideas:
             - stores how much the robot has turned since the last reset(). Based on this number, the robot will know how much it has to turn right/left to face forward
              */
+            if (orientation > 90){
+                orientation = 90 - (orientation %= 90);
+
+            }
         }
     }
 
