@@ -120,21 +120,21 @@ public class BaseDrive extends OpMode{
         double left_stick_x = gamepad1.left_stick_x; //returns a value between [-1, 1]
         double left_stick_y = gamepad1.left_stick_y; //returns a value between [-1, 1]
         double targetOrientation = Math.atan2(left_stick_x, left_stick_y);
+        double temp_targetOrientation = targetOrientation;
         double previousOrientation = 0.0;
+        if (previousOrientation > targetOrientation) targetOrientation = previousOrientation + (360 - (previousOrientation - targetOrientation));
+        switchMotors = -1; //"by default, the robot's wheels will rotate left."
         double targetAmountTurned = Math.abs(targetOrientation - previousOrientation);
-
-        if (previousOrientation > targetOrientation && targetOrientation < 90) targetOrientation += 360; //temporarily adds 360
-        switchMotors = (targetOrientation > previousOrientation ? -1 : 1); //determines whether or not the wheel will rotate right or left
         switchMotors *= (targetAmountTurned <= 90 ? 1 : -1); //determines which way is faster to rotate to get to the desired orientation
         if (targetAmountTurned > 90) targetAmountTurned = 90 - (targetAmountTurned%90);
-        targetOrientation -= 360;
+        targetOrientation = temp_targetOrientation;
 
         //
         if (finishedTurning){
             botRstartingClick = robot.botR.getCurrentPosition();
             topRstartingClick = robot.topR.getCurrentPosition();
         }
-        finishedTurning = (Math.abs(deltaAngle()) >= Math.abs(targetAmountTurned));
+        finishedTurning = (Math.abs(deltaAngle() * constants.DEGREES_PER_CLICK) >= Math.abs(targetAmountTurned));
 
         //module spin power
         spinPower = Math.sqrt(Math.pow(left_stick_x,2) + Math.pow(left_stick_y, 2));
