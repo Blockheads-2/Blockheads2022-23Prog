@@ -89,9 +89,7 @@ public class BaseDrive extends OpMode{
     void UpdateButton(){
     }
 
-    void DriveTrainBase(){
-        DriveTrainMove();
-    }
+    void DriveTrainBase(){DriveTrainMove();}
 
     private void DriveTrainMove(){
         //constant heading
