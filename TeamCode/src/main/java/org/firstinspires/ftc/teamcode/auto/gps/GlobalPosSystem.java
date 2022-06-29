@@ -4,13 +4,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.robotcore.internal.android.dx.util.IntIterator;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import java.util.HashMap;
 
 public class GlobalPosSystem {
 
     private double[] position = new double[3];
-    private HashMap<DcMotorEx, Integer> motorClicksPose = new HashMap<DcMotorEx, Integer>();
+    private HashMap<DcMotorEx, Integer> motorClicksPose = new HashMap<>();
 
     HardwareDrive robot;
 
@@ -27,8 +28,10 @@ public class GlobalPosSystem {
 
         for (DcMotorEx motors : robot.dtMotors){
             motorClicksPose.put(motors, motors.getCurrentPosition());
-
         }
+
+        // 0 and 1 are left
+        // 2 and 3 are right
 
 
 
@@ -43,6 +46,10 @@ public class GlobalPosSystem {
 
     public double[] getPosition(){
         return position;
+    }
+
+    public HashMap<DcMotorEx, Integer> getMotorClicksPose(){
+        return motorClicksPose;
     }
 
 
