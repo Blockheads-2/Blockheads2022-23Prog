@@ -1,13 +1,17 @@
 package org.firstinspires.ftc.teamcode.auto.gps;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
+import java.util.HashMap;
 
 public class GlobalPosSystem {
 
     private final LinearOpMode linearOpMode;
     private double[] position = new double[3];
-    private int[] motorClicksPos = new int[4];
+    private HashMap<DcMotorEx, Integer> motorClicksPose = new HashMap<DcMotorEx, Integer>();
 
     HardwareDrive robot;
 
@@ -24,11 +28,10 @@ public class GlobalPosSystem {
         int translationalClicks;
         int rotationalClicks;
 
-        //Top Left; Bottom Left; Top Right; Bottom Right
-        motorClicksPos[0] = robot.topL.getCurrentPosition();
-        motorClicksPos[1] = robot.botL.getCurrentPosition();
-        motorClicksPos[2] = robot.topR.getCurrentPosition();
-        motorClicksPos[3] = robot.botR.getCurrentPosition();
+        for (DcMotorEx motors : robot.dtMotors){
+            motorClicksPose.put(motors, motors.getCurrentPosition());
+
+        }
 
 
 
