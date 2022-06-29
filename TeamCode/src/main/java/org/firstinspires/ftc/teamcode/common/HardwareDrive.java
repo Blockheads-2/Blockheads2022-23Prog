@@ -66,10 +66,13 @@ import com.qualcomm.robotcore.util.Range;
  */
 public class HardwareDrive
 {
+
     public DcMotorEx  topL   = null;
     public DcMotorEx  botR   = null;
     public DcMotorEx  topR   = null;
     public DcMotorEx  botL   = null;
+
+
 
 
 
@@ -148,7 +151,7 @@ public class HardwareDrive
 
         } else{
             for (DcMotorEx motor : dtMotors) {
-                motor.setPower(power);;
+                motor.setPower(power);
             }
         }
     }

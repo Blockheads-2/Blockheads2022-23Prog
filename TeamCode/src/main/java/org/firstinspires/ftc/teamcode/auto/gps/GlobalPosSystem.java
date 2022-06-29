@@ -9,18 +9,15 @@ import java.util.HashMap;
 
 public class GlobalPosSystem {
 
-    private final LinearOpMode linearOpMode;
     private double[] position = new double[3];
     private HashMap<DcMotorEx, Integer> motorClicksPose = new HashMap<DcMotorEx, Integer>();
 
     HardwareDrive robot;
 
-    public GlobalPosSystem(LinearOpMode plinear){
+    public GlobalPosSystem(){
         for (int i = 0; i < 3; i++){
             position[i] = 0;
         }
-
-        linearOpMode = plinear;
 
     }
 
@@ -32,8 +29,6 @@ public class GlobalPosSystem {
             motorClicksPose.put(motors, motors.getCurrentPosition());
 
         }
-
-
 
 
 
