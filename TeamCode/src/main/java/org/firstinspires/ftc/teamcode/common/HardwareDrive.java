@@ -66,15 +66,26 @@ import com.qualcomm.robotcore.util.Range;
  */
 public class HardwareDrive
 {
-    //Motors
-    public DcMotorEx  botL   = null;
     public DcMotorEx  topL   = null;
     public DcMotorEx  botR   = null;
     public DcMotorEx  topR   = null;
+    public DcMotorEx  botL   = null;
 
-    //Servos
 
-    //Sensor
+
+    public DcMotorEx[] dtMotors = {topL, botL, topR, botR};
+
+    /*
+    Top Left  0                              Top Right 2
+
+
+
+
+    Bottom Left 1                           Bottom Right 3
+
+     */
+
+    //imu
     public BNO055IMU imu;
 
     /* local OpMode members. */
@@ -93,10 +104,11 @@ public class HardwareDrive
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-        botL  = hwMap.get(DcMotorEx.class, "bottom_left");
-        botR  = hwMap.get(DcMotorEx.class, "bottom_right");
-        topL  = hwMap.get(DcMotorEx.class, "top_left");
-        topR  = hwMap.get(DcMotorEx.class, "top_right");
+
+        dtMotors[1] = hwMap.get(DcMotorEx.class, "bottom_left");
+        dtMotors[3] = hwMap.get(DcMotorEx.class, "bottom_right");
+        dtMotors[0] = hwMap.get(DcMotorEx.class, "top_left");
+        dtMotors[2] = hwMap.get(DcMotorEx.class, "top_right");
 
 
         //IMU initiation
@@ -113,10 +125,10 @@ public class HardwareDrive
 
 
         //Reverse Motor
-        botL.setDirection(DcMotorEx.Direction.FORWARD);
-        botR.setDirection(DcMotorEx.Direction.FORWARD);
-        topL.setDirection(DcMotorEx.Direction.FORWARD);
-        topR.setDirection(DcMotorEx.Direction.FORWARD);
+
+        for (DcMotorEx motor : dtMotors){
+            motor.setDirection(DcMotorEx.Direction.FORWARD);
+        }
 
         // Set all motors to zero power
         setMotorPower(0);
@@ -129,44 +141,41 @@ public class HardwareDrive
 
     public void setMotorPower(double power){
         if (power == 0.0){
-            botL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-            botR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-            topL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-            topR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+            // Grady Was Here
+            for (DcMotorEx motor : dtMotors) {
+                motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+            }
+
         } else{
-            botL.setPower(power);
-            botR.setPower(power);
-            topL.setPower(power);
-            topR.setPower(power);
+            for (DcMotorEx motor : dtMotors) {
+                motor.setPower(power);;
+            }
         }
     }
 
     public void runUsingEncoders(){
-        botL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        botR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        topL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        topR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        for (DcMotorEx motor : dtMotors) {
+            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
     }
 
     public void runWithoutEncoders(){
-        botL.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        botR.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        topL.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        topR.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        for (DcMotorEx motor : dtMotors) {
+            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+
     }
 
     public void runToEncoderPosition(){
-        botL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        botR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        topL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        topR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        for (DcMotorEx motor : dtMotors) {
+            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
     }
 
     public void resetEncoders(){
-        botL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        botR.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        topL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        topR.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        for (DcMotorEx motor : dtMotors) {
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
     }
 }
 
