@@ -129,8 +129,8 @@ public class BaseDrive extends OpMode{
 
         //
         if (finishedTurning){
-            botRstartingClick = robot.botR.getCurrentPosition();
-            topRstartingClick = robot.topR.getCurrentPosition();
+            botRstartingClick = robot.dtMotors[3].getCurrentPosition();
+            topRstartingClick = robot.dtMotors[2].getCurrentPosition();
         }
         finishedTurning = (Math.abs(deltaAngle()) >= Math.abs(targetAmountTurned));
 
@@ -147,15 +147,15 @@ public class BaseDrive extends OpMode{
             robot.setMotorPower(0); // <-- this needs to be fixed, because it'll stop the movement every loop
 
             if (deltaAngle() < targetOrientation){ //rotate modules until target is hit
-                robot.botR.setPower(rotatePower * switchMotors);
-                robot.botL.setPower(rotatePower * switchMotors);
-                robot.topR.setPower(rotatePower * switchMotors);
-                robot.topL.setPower(rotatePower * switchMotors);
+                robot.dtMotors[3].setPower(rotatePower * switchMotors);
+                robot.dtMotors[1].setPower(rotatePower * switchMotors);
+                robot.dtMotors[2].setPower(rotatePower * switchMotors);
+                robot.dtMotors[0].setPower(rotatePower * switchMotors);
             } else{ //once target is hit, move in linear motion
-                robot.botR.setPower(-1 * spinPower * switchMotors);
-                robot.botL.setPower(-1 * spinPower * switchMotors);
-                robot.topR.setPower(spinPower * switchMotors);
-                robot.topL.setPower(spinPower * switchMotors);
+                robot.dtMotors[3].setPower(-1 * spinPower * switchMotors);
+                robot.dtMotors[1].setPower(-1 * spinPower * switchMotors);
+                robot.dtMotors[2].setPower(spinPower * switchMotors);
+                robot.dtMotors[0].setPower(spinPower * switchMotors);
             }
         } else{ //spline
             double throttle = Math.tanh(Math.abs(left_stick_y / (2 * left_stick_x)));
@@ -186,8 +186,8 @@ public class BaseDrive extends OpMode{
         /*
         based on the number of clicks the motor has ran, this method figures out how much it has turned.
          */
-        double clicksTOP = Math.abs(robot.topR.getCurrentPosition() - topRstartingClick);
-        double clicksBOT = Math.abs(robot.botR.getCurrentPosition() - botRstartingClick);
+        double clicksTOP = Math.abs(robot.dtMotors[2].getCurrentPosition() - topRstartingClick);
+        double clicksBOT = Math.abs(robot.dtMotors[3].getCurrentPosition() - botRstartingClick);
 
         double clicksSpun = (clicksTOP-clicksBOT) / 2;
         double clicksRotated = Math.abs(clicksTOP) - clicksSpun;
@@ -196,8 +196,8 @@ public class BaseDrive extends OpMode{
     }
 
     private double deltaSpun(){ //calculates how many clicks were allocated to spinning the module
-        double clicksTOP = Math.abs(robot.topR.getCurrentPosition() - topRstartingClick);
-        double clicksBOT = Math.abs(robot.botR.getCurrentPosition() - botRstartingClick);
+        double clicksTOP = Math.abs(robot.dtMotors[2].getCurrentPosition() - topRstartingClick);
+        double clicksBOT = Math.abs(robot.dtMotors[3].getCurrentPosition() - botRstartingClick);
 
         double clicksSpun = (clicksTOP-clicksBOT) / 2;
         return clicksSpun;
