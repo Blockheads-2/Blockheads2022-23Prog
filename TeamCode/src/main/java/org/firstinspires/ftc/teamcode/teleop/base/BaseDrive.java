@@ -33,19 +33,22 @@ public class BaseDrive extends OpMode{
     ElapsedTime resetTimer = new ElapsedTime();
     private double startingMilliseconds;
 
-    //Used for tracking the robot's orientation and how much it needs to turn to return to it's original position
-    private double orientation = 0.0;
+    //module's orientation
+    private int switchMotors = 1;
 
     //robot's power
     private double rotatePower = 0.0;
     private double spinPower = 0.0;
     private double translationPowerPercentage = 0.0;
     private double rotationPowerPercentage = 0.0;
+    private double leftThrottle = 0.0;
+    private double rightThrottle = 0.0;
 
-    //module's orientation
-    private double targetOrientation = 0.0;
-    private double previousOrientation = 0.0;
-    private int switchMotors = 1;
+    private double topRMotoRPower = (spinPower * translationPowerPercentage + rotatePower * rotationPowerPercentage) * rightThrottle * switchMotors;
+    private double botRMotorPower = (-1 * spinPower * translationPowerPercentage + rotatePower * rotationPowerPercentage) * rightThrottle * switchMotors ;
+    private double topLMotorPower = (spinPower * translationPowerPercentage + rotatePower * rotationPowerPercentage) * leftThrottle * switchMotors;
+    private double botLMotorPower = (-1 * spinPower * translationPowerPercentage + rotatePower * rotationPowerPercentage) * leftThrottle * switchMotors;
+
 
     //conditions
     private boolean stutter = false;
@@ -119,11 +122,12 @@ public class BaseDrive extends OpMode{
         double left_stick_y = gamepad1.left_stick_y; //returns a value between [-1, 1]
         double targetOrientation = Math.atan2(left_stick_x, left_stick_y);
         double temp_targetOrientation = targetOrientation;
-        double previousOrientation = 0.0;
-        if (previousOrientation > targetOrientation) targetOrientation = previousOrientation + (360 - (previousOrientation - targetOrientation));
+        double currentOrientation = 0.0;
+
+        if (currentOrientation > targetOrientation) targetOrientation += 360;
         switchMotors = -1; //"by default, the robot's wheels will rotate left."
-        double targetAmountTurned = Math.abs(targetOrientation - previousOrientation);
-        switchMotors *= (targetAmountTurned <= 90 ? 1 : -1); //determines which way is faster to rotate to get to the desired orientation
+        double targetAmountTurned = Math.abs(targetOrientation - currentOrientation);
+        switchMotors *= (targetAmountTurned <= 90 ? 1 : -1); //determines if rotating right or left is faster to get to the desired orientation
         if (targetAmountTurned > 90) targetAmountTurned = 90 - (targetAmountTurned%90);
         targetOrientation = temp_targetOrientation;
 
@@ -132,46 +136,39 @@ public class BaseDrive extends OpMode{
             botRstartingClick = robot.dtMotors[3].getCurrentPosition();
             topRstartingClick = robot.dtMotors[2].getCurrentPosition();
         }
-        finishedTurning = (Math.abs(deltaAngle() * constants.DEGREES_PER_CLICK) >= Math.abs(targetAmountTurned));
+        finishedTurning = (Math.abs(deltaAngle()) >= Math.abs(targetAmountTurned));
 
         //module spin power
         spinPower = Math.sqrt(Math.pow(left_stick_x,2) + Math.pow(left_stick_y, 2));
 
         //module rotation power
         RotateSwerveModulePID rotateWheelPID = new RotateSwerveModulePID(targetAmountTurned, 0, 0, 0);
-        double angleTurned = deltaAngle() * constants.DEGREES_PER_CLICK;
-        orientation += angleTurned;
+        double angleTurned = deltaAngle();
+        currentOrientation += angleTurned;
         rotatePower = rotateWheelPID.update(angleTurned);
 
         if (targetAmountTurned <= 90){ //stop, snap, move
             robot.setMotorPower(0); // <-- this needs to be fixed, because it'll stop the movement every loop
-
+            rightThrottle = 1;
+            leftThrottle = 1;
             if (deltaAngle() < targetOrientation){ //rotate modules until target is hit
-                robot.dtMotors[3].setPower(rotatePower * switchMotors);
-                robot.dtMotors[1].setPower(rotatePower * switchMotors);
-                robot.dtMotors[2].setPower(rotatePower * switchMotors);
-                robot.dtMotors[0].setPower(rotatePower * switchMotors);
+                translationPowerPercentage = 0.0;
+                rotationPowerPercentage = 1 - translationPowerPercentage;
             } else{ //once target is hit, move in linear motion
-                robot.dtMotors[3].setPower(-1 * spinPower * switchMotors);
-                robot.dtMotors[1].setPower(-1 * spinPower * switchMotors);
-                robot.dtMotors[2].setPower(spinPower * switchMotors);
-                robot.dtMotors[0].setPower(spinPower * switchMotors);
+                translationPowerPercentage = 1.0;
+                rotationPowerPercentage = 1 - translationPowerPercentage;
             }
         } else{ //spline
-            double throttle = Math.tanh(Math.abs(left_stick_y / (2 * left_stick_x)));
-            double botRightMotorPower = -1 * spinPower * switchMotors * throttle;
-            double topRightMotorPower = spinPower  * switchMotors * throttle;
-            double topLeftMotorPower = -1 * spinPower * switchMotors;
-            double botLeftMotorPower = spinPower * switchMotors;
+            translationPowerPercentage = 1.0;
+            rotationPowerPercentage = 1 - translationPowerPercentage;
 
-            if (switchMotors == -1){ //checks if robot needs to turn left (default is turning right)
-                botRightMotorPower = -1 * spinPower * switchMotors;
-                topRightMotorPower = spinPower  * switchMotors;
-                topLeftMotorPower = -1 * spinPower * switchMotors * throttle;
-                botLeftMotorPower = spinPower * switchMotors * throttle;
-            }
+            double throttle = Math.tanh(Math.abs(left_stick_y / (2 * left_stick_x)));
+            rightThrottle = (switchMotors == 1 ? throttle : 1);
+            leftThrottle = (switchMotors == 1 ? 1 : throttle);
+            //if switchMotors = 1, then robot is turning right. If switchMotors = -1, then robot is turning left.
         }
-        previousOrientation = targetOrientation;
+        if (finishedTurning) currentOrientation = targetOrientation; //corrects it in case it goes off
+        //Note: This does not work corectly rn because of finishedTurning
     }
 
     private void spin(){
@@ -180,9 +177,16 @@ public class BaseDrive extends OpMode{
         double angle = Math.atan2(right_stick_x, right_stick_y);
     }
 
+    private void setPower(){
+        robot.dtMotors[0].setPower(topLMotorPower);
+        robot.dtMotors[1].setPower(botLMotorPower);
+        robot.dtMotors[2].setPower(topRMotoRPower);
+        robot.dtMotors[3].setPower(botRMotorPower);
+    }
 
 
-    private double deltaAngle(){ //calculates how many clicks were allocated to rotating the module
+
+    private double deltaAngle(){ //calculates how many degrees the module has rotated
         /*
         based on the number of clicks the motor has ran, this method figures out how much it has turned.
          */
@@ -192,7 +196,7 @@ public class BaseDrive extends OpMode{
         double clicksSpun = (clicksTOP-clicksBOT) / 2;
         double clicksRotated = Math.abs(clicksTOP) - clicksSpun;
 
-        return clicksRotated;
+        return clicksRotated * constants.DEGREES_PER_CLICK;
     }
 
     private double deltaSpun(){ //calculates how many clicks were allocated to spinning the module
