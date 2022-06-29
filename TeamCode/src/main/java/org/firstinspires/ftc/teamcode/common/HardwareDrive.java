@@ -148,7 +148,7 @@ public class HardwareDrive
 
         } else{
             for (DcMotorEx motor : dtMotors) {
-                motor.setPower(power);;
+                motor.setPower(power);
             }
         }
     }
