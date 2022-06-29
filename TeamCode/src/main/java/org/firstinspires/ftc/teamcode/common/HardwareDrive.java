@@ -105,10 +105,10 @@ public class HardwareDrive
 
         // Define and Initialize Motors
 
-        dtMotors[1] = hwMap.get(DcMotorEx.class, "bottom_left");
-        dtMotors[3] = hwMap.get(DcMotorEx.class, "bottom_right");
         dtMotors[0] = hwMap.get(DcMotorEx.class, "top_left");
+        dtMotors[1] = hwMap.get(DcMotorEx.class, "bottom_left");
         dtMotors[2] = hwMap.get(DcMotorEx.class, "top_right");
+        dtMotors[3] = hwMap.get(DcMotorEx.class, "bottom_right");
 
 
         //IMU initiation
@@ -148,7 +148,7 @@ public class HardwareDrive
 
         } else{
             for (DcMotorEx motor : dtMotors) {
-                motor.setPower(power);;
+                motor.setPower(power);
             }
         }
     }
