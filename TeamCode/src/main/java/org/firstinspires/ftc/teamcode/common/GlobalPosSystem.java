@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto.gps;
+package org.firstinspires.ftc.teamcode.common;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
