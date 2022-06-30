@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.io.FileWriter;   // Import the FileWriter class
 import java.io.IOException;  // Import the IOException class to handle errors
 
-
 public class GlobalPosSystem {
 
     Constants constants = new Constants();
@@ -69,10 +68,23 @@ public class GlobalPosSystem {
 
     public void update ( double x, double y, double wheelR, double robotR){
         //update
-        positionArr[0] = x * constants.INCHES_PER_CLICK;
-        positionArr[1] = y * constants.INCHES_PER_CLICK;
-        positionArr[2] = wheelR * constants.DEGREES_PER_CLICK;
-        positionArr[3] = robotR * constants.DEGREES_PER_CLICK;
+        positionArr[0] += x * constants.INCHES_PER_CLICK;
+        positionArr[1] += y * constants.INCHES_PER_CLICK;
+        positionArr[2] += wheelR * constants.DEGREES_PER_CLICK;
+        positionArr[3] += robotR * constants.DEGREES_PER_CLICK;
+
+        try {
+            FileWriter myWriter = new FileWriter("gpsLog.txt");
+            myWriter.write("GPS Log\n");
+            myWriter.write((int) positionArr[0] + "\n");
+            myWriter.write((int) positionArr[1] + "\n");
+            myWriter.write((int) positionArr[2] + "\n");
+            myWriter.write((int) positionArr[3] + "\n\n");
+            myWriter.close();
+        } catch (IOException e) {
+           // System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
 
     }
 
