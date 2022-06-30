@@ -19,71 +19,68 @@ public class GlobalPosSystem {
     private int rotationalClicks;
 
 
-
-
     HardwareDrive robot;
 
     public GlobalPosSystem(){
-            for (int i = 0; i < 4; i++){
-                positionArr[i] = 0;
-            }
-
+        for (int i = 0; i < 4; i++){
+            positionArr[i] = 0;
         }
 
-        public void calculatePos(){
-            int clicks0;
-            int clicks1;
-            int clicks2;
-            int clicks3;
+    }
 
-            for (DcMotorEx motors : robot.dtMotors){
-                motorClicksPose.put(motors, motors.getCurrentPosition());
-            }
+    public void calculatePos(){
+        int clicks0;
+        int clicks1;
+        int clicks2;
+        int clicks3;
 
-            //Left
-            clicks0 = motorClicksPose.get(robot.dtMotors[0]); //A
-            clicks1 = motorClicksPose.get(robot.dtMotors[1]); //B
-
-            //Right
-            clicks2 = motorClicksPose.get(robot.dtMotors[2]); //A
-            clicks3 = motorClicksPose.get(robot.dtMotors[3]); //B
-
-            //distance = (A-B)/2
-            translationalClicks = ((clicks0 + clicks2)/2 - (clicks1 + clicks3)/2);
-            translationalClicks /= 2;
-
-            rotationalClicks = (clicks0 + clicks2)/2 - translationalClicks;
-
-            double w = positionArr[2] * constants.DEGREES_PER_CLICK;
-            w = Math.toRadians(w);
-
-
-            if (translationalClicks == 0){
-                update(translationalClicks * Math.cos(w), translationalClicks * Math.sin(w) , rotationalClicks, 0);
-            }
-            else{
-                update(translationalClicks * Math.cos(w), translationalClicks * Math.sin(w) ,0, rotationalClicks);
-            }
-
+        for (DcMotorEx motors : robot.dtMotors){
+            motorClicksPose.put(motors, motors.getCurrentPosition());
         }
 
-            public void update ( double x, double y, double wheelR, double robotR){
-                //update
-                positionArr[0] = x * constants.INCHES_PER_CLICK;
-                positionArr[1] = y * constants.INCHES_PER_CLICK;
-                positionArr[2] = wheelR * constants.DEGREES_PER_CLICK;
-                positionArr[3] = robotR * constants.DEGREES_PER_CLICK;
+        //Left
+        clicks0 = motorClicksPose.get(robot.dtMotors[0]); //A
+        clicks1 = motorClicksPose.get(robot.dtMotors[1]); //B
 
-            }
+        //Right
+        clicks2 = motorClicksPose.get(robot.dtMotors[2]); //A
+        clicks3 = motorClicksPose.get(robot.dtMotors[3]); //B
+
+        //distance = (A-B)/2
+        translationalClicks = ((clicks0 + clicks2)/2 - (clicks1 + clicks3)/2);
+        translationalClicks /= 2;
+
+        rotationalClicks = (clicks0 + clicks2)/2 - translationalClicks;
+
+        double w = positionArr[2] * constants.DEGREES_PER_CLICK;
+        w = Math.toRadians(w);
 
 
-            public double[] getPositionArr () {
-                return positionArr;
-            }
-
-            public HashMap<DcMotorEx, Integer> getMotorClicksPose () {
-                return motorClicksPose;
-            }
-
-
+        if (translationalClicks == 0){
+            update(translationalClicks * Math.cos(w), translationalClicks * Math.sin(w) , rotationalClicks, 0);
         }
+        else{
+            update(translationalClicks * Math.cos(w), translationalClicks * Math.sin(w) ,0, rotationalClicks);
+        }
+
+    }
+
+    public void update ( double x, double y, double wheelR, double robotR){
+        //update
+        positionArr[0] = x * constants.INCHES_PER_CLICK;
+        positionArr[1] = y * constants.INCHES_PER_CLICK;
+        positionArr[2] = wheelR * constants.DEGREES_PER_CLICK;
+        positionArr[3] = robotR * constants.DEGREES_PER_CLICK;
+
+    }
+
+
+    public double[] getPositionArr () {
+        return positionArr;
+    }
+
+    public HashMap<DcMotorEx, Integer> getMotorClicksPose () {
+        return motorClicksPose;
+    }
+
+}
