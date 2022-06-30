@@ -13,12 +13,10 @@ public class GlobalPosSystem {
 
     Constants constants = new Constants();
 
-    private double[] position = new double[3];
     private double[] positionArr = new double[4];
     private HashMap<DcMotorEx, Integer> motorClicksPose = new HashMap<>();
     private int translationalClicks;
     private int rotationalClicks;
-    private int rotationalRadians = 0;
 
 
 
