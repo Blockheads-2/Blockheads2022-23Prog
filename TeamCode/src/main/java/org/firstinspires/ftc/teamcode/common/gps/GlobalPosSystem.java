@@ -1,10 +1,7 @@
-package org.firstinspires.ftc.teamcode.auto.gps;
+package org.firstinspires.ftc.teamcode.common.gps;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.robotcore.internal.android.dx.util.IntIterator;
 import org.firstinspires.ftc.teamcode.common.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import java.util.HashMap;
@@ -28,7 +25,6 @@ public class GlobalPosSystem {
         for (int i = 0; i < 3; i++){
             position[i] = 0;
         }
-
     }
 
     public void calculatePos(){
@@ -55,7 +51,7 @@ public class GlobalPosSystem {
 
         rotationalClicks = (clicks0 + clicks2)/2 - translationalClicks;
 
-        update(translationalClicks * Math.cos(rotationalRadians), translationalClicks * Math.sin(rotationalRadians) , rotationalClicks);
+        update(translationalClicks * Math.sin(rotationalRadians), translationalClicks * Math.cos(rotationalRadians) , rotationalClicks);
     }
 
     public void update(double x, double y, double theta){
