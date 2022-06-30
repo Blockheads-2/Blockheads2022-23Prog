@@ -59,29 +59,28 @@ public class BaseDrive extends OpMode{
     View relativeLayout;
 
     @Override
-    public void init() {
+    public void init() { //after INIT is pressed
         robot.init(hardwareMap);
 
         telemetry.addData("Say", "Hello Driver");
-        runtime.reset();
-
-        resetTimer.reset();
-        startingMilliseconds = resetTimer.milliseconds();
-
     }
 
     @Override
-    public void init_loop() {
+    public void init_loop() { //loop between INIT and START
         robot.resetEncoders();
         robot.runUsingEncoders();
     }
 
     @Override
-    public void start() {
+    public void start() { //after START is pressed
+        runtime.reset();
+
+        resetTimer.reset();
+        startingMilliseconds = resetTimer.milliseconds();
     }
 
     @Override
-    public void loop() {
+    public void loop() { //loop between START and STOP
         UpdatePlayer1();
         UpdatePlayer2();
         UpdateButton();
@@ -203,7 +202,11 @@ public class BaseDrive extends OpMode{
     }
 
     private boolean wheelsAreStopped(){
-        return (gamepad1.left_stick_x == 0 && gamepad1.left_stick_y == 0 && gamepad1.right_stick_x == 0 && gamepad1.right_stick_y == 0 && gamepad1.right_trigger == 0 && gamepad1.left_trigger == 0);
+        if (!(gamepad1.left_stick_x == 0 && gamepad1.left_stick_y == 0 && gamepad1.right_stick_x == 0 && gamepad1.right_stick_y == 0 && gamepad1.right_trigger == 0 && gamepad1.left_trigger == 0)){
+            resetTimer.reset();
+            return false;
+        }
+        return true;
     }
 
     private void reset(){
