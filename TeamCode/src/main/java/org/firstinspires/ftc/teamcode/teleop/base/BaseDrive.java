@@ -140,7 +140,6 @@ public class BaseDrive extends OpMode{
         //module rotation power
         RotateSwerveModulePID rotateWheelPID = new RotateSwerveModulePID(targetAmountTurned, 0, 0, 0);
         double angleTurned = deltaAngle();
-        currentOrientation += angleTurned;
         rotatePower = rotateWheelPID.update(angleTurned);
 
         if (targetAmountTurned <= 90){ //stop, snap, move
@@ -172,6 +171,21 @@ public class BaseDrive extends OpMode{
         double right_stick_x = gamepad1.right_stick_x; //returns a value between [-1, 1]
         double right_stick_y = gamepad1.right_stick_y; //returns a value between [-1, 1]
         double tableSpinPower = Math.sqrt(Math.pow(right_stick_x, 2) + Math.pow(right_stick_y, 2));
+        double targetOrientation = Math.atan2(right_stick_x, right_stick_y);
+        double temp_targetOrientation =  targetOrientation;
+        double robotOrientation = posSystem.getPositionArr()[3];
+        double angleSpun = Math.abs(targetOrientation - currentOrientation);
+
+        if (currentOrientation > targetOrientation) targetOrientation += 360;
+        switchMotors = -1; //"by default, the robot's wheels will rotate left."
+        //Note: Must take into account the switchMotors set in constantHeading()
+
+        double targetAmountTurned = Math.abs(targetOrientation - currentOrientation);
+        switchMotors *= (targetAmountTurned <= 90 ? 1 : -1); //determines if rotating right or left is faster to get to the desired orientation
+        if (targetAmountTurned > 90) targetAmountTurned = 90 - (targetAmountTurned%90);
+        targetOrientation = temp_targetOrientation;
+        if (finishedTurning) startingOrienation = currentOrientation;
+        finishedTurning = (deltaAngle() >= targetAmountTurned);
 
         /*
          spinPower * translationPowerPercentage +

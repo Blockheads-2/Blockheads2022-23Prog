@@ -62,7 +62,7 @@ public class GlobalPosSystem {
             update(translationalClicks * Math.cos(w), translationalClicks * Math.sin(w) , rotationalClicks, 0);
         }
         else{
-            update(translationalClicks * Math.cos(w), translationalClicks * Math.sin(w) ,0, rotationalClicks); //change wheelR
+            update(translationalClicks * Math.cos(w), translationalClicks * Math.sin(w) ,0, rotationalClicks);
         }
 
     }
