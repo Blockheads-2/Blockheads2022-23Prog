@@ -2,12 +2,12 @@
 
 The array `positionArr` has 4 indicies
 
--------
+[
 x position
 y position
 wheel angle
 robot angle
--------
+]
 
 The GPS class calculates the absolute position of these 4 values. 
 
