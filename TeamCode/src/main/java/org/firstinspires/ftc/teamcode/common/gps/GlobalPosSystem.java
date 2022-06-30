@@ -16,9 +16,6 @@ public class GlobalPosSystem {
     private int rotationalClicks;
     private int rotationalRadians = 0;
 
-
-
-
     HardwareDrive robot;
 
     public GlobalPosSystem(){
