@@ -3,9 +3,9 @@
 The array `positionArr` has 4 indicies
 
 [
-x position
-y position
-wheel angle
+x position,
+y position,
+wheel angle,
 robot angle
 ]
 
