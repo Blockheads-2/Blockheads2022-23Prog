@@ -181,7 +181,6 @@ public class BaseDrive extends OpMode{
     }
 
 
-
     private double deltaAngle(){ //calculates how many clicks were allocated to rotating the module
         /*
         based on the number of clicks the motor has ran, this method figures out how much it has turned.

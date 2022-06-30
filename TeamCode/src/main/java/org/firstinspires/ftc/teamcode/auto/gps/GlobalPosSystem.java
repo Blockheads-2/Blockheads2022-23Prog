@@ -34,11 +34,11 @@ public class GlobalPosSystem {
 
     }
 
-    public void update(double x, double y, double theta){
+    public void update(double x, double y, double r){
         //update
         position[0] = x;
         position[1] = y;
-        position[2] = theta;
+        position[2] = r;
     }
 
     public double[] getPosition(){
