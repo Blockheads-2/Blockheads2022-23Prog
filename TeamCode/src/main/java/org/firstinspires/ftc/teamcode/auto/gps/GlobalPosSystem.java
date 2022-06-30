@@ -13,7 +13,7 @@ public class GlobalPosSystem {
 
     Constants constants = new Constants();
 
-    private double[] position = new double[3];
+    private double[] positionArr = new double[4];
     private HashMap<DcMotorEx, Integer> motorClicksPose = new HashMap<>();
     private int translationalClicks;
     private int rotationalClicks;
@@ -25,8 +25,8 @@ public class GlobalPosSystem {
     HardwareDrive robot;
 
     public GlobalPosSystem(){
-        for (int i = 0; i < 3; i++){
-            position[i] = 0;
+        for (int i = 0; i < 4; i++){
+            positionArr[i] = 0;
         }
 
     }
@@ -55,19 +55,30 @@ public class GlobalPosSystem {
 
         rotationalClicks = (clicks0 + clicks2)/2 - translationalClicks;
 
-        update(translationalClicks * Math.cos(rotationalRadians), translationalClicks * Math.sin(rotationalRadians) , rotationalClicks);
+        double w = positionArr[2] * constants.DEGREES_PER_CLICK;
+         w = Math.toRadians(w);
+
+
+        if (translationalClicks == 0){
+            update(translationalClicks * Math.cos(w), translationalClicks * Math.sin(w) , rotationalClicks, 0);
+        }
+        else{
+            update(translationalClicks * Math.cos(w), translationalClicks * Math.sin(w) ,0, rotationalClicks);
+        }
+
     }
 
-    public void update(double x, double y, double theta){
+    public void update(double x, double y, double wheelR, double robotR){
         //update
-        position[0] = x * constants.INCHES_PER_CLICK;
-        position[1] = y * constants.INCHES_PER_CLICK;
-        position[2] = theta * constants.DEGREES_PER_CLICK;
+        positionArr[0] = x * constants.INCHES_PER_CLICK;
+        positionArr[1] = y * constants.INCHES_PER_CLICK;
+        positionArr[2] = wheelR * constants.DEGREES_PER_CLICK;
+        positionArr[3] = robotR * constants.DEGREES_PER_CLICK;
 
     }
 
-    public double[] getPosition(){
-        return position;
+    public double[] getPositionArr(){
+        return positionArr;
     }
 
     public HashMap<DcMotorEx, Integer> getMotorClicksPose(){
