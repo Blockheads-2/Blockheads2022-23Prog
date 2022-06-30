@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
+import org.firstinspires.ftc.teamcode.auto.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.Button;
 import org.firstinspires.ftc.teamcode.common.Constants;
 
@@ -123,7 +123,7 @@ public class BaseDrive extends OpMode{
         double targetOrientation = Math.atan2(left_stick_x, left_stick_y);
         double prevTargetOrientation = 0.0;
         double temp_targetOrientation = targetOrientation;
-        currentOrientation = posSystem.getPosition()[2];
+       // currentOrientation = posSystem.getPosition()[2];
 
         if (currentOrientation > targetOrientation) targetOrientation += 360;
         switchMotors = -1; //"by default, the robot's wheels will rotate left."
