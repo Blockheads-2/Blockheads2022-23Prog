@@ -17,7 +17,6 @@ public class GlobalPosSystem {
     private HashMap<DcMotorEx, Integer> motorClicksPose = new HashMap<>();
     private int translationalClicks;
     private int rotationalClicks;
-    private int rotationalRadians = 0;
 
 
 
