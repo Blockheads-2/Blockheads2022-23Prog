@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.common;
+package org.firstinspires.ftc.teamcode.common.gps;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -25,7 +25,6 @@ public class GlobalPosSystem {
         for (int i = 0; i < 4; i++){
             positionArr[i] = 0;
         }
-
     }
 
     public void calculatePos(){
