@@ -15,15 +15,17 @@ public class ConstantHeading {
     GlobalPosSystem posSystem = new GlobalPosSystem();
     MathConstHeadSwerve constHeadSwerve = new MathConstHeadSwerve();
 
-    public void constantHeading(double xPosition, double yPosition, double power){
+    public void constantHeading(double power, double xPosition, double yPosition, double timeoutSeconds){
         //creates new class object for movement
         constHeadSwerve.setFinalPosition(xPosition, yPosition);
 
         //final distance
         double distance = constHeadSwerve.getDistance();
 
-        //module angle
+        //final robot angle, same as module angle
         double theta = constHeadSwerve.getTheta();
+
+        //module turning reference angles
         double previousTheta = 0.0;
         double thetaTurned = Math.abs(theta - previousTheta);
 
@@ -40,6 +42,7 @@ public class ConstantHeading {
         if (thetaTurned > 90) thetaTurned = 90 - (thetaTurned%90);
         theta -= 360;
 
+        //setting power
 
     }
 }
