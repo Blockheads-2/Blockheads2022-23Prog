@@ -1,6 +1,6 @@
 ## GPS
 
-The array `positionArr` has 4 indicies
+The array `positionArr` has 4 indices
 
 [
 x position,
