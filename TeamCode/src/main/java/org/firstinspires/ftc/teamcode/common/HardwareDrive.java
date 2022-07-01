@@ -107,7 +107,7 @@ public class HardwareDrive
         String[] drive_position = {"top_left", "bottom_left", "top_right", "bottom_right"};
 
 
-        for (int i = 0; i < 3; i++){
+        for (int i = 0; i < 4; i++){
             dtMotors[i] = hwMap.get(DcMotorEx.class, drive_position[i]);
         }
 

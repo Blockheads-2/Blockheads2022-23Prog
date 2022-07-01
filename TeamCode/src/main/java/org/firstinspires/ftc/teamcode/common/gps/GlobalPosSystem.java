@@ -47,21 +47,22 @@ public class GlobalPosSystem {
         clicks2 = motorClicksPose.get(robot.dtMotors[2]); //A
         clicks3 = motorClicksPose.get(robot.dtMotors[3]); //B
 
+
         //distance = (A-B)/2
         translationalClicks = ((clicks0 + clicks2)/2 - (clicks1 + clicks3)/2);
         translationalClicks /= 2;
 
         rotationalClicks = (clicks0 + clicks2)/2 - translationalClicks;
 
-        double w = positionArr[2] * constants.DEGREES_PER_CLICK;
-        w = Math.toRadians(w);
+        double wheelOrientation = positionArr[2] * constants.DEGREES_PER_CLICK;
+        wheelOrientation = Math.toRadians(wheelOrientation);
 
 
         if (translationalClicks == 0){
-            update(translationalClicks * Math.cos(w), translationalClicks * Math.sin(w) , rotationalClicks, 0);
+            update(translationalClicks * Math.cos(wheelOrientation), translationalClicks * Math.sin(wheelOrientation) , rotationalClicks, 0);
         }
         else{
-            update(translationalClicks * Math.cos(w), translationalClicks * Math.sin(w) ,0, rotationalClicks);
+            update(translationalClicks * Math.cos(wheelOrientation), translationalClicks * Math.sin(wheelOrientation) ,0, rotationalClicks);
         }
 
     }

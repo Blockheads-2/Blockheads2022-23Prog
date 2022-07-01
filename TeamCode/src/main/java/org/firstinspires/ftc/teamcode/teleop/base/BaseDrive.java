@@ -48,6 +48,7 @@ public class BaseDrive extends OpMode{
     private double rotationPowerPercentage = 0.0;
     private double leftThrottle = 0.0;
     private double rightThrottle = 0.0;
+
     //conditions
     private boolean stutter = false;
 
@@ -89,17 +90,15 @@ public class BaseDrive extends OpMode{
         UpdateButton();
         UpdateTelemetry();
     }
+
     void UpdatePlayer1(){
-
         DriveTrainBase();
-
     }
 
     void UpdatePlayer2(){
     }
 
     void UpdateTelemetry(){
-
         telemetry.addData("X", gamepad1.left_stick_x);
         telemetry.addData("Y", -gamepad1.left_stick_y);
         telemetry.addData("R", gamepad1.right_stick_x);
@@ -108,9 +107,15 @@ public class BaseDrive extends OpMode{
     }
 
     void UpdateButton(){
+        x.update(gamepad1.x);
+        y.update(gamepad1.y);
+        a.update(gamepad1.a);
+        b.update(gamepad1.b);
     }
 
-    void DriveTrainBase(){DriveTrainMove();}
+    void DriveTrainBase(){
+        DriveTrainMove();
+    }
 
     private void DriveTrainMove(){
         posSystem.calculatePos();
