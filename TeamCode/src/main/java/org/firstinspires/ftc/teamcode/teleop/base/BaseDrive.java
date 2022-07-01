@@ -4,6 +4,7 @@ import android.view.View;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
@@ -72,7 +73,7 @@ public class BaseDrive extends OpMode{
 
     @Override
     public void init_loop() {
-        robot.resetEncoders();
+        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.runUsingEncoders();
     }
 
@@ -222,7 +223,7 @@ public class BaseDrive extends OpMode{
         double deltaTime = Math.abs(resetTimer.milliseconds() - startingMilliseconds);
         double gapTime = 200; //200 is a placeholder
         if (wheelsAreStopped() && deltaTime > gapTime){ //"If the wheels have stopped for __ milliseconds"
-            robot.resetEncoders();
+            robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             robot.runUsingEncoders();
             //make robot's wheels face forward
             /*
