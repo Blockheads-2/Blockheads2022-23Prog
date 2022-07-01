@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.common.positioning;
 
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 
-public class MathVariableHead<y, x> {
+public class MathVariableHead{
     MathSpline mathSpline = new MathSpline();
 
     //Variables inputted
@@ -18,18 +18,19 @@ public class MathVariableHead<y, x> {
         x = xChange;
         y = yChange;
         finalAngle = endAngle;
+
+        mathSpline.setFinalPose(x, y);
     }
 
-    mathSpline.setFinalPose(x,y);
 
     public int[] returnClicks(){
         double rDistance = mathSpline.returnRDistance() * 32.382;
-        rightMotorClicks[2] = (int) (rDistance);
-        rightMotorClicks[3] = (int) (-rDistance);
+        motorClicks[2] = (int) (rDistance);
+        motorClicks[3] = (int) (-rDistance);
 
         double lDistance = mathSpline.returnLDistance() * 32.382;
-        leftMotorClicks[0] = (int) (lDistance);
-        leftMotorClicks[1] = (int) (-lDistance);
+        motorClicks[0] = (int) (lDistance);
+        motorClicks[1] = (int) (-lDistance);
 
         return motorClicks;
     }
