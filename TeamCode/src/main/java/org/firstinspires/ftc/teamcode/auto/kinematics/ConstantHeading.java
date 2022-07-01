@@ -80,8 +80,5 @@ public class ConstantHeading {
         double angleTurned = Math.abs(theta - thetaTurned);
         return angleTurned;
     }
-
-    private void setPower(){
-
-    }
+    
 }
