@@ -106,6 +106,7 @@ public class HardwareDrive
         // Define and Initialize Motors
         String[] drive_position = {"top_left", "bottom_left", "top_right", "bottom_right"};
 
+
         for (int i = 0; i < 3; i++){
             dtMotors[i] = hwMap.get(DcMotorEx.class, drive_position[i]);
         }
@@ -135,7 +136,8 @@ public class HardwareDrive
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        runUsingEncoders();
+        setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 
     public void setMotorPower(double power){
@@ -151,13 +153,6 @@ public class HardwareDrive
             }
         }
     }
-
-    public void runUsingEncoders(){
-        for (DcMotorEx motor : dtMotors) {
-            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-    }
-
 
     public void setRunMode(DcMotor.RunMode runState){
         for (DcMotorEx motor : dtMotors){

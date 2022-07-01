@@ -74,7 +74,8 @@ public class BaseDrive extends OpMode{
     @Override
     public void init_loop() {
         robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.runUsingEncoders();
+        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 
     @Override
@@ -224,7 +225,7 @@ public class BaseDrive extends OpMode{
         double gapTime = 200; //200 is a placeholder
         if (wheelsAreStopped() && deltaTime > gapTime){ //"If the wheels have stopped for __ milliseconds"
             robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.runUsingEncoders();
+            robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
             //make robot's wheels face forward
             /*
             Ideas:
