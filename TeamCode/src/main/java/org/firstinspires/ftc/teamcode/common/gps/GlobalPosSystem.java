@@ -89,6 +89,18 @@ public class GlobalPosSystem {
 
     }
 
+    public void hardResetGPS(){
+        //Reset GPS
+        for (int i = 0; i < 4; i++){
+            positionArr[i] = 0;
+        }
+
+        //Reset Motor Clicks
+        for (DcMotorEx motors : robot.dtMotors){
+            motorClicksPose.put(motors, 0);
+        }
+    }
+
 
     public double[] getPositionArr () {
         return positionArr;
