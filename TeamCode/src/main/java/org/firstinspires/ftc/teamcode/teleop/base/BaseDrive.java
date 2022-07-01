@@ -4,6 +4,7 @@ import android.view.View;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
@@ -47,6 +48,7 @@ public class BaseDrive extends OpMode{
     private double rotationPowerPercentage = 0.0;
     private double leftThrottle = 0.0;
     private double rightThrottle = 0.0;
+
     //conditions
     private boolean stutter = false;
 
@@ -72,8 +74,9 @@ public class BaseDrive extends OpMode{
 
     @Override
     public void init_loop() {
-        robot.resetEncoders();
-        robot.runUsingEncoders();
+        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 
     @Override
@@ -87,17 +90,15 @@ public class BaseDrive extends OpMode{
         UpdateButton();
         UpdateTelemetry();
     }
+
     void UpdatePlayer1(){
-
         DriveTrainBase();
-
     }
 
     void UpdatePlayer2(){
     }
 
     void UpdateTelemetry(){
-
         telemetry.addData("X", gamepad1.left_stick_x);
         telemetry.addData("Y", -gamepad1.left_stick_y);
         telemetry.addData("R", gamepad1.right_stick_x);
@@ -106,9 +107,15 @@ public class BaseDrive extends OpMode{
     }
 
     void UpdateButton(){
+        x.update(gamepad1.x);
+        y.update(gamepad1.y);
+        a.update(gamepad1.a);
+        b.update(gamepad1.b);
     }
 
-    void DriveTrainBase(){DriveTrainMove();}
+    void DriveTrainBase(){
+        DriveTrainMove();
+    }
 
     private void DriveTrainMove(){
         posSystem.calculatePos();
@@ -222,8 +229,8 @@ public class BaseDrive extends OpMode{
         double deltaTime = Math.abs(resetTimer.milliseconds() - startingMilliseconds);
         double gapTime = 200; //200 is a placeholder
         if (wheelsAreStopped() && deltaTime > gapTime){ //"If the wheels have stopped for __ milliseconds"
-            robot.resetEncoders();
-            robot.runUsingEncoders();
+            robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
             //make robot's wheels face forward
             /*
             Ideas:

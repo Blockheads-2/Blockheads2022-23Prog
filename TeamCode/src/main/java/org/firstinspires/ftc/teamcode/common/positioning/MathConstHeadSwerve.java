@@ -4,6 +4,8 @@ import org.firstinspires.ftc.teamcode.common.Constants;
 
 public class MathConstHeadSwerve {
     Constants constants = new Constants();
+
+    //declaring local class variables
     double x = 0;
     double y = 0;
     double distance = 0;

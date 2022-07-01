@@ -67,13 +67,10 @@ import com.qualcomm.robotcore.util.Range;
 public class HardwareDrive
 {
 
-    public DcMotorEx  topL   = null;
-    public DcMotorEx  botR   = null;
-    public DcMotorEx  topR   = null;
-    public DcMotorEx  botL   = null;
-
-
-
+    public DcMotorEx  topL;
+    public DcMotorEx  botR;
+    public DcMotorEx  topR;
+    public DcMotorEx  botL;
 
 
     public DcMotorEx[] dtMotors = {topL, botL, topR, botR};
@@ -107,12 +104,12 @@ public class HardwareDrive
         hwMap = ahwMap;
 
         // Define and Initialize Motors
+        String[] drive_position = {"top_left", "bottom_left", "top_right", "bottom_right"};
 
-        dtMotors[0] = hwMap.get(DcMotorEx.class, "top_left");
-        dtMotors[1] = hwMap.get(DcMotorEx.class, "bottom_left");
-        dtMotors[2] = hwMap.get(DcMotorEx.class, "top_right");
-        dtMotors[3] = hwMap.get(DcMotorEx.class, "bottom_right");
 
+        for (int i = 0; i < 4; i++){
+            dtMotors[i] = hwMap.get(DcMotorEx.class, drive_position[i]);
+        }
 
         //IMU initiation
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -138,8 +135,9 @@ public class HardwareDrive
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
-        resetEncoders();
-        runUsingEncoders();
+        setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 
     public void setMotorPower(double power){
@@ -156,29 +154,11 @@ public class HardwareDrive
         }
     }
 
-    public void runUsingEncoders(){
-        for (DcMotorEx motor : dtMotors) {
-            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    public void setRunMode(DcMotor.RunMode runState){
+        for (DcMotorEx motor : dtMotors){
+            motor.setMode(runState);
         }
     }
 
-    public void runWithoutEncoders(){
-        for (DcMotorEx motor : dtMotors) {
-            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        }
-
-    }
-
-    public void runToEncoderPosition(){
-        for (DcMotorEx motor : dtMotors) {
-            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-    }
-
-    public void resetEncoders(){
-        for (DcMotorEx motor : dtMotors) {
-            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        }
-    }
 }
 
