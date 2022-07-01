@@ -2,18 +2,24 @@ package org.firstinspires.ftc.teamcode.auto.kinematics;
 
 import org.firstinspires.ftc.teamcode.common.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
+import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 
 import org.firstinspires.ftc.teamcode.common.pid.RotateSwerveModulePID;
 import org.firstinspires.ftc.teamcode.common.positioning.MathConstHeadSwerve;
 
 public class ConstantHeading {
+
+    //declaring class objects
     HardwareDrive robot = new HardwareDrive();
     Constants constants = new Constants();
+    GlobalPosSystem posSystem = new GlobalPosSystem();
     MathConstHeadSwerve constHeadSwerve = new MathConstHeadSwerve();
 
     public void constantHeading(double xPosition, double yPosition, double power){
-        //final position
+        //creates new class object for movement
         constHeadSwerve.setFinalPosition(xPosition, yPosition);
+
+        //final distance
         double distance = constHeadSwerve.getDistance();
 
         //module angle
