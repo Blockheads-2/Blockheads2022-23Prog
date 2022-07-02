@@ -5,7 +5,7 @@ import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 
 import org.firstinspires.ftc.teamcode.common.pid.RotateSwerveModulePID;
-import org.firstinspires.ftc.teamcode.common.positioning.MathSwerveAuto;
+import org.firstinspires.ftc.teamcode.common.positioning.MathConstantHeadingAuto;
 
 public class ConstantHeading {
 
@@ -13,7 +13,7 @@ public class ConstantHeading {
     HardwareDrive robot = new HardwareDrive();
     Constants constants = new Constants();
     GlobalPosSystem posSystem = new GlobalPosSystem();
-    MathSwerveAuto swerveMath = new MathSwerveAuto();
+    MathConstantHeadingAuto swerveMath = new MathConstantHeadingAuto();
 
     //rotation and translate power(for ratio)
     private double translationPowerPercentage = 0.0;
