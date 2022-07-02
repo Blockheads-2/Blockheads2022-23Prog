@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.common.positioning;
 
 import org.firstinspires.ftc.teamcode.common.Constants;
 
-public class MathConstHeadSwerve {
+public class MathSwerveAuto {
     Constants constants = new Constants();
 
     //declaring local class variables
