@@ -10,6 +10,7 @@ public class MathSwerveAuto {
     double y = 0;
     double distance = 0;
     double theta = 0;
+    double targetThetaLinearMotionVariableHeading = 0;
 
     public void setFinalPosition(double xPosition, double yPosition){
         x = xPosition;
@@ -26,4 +27,11 @@ public class MathSwerveAuto {
         return theta;
     }
 
+    public void setTargetTheta(double tTheta){
+        targetThetaLinearMotionVariableHeading = tTheta;
+    }
+
+    public double getTargetTheta(){
+        return targetThetaLinearMotionVariableHeading;
+    }
 }
