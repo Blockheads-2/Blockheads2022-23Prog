@@ -62,8 +62,6 @@ public class RotateSwerveModulePID {
 
 
         LOGGER.log(Level.INFO, "Error: " + pError);
-
-
-        // A log of INFO level with the message "My First Log Message"
+        
     }
 }
