@@ -1,15 +1,22 @@
 package org.firstinspires.ftc.teamcode.common.pid;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RotateSwerveModulePID {
     private double kp, ki, kd; //Maybe: create static variables for the gains, and fine-tune each value
+    private double pError;
 
     private ElapsedTime timer = new ElapsedTime();
     private double targetAngle;
     private double prevError = 0;
     private double prevTime = 0;
     private double accumulatedError = 0;
+
+
+    private final static Logger LOGGER =
+            Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     public RotateSwerveModulePID(double targetAngle, double kp, double ki, double kd){
         this.kp = kp;
@@ -22,6 +29,7 @@ public class RotateSwerveModulePID {
     public double update(double angleTurned){
         //proportion
         double error = targetAngle - angleTurned;
+        pError = error;
         error %= 360;   //ensures that error is between [-360, 360]
         error += 360;   //ensures that error is positive
         error %= 360;   //ensures that the error is still within [-360, 360], even after adding 360
@@ -46,5 +54,14 @@ public class RotateSwerveModulePID {
         //alternative: motorPower =  Math.tanh(kp * error + ki * accumulatedError + kd * slope);
 
         return motorPower;
+    }
+
+    public void makeSomeLog() {
+        // add some code of your choice here
+        // Moving to the logging part now
+
+
+        LOGGER.log(Level.INFO, "Error: " + pError);
+        
     }
 }
