@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.common.positioning;
 
 import org.firstinspires.ftc.teamcode.common.Constants;
-import org.firstinspires.ftc.teamcode.common.positioning.AbsPose;
 
 public class MathSpline {
     double alpha = 0; //final x
@@ -14,7 +13,6 @@ public class MathSpline {
     double pRight = 0; //power of right wheel
 
     Constants constants = new Constants();
-    AbsPose absPose = new AbsPose();
 
     //Variables for Math
     double midD = constants.horizontalDistanceOdo;
