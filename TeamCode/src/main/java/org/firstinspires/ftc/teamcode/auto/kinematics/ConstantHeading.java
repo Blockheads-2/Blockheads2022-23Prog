@@ -13,7 +13,7 @@ public class ConstantHeading {
     HardwareDrive robot = new HardwareDrive();
     Constants constants = new Constants();
     GlobalPosSystem posSystem = new GlobalPosSystem();
-    MathSwerveAuto constHeadSwerve = new MathSwerveAuto();
+    MathSwerveAuto swerveMath = new MathSwerveAuto();
 
     //rotation and translate power(for ratio)
     private double translationPowerPercentage = 0.0;
@@ -24,13 +24,13 @@ public class ConstantHeading {
 
     public void constantHeading(double power, double xPosition, double yPosition, double timeoutSeconds){
         //creates new class object for movement
-        constHeadSwerve.setFinalPosition(xPosition, yPosition);
+        swerveMath.setFinalPosition(xPosition, yPosition);
 
         //final distance
-        double distance = constHeadSwerve.getDistance();
+        double distance = swerveMath.getDistance();
 
         //final robot angle, same as module angle
-        double theta = constHeadSwerve.getTheta();
+        double theta = swerveMath.getTheta();
 
         //module turning reference angles
         double previousTheta = 0.0;
