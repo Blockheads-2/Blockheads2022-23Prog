@@ -4,9 +4,6 @@ import org.firstinspires.ftc.teamcode.common.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 
-import org.firstinspires.ftc.teamcode.common.pid.RotateSwerveModulePID;
-import org.firstinspires.ftc.teamcode.common.positioning.MathSwerveAuto;
-
 public class LinearMotionVariableHeading {
     //declaring class objects
     HardwareDrive robot = new HardwareDrive();
@@ -20,7 +17,7 @@ public class LinearMotionVariableHeading {
     //power of module rotation
     private double rotatePower = 0.0;
 
-    public void linearMotionVariableHeading(){
+    public void linearMotionVariableHeading(double power, double xPosition, double yPosition, double endAngle){
 
     }
 
