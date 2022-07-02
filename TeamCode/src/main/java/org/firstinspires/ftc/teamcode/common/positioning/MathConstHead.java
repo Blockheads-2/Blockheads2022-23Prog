@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.common.positioning;
 
 
 import org.firstinspires.ftc.teamcode.common.Constants;
-import org.firstinspires.ftc.teamcode.common.positioning.AbsPose;
 
 public class MathConstHead {
     double psi = 0; //final x
@@ -15,7 +14,6 @@ public class MathConstHead {
     double psiOverOmega = 0;
 
     Constants constants = new Constants();
-    AbsPose absPose = new AbsPose();
 
 
     //Input the Final Position

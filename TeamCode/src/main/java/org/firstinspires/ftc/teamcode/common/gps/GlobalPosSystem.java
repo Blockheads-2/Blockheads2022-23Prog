@@ -102,7 +102,7 @@ public class GlobalPosSystem {
     }
 
 
-    public double[] getPositionArr () {
+    public double[] getPositionArr() {
         return positionArr;
     }
 
