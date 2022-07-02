@@ -59,9 +59,7 @@ public class RotateSwerveModulePID {
     public void makeSomeLog() {
         // add some code of your choice here
         // Moving to the logging part now
-
-
         LOGGER.log(Level.INFO, "Error: " + pError);
-        
+
     }
 }
