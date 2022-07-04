@@ -17,12 +17,11 @@ public class LinearMotionVariableHeading {
     //power of module rotation
     private double rotatePower = 0.0;
 
-    public void linearMotionVariableHeading(double power, double xPosition, double yPosition, double endAngle){
-
-    }
-
     private double x = 0;
     private double y = 0;
 
+    public void linearMotionVariableHeading(){
+
+    }
 
 }
