@@ -36,8 +36,9 @@ public class BaseDrive extends OpMode{
     ElapsedTime resetTimer = new ElapsedTime();
     private double startingMilliseconds;
 
-    //module's orientation
-    private int switchMotors = 1;
+    //orientation
+    private double robotOrientation = 0.0;
+    private double wheelOrientation = 0.0;
 
     //robot's power
     private double rotatePower = 0.0;
@@ -46,6 +47,7 @@ public class BaseDrive extends OpMode{
     private double rotationPowerPercentage = 0.0;
     private double leftThrottle = 0.0;
     private double rightThrottle = 0.0;
+    private double switchMotors = 1.0;
 
     //checkover
     private boolean finishedTurning = true;
@@ -114,20 +116,20 @@ public class BaseDrive extends OpMode{
 
     private void DriveTrainMove(){
         posSystem.calculatePos();
-        constantHeading();
+        drive();
         setPower();
     }
 
 
 
-    private void constantHeading(){
+    private void drive(){
         //output of left joystick
         double left_stick_x = gamepad1.left_stick_x; //returns a value between [-1, 1]
         double left_stick_y = gamepad1.left_stick_y; //returns a value between [-1, 1]
 
         //wheel orientation
-        double wheelOrientation = posSystem.getPositionArr()[2]; //current orientation of the wheel
-        double prevOrientation = 0.0; //previous orientation of the wheel before it began a turning cycle
+        wheelOrientation = posSystem.getPositionArr()[2]; //current orientation of the wheel
+        double prevOrientation = 0.0; //previous orientation of the wheel before it begins a turning cycle
 
         //orientation of joystick & amount wheel must turn
         double prevTargetOrientation = 0.0;
@@ -191,7 +193,7 @@ public class BaseDrive extends OpMode{
         double right_stick_y = gamepad1.right_stick_y; //returns a value between [-1, 1]
 
         //robot's orientation
-        double robotOrientation = posSystem.getPositionArr()[3];
+        robotOrientation = posSystem.getPositionArr()[3];
         double prevOrientation = 0.0;
 
         //right joystick's orientation
@@ -199,6 +201,7 @@ public class BaseDrive extends OpMode{
         double targetOrientation = robotDirection(right_stick_x, right_stick_y, robotOrientation)[1];
         switchMotors = (int)robotDirection(right_stick_x, right_stick_y, robotOrientation)[2];
 
+        //checks if
         if (finishedTurning) prevOrientation = robotOrientation;
         finishedTurning = (deltaAngle(prevOrientation, robotOrientation) >= targetAmountTurned);
 
@@ -209,9 +212,8 @@ public class BaseDrive extends OpMode{
 
         //rotation and translation power percentages
         double tableSpinPower = Math.sqrt(Math.pow(right_stick_x, 2) + Math.pow(right_stick_y, 2));
-        rotationPowerPercentage = tableSpinPower / 1.4;
+        rotationPowerPercentage = tableSpinPower / 1.4; //1.4 can be changed based on testing
         translationPowerPercentage = 1 - rotationPowerPercentage;
-
     }
 
     private void setPower(){
@@ -237,14 +239,31 @@ public class BaseDrive extends OpMode{
     private void reset(){
         double deltaTime = Math.abs(resetTimer.milliseconds() - startingMilliseconds);
         double gapTime = 200; //200 is a placeholder
+        double prevOrientation = wheelOrientation-180;
         if (wheelsAreStopped() && deltaTime > gapTime){ //"If the wheels have stopped for __ milliseconds"
-            robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
             //make robot's wheels face forward
-            /*
-            Ideas:
-            - stores how much the robot has turned since the last reset(). Based on this number, the robot will know how much it has to turn right/left to face forward
-             */
+            if (wheelOrientation != 0){
+                finishedTurning = false;
+                double amountNeededToTurn = wheelOrientation - 180; //makes it [-180, 180] and tells us if the wheels need to turn right or left
+                switchMotors = (amountNeededToTurn > 0 ? -1 : 1); //1 = right, -1 = left
+
+                RotateSwerveModulePID rotateWheelPID = new RotateSwerveModulePID(amountNeededToTurn, 0, 0, 0);
+                double angleTurned = deltaAngle(prevOrientation, wheelOrientation-180);
+                rotatePower = rotateWheelPID.update(angleTurned);
+
+                translationPowerPercentage = 0.0;
+                rotationPowerPercentage = 1.0;
+                leftThrottle = 1.0;
+                rightThrottle = 1.0;
+                spinPower = 0.0;
+                rotatePower = 1.0;
+                setPower();
+            }
+            finishedTurning = true;
+            robot.setMotorPower(0);
+
+            robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //reset encoders
+            robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
 
@@ -258,13 +277,11 @@ public class BaseDrive extends OpMode{
         int switchMotors = -1; //"by default, the robot's wheels will rotate left."
 
         currentOrientation = posSystem.getPositionArr()[2];
-        double targetOrientation = Math.atan2(x, y); //PROBLEMMMM: atan2() returns a range from [-pi, pi] radians. Not [0,360].  You need to make this into absolute orientation.
+        double targetOrientation = Math.atan2(x, y);
+        targetOrientation = Math.toDegrees(targetOrientation) + 180; //converts radians to degrees and adds 180 to make the rage [0,360]
         double temp_targetOrientation = targetOrientation;
-
         if (currentOrientation > targetOrientation) targetOrientation += 360;
-
         double targetAmountTurned = Math.abs(targetOrientation - currentOrientation);
-
         switchMotors *= (targetAmountTurned <= 90 ? 1 : -1); //determines if rotating right or left is faster to get to the desired orientation
 
         if (targetAmountTurned > 90) targetAmountTurned = 90 - (targetAmountTurned%90);
