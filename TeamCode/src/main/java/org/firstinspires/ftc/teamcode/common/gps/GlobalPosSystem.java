@@ -67,6 +67,7 @@ public class GlobalPosSystem {
 
     }
 
+
     public void update ( double x, double y, double wheelR, double robotR){
         //update
         positionArr[0] += x * constants.INCHES_PER_CLICK;
