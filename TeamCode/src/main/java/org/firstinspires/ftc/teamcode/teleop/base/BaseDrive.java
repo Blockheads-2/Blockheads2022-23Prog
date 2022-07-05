@@ -38,8 +38,6 @@ public class BaseDrive extends OpMode{
 
     //module's orientation
     private int switchMotors = 1;
-    private double currentOrientation = 0.0;
-    private double startingOrienation = 0.0;
 
     //robot's power
     private double rotatePower = 0.0;
@@ -48,9 +46,6 @@ public class BaseDrive extends OpMode{
     private double rotationPowerPercentage = 0.0;
     private double leftThrottle = 0.0;
     private double rightThrottle = 0.0;
-
-    //conditions
-    private boolean stutter = false;
 
     //checkover
     private boolean finishedTurning = true;
@@ -123,82 +118,98 @@ public class BaseDrive extends OpMode{
         setPower();
     }
 
+
+
     private void constantHeading(){
+        //output of left joystick
         double left_stick_x = gamepad1.left_stick_x; //returns a value between [-1, 1]
         double left_stick_y = gamepad1.left_stick_y; //returns a value between [-1, 1]
-        double targetOrientation = Math.atan2(left_stick_x, left_stick_y);
+
+        //wheel orientation
+        double wheelOrientation = posSystem.getPositionArr()[2]; //current orientation of the wheel
+        double prevOrientation = 0.0; //previous orientation of the wheel before it began a turning cycle
+
+        //orientation of joystick & amount wheel must turn
         double prevTargetOrientation = 0.0;
-        double temp_targetOrientation = targetOrientation;
-        currentOrientation = posSystem.getPositionArr()[2];
+        double targetAmountTurned = robotDirection(left_stick_x, left_stick_y, wheelOrientation)[0];
+        double targetOrientation = robotDirection(left_stick_x, left_stick_y, wheelOrientation)[1];
 
-        if (currentOrientation > targetOrientation) targetOrientation += 360;
-        switchMotors = -1; //"by default, the robot's wheels will rotate left."
+        //direction robot turns
+        switchMotors = (int)robotDirection(left_stick_x, left_stick_y, wheelOrientation)[2];
 
-        double targetAmountTurned = Math.abs(targetOrientation - currentOrientation);
-        switchMotors *= (targetAmountTurned <= 90 ? 1 : -1); //determines if rotating right or left is faster to get to the desired orientation
-        if (targetAmountTurned > 90) targetAmountTurned = 90 - (targetAmountTurned%90);
-        targetOrientation = temp_targetOrientation;
-        if (finishedTurning) startingOrienation = currentOrientation;
-        finishedTurning = (deltaAngle() >= targetAmountTurned);
+        //checks if
+        if (finishedTurning) prevOrientation = wheelOrientation;
+        finishedTurning = (deltaAngle(prevOrientation, wheelOrientation) >= targetAmountTurned);
 
         //module spin power
         spinPower = Math.sqrt(Math.pow(left_stick_x,2) + Math.pow(left_stick_y, 2));
 
         //module rotation power
         RotateSwerveModulePID rotateWheelPID = new RotateSwerveModulePID(targetAmountTurned, 0, 0, 0);
-        double angleTurned = deltaAngle();
+        double angleTurned = deltaAngle(prevOrientation, wheelOrientation);
         rotatePower = rotateWheelPID.update(angleTurned);
 
-        if (targetAmountTurned <= 90){ //stop, snap, move
-            if (Math.abs(prevTargetOrientation - targetOrientation) > 90){
-                rightThrottle = 0; //completely stops the entire robot.
-                leftThrottle = 0;
-            }
+        if (targetAmountTurned > 90){ //stop, snap, move
             rightThrottle = 1;
             leftThrottle = 1;
-            if (deltaAngle() < targetOrientation){ //rotate modules until target is hit
+            if (Math.abs(prevTargetOrientation - targetOrientation) > 90){ //if the player moves the joystic more than 90 degrees in an instant
+                robot.setMotorPower(0); //completely stops the entire robot
+            } else if (!finishedTurning){ //rotate modules until target is hit
                 translationPowerPercentage = 0.0;
-                rotationPowerPercentage = 1 - translationPowerPercentage;
+                rotationPowerPercentage = 1.0;
             } else{ //once target is hit, move in linear motion
                 translationPowerPercentage = 1.0;
-                rotationPowerPercentage = 1 - translationPowerPercentage;
+                rotationPowerPercentage = 0.0;
             }
         } else{ //spline
-            translationPowerPercentage = 1.0;
-            rotationPowerPercentage = 1 - translationPowerPercentage;
-
-            double throttle = Math.tanh(Math.abs(left_stick_y / (2 * left_stick_x)));
-            rightThrottle = (switchMotors == 1 ? throttle : 1);
-            leftThrottle = (switchMotors == 1 ? 1 : throttle);
-            //if switchMotors = 1, then robot is turning right. If switchMotors = -1, then robot is turning left.
+            //to-do: robot needs to stop splining after it hits its target
+            spline(left_stick_x, left_stick_y);
         }
+        if (Math.sqrt(Math.pow(posSystem.getPositionArr()[0],2) + Math.pow(posSystem.getPositionArr()[1], 2)) != 0){
+            //tableSpin() should only occur when the robot is translating
+            tableSpin();
+        }
+
         prevTargetOrientation = targetOrientation;
     }
+
+    private void spline(double x, double y){
+        boolean finishedTurning;
+
+        translationPowerPercentage = 1.0;
+        rotationPowerPercentage = 0.0;
+
+        double throttle = Math.tanh(Math.abs(y / (2 * x)));
+        rightThrottle = (switchMotors == 1 ? throttle : 1);
+        leftThrottle = (switchMotors == 1 ? 1 : throttle);
+        //if switchMotors = 1, then robot is turning right. If switchMotors = -1, then robot is turning left.
+    }
+
     private void tableSpin(){
+        //output of right joystick
         double right_stick_x = gamepad1.right_stick_x; //returns a value between [-1, 1]
         double right_stick_y = gamepad1.right_stick_y; //returns a value between [-1, 1]
-        double tableSpinPower = Math.sqrt(Math.pow(right_stick_x, 2) + Math.pow(right_stick_y, 2));
-        double targetOrientation = Math.atan2(right_stick_x, right_stick_y);
-        double temp_targetOrientation =  targetOrientation;
+
+        //robot's orientation
         double robotOrientation = posSystem.getPositionArr()[3];
-        double angleSpun = Math.abs(targetOrientation - currentOrientation);
+        double prevOrientation = 0.0;
 
-        if (currentOrientation > targetOrientation) targetOrientation += 360;
-        switchMotors = -1; //"by default, the robot's wheels will rotate left."
-        //Note: Must take into account the switchMotors set in constantHeading()
+        //right joystick's orientation
+        double targetAmountTurned = robotDirection(right_stick_x, right_stick_y, robotOrientation)[0];
+        double targetOrientation = robotDirection(right_stick_x, right_stick_y, robotOrientation)[1];
+        switchMotors = (int)robotDirection(right_stick_x, right_stick_y, robotOrientation)[2];
 
-        double targetAmountTurned = Math.abs(targetOrientation - currentOrientation);
-        switchMotors *= (targetAmountTurned <= 90 ? 1 : -1); //determines if rotating right or left is faster to get to the desired orientation
-        if (targetAmountTurned > 90) targetAmountTurned = 90 - (targetAmountTurned%90);
-        targetOrientation = temp_targetOrientation;
-        if (finishedTurning) startingOrienation = currentOrientation;
-        finishedTurning = (deltaAngle() >= targetAmountTurned);
+        if (finishedTurning) prevOrientation = robotOrientation;
+        finishedTurning = (deltaAngle(prevOrientation, robotOrientation) >= targetAmountTurned);
 
-        /*
-         spinPower * translationPowerPercentage +
-         rotatePower * rotationPowerPercentage
-         */
+        //rotate power:
+        RotateSwerveModulePID rotateWheelPID = new RotateSwerveModulePID(targetAmountTurned, 0, 0, 0);
+        double angleTurned = deltaAngle(prevOrientation, robotOrientation);
+        rotatePower = rotateWheelPID.update(angleTurned);
 
+        //rotation and translation power percentages
+        double tableSpinPower = Math.sqrt(Math.pow(right_stick_x, 2) + Math.pow(right_stick_y, 2));
+        rotationPowerPercentage = tableSpinPower / 1.4;
         translationPowerPercentage = 1 - rotationPowerPercentage;
 
     }
@@ -215,14 +226,12 @@ public class BaseDrive extends OpMode{
         robot.dtMotors[3].setPower(botRMotorPower);
     }
 
-    private double deltaAngle(){ //calculates how many degrees the module has rotated
-        double angleTurned = Math.abs(startingOrienation - currentOrientation);
+    private double deltaAngle(double prevOrientation, double currentOrientation){ //calculates how many degrees the module has rotated
+        double angleTurned = Math.abs(currentOrientation - prevOrientation);
+
+        if (angleTurned > 90) angleTurned = 90 - (angleTurned%90);
+
         return angleTurned;
-    }
-
-
-    private boolean wheelsAreStopped(){
-        return (gamepad1.left_stick_x == 0 && gamepad1.left_stick_y == 0 && gamepad1.right_stick_x == 0 && gamepad1.right_stick_y == 0 && gamepad1.right_trigger == 0 && gamepad1.left_trigger == 0);
     }
 
     private void reset(){
@@ -237,6 +246,35 @@ public class BaseDrive extends OpMode{
             - stores how much the robot has turned since the last reset(). Based on this number, the robot will know how much it has to turn right/left to face forward
              */
         }
+    }
+
+    private boolean wheelsAreStopped(){
+        return (gamepad1.left_stick_x == 0 && gamepad1.left_stick_y == 0 && gamepad1.right_stick_x == 0 && gamepad1.right_stick_y == 0 && gamepad1.right_trigger == 0 && gamepad1.left_trigger == 0);
+    }
+
+    private double[] robotDirection(double x, double y, double currentOrientation){ //returns how much the robot should turn in which direction
+        double[] directionArr = new double[3];
+
+        int switchMotors = -1; //"by default, the robot's wheels will rotate left."
+
+        currentOrientation = posSystem.getPositionArr()[2];
+        double targetOrientation = Math.atan2(x, y); //PROBLEMMMM: atan2() returns a range from [-pi, pi] radians. Not [0,360].  You need to make this into absolute orientation.
+        double temp_targetOrientation = targetOrientation;
+
+        if (currentOrientation > targetOrientation) targetOrientation += 360;
+
+        double targetAmountTurned = Math.abs(targetOrientation - currentOrientation);
+
+        switchMotors *= (targetAmountTurned <= 90 ? 1 : -1); //determines if rotating right or left is faster to get to the desired orientation
+
+        if (targetAmountTurned > 90) targetAmountTurned = 90 - (targetAmountTurned%90);
+        targetOrientation = temp_targetOrientation;
+
+        directionArr[0] = targetAmountTurned;
+        directionArr[1] = targetOrientation;
+        directionArr[2] = switchMotors;
+
+        return directionArr;
     }
 
     /*
