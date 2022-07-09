@@ -87,7 +87,6 @@ public class GlobalPosSystem {
            // System.out.println("An error occurred.");
             e.printStackTrace();
         }
-
     }
 
     public void hardResetGPS(){
