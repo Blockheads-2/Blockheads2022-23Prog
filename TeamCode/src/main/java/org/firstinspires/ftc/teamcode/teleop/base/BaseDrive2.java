@@ -149,7 +149,6 @@ public class BaseDrive2 extends OpMode{
         //outputs of joysticks
         left_stick_x = gamepad1.left_stick_x; //returns a value between [-1, 1]
         left_stick_y = gamepad1.left_stick_y; //returns a value between [-1, 1]
-
         right_stick_x = gamepad1.right_stick_x; //returns a value between [-1, 1]
         right_stick_y = gamepad1.right_stick_y; //returns a value between [-1, 1]
 
@@ -157,7 +156,7 @@ public class BaseDrive2 extends OpMode{
         LJ_targetOrientation = direction(left_stick_x, left_stick_y, wheelOrientation)[1]; //LJ = left joystick
         RJ_targetOrientation = direction(right_stick_x, right_stick_y, robotOrientation)[1];
 
-        //robot wheel target
+        //wheel target
         wheelOrientation = posSystem.getPositionArr()[2]; //current orientation of the wheel
         wheelTargetAmountTurned = direction(left_stick_x, left_stick_y, wheelOrientation)[0]; //how much the wheel should turn
 
@@ -247,7 +246,6 @@ public class BaseDrive2 extends OpMode{
         }
     }
 
-    //NOTE: Needs to do the target+=360 if (current > target)
     private double[] direction(double x, double y, double J_currentOrientation){ //returns how much the robot should turn in which direction
         double[] directionArr = new double[3];
         double switchMotors = 1; //"by default, everything will rotate right."
@@ -351,16 +349,14 @@ public class BaseDrive2 extends OpMode{
 
 
     private boolean isMoving(){
-        double requiredMS = 150.0;
+        double requiredMS = 100.0; //Note: this is ~5 loops
 
         if (Math.abs(lastMovementTime - movementTime.milliseconds()) >= requiredMS){ //checks if it has been 150 milliseconds
             if (Math.abs(posSystem.getPositionArr()[0] - prevX) <= tolerance && Math.abs(posSystem.getPositionArr()[0] - prevY) <= tolerance){ //if stopped
-                requiredMS = 150.0;
                 return false;
             } else{ //if not stopped
                 prevX = posSystem.getPositionArr()[0];
                 prevY = posSystem.getPositionArr()[1];
-                requiredMS/=2;
                 lastMovementTime = movementTime.milliseconds();
                 return true;
             }

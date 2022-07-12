@@ -23,7 +23,4 @@ public class Constants {
     public double horizontalDistanceOdo = 6.25;
     public double midDistanceOdo = 3.0;
 
-    //Code
-    public double LOOPS_PER_MS = 50.0/1000.0; //50 loops per second
-
 }
