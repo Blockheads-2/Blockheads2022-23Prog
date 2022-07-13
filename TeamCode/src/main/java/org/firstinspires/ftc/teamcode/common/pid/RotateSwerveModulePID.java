@@ -26,9 +26,9 @@ public class RotateSwerveModulePID {
         timer.reset();
     }
 
-    public double update(double angleTurned){
+    public double update(double currentOrientation){
         //proportion
-        double error = targetAngle - angleTurned;
+        double error = targetAngle - currentOrientation;
         pError = error;
         error %= 360;   //ensures that error is between [-360, 360]
         error += 360;   //ensures that error is positive
