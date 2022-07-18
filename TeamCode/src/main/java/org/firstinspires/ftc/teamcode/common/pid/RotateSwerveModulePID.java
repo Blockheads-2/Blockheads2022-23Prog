@@ -5,7 +5,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class RotateSwerveModulePID {
-    private double kp, ki, kd; //Maybe: create static variables for the gains, and fine-tune each value
+    private double kp, ki, kd;
     private double pError;
 
     private ElapsedTime timer = new ElapsedTime();
