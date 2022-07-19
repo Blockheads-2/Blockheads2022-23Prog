@@ -124,11 +124,11 @@ public class HardwareDrive
         imu.initialize(parameters);
 
 
-        //Reverse Motor
-
-        for (DcMotorEx motor : dtMotors){
-            motor.setDirection(DcMotorEx.Direction.FORWARD);
-        }
+        //Set Motor Directions
+        dtMotors[0].setDirection(DcMotorSimple.Direction.REVERSE);
+        dtMotors[1].setDirection(DcMotorSimple.Direction.REVERSE);
+        dtMotors[2].setDirection(DcMotorSimple.Direction.FORWARD);
+        dtMotors[3].setDirection(DcMotorSimple.Direction.FORWARD);
 
         // Set all motors to zero power
         setMotorPower(0);
@@ -142,7 +142,7 @@ public class HardwareDrive
 
     public void setMotorPower(double power){
         if (power == 0.0){
-            // Grady Was Here
+            // Grady Conwell Was Here
             for (DcMotorEx motor : dtMotors) {
                 motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
             }

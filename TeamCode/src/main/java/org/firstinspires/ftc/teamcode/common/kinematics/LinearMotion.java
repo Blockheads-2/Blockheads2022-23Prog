@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto.kinematics;
+package org.firstinspires.ftc.teamcode.common.kinematics;
 
 import org.firstinspires.ftc.teamcode.common.Constants;
 import org.firstinspires.ftc.teamcode.common.pid.RotateSwerveModulePID;
@@ -17,6 +17,10 @@ public class LinearMotion {
     //wheel target
     private double wheelOrientation = 0.0;
     private double wheelTargetAmountTurned;
+
+    //current orientation
+    private double currentW;
+    private double currentR;
 
     //robot header target
     private double robotOrientation = 0.0;
@@ -39,35 +43,69 @@ public class LinearMotion {
     }
 
     public void logic(){
-
+        //rotation and translation power percentages
+//        double tableSpinPower = Math.sqrt(Math.pow(right_stick_x, 2) + Math.pow(right_stick_y, 2));
+//        rotationSwitchMotors = (int)robotDirection(right_stick_x, right_stick_y, robotOrientation)[1];
+//        if (Math.abs(currentR - robotOrientation) <= constants.TOLERANCE){ //while target not hit
+//            rotationPowerPercentage = tableSpinPower / 1.4; //1.4 can be changed based on testing
+//            translationPowerPercentage = 1 - rotationPowerPercentage;
+//        } else{ //after target is hit, stop table spinning
+//            rotationPowerPercentage = 0.0;
+//            translationPowerPercentage = 1.0;
+//        }
     }
 
-    public void setPos(double x, double y, double finalAngle){
+    public void setPos(double x, double y, double finalAngle, double currentW, double currentR){
         this.x = x;
         this.y = y;
         this.finalAngle = finalAngle;
+        this.currentW = currentW;
+        this.currentR = currentR;
     }
 
     public double getDistance(){
         return Math.sqrt(Math.pow(x,2) + Math.pow(y,2));
     }
 
+    public int getClicks(){
+        double translationClicks = getDistance() * constants.CLICKS_PER_INCH; //rotation clicks
+        double rotationClicks = robotDirection(x, y, currentR)[0] * constants.CLICKS_PER_DEGREE; //table spinning clicks
 
-    public double[] targets(double currentOrientation){ //returns how much the robot should turn in which direction
+        return (int)(translationClicks + rotationClicks);
+    }
+
+    private double[] wheelDirection(double x, double y, double current){ //returns how much the wheels should rotate in which direction
         double[] directionArr = new double[3];
+
+        //determine targets
+        double target =  Math.toDegrees(Math.atan2(x, y)); //finds target orientation in terms of degrees (range is (-180, 180])
+        directionArr[1] = target;
+
+        //determine how much modules must turn
+        if (current > target) target += 360;
+        double turnAmount = Math.abs(target - current);
+        if (turnAmount > 90) turnAmount = 90 - (turnAmount%90);
+        directionArr[0] = turnAmount;
+
+        //determine direction wheel will rotate
         double switchMotors = 1; //"by default, everything will rotate right."
+        switchMotors *= (turnAmount <= 90 ? 1 : -1); //1 = right, -1 = left
+        directionArr[2] = switchMotors;
 
-        double targetOrientation = Math.toDegrees(Math.atan2(x, y)); //finds target orientation in terms of degrees (range is (-pi, pi])
-        double temp_JtargetOrientation = targetOrientation;
-        if (currentOrientation > targetOrientation) targetOrientation += 360;
-        double targetAmountTurned = Math.abs(targetOrientation - currentOrientation); //how much the robot/wheel must turn
-        switchMotors *= (targetAmountTurned <= 90 ? 1 : -1); //1 = right, -1 = left
-        targetOrientation = temp_JtargetOrientation;
+        return directionArr;
+    }
 
-        if (targetAmountTurned > 90) targetAmountTurned = 90 - (targetAmountTurned%90);
+    private double[] robotDirection(double x, double y, double current){
+        double[] directionArr = new double[3];
 
-        directionArr[0] = targetAmountTurned;
-        directionArr[1] = targetOrientation;
+        //determine targets
+        double target = Math.toDegrees(Math.atan2(x, y));
+        directionArr[1] = target;
+
+        //determine how much robot header must turn in which direction
+        double turnAmount = target-current;
+        double switchMotors = Math.signum(turnAmount);
+        directionArr[0] = Math.abs(turnAmount);
         directionArr[2] = switchMotors;
 
         return directionArr;

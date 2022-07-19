@@ -1,16 +1,13 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import android.app.Activity;
-import android.provider.Settings;
 import android.view.View;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.Const;
-import org.firstinspires.ftc.teamcode.auto.kinematics.LinearMotion;
+import org.firstinspires.ftc.teamcode.common.kinematics.LinearMotion;
 import org.firstinspires.ftc.teamcode.common.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
@@ -50,13 +47,14 @@ public class AutoHub {
 
 
     public void linearMovement(double x, double y, double turnDegrees, double kp, double ki, double kd){
-        linearMotion.setPos(x, y, turnDegrees);
         posSystem.calculatePos();
+        linearMotion.setPos(x, y, turnDegrees, posSystem.getPositionArr()[2], posSystem.getPositionArr()[3]);
+        snap(turnDegrees);
 
         int[] encoderTargets = new int[4];
 
         for (int i = 0; i < 4; i++){
-            encoderTargets[i] = (int)(linearMotion.getDistance() * constants.CLICKS_PER_INCH);
+            encoderTargets[i] = linearMotion.getClicks();
             robot.dtMotors[i].setTargetPosition(encoderTargets[i]);
         }
 
@@ -76,10 +74,15 @@ public class AutoHub {
         double targetOrientation = turnDegrees + posSystem.getPositionArr()[2];
         double currentOrientation = posSystem.getPositionArr()[2];
         RotateSwerveModulePID rotatePID = new RotateSwerveModulePID(targetOrientation, 0.0, 0.0, 0.0);
-        while (Math.abs(currentOrientation - targetOrientation) <= 2){
+        while (Math.abs(currentOrientation - targetOrientation) <= constants.TOLERANCE){
             posSystem.calculatePos();
-            //set motor power
+            double power = rotatePID.update(currentOrientation);
+            robot.dtMotors[0].setPower(power);
+            robot.dtMotors[1].setPower(-power);
+            robot.dtMotors[2].setPower(power);
+            robot.dtMotors[3].setPower(-power);
         }
+        robot.setMotorPower(0);
     }
 
 

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto.kinematics;
+package org.firstinspires.ftc.teamcode.common.kinematics;
 
 import org.firstinspires.ftc.teamcode.common.pid.RotateSwerveModulePID;
 import org.firstinspires.ftc.teamcode.common.positioning.MathSpline;
