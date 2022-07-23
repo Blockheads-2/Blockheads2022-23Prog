@@ -21,7 +21,7 @@ public class GlobalPosSystem {
     private int rotationalClicks;
 
 
-    HardwareDrive robot;
+    HardwareDrive robot; //this HardwareDrive robot is a completely separate robot to the ones that are initialized in basedrive and autohub ?!??!?
 
     public GlobalPosSystem(){
         for (int i = 0; i < 4; i++){
@@ -64,8 +64,9 @@ public class GlobalPosSystem {
         else{
             update(translationalClicks * Math.cos(wheelOrientation), translationalClicks * Math.sin(wheelOrientation) ,0, rotationalClicks);
         }
-
-
+        //Example of an error that might happen:
+        //For the change in the robot's header: This program only accounts for the change of the robot's header based on the robot's table-turning (the rotation of the wheels while the robot is moving)
+        //However, it does not detect the change in the robot's header when it is splining...
 
     }
 
@@ -106,6 +107,14 @@ public class GlobalPosSystem {
 
     public double[] getPositionArr() {
         return positionArr;
+    }
+
+    public int[] getMotorClicks(){
+        int[] clicks = new int[4];
+        for (int i = 0; i < 3; i++){
+            clicks[i] = robot.dtMotors[i].getCurrentPosition();
+        }
+        return clicks;
     }
 
     public HashMap<DcMotorEx, Integer> getMotorClicksPose () {

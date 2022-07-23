@@ -21,9 +21,9 @@ public class BaseDrive extends OpMode{
     /* Declare OpMode members. */
     HardwareDrive robot = new HardwareDrive();
     Constants constants = new Constants();
-    GlobalPosSystem posSystem = new GlobalPosSystem();
+    GlobalPosSystem posSystem;
     private ElapsedTime runtime = new ElapsedTime();
-    Kinematics kinematics = new Kinematics();
+    Kinematics kinematics;
 
     Button x = new Button();
     Button y = new Button();
@@ -49,6 +49,9 @@ public class BaseDrive extends OpMode{
 
         resetTimer.reset();
         startingMSsinceRelease = resetTimer.milliseconds();
+
+        posSystem = new GlobalPosSystem();
+        kinematics = new Kinematics(posSystem);
     }
 
     @Override
@@ -112,32 +115,23 @@ public class BaseDrive extends OpMode{
         double right_stick_y = gamepad1.right_stick_y; //returns a value between [-1, 1]
 
         //set current orientation
-        kinematics.setCurrents(posSystem.getPositionArr()[2], posSystem.getPositionArr()[3]);
+        kinematics.setCurrents();
 
         double wheelTurnAmount = kinematics.getWheelDirection(left_stick_x, left_stick_y)[0];
         double robotTurnAmount = kinematics.getRobotDirection(right_stick_x, right_stick_y)[0];
 
-        kinematics.spinPower = Math.sqrt(Math.pow(left_stick_x,2) + Math.pow(left_stick_y, 2));
-
         if (Math.abs(wheelTurnAmount) > 90){ //if the wheels must turn more than 90 degrees, stop, stop_snap, move
-            kinematics.setPos(Kinematics.DriveType.LINEAR, left_stick_x, left_stick_y, wheelTurnAmount, robotTurnAmount);
+            kinematics.setPos(Kinematics.DriveType.LINEAR, left_stick_x, left_stick_y, robotTurnAmount, 1);
         } else if (!kinematics.dontspline){ //otherwise, spline
-            kinematics.setPos(Kinematics.DriveType.SPLINE, left_stick_x, left_stick_y, wheelTurnAmount, robotTurnAmount);
+            kinematics.setPos(Kinematics.DriveType.SPLINE, left_stick_x, left_stick_y, robotTurnAmount, 1);
         }
-        kinematics.logic();
+        kinematics.setSpinPower(false);
+        kinematics.logic(false);
 
         reset(); //snaps wheels back to 0 degrees if the robot has stopped moving
     }
 
-    public double[] getSticksTeleop(double lx, double ly, double rx, double ry) {
-        double[] sticks = new double[4];
-        sticks[0] = lx;
-        sticks[1] = ly;
-        sticks[2] = rx;
-        sticks[3] = ry;
 
-        return sticks;
-    }
 
     private void setPower(){
         double[] motorPower = new double[4];

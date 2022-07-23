@@ -1,10 +1,16 @@
 package org.firstinspires.ftc.teamcode.common;
 
+import org.firstinspires.ftc.teamcode.auto.Math.LinearMath;
+import org.firstinspires.ftc.teamcode.auto.Math.SplineMath;
 import org.firstinspires.ftc.teamcode.common.Constants;
+import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.pid.RotateSwerveModulePID;
+import org.firstinspires.ftc.teamcode.common.pid.SpinPID;
 
 public class Kinematics {
     Constants constants = new Constants();
+    SplineMath splinemath;
+    LinearMath linearmath;
 
     public enum DriveType{
         LINEAR,
@@ -17,21 +23,25 @@ public class Kinematics {
 
     //robot's power
     private double rotatePower = 0.0;
-    public double spinPower = 0.0;
+    private double spinPower = 0.0;
     private double translationPowerPercentage = 0.0;
     private double rotationPowerPercentage = 0.0;
     private double leftThrottle = 1.0;
     private double rightThrottle = 1.0;
+    private double speed = 0.0; //for auto (between 0~1)
     private int rotationSwitchMotors = 1; //1 if rotating wheels right, -1 if rotating wheels left
     private int translateSwitchMotors = 1; //1 if going forward, -1 if going backward
 
     //current orientation
+    GlobalPosSystem posSystem;
     private double currentW; //current wheel orientation
     private double currentR; //current robot header orientation
 
     //PIDs
     private RotateSwerveModulePID snapWheelPID;
     private RotateSwerveModulePID tableSpinWheelPID;
+    private RotateSwerveModulePID resetWheelPID;
+
 
     //targets
     double x = 0.0;
@@ -43,28 +53,38 @@ public class Kinematics {
 
     //checkover
     private boolean finished_stop = false;
-    private boolean finished_snap = false;
+    public boolean finished_snap = false;
     public boolean dontspline = false;
+    public boolean skipToMove = false;
 
-    public Kinematics(){
 
+    public Kinematics(GlobalPosSystem posSystem){
+        snapWheelPID = new RotateSwerveModulePID();
+        tableSpinWheelPID = new RotateSwerveModulePID();
+        resetWheelPID = new RotateSwerveModulePID();
+        this.posSystem = posSystem;
     }
 
-    public void logic(){
+    public void logic(boolean auto){
         rotatePower = snapWheelPID.update(currentW);
 
         switch(type){
             case LINEAR:
-                if (!finished_stop) type = DriveType.STOP;
+                if (!finished_stop && !skipToMove) type = DriveType.STOP;
 
-                if (finished_stop && !finished_snap){
+                if (finished_stop && !finished_snap && !skipToMove){
                     type = DriveType.SNAP;
-                } else if (finished_stop && finished_snap){
+                }
+                if ((finished_stop && finished_snap) || skipToMove){
+                    finished_stop = true;
+                    finished_snap = true;
                     rightThrottle = 1;
                     leftThrottle = 1;
                     translateSwitchMotors = rotationSwitchMotors;
                     translationPowerPercentage = 1.0;
                     rotationPowerPercentage = 0.0;
+                    setSpinPower(auto);
+                    tableSpin();
                 }
                 break;
 
@@ -86,19 +106,10 @@ public class Kinematics {
             case SPLINE:
                 translationPowerPercentage = 1.0;
                 rotationPowerPercentage = 0.0;
-                double throttle = Math.tanh(Math.abs(y / (2 * x)));
-
-                if (Math.abs(currentR - targetR) <= constants.TOLERANCE){
-                    rightThrottle = (rotationSwitchMotors == 1 ? throttle : 1);
-                    leftThrottle = (rotationSwitchMotors == 1 ? 1 : throttle);
-                } else{
-                    rightThrottle = 1; //once target is met, stop splining and just move straight
-                    leftThrottle = 1;
-                }
-
+                setSpinPower(auto);
                 finished_stop = false;
                 finished_snap = false;
-
+                tableSpin();
                 break;
 
             case TURN:
@@ -117,10 +128,10 @@ public class Kinematics {
         }
     }
 
-    private void tableSpin(){ //NNEEEDSSS REVISSIONNN
+    private void tableSpin(){
         //rotation and translation power percentages
         rotatePower = tableSpinWheelPID.update(currentR);
-        rotationSwitchMotors = (int)getRobotDirection(right_stick_x, right_stick_y)[1];
+        rotationSwitchMotors = (int)getRobotDirection(targetR)[2];
         if (Math.abs(targetR - currentR) <= constants.TOLERANCE){ //while target not hit
             rotationPowerPercentage = rotatePower / 1.4; //1.4 can be changed based on testing
             translationPowerPercentage = 1 - rotationPowerPercentage;
@@ -130,34 +141,64 @@ public class Kinematics {
         }
     }
 
-    public void setPos(DriveType type, double x, double y, double wheelTurnAmount, double robotTurnAmount){
+
+    public void setPos(DriveType type, double x, double y, double robotTurnAmount, double speed){
         this.type = type;
         this.x = x;
         this.y = y;
-        this.wheelTurnAmount = wheelTurnAmount;
-        this.robotTurnAmount = robotTurnAmount;
+        this.speed = speed;
+
+        //setting targets
+        this.wheelTurnAmount = getWheelDirection(x, y)[0];
+        this.robotTurnAmount = robotTurnAmount; //how much the robot should turn
         targetW = currentW + wheelTurnAmount;
-        targetR = currentR + robotTurnAmount;
+        targetR = currentR + robotTurnAmount; //the target orientation on a circle of (-179, 180]
         if (targetW < -179 || targetW > 180) targetW -= (Math.signum(targetW) * 360);
         if (targetR < -179 || targetR > 180) targetR -= (Math.signum(targetR) * 360);
-        snapWheelPID = new RotateSwerveModulePID(targetW, 0, 0, 0); //does this make a new object every loop?
-        tableSpinWheelPID = new RotateSwerveModulePID(targetR, 0, 0, 0);
+
+        //setting PIDs for rotation of wheels & robot
+        snapWheelPID.setTargets(targetW, 0, 0, 0);
+        tableSpinWheelPID.setTargets(targetR, 0, 0, 0);
+
+        //specifically for auto (not teleop)
+        splinemath = new SplineMath(posSystem.getMotorClicks()[2], posSystem.getMotorClicks()[0]);
+        splinemath.setPos(x, y, robotTurnAmount);
+        linearmath = new LinearMath(posSystem.getPositionArr()[0], posSystem.getPositionArr()[1]);
+        linearmath.setPos(x, y, robotTurnAmount);
     }
 
-    public void setCurrents(double currentWheelOrientation, double currentRobotOrientation){
-        currentW = currentWheelOrientation;
-        currentR = currentRobotOrientation;
+    public void setSpinPower(boolean auto){
+        if (!auto) {
+            double throttle = Math.tanh(Math.abs(y / (2 * x)));
+            spinPower = Math.sqrt(Math.pow(x,2) + Math.pow(y, 2));
+
+            if (Math.abs(currentR - targetR) <= constants.TOLERANCE){
+                rightThrottle = (rotationSwitchMotors == 1 ? throttle : 1);
+                leftThrottle = (rotationSwitchMotors == 1 ? 1 : throttle);
+            } else{
+                rightThrottle = 1; //once target is met, stop splining and just move straight
+                leftThrottle = 1;
+            }
+        }
+        else {
+            switch (type){
+                case SPLINE:
+                    spinPower = 1;
+                    rightThrottle = splinemath.returnPowerR(posSystem.getMotorClicks()[2], posSystem.getMotorClicks()[0]);
+                    leftThrottle = splinemath.returnPowerL(posSystem.getMotorClicks()[2], posSystem.getMotorClicks()[0]);
+                    //NOTE: May need to apply the powers to the spin power instead of the throttles (and make it spinPowerR, spinPowerL)
+                    break;
+
+                case LINEAR:
+                    spinPower = linearmath.getSpinPower(posSystem.getPositionArr()[0], posSystem.getPositionArr()[1]);
+                    break;
+            }
+        }
     }
 
-    public double getDistance(){
-        return Math.sqrt(Math.pow(x,2) + Math.pow(y,2));
-    }
-
-    public int getClicks(){
-        double translationClicks = getDistance() * constants.CLICKS_PER_INCH; //rotation clicks
-        double rotationClicks = getRobotDirection(x, y)[0] * constants.CLICKS_PER_DEGREE; //table spinning clicks
-
-        return (int)(translationClicks + rotationClicks);
+    public void setCurrents(){
+        currentW = posSystem.getPositionArr()[2];
+        currentR = posSystem.getPositionArr()[3];
     }
 
     public double[] getWheelDirection(double x, double y){ //returns how much the wheels should rotate in which direction
@@ -197,13 +238,28 @@ public class Kinematics {
         return directionArr;
     }
 
+    public double[] getRobotDirection(double targetOrientation){
+        double[] directionArr = new double[3];
+
+        //determine targets
+        directionArr[1] = targetOrientation;
+
+        //determine how much robot header must turn in which direction
+        double turnAmount = targetOrientation-currentR;
+        double switchMotors = Math.signum(turnAmount);
+        directionArr[0] = Math.abs(turnAmount);
+        directionArr[2] = switchMotors;
+
+        return directionArr;
+    }
+
     public double[] getVelocity(){
         double[] motorPower = new double[4];
 
-        motorPower[0] = constants.MAX_VELOCITY_DT * leftThrottle * (spinPower * translationPowerPercentage * translateSwitchMotors + rotatePower * rotationPowerPercentage * rotationSwitchMotors); //top left
-        motorPower[1] = constants.MAX_VELOCITY_DT * leftThrottle * (-1 * spinPower * translationPowerPercentage * translateSwitchMotors + rotatePower * rotationPowerPercentage * rotationSwitchMotors); //bottom left
-        motorPower[2] = constants.MAX_VELOCITY_DT * rightThrottle * (spinPower * translationPowerPercentage * translateSwitchMotors + rotatePower * rotationPowerPercentage * rotationSwitchMotors); //top right
-        motorPower[3] = constants.MAX_VELOCITY_DT * rightThrottle * (-1 * spinPower * translationPowerPercentage * translateSwitchMotors + rotatePower * rotationPowerPercentage * rotationSwitchMotors); //bottom right
+        motorPower[0] = constants.MAX_VELOCITY_DT * speed * leftThrottle * (spinPower * translationPowerPercentage * translateSwitchMotors + rotatePower * rotationPowerPercentage * rotationSwitchMotors); //top left
+        motorPower[1] = constants.MAX_VELOCITY_DT * speed * leftThrottle * (-1 * spinPower * translationPowerPercentage * translateSwitchMotors + rotatePower * rotationPowerPercentage * rotationSwitchMotors); //bottom left
+        motorPower[2] = constants.MAX_VELOCITY_DT * speed * rightThrottle * (spinPower * translationPowerPercentage * translateSwitchMotors + rotatePower * rotationPowerPercentage * rotationSwitchMotors); //top right
+        motorPower[3] = constants.MAX_VELOCITY_DT * speed * rightThrottle * (-1 * spinPower * translationPowerPercentage * translateSwitchMotors + rotatePower * rotationPowerPercentage * rotationSwitchMotors); //bottom right
 
         return motorPower;
     }
@@ -223,8 +279,8 @@ public class Kinematics {
         if (currentW != 0){
             rotationSwitchMotors = (currentW > 0 ? -1 : 1); //1 = right, -1 = left
 
-            RotateSwerveModulePID rotateWheelPID = new RotateSwerveModulePID(0, 0, 0, 0);
-            rotatePower = rotateWheelPID.update(currentW);
+            resetWheelPID.setTargets(0, 0, 0, 0);
+            rotatePower = resetWheelPID.update(currentW);
 
             translationPowerPercentage = 0.0;
             rotationPowerPercentage = 1.0;
@@ -238,6 +294,11 @@ public class Kinematics {
             rotatePower = 0.0;
             rotationSwitchMotors = 1;
         }
+        finished_stop = false;
+        finished_snap = false;
+        dontspline = false;
+        skipToMove = false;
+
         return (currentW == 0);
     }
 }

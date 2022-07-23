@@ -23,7 +23,7 @@ public class MathVariableHead{
         mathSpline.setFinalPose(x, y);
     }
 
-    RotateSwerveModulePID pid = new RotateSwerveModulePID(finalAngle, 0, 0, 0);
+    RotateSwerveModulePID pid = new RotateSwerveModulePID();
 
     public int[] returnClicks(){
         double rDistance = mathSpline.returnRDistance() * 32.382;

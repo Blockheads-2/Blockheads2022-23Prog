@@ -54,7 +54,8 @@ public class ConstantHeading {
         theta -= 360;
 
         //module rotation
-        RotateSwerveModulePID rotateWheelPID = new RotateSwerveModulePID(thetaTurned, 0, 0, 0);
+        RotateSwerveModulePID rotateWheelPID = new RotateSwerveModulePID();
+        rotateWheelPID.setTargets(thetaTurned, 0, 0,0);
         double angleTurned = deltaAngle(theta, thetaTurned);
         rotatePower = rotateWheelPID.update(angleTurned);
 

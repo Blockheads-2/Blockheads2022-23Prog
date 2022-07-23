@@ -11,5 +11,5 @@ public class MathVariableHeadPhi {
         angle = mathSpline.returnTheta();
     }
 
-    RotateSwerveModulePID pid = new RotateSwerveModulePID(angle, 0, 0, 0);
+    RotateSwerveModulePID pid = new RotateSwerveModulePID();
 }
