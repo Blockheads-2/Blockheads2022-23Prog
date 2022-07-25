@@ -160,5 +160,9 @@ public class HardwareDrive
         }
     }
 
+    public boolean wheelsAreBusy(){
+        return (dtMotors[0].isBusy() && dtMotors[1].isBusy() && dtMotors[2].isBusy() && dtMotors[3].isBusy());
+    }
+
 }
 

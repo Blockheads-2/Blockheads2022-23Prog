@@ -52,6 +52,8 @@ public class BaseDrive extends OpMode{
 
         posSystem = new GlobalPosSystem();
         kinematics = new Kinematics(posSystem);
+
+        kinematics.setMode(Kinematics.Mode.TELEOP);
     }
 
     @Override
@@ -125,8 +127,8 @@ public class BaseDrive extends OpMode{
         } else if (!kinematics.dontspline){ //otherwise, spline
             kinematics.setPos(Kinematics.DriveType.SPLINE, left_stick_x, left_stick_y, robotTurnAmount, 1);
         }
-        kinematics.setSpinPower(false);
-        kinematics.logic(false);
+        kinematics.setSpinPower();
+        kinematics.logic();
 
         reset(); //snaps wheels back to 0 degrees if the robot has stopped moving
     }

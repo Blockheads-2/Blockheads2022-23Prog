@@ -49,6 +49,8 @@ public class AutoHub {
 
         linearOpMode.telemetry.addData("Status", "Waiting on Camera");
         linearOpMode.telemetry.update();
+
+        kinematics.setMode(Kinematics.Mode.AUTO);
     }
 
 
@@ -62,7 +64,7 @@ public class AutoHub {
         while (linearOpMode.opModeIsActive() && !kinematics.finished_snap){
             posSystem.calculatePos();
             kinematics.setCurrents();
-            kinematics.logic(true);
+            kinematics.logic();
             robot.dtMotors[0].setPower(kinematics.getPower()[0]);
             robot.dtMotors[1].setPower(-kinematics.getPower()[1]);
             robot.dtMotors[2].setPower(kinematics.getPower()[2]);
@@ -74,7 +76,6 @@ public class AutoHub {
         //move
         kinematics.setPos(Kinematics.DriveType.LINEAR, x, y, turnDegrees, speed);
         linearmath.setPos(x, y, turnDegrees);
-        kinematics.skipToMove = true;
 
         int[] encoderTargets = new int[4];
         for (int i = 0; i < 4; i++){
@@ -83,15 +84,14 @@ public class AutoHub {
         }
         robot.setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        while (linearOpMode.opModeIsActive() && robot.dtMotors[0].isBusy() && robot.dtMotors[1].isBusy() && robot.dtMotors[2].isBusy() && robot.dtMotors[3].isBusy()){
+        while (linearOpMode.opModeIsActive() && robot.wheelsAreBusy()){
             posSystem.calculatePos();
             kinematics.setCurrents();
-            kinematics.logic(true);
+            kinematics.logic();
             for (int i = 0; i < 3; i++){
                 robot.dtMotors[i].setVelocity(kinematics.getVelocity()[i]);
             }
         }
-        kinematics.skipToMove = false;
         robot.setMotorPower(0);
         //reset()
         robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -116,10 +116,10 @@ public class AutoHub {
 
         robot.setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        while (linearOpMode.opModeIsActive() && robot.dtMotors[0].isBusy() && robot.dtMotors[1].isBusy() && robot.dtMotors[2].isBusy() && robot.dtMotors[3].isBusy()){
+        while (linearOpMode.opModeIsActive() && robot.wheelsAreBusy()){
             posSystem.calculatePos();
             kinematics.setCurrents();
-            kinematics.logic(true);
+            kinematics.logic();
             for (int i = 0; i < 3; i++){
                 robot.dtMotors[i].setVelocity(kinematics.getVelocity()[i]);
             }

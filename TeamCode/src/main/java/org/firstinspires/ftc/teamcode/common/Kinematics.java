@@ -21,6 +21,9 @@ public class Kinematics {
     }
     private DriveType type;
 
+    public enum Mode{AUTO, TELEOP};
+    private Mode mode = Mode.AUTO;
+
     //robot's power
     private double rotatePower = 0.0;
     private double spinPower = 0.0;
@@ -28,7 +31,7 @@ public class Kinematics {
     private double rotationPowerPercentage = 0.0;
     private double leftThrottle = 1.0;
     private double rightThrottle = 1.0;
-    private double speed = 0.0; //for auto (between 0~1)
+    private double speed = 0.0; //for autoMode (between 0~1)
     private int rotationSwitchMotors = 1; //1 if rotating wheels right, -1 if rotating wheels left
     private int translateSwitchMotors = 1; //1 if going forward, -1 if going backward
 
@@ -42,7 +45,6 @@ public class Kinematics {
     private RotateSwerveModulePID tableSpinWheelPID;
     private RotateSwerveModulePID resetWheelPID;
 
-
     //targets
     double x = 0.0;
     double y = 0.0;
@@ -55,7 +57,6 @@ public class Kinematics {
     private boolean finished_stop = false;
     public boolean finished_snap = false;
     public boolean dontspline = false;
-    public boolean skipToMove = false;
 
 
     public Kinematics(GlobalPosSystem posSystem){
@@ -65,17 +66,17 @@ public class Kinematics {
         this.posSystem = posSystem;
     }
 
-    public void logic(boolean auto){
+    public void logic(){
         rotatePower = snapWheelPID.update(currentW);
 
         switch(type){
             case LINEAR:
-                if (!finished_stop && !skipToMove) type = DriveType.STOP;
+                if (!finished_stop && mode == Mode.TELEOP) type = DriveType.STOP;
 
-                if (finished_stop && !finished_snap && !skipToMove){
+                if (finished_stop && !finished_snap && mode == Mode.TELEOP){
                     type = DriveType.SNAP;
                 }
-                if ((finished_stop && finished_snap) || skipToMove){
+                if ((finished_stop && finished_snap) || mode == Mode.AUTO){
                     finished_stop = true;
                     finished_snap = true;
                     rightThrottle = 1;
@@ -83,7 +84,7 @@ public class Kinematics {
                     translateSwitchMotors = rotationSwitchMotors;
                     translationPowerPercentage = 1.0;
                     rotationPowerPercentage = 0.0;
-                    setSpinPower(auto);
+                    setSpinPower();
                     tableSpin();
                 }
                 break;
@@ -106,7 +107,7 @@ public class Kinematics {
             case SPLINE:
                 translationPowerPercentage = 1.0;
                 rotationPowerPercentage = 0.0;
-                setSpinPower(auto);
+                setSpinPower();
                 finished_stop = false;
                 finished_snap = false;
                 tableSpin();
@@ -160,15 +161,15 @@ public class Kinematics {
         snapWheelPID.setTargets(targetW, 0, 0, 0);
         tableSpinWheelPID.setTargets(targetR, 0, 0, 0);
 
-        //specifically for auto (not teleop)
+        //specifically for autoMode (not teleop)
         splinemath = new SplineMath(posSystem.getMotorClicks()[2], posSystem.getMotorClicks()[0]);
         splinemath.setPos(x, y, robotTurnAmount);
         linearmath = new LinearMath(posSystem.getPositionArr()[0], posSystem.getPositionArr()[1]);
         linearmath.setPos(x, y, robotTurnAmount);
     }
 
-    public void setSpinPower(boolean auto){
-        if (!auto) {
+    public void setSpinPower(){
+        if (mode == Mode.TELEOP) {
             double throttle = Math.tanh(Math.abs(y / (2 * x)));
             spinPower = Math.sqrt(Math.pow(x,2) + Math.pow(y, 2));
 
@@ -199,6 +200,10 @@ public class Kinematics {
     public void setCurrents(){
         currentW = posSystem.getPositionArr()[2];
         currentR = posSystem.getPositionArr()[3];
+    }
+
+    public void setMode(Mode mode){
+        this.mode = mode;
     }
 
     public double[] getWheelDirection(double x, double y){ //returns how much the wheels should rotate in which direction
@@ -297,7 +302,6 @@ public class Kinematics {
         finished_stop = false;
         finished_snap = false;
         dontspline = false;
-        skipToMove = false;
 
         return (currentW == 0);
     }
