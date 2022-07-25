@@ -128,4 +128,8 @@ public class AutoHub {
         //reset()
         robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+
+    public void turn(double turnDegrees, double speed, double kp, double ki, double kd){
+
+    }
 }
