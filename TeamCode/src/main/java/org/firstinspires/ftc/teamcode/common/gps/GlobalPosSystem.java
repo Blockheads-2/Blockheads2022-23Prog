@@ -47,12 +47,11 @@ public class GlobalPosSystem {
         clicks2 = motorClicksPose.get(robot.dtMotors[2]); //A
         clicks3 = motorClicksPose.get(robot.dtMotors[3]); //B
 
-
         //distance = (A-B)/2
-        translationalClicks = ((clicks0 + clicks2)/2 - (clicks1 + clicks3)/2);
-        translationalClicks /= 2;
-
-        rotationalClicks = (clicks0 + clicks2)/2 - translationalClicks;
+        int top = (clicks0 + clicks2)/2;
+        int bottom = (clicks1 + clicks3)/2;
+        translationalClicks = (int)(top - bottom) / 2;
+        rotationalClicks = top - translationalClicks;
 
         double wheelOrientation = positionArr[2] * constants.DEGREES_PER_CLICK;
         wheelOrientation = Math.toRadians(wheelOrientation);
@@ -64,10 +63,6 @@ public class GlobalPosSystem {
         else{
             update(translationalClicks * Math.cos(wheelOrientation), translationalClicks * Math.sin(wheelOrientation) ,0, rotationalClicks);
         }
-        //Example of an error that might happen:
-        //For the change in the robot's header: This program only accounts for the change of the robot's header based on the robot's table-turning (the rotation of the wheels while the robot is moving)
-        //However, it does not detect the change in the robot's header when it is splining...
-
     }
 
 
