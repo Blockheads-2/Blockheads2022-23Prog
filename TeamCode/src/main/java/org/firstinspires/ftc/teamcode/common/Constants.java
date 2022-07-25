@@ -5,22 +5,24 @@ import org.checkerframework.checker.units.qual.C;
 public class Constants {
 
     //Drive Train Constants
-    public double CLICKS_PER_REV = 384.5;
-    public double DIAMETER_OF_WHEEL = 96 / 25.4; //unit is in inches
+    public double CLICKS_PER_REV = 384.5; //clicks per rev of motor
+    public double WHEEL_DIAMETER = 96 / 25.4; //unit is in inches
+    public double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
     public double MAX_VELOCITY_DT = 2700; // unit is clicks/sec
     public double TOLERANCE = 3; //number of clicks or degrees the robot can be off by
 
-    //Swerve
-    public double ROT_WHEEL_PER_ROT_INPUT_SHAFT = 16.0/17.0; //1 rotation in opposite directions = 16/17 rotations of wheel
-    public double INCHES_PER_ROT_INPUT_SHAFT = (Math.PI * DIAMETER_OF_WHEEL) * ROT_WHEEL_PER_ROT_INPUT_SHAFT; //11.175 inches per rotation of input shaft
-
-    public double CLICKS_PER_INCH = CLICKS_PER_REV / INCHES_PER_ROT_INPUT_SHAFT; //34.406 clicks of top & bottom gears in opposite directions = 1 inch
+    //Swerve constants
+        //module translation
+    public double InputShaftREV_PER_WheelREV = 17.0 / 16.0; //assuming other gear isn't messing stuff up, 17 revolutions of the input shaft = 16 revolutions of the wheel
+    public double Clicks_PER_WheelREV = InputShaftREV_PER_WheelREV * CLICKS_PER_REV; // ~408.53 clicks per wheel revolution
+    public double CLICKS_PER_INCH = Clicks_PER_WheelREV / WHEEL_CIRCUMFERENCE; //~34.406 clicks of input shaft per inch (assuming other gear isn't messing stuff up)
     public double INCHES_PER_CLICK = 1.0 / CLICKS_PER_INCH;
-    public double DEGREES_PER_CLICK = 360.0 / CLICKS_PER_REV;
-    public double CLICKS_PER_DEGREE = 1.0/DEGREES_PER_CLICK;
 
-    //Degrees Per Inch Auto
-    public double degree = 23.47/90;
+        //module rotation
+    public double InputShaftREV_PER_BigGearREV = 85.0 / 24.0;
+    public double Clicks_PER_BigGearRev = InputShaftREV_PER_BigGearREV * CLICKS_PER_REV; //~361.77 clicks per big gear revolution
+    public double CLICKS_PER_DEGREE = Clicks_PER_BigGearRev / 360.0; //~3.78 clicks per degree (assuming other gear isn't messing stuff up)
+    public double DEGREES_PER_CLICK = 1.0 / CLICKS_PER_REV;
 
     //Distance Between swerve module and Center
     public double DISTANCE_BETWEEN_MODULE_AND_CENTER;
