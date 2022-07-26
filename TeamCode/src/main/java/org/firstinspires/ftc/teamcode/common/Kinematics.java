@@ -112,6 +112,10 @@ public class Kinematics {
                 finished_snap = false;
                 tableSpin();
                 break;
+                /*
+                To Do:
+                Spline w/ a constant heading
+                 */
 
             case TURN:
                 //...
@@ -256,6 +260,10 @@ public class Kinematics {
         directionArr[2] = switchMotors;
 
         return directionArr;
+    }
+
+    public DriveType getDriveType(){
+        return type;
     }
 
     public double[] getVelocity(){

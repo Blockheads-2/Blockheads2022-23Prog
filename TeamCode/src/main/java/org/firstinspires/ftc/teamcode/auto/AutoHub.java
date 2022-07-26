@@ -36,7 +36,7 @@ public class AutoHub {
         linearOpMode.telemetry.addData("Status", "Resetting Encoders and Camera");
         linearOpMode.telemetry.update();
 
-        posSystem = new GlobalPosSystem();
+        posSystem = new GlobalPosSystem(robot);
         kinematics = new Kinematics(posSystem);
 
         // Get a reference to the RelativeLayout so we can later change the background

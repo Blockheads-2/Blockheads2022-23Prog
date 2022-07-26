@@ -50,7 +50,7 @@ public class BaseDrive extends OpMode{
         resetTimer.reset();
         startingMSsinceRelease = resetTimer.milliseconds();
 
-        posSystem = new GlobalPosSystem();
+        posSystem = new GlobalPosSystem(robot);
         kinematics = new Kinematics(posSystem);
 
         kinematics.setMode(Kinematics.Mode.TELEOP);
