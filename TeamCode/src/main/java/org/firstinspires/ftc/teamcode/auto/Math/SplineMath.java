@@ -56,7 +56,7 @@ public class SplineMath {
         return clicks;
     }
 
-    public double returnPowerR(double currentClickR, double currentClickL){
+    public double returnPowerR(double currentClickR){
         double distanceR = returnDistance()[2];
         double distanceL = returnDistance()[1];
 
@@ -64,7 +64,7 @@ public class SplineMath {
         return (distanceR >= distanceL ? 1 * spinPIDR.update(distance): (distanceL / distanceR) * spinPIDR.update(distance));
     }
 
-    public double returnPowerL(double currentClickR, double currentClickL){
+    public double returnPowerL(double currentClickL){
         double distanceR = returnDistance()[2];
         double distanceL = returnDistance()[1];
 

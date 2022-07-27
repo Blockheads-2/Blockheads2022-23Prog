@@ -181,7 +181,7 @@ public class Kinematics {
             spinPower = Math.sqrt(Math.pow(x,2) + Math.pow(y, 2));
 
             if (Math.abs(currentR - targetW) <= constants.TOLERANCE && type == DriveType.SPLINE){
-                double throttle = Math.tanh(Math.abs(y / (2 * x)));
+                double throttle = Math.tanh(Math.abs(y / x));
                 rightThrottle = (rotationSwitchMotors == 1 ? throttle : 1);
                 leftThrottle = (rotationSwitchMotors == 1 ? 1 : throttle);
             } else{
@@ -193,8 +193,8 @@ public class Kinematics {
             switch (type){
                 case SPLINE:
                     spinPower = 1;
-                    rightThrottle = splinemath.returnPowerR(posSystem.getMotorClicks()[2], posSystem.getMotorClicks()[0]);
-                    leftThrottle = splinemath.returnPowerL(posSystem.getMotorClicks()[2], posSystem.getMotorClicks()[0]);
+                    rightThrottle = splinemath.returnPowerR(posSystem.getMotorClicks()[2]);
+                    leftThrottle = splinemath.returnPowerL(posSystem.getMotorClicks()[0]);
                     //NOTE: May need to apply the powers to the spin power instead of the throttles (and make it spinPowerR, spinPowerL)
                     break;
 
@@ -273,10 +273,10 @@ public class Kinematics {
     public double[] getVelocity(){
         double[] motorPower = new double[4];
 
-        motorPower[0] = constants.MAX_VELOCITY_DT * speed * leftThrottle * (spinPower * translationPowerPercentage * translateSwitchMotors + rotatePower * rotationPowerPercentage * rotationSwitchMotors); //top left
-        motorPower[1] = constants.MAX_VELOCITY_DT * speed * leftThrottle * (-1 * spinPower * translationPowerPercentage * translateSwitchMotors + rotatePower * rotationPowerPercentage * rotationSwitchMotors); //bottom left
-        motorPower[2] = constants.MAX_VELOCITY_DT * speed * rightThrottle * (spinPower * translationPowerPercentage * translateSwitchMotors + rotatePower * rotationPowerPercentage * rotationSwitchMotors); //top right
-        motorPower[3] = constants.MAX_VELOCITY_DT * speed * rightThrottle * (-1 * spinPower * translationPowerPercentage * translateSwitchMotors + rotatePower * rotationPowerPercentage * rotationSwitchMotors); //bottom right
+        motorPower[0] = constants.MAX_VELOCITY_DT * speed * (spinPower * translationPowerPercentage * translateSwitchMotors * leftThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors); //top left
+        motorPower[1] = constants.MAX_VELOCITY_DT * speed * (-1 * spinPower * translationPowerPercentage * translateSwitchMotors * leftThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors); //bottom left
+        motorPower[2] = constants.MAX_VELOCITY_DT * speed * (spinPower * translationPowerPercentage * translateSwitchMotors * rightThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors); //top right
+        motorPower[3] = constants.MAX_VELOCITY_DT * speed * (-1 * spinPower * translationPowerPercentage * translateSwitchMotors + rotatePower * rightThrottle * rotationPowerPercentage * rotationSwitchMotors); //bottom right
 
         return motorPower;
     }
@@ -284,10 +284,10 @@ public class Kinematics {
     public double[] getPower(){
         double[] motorPower = new double[4];
 
-        motorPower[0] = (spinPower * translationPowerPercentage * translateSwitchMotors + rotatePower * rotationPowerPercentage * rotationSwitchMotors) * leftThrottle; //top left
-        motorPower[1] = (-1 * spinPower * translationPowerPercentage * translateSwitchMotors + rotatePower * rotationPowerPercentage * rotationSwitchMotors) * leftThrottle; //bottom left
-        motorPower[2] = (spinPower * translationPowerPercentage * translateSwitchMotors + rotatePower * rotationPowerPercentage * rotationSwitchMotors) * rightThrottle; //top right
-        motorPower[3] = (-1 * spinPower * translationPowerPercentage * translateSwitchMotors + rotatePower * rotationPowerPercentage * rotationSwitchMotors) * rightThrottle ; //bottom right
+        motorPower[0] = spinPower * translationPowerPercentage * translateSwitchMotors * leftThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //top left
+        motorPower[1] = -1 * spinPower * translationPowerPercentage * translateSwitchMotors * leftThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //bottom left
+        motorPower[2] = spinPower * translationPowerPercentage * translateSwitchMotors * rightThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //top right
+        motorPower[3] = -1 * spinPower * translationPowerPercentage * translateSwitchMotors * rightThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //bottom right
 
         return motorPower;
     }
