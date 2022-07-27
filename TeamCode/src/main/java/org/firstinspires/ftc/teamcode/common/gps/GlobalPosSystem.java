@@ -63,29 +63,34 @@ public class GlobalPosSystem {
         double wheelOrientation = positionArr[2] * constants.DEGREES_PER_CLICK; //this will be off by 1 loop.
         wheelOrientation = Math.toRadians(wheelOrientation);
 
-        double theta = 0.0;
+        int translationalClicks = (translationalClicksL + translationalClicksR) / 2;
+
+        double splineOrientation = 0.0;
 
         if (kinematics.getDriveType() == Kinematics.DriveType.SPLINE){
-            double bigArc = Math.max(translationalClicksL, translationalClicksR);
-            double smallArc = Math.min(translationalClicksL, translationalClicksR);
-            theta = Math.toDegrees((bigArc - smallArc) / (2 * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER));
+            double bigArc = Math.max(translationalClicksL, translationalClicksR); //unit: clicks
+            double smallArc = Math.min(translationalClicksL, translationalClicksR); //unit: clicks
+            double radius = ((bigArc + smallArc) * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER) / (bigArc - smallArc); //unit: clicks
+            double theta = Math.toDegrees((bigArc - smallArc) / (2 * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER)); //unit: radians
+            double otherAngle = (Math.PI - theta) / 2.0; //unit: radians
+            translationalClicks = (int)(Math.sqrt((2 * radius * radius) * (1 - Math.cos(theta))));
+            splineOrientation = (Math.PI / 2.0) - otherAngle;
+            splineOrientation = Math.toDegrees(splineOrientation);
+            splineOrientation *= constants.CLICKS_PER_DEGREE;
         }
 
-        int translationalClicks = (translationalClicksL + translationalClicksR) / 2; //make it an int or double???
         if (translationalClicks == 0){
-            update(translationalClicks * Math.cos(wheelOrientation), translationalClicks * Math.sin(wheelOrientation) , rotationalClicks, theta);
+            update(translationalClicks * Math.sin(wheelOrientation), translationalClicks * Math.cos(wheelOrientation) , rotationalClicks, 0);
             /*
-            Problem:
-            Calculates incorrect x & y position when wheels are traveling at an arc.
-            Because then x != distance * cos(angle)
-
+            Problems:
+            - completely breaks when robot rotates on its center (because the one of the arcs is reflected)
             To Do:
             - "Clamp" the output of orientations to (-180, 180], to keep it uniform with the rest of the program.
             - Test if math works
              */
         }
         else{
-            update(translationalClicks * Math.cos(wheelOrientation), translationalClicks * Math.sin(wheelOrientation) ,0, rotationalClicks + theta);
+            update(translationalClicks * Math.cos(wheelOrientation), translationalClicks * Math.sin(wheelOrientation) ,0, rotationalClicks + splineOrientation);
         }
     }
 

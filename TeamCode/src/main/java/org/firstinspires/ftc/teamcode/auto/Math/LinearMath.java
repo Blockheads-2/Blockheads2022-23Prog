@@ -17,9 +17,9 @@ public class LinearMath { //Note: snap() is used in the auto class separately. T
 
 
 
-    public LinearMath(double initX, double initY){
-        initialX = initX;
-        initialY = initY;
+    public LinearMath(double initXClicks, double initYClicks){
+        initialX = initXClicks * constants.INCHES_PER_CLICK;
+        initialY = initYClicks * constants.INCHES_PER_CLICK;
     }
 
     public void setPos(double x, double y, double theta){
@@ -40,8 +40,10 @@ public class LinearMath { //Note: snap() is used in the auto class separately. T
         return (int)(translationClicks + rotationClicks);
     }
 
-    public double getSpinPower(double currentX, double currentY){
-        double distanceTravelled = Math.sqrt(Math.pow(currentX - initialX, 2) + Math.pow(currentY - initialY, 2));
+    public double getSpinPower(double currentXClicks, double currentYClicks){
+        currentXClicks *= constants.INCHES_PER_CLICK;
+        currentYClicks *= constants.INCHES_PER_CLICK;
+        double distanceTravelled = Math.sqrt(Math.pow(currentXClicks - initialX, 2) + Math.pow(currentYClicks - initialY, 2));
 
         return spinPID.update(distanceTravelled);
     }

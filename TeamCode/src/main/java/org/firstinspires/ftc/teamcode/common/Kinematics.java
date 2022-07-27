@@ -16,10 +16,11 @@ public class Kinematics {
         LINEAR,
         SNAP,
         SPLINE,
-        TURN, //robot header turns
-        STOP
+        TURN, //robot turns on its center
+        STOP,
+        NOT_INITIALIZED
     }
-    private DriveType type;
+    private DriveType type = DriveType.NOT_INITIALIZED;
 
     public enum Mode{AUTO, TELEOP};
     private Mode mode = Mode.AUTO;
@@ -57,6 +58,7 @@ public class Kinematics {
     private boolean finished_stop = false;
     public boolean finished_snap = false;
     public boolean dontspline = false;
+    public boolean firstMovement = true;
 
 
     public Kinematics(GlobalPosSystem posSystem){
@@ -86,6 +88,7 @@ public class Kinematics {
                     rotationPowerPercentage = 0.0;
                     setSpinPower();
                     tableSpin();
+                    firstMovement = false;
                 }
                 break;
 
@@ -129,6 +132,7 @@ public class Kinematics {
                 leftThrottle = 0;
                 finished_stop = true;
                 dontspline = true;
+                firstMovement = true;
                 break;
         }
     }
@@ -174,14 +178,14 @@ public class Kinematics {
 
     public void setSpinPower(){
         if (mode == Mode.TELEOP) {
-            double throttle = Math.tanh(Math.abs(y / (2 * x)));
             spinPower = Math.sqrt(Math.pow(x,2) + Math.pow(y, 2));
 
-            if (Math.abs(currentR - targetR) <= constants.TOLERANCE){
+            if (Math.abs(currentR - targetW) <= constants.TOLERANCE && type == DriveType.SPLINE){
+                double throttle = Math.tanh(Math.abs(y / (2 * x)));
                 rightThrottle = (rotationSwitchMotors == 1 ? throttle : 1);
                 leftThrottle = (rotationSwitchMotors == 1 ? 1 : throttle);
             } else{
-                rightThrottle = 1; //once target is met, stop splining and just move straight
+                rightThrottle = 1;
                 leftThrottle = 1;
             }
         }
@@ -208,7 +212,7 @@ public class Kinematics {
 
     public void setMode(Mode mode){
         this.mode = mode;
-    }
+    } //Important to set this at the "init" for teleop and auto
 
     public double[] getWheelDirection(double x, double y){ //returns how much the wheels should rotate in which direction
         double[] directionArr = new double[3];
@@ -310,6 +314,7 @@ public class Kinematics {
         finished_stop = false;
         finished_snap = false;
         dontspline = false;
+        firstMovement = true;
 
         return (currentW == 0);
     }
