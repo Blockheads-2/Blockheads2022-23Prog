@@ -45,52 +45,55 @@ public class GlobalPosSystem {
             motorClicksPose.put(motors, motors.getCurrentPosition()); //(key, value)
         }
 
-        //Left side
+        //left
         int topL = motorClicksPose.get(robot.dtMotors[0]) - prevMotorClicks.get(robot.dtMotors[0]); //change in top left
-        int bottomL = motorClicksPose.get(robot.dtMotors[1]) - prevMotorClicks.get(robot.dtMotors[1]); //change in bottom left
-        int translationalClicksL = (topL - bottomL) / 2; //distance = (top-bottom)/2
-        int rotationalClicksL = topL - translationalClicksL;
+        int botL = motorClicksPose.get(robot.dtMotors[1]) - prevMotorClicks.get(robot.dtMotors[1]); //change in bottom left
+        double translateL = (topL - botL) / 2.0;
+        double rotateL = topL - translateL;
+        translateL *= constants.INCHES_PER_CLICK;
+        rotateL *= constants.DEGREES_PER_CLICK;
 
-        //Right side
+        //right
         int topR = motorClicksPose.get(robot.dtMotors[2]) - prevMotorClicks.get(robot.dtMotors[2]); //change in top right
-        int bottomR = motorClicksPose.get(robot.dtMotors[3]) - prevMotorClicks.get(robot.dtMotors[3]); //change in bottom right
-        int translationalClicksR = (topR - bottomR) / 2; //distance = (top-bottom)/2
-        int rotationalClicksR = topR - translationalClicksR;
+        int botR = motorClicksPose.get(robot.dtMotors[3]) - prevMotorClicks.get(robot.dtMotors[3]); //change in bottom right
+        double translateR = (topR - botR) / 2.0;
+        double rotateR = topR - translateR;
+        translateR *= constants.INCHES_PER_CLICK;
+        rotateR *= constants.DEGREES_PER_CLICK;
 
-        //the rotational clicks for the left and right should always be the same.
-        int rotationalClicks = (rotationalClicksL + rotationalClicksR) / 2;
-
-        double wheelOrientation = positionArr[2] * constants.DEGREES_PER_CLICK; //this will be off by 1 loop.
-        wheelOrientation = Math.toRadians(wheelOrientation);
-
-        int translationalClicks = (translationalClicksL + translationalClicksR) / 2;
+        double rotationalDegrees = (rotateL + rotateR) / 2;
+        double translationalInches = (translateL + translateR) / 2;
 
         double splineOrientation = 0.0;
+        double otherAngle = rotationalDegrees;
 
         if (kinematics.getDriveType() == Kinematics.DriveType.SPLINE){
-            double bigArc = Math.max(translationalClicksL, translationalClicksR); //unit: clicks
-            double smallArc = Math.min(translationalClicksL, translationalClicksR); //unit: clicks
-            double radius = ((bigArc + smallArc) * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER) / (bigArc - smallArc); //unit: clicks
-            double theta = Math.toDegrees((bigArc - smallArc) / (2 * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER)); //unit: radians
-            double otherAngle = (Math.PI - theta) / 2.0; //unit: radians
-            translationalClicks = (int)(Math.sqrt((2 * radius * radius) * (1 - Math.cos(theta))));
-            splineOrientation = (Math.PI / 2.0) - otherAngle;
-            splineOrientation = Math.toDegrees(splineOrientation);
-            splineOrientation *= constants.CLICKS_PER_DEGREE;
+            double bigArc = Math.max(translateL, translateR); //unit: inches
+            double smallArc = Math.min(translateL, translateR); //unit: inches
+            double radius = ((bigArc + smallArc) * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER) / (bigArc - smallArc); //unit: inches
+            double theta = (bigArc - smallArc) / (2 * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER); //unit: radians
+            translationalInches = Math.sqrt((2 * radius * radius) * (1 - Math.cos(theta))); //value of hypotenuse, not arc. Ask Josh for more info.
+            splineOrientation = Math.toDegrees(theta);
+
+            otherAngle = (Math.PI - theta) / 2.0; //unit: radians
+            otherAngle = (Math.PI / 2.0) - otherAngle;
         }
 
-        if (translationalClicks == 0){
-            update(translationalClicks * Math.sin(wheelOrientation), translationalClicks * Math.cos(wheelOrientation) , rotationalClicks, 0);
-            /*
-            Problems:
-            - completely breaks when robot rotates on its center (because the one of the arcs is reflected)
-            To Do:
-            - "Clamp" the output of orientations to (-180, 180], to keep it uniform with the rest of the program.
-            - Test if math works
-             */
+        double wheelOrientation = Math.toRadians(rotationalDegrees + splineOrientation);
+        System.out.println("translational inches: " + translationalInches);
+        System.out.println("rotational degrees: " + rotationalDegrees + "\n");
+
+        if (translationalInches == 0){
+            update(translationalInches * Math.sin(otherAngle), translationalInches * Math.cos(otherAngle) , rotationalDegrees, 0);
+        /*
+        Problems:
+        - completely breaks when robot rotates on its center (because the one of the arcs is reflected)
+        To Do:
+        - "Clamp" the output of orientations to (-180, 180], to keep it uniform with the rest of the program.
+         */
         }
         else{
-            update(translationalClicks * Math.cos(wheelOrientation), translationalClicks * Math.sin(wheelOrientation) ,0, rotationalClicks + splineOrientation);
+            update(translationalInches * Math.cos(otherAngle), translationalInches * Math.sin(otherAngle), splineOrientation, rotationalDegrees + splineOrientation);
         }
     }
 

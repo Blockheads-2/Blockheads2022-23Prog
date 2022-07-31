@@ -122,7 +122,7 @@ public class BaseDrive extends OpMode{
         double wheelTurnAmount = kinematics.getWheelDirection(left_stick_x, left_stick_y)[0];
         double robotTurnAmount = kinematics.getRobotDirection(right_stick_x, right_stick_y)[0];
 
-        if (Math.abs(wheelTurnAmount) > 90 || kinematics.firstMovement){ //if the wheels must turn more than 90 degrees, stop, stop_snap, move
+        if (Math.abs(wheelTurnAmount) > 45 || kinematics.firstMovement){ //if the wheels must turn more than 90 degrees, stop, stop_snap, move
             kinematics.setPos(Kinematics.DriveType.LINEAR, left_stick_x, left_stick_y, robotTurnAmount, 1);
         } else if (!kinematics.dontspline){ //otherwise, spline
             kinematics.setPos(Kinematics.DriveType.SPLINE, left_stick_x, left_stick_y, robotTurnAmount, 1);
