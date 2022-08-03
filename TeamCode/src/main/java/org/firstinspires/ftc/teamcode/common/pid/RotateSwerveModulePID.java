@@ -26,7 +26,8 @@ public class RotateSwerveModulePID {
         //proportion
         double error = targetAngle - currentOrientation;
         pError = error;
-        if (error < -179 || error > 180) error -= (Math.signum(error) * 360); //keeps error in (-179, 180]
+        if (error < -179 || error > 180) error %= (-1 * Math.signum(error) * 360);
+        //keeps error in (-179, 180]
 
         //how some random dude on the internet did it:
 //        error %= 360;   //ensures that error is between [-360, 360]

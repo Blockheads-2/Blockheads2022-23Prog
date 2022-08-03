@@ -45,105 +45,111 @@ public class Kinematics {
     private RotateSwerveModulePID snapWheelPID;
     private RotateSwerveModulePID tableSpinWheelPID;
     private RotateSwerveModulePID resetWheelPID;
+    private RotateSwerveModulePID counteractSplinePID;
 
     //targets
     double x = 0.0;
     double y = 0.0;
-    private double wheelTurnAmount = 0.0; //how much the wheels should rotate
-    private double robotTurnAmount = 0.0; //how much the robot should turn
+    double wheelTurnAmount = 0.0; //how much the wheels should rotate
+    double robotTurnAmount = 0.0; //how much the robot should turn
     double targetW = 0.0;
+    double prevTargetW = 0.0;
     double targetR = 0.0;
+    double splineReference = 0.0;
 
     //checkover
-    private boolean finished_stop = false;
-    public boolean finished_snap = false;
-    public boolean dontspline = false;
-    public boolean firstMovement = true;
+    public boolean firstMovement = true; //true when robot is stopped.  False while it is moving.
 
 
     public Kinematics(GlobalPosSystem posSystem){
+        splinemath = new SplineMath();
+        linearmath = new LinearMath();
         snapWheelPID = new RotateSwerveModulePID();
         tableSpinWheelPID = new RotateSwerveModulePID();
         resetWheelPID = new RotateSwerveModulePID();
+        counteractSplinePID = new RotateSwerveModulePID();
         this.posSystem = posSystem;
     }
 
     public void logic(){
         rotatePower = snapWheelPID.update(currentW);
-
         switch(type){
             case LINEAR:
-                if (!finished_stop && mode == Mode.TELEOP) type = DriveType.STOP;
-
-                if (finished_stop && !finished_snap && mode == Mode.TELEOP){
-                    type = DriveType.SNAP;
-                }
-                if ((finished_stop && finished_snap) || mode == Mode.AUTO){
-                    finished_stop = true;
-                    finished_snap = true;
-                    rightThrottle = 1;
-                    leftThrottle = 1;
-                    translateSwitchMotors = rotationSwitchMotors;
-                    translationPowerPercentage = 1.0;
-                    rotationPowerPercentage = 0.0;
-                    setSpinPower();
-                    tableSpin();
-                    firstMovement = false;
-                }
-                break;
-
-            case SNAP:
-                if (Math.abs(currentW - targetW) <= constants.TOLERANCE){ //rotate modules until target is hit
-                    rightThrottle = 1;
-                    leftThrottle = 1;
-                    rotationSwitchMotors = (int)getWheelDirection(x, y)[2];
-                    translateSwitchMotors = rotationSwitchMotors;
-                    translationPowerPercentage = 0.0;
-                    rotationPowerPercentage = 1.0;
-                    rotatePower = snapWheelPID.update(currentW);
-                } else {
-                    finished_snap = true;
-                    dontspline = false;
-                }
-                break;
-
-            case SPLINE:
+                rightThrottle = 1;
+                leftThrottle = 1;
+                translateSwitchMotors = rotationSwitchMotors;
                 translationPowerPercentage = 1.0;
                 rotationPowerPercentage = 0.0;
                 setSpinPower();
-                finished_stop = false;
-                finished_snap = false;
+                tableSpin();
+                firstMovement = false;
+
+                break;
+
+            case SNAP:
+                //rotate modules until target is hit
+                rightThrottle = 1;
+                leftThrottle = 1;
+                rotationSwitchMotors = (int)getWheelDirection(x, y)[2];
+                translateSwitchMotors = rotationSwitchMotors;
+                translationPowerPercentage = 0.0;
+                rotationPowerPercentage = 1.0;
+                rotatePower = snapWheelPID.update(currentW);
+                break;
+
+            case SPLINE:
+                if (firstMovement) { //this part needs work
+                    splineReference = posSystem.getPositionArr()[3];
+                    counteractSplinePID.setTargets(splineReference, 0, 0, 0);
+                }
+                firstMovement = false;
+                setSpinPower();
                 tableSpin();
                 break;
-                /*
-                To Do:
-                Spline w/ a constant heading
-                 */
 
             case TURN:
                 //...
-                finished_stop = false;
-                finished_snap = false;
 
                 break;
 
-            case STOP:
+            case STOP: //this is NOT reset
                 rightThrottle = 0;
                 leftThrottle = 0;
-                finished_stop = true;
-                dontspline = true;
-                firstMovement = true;
+                spinPower = 0;
+                rotatePower = 0;
+                translationPowerPercentage = 0;
+                rotationPowerPercentage = 0;
+
                 break;
         }
+        prevTargetW = targetW;
     }
 
+    public boolean shouldStop(){
+        return (Math.abs(targetW - prevTargetW) > 45);
+    }
+
+    public boolean shouldSnap(){
+        return (Math.abs(currentW - targetW) <= constants.TOLERANCE);
+    }
+
+    public boolean canSpline(){
+        return (type != DriveType.STOP && type != DriveType.SNAP && type != DriveType.TURN);
+    }
+
+
     private void tableSpin(){
-        //rotation and translation power percentages
         rotatePower = tableSpinWheelPID.update(currentR);
         rotationSwitchMotors = (int)getRobotDirection(targetR)[2];
+
         if (Math.abs(targetR - currentR) <= constants.TOLERANCE){ //while target not hit
-            rotationPowerPercentage = rotatePower / 1.4; //1.4 can be changed based on testing
-            translationPowerPercentage = 1 - rotationPowerPercentage;
+            rotationPowerPercentage = 0.5; //this may or may not be good
+            translationPowerPercentage = 0.5;
+            /*
+            possible alternative:
+            rotationPowerPercentage = rotatePower / 1.4;
+            translationPowerPercentage = 1 - rotatePower;
+             */
         } else{ //after target is hit, stop table spinning
             rotationPowerPercentage = 0.0;
             translationPowerPercentage = 1.0;
@@ -159,20 +165,18 @@ public class Kinematics {
 
         //setting targets
         this.wheelTurnAmount = getWheelDirection(x, y)[0];
-        this.robotTurnAmount = robotTurnAmount; //how much the robot should turn
-        targetW = currentW + wheelTurnAmount;
-        targetR = currentR + robotTurnAmount; //the target orientation on a circle of (-179, 180]
-        if (targetW < -179 || targetW > 180) targetW -= (Math.signum(targetW) * 360);
-        if (targetR < -179 || targetR > 180) targetR -= (Math.signum(targetR) * 360);
+        this.robotTurnAmount = robotTurnAmount; //how much the robot heading should turn
+        targetW = clamp(currentW + wheelTurnAmount);
+        targetR = clamp(currentR + robotTurnAmount); //the target orientation on a circle of (-179, 180]
 
         //setting PIDs for rotation of wheels & robot
         snapWheelPID.setTargets(targetW, 0, 0, 0);
         tableSpinWheelPID.setTargets(targetR, 0, 0, 0);
 
-        //specifically for autoMode (not teleop)
-        splinemath = new SplineMath(posSystem.getMotorClicks()[2], posSystem.getMotorClicks()[0]);
+        //specifically for auto (not teleop)
+        splinemath.setInits(posSystem.getMotorClicks()[2], posSystem.getMotorClicks()[0]);
         splinemath.setPos(x, y, robotTurnAmount);
-        linearmath = new LinearMath(posSystem.getPositionArr()[0], posSystem.getPositionArr()[1]);
+        linearmath.setInits(posSystem.getPositionArr()[0], posSystem.getPositionArr()[1]);
         linearmath.setPos(x, y, robotTurnAmount);
     }
 
@@ -180,10 +184,14 @@ public class Kinematics {
         if (mode == Mode.TELEOP) {
             spinPower = Math.sqrt(Math.pow(x,2) + Math.pow(y, 2));
 
-            if (Math.abs(currentR - targetW) <= constants.TOLERANCE && type == DriveType.SPLINE){
+            if (Math.abs(currentW - targetW) <= constants.TOLERANCE){
                 double throttle = Math.tanh(Math.abs(y / x));
                 rightThrottle = (rotationSwitchMotors == 1 ? throttle : 1);
                 leftThrottle = (rotationSwitchMotors == 1 ? 1 : throttle);
+                if (Math.abs(splineReference - posSystem.getPositionArr()[3]) <= constants.TOLERANCE){
+                    rotatePower = counteractSplinePID.update(posSystem.getPositionArr()[3]);
+                }
+                //set direction as well
             } else{
                 rightThrottle = 1;
                 leftThrottle = 1;
@@ -210,6 +218,10 @@ public class Kinematics {
         currentR = posSystem.getPositionArr()[3];
     }
 
+    public void setDriveType(DriveType t){
+        type = t;
+    }
+
     public void setMode(Mode mode){
         this.mode = mode;
     } //Important to set this at the "init" for teleop and auto
@@ -221,16 +233,26 @@ public class Kinematics {
         double target =  Math.toDegrees(Math.atan2(x, y)); //finds target orientation in terms of degrees (range is (-180, 180])
         directionArr[1] = target;
 
-        //determine how much modules must turn
-        if (currentW > target) target += 360;
-        double turnAmount = Math.abs(target - currentW);
-        if (turnAmount > 90) turnAmount = 90 - (turnAmount%90);
-        directionArr[0] = turnAmount;
+        //determine how much modules must turn in which direction (optimization)
+        double turnAmount = target - currentW;
+        double switchMotors = Math.signum(turnAmount);
 
-        //determine direction wheel will rotate
-        double switchMotors = 1; //"by default, everything will rotate right."
-        switchMotors *= (turnAmount <= 90 ? 1 : -1); //1 = right, -1 = left
-        directionArr[2] = switchMotors;
+        if(Math.abs(turnAmount) > 180){
+            turnAmount = 360 - Math.abs(turnAmount);
+            switchMotors *= -1;
+        }
+        if(Math.abs(turnAmount) > 90){
+            target += 180;
+            target = clamp(target);
+            turnAmount = target - currentW;
+            switchMotors *= -1;
+            if(Math.abs(turnAmount) > 180){
+                turnAmount = 360 - Math.abs(turnAmount);
+                switchMotors *= -1;
+            }
+        }
+        directionArr[0] = turnAmount;
+        directionArr[2] = switchMotors; //1 = right, -1 = left
 
         return directionArr;
     }
@@ -244,7 +266,11 @@ public class Kinematics {
 
         //determine how much robot header must turn in which direction
         double turnAmount = target-currentR;
-        double switchMotors = Math.signum(turnAmount);
+        double switchMotors = Math.signum(turnAmount); //pos = right, neg = left
+        if(Math.abs(turnAmount) > 180) {
+            turnAmount = 360 - Math.abs(turnAmount);
+            switchMotors *= -1;
+        }
         directionArr[0] = Math.abs(turnAmount);
         directionArr[2] = switchMotors;
 
@@ -260,6 +286,10 @@ public class Kinematics {
         //determine how much robot header must turn in which direction
         double turnAmount = targetOrientation-currentR;
         double switchMotors = Math.signum(turnAmount);
+        if(Math.abs(turnAmount) > 180) {
+            turnAmount = 360 - Math.abs(turnAmount);
+            switchMotors *= -1;
+        }
         directionArr[0] = Math.abs(turnAmount);
         directionArr[2] = switchMotors;
 
@@ -292,6 +322,27 @@ public class Kinematics {
         return motorPower;
     }
 
+    public int[] getSplineClicks(){
+        int[] clicks = new int[4];
+        for (int i = 0; i < 4; i++){
+            clicks[i] = splinemath.getClicks()[i];
+        }
+        return clicks;
+    }
+
+    public int[] getLinearClicks(){
+        int[] clicks = new int[4];
+        for (int i = 0; i < 4; i++){
+            clicks[i] = linearmath.getClicks()[i];
+        }
+        return clicks;
+    }
+
+    public double clamp(double degrees){
+        if (degrees < -179 || degrees > 180) degrees %= (-1 * Math.signum(degrees) * 360);
+        return degrees;
+    }
+
     public boolean resetStuff(){
         if (currentW != 0){
             rotationSwitchMotors = (currentW > 0 ? -1 : 1); //1 = right, -1 = left
@@ -311,9 +362,6 @@ public class Kinematics {
             rotatePower = 0.0;
             rotationSwitchMotors = 1;
         }
-        finished_stop = false;
-        finished_snap = false;
-        dontspline = false;
         firstMovement = true;
 
         return (currentW == 0);

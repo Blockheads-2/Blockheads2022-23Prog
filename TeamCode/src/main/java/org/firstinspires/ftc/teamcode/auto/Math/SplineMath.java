@@ -13,11 +13,14 @@ public class SplineMath {
     private double y;
     private double turnAmount; //amount robot header should turn (for table-spinning)
 
-    public SplineMath(int initialClickR, int initialClickL){
-        RinitClick = initialClickR;
-        LinitClick = initialClickL;
+    public SplineMath(){
         spinPIDR = new SpinPID();
         spinPIDL = new SpinPID();
+    }
+
+    public void setInits(int initialClickR, int initialClickL){
+        RinitClick = initialClickR;
+        LinitClick = initialClickL;
     }
 
     public void setPos(double x, double y, double theta){
@@ -51,8 +54,10 @@ public class SplineMath {
         int rotationClicks = (int)(turnAmount * constants.CLICKS_PER_DEGREE); //table spinning clicks
 
         clicks[0] = spinClicksL + rotationClicks; //left side
-        clicks[1] = spinClicksR + rotationClicks; //right side
+        clicks[1] = -spinClicksL + rotationClicks; //left side
 
+        clicks[2] = spinClicksR + rotationClicks; //right side
+        clicks[3] = -spinClicksR + rotationClicks; //right side
         return clicks;
     }
 

@@ -38,6 +38,7 @@ public class AutoHub {
 
         posSystem = new GlobalPosSystem(robot);
         kinematics = new Kinematics(posSystem);
+        posSystem.grabKinematics(kinematics);
 
         // Get a reference to the RelativeLayout so we can later change the background
         // color of the Robot Controller app to match the hue detected by the RGB sensor.
@@ -56,11 +57,10 @@ public class AutoHub {
 
     public void linearMovement(double x, double y, double turnDegrees, double speed, double kp, double ki, double kd){
         posSystem.calculatePos();
-        LinearMath linearmath = new LinearMath(posSystem.getPositionArr()[0], posSystem.getPositionArr()[1]);
         kinematics.setCurrents();
 
         //snap
-        kinematics.setPos(Kinematics.DriveType.SNAP, x, y, turnDegrees, speed);
+        kinematics.setPos(Kinematics.DriveType.SNAP, x, y, 0, 1);
         while (linearOpMode.opModeIsActive() && !kinematics.finished_snap){
             posSystem.calculatePos();
             kinematics.setCurrents();
@@ -75,11 +75,10 @@ public class AutoHub {
 
         //move
         kinematics.setPos(Kinematics.DriveType.LINEAR, x, y, turnDegrees, speed);
-        linearmath.setPos(x, y, turnDegrees);
 
         int[] encoderTargets = new int[4];
         for (int i = 0; i < 4; i++){
-            encoderTargets[i] = linearmath.getClicks();
+            encoderTargets[i] = kinematics.getLinearClicks()[i];
             robot.dtMotors[i].setTargetPosition(encoderTargets[i]);
         }
         robot.setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -99,20 +98,15 @@ public class AutoHub {
 
     public void spline(double x, double y, double turnDegrees, double speed, double kp, double ki, double kd){
         posSystem.calculatePos();
-        SplineMath splinemath = new SplineMath(robot.dtMotors[2].getCurrentPosition(), robot.dtMotors[0].getCurrentPosition());
         kinematics.setCurrents();
 
         kinematics.setPos(Kinematics.DriveType.SPLINE, x, y, turnDegrees, speed);
-        splinemath.setPos(x, y, turnDegrees);
 
-        int topLeftTarget = splinemath.getClicks()[0];
-        int botLeftTarget = splinemath.getClicks()[0];
-        int topRightTarget = splinemath.getClicks()[1];
-        int botRightTarget = splinemath.getClicks()[1];
-        robot.dtMotors[0].setTargetPosition(topLeftTarget);
-        robot.dtMotors[1].setTargetPosition(botLeftTarget);
-        robot.dtMotors[2].setTargetPosition(topRightTarget);
-        robot.dtMotors[3].setTargetPosition(botRightTarget);
+        int targets[] = new int[4];
+        for (int i = 0; i < 4; i++){
+            targets[i] = kinematics.getSplineClicks()[i];
+            robot.dtMotors[i].setTargetPosition(targets[i]);
+        }
 
         robot.setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
 

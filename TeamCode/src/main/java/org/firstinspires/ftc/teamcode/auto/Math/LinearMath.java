@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.common.pid.SpinPID;
 
 public class LinearMath { //Note: snap() is used in the auto class separately. This class is used assuming that the wheels are already pointing the way we want it to.
     Constants constants = new Constants();
-    SpinPID spinPID = new SpinPID();
+    SpinPID spinPID;
 
     private double initialX;
     private double initialY;
@@ -16,8 +16,11 @@ public class LinearMath { //Note: snap() is used in the auto class separately. T
     private double theta; //amount robot header should turn (for table-spinning)
 
 
+    public LinearMath(){
+        spinPID = new SpinPID();
+    }
 
-    public LinearMath(double initXClicks, double initYClicks){
+    public void setInits(double initXClicks, double initYClicks){
         initialX = initXClicks * constants.INCHES_PER_CLICK;
         initialY = initYClicks * constants.INCHES_PER_CLICK;
     }
@@ -33,11 +36,16 @@ public class LinearMath { //Note: snap() is used in the auto class separately. T
         return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
     }
 
-    public int getClicks(){ //needs work
+    public int[] getClicks(){
+        int[] clicks = new int[4];
         double translationClicks = getDistance() * constants.CLICKS_PER_INCH; //rotation clicks
         double rotationClicks = theta * constants.CLICKS_PER_DEGREE; //table spinning clicks
 
-        return (int)(translationClicks + rotationClicks);
+        clicks[0] = (int)(translationClicks + rotationClicks);
+        clicks[1] = (int)(-translationClicks + rotationClicks);
+        clicks[2] = (int)(translationClicks + rotationClicks);
+        clicks[3] = (int)(-translationClicks + rotationClicks);
+        return clicks;
     }
 
     public double getSpinPower(double currentXClicks, double currentYClicks){

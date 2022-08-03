@@ -52,6 +52,7 @@ public class BaseDrive extends OpMode{
 
         posSystem = new GlobalPosSystem(robot);
         kinematics = new Kinematics(posSystem);
+        posSystem.grabKinematics(kinematics);
 
         kinematics.setMode(Kinematics.Mode.TELEOP);
     }
@@ -119,20 +120,26 @@ public class BaseDrive extends OpMode{
         //set current orientation
         kinematics.setCurrents();
 
-        double wheelTurnAmount = kinematics.getWheelDirection(left_stick_x, left_stick_y)[0];
-        double robotTurnAmount = kinematics.getRobotDirection(right_stick_x, right_stick_y)[0];
+        double wheelTurnAmount = kinematics.getWheelDirection(left_stick_x, left_stick_y)[0]; //how much the wheel should spin
+        double robotTurnAmount = kinematics.getRobotDirection(right_stick_x, right_stick_y)[0]; //how much the robot should table-spin
+        if (left_stick_x == 0 && left_stick_y == 0) robotTurnAmount = 0; //delete this when you implement "turn()"
 
-        if (Math.abs(wheelTurnAmount) > 45 || kinematics.firstMovement){ //if the wheels must turn more than 90 degrees, stop, stop_snap, move
-            kinematics.setPos(Kinematics.DriveType.LINEAR, left_stick_x, left_stick_y, robotTurnAmount, 1);
-        } else if (!kinematics.dontspline){ //otherwise, spline
+        if (Math.abs(wheelTurnAmount) > 45 || kinematics.firstMovement){ //if the wheels must turn more than 45 degrees, stop, snap, move
+            Kinematics.DriveType type;
+            if (kinematics.shouldStop()) type = Kinematics.DriveType.STOP;
+            else if (kinematics.shouldSnap()) type = Kinematics.DriveType.SNAP;
+            else type = Kinematics.DriveType.LINEAR;
+            kinematics.setPos(type, left_stick_x, left_stick_y, robotTurnAmount, 1);
+        } else if (kinematics.canSpline()){ //otherwise, spline
             kinematics.setPos(Kinematics.DriveType.SPLINE, left_stick_x, left_stick_y, robotTurnAmount, 1);
+        } else{
+            telemetry.addLine("kinematics boolean thing is faulty");
         }
         kinematics.setSpinPower();
         kinematics.logic();
 
         reset(); //snaps wheels back to 0 degrees if the robot has stopped moving
     }
-
 
 
     private void setPower(){
@@ -152,6 +159,7 @@ public class BaseDrive extends OpMode{
             robot.dtMotors[i].setPower(motorPower[i]);
         }
     }
+
 
     private void reset(){
         double deltaTime = Math.abs(resetTimer.milliseconds() - startingMSsinceRelease);

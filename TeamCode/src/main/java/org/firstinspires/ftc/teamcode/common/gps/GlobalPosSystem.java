@@ -80,8 +80,6 @@ public class GlobalPosSystem {
         }
 
         double wheelOrientation = Math.toRadians(rotationalDegrees + splineOrientation);
-        System.out.println("translational inches: " + translationalInches);
-        System.out.println("rotational degrees: " + rotationalDegrees + "\n");
 
         if (translationalInches == 0){
             update(translationalInches * Math.sin(otherAngle), translationalInches * Math.cos(otherAngle) , rotationalDegrees, 0);
@@ -101,8 +99,8 @@ public class GlobalPosSystem {
         //update
         positionArr[0] += x * constants.INCHES_PER_CLICK;
         positionArr[1] += y * constants.INCHES_PER_CLICK;
-        positionArr[2] += wheelR * constants.DEGREES_PER_CLICK;
-        positionArr[3] += robotR * constants.DEGREES_PER_CLICK;
+        positionArr[2] += kinematics.clamp(wheelR * constants.DEGREES_PER_CLICK);
+        positionArr[3] += kinematics.clamp(robotR * constants.DEGREES_PER_CLICK);
 
         try {
             FileWriter myWriter = new FileWriter("gpsLog.txt");
@@ -134,7 +132,7 @@ public class GlobalPosSystem {
         for (int i = 0; i < 3; i++) {
             try{
                 if (Math.abs(motorClicksPose.get(robot.dtMotors[i]) - prevMotorClicks.get(robot.dtMotors[i])) <= constants.TOLERANCE) return false;
-            } catch (NullPointerException nullPointerException){
+            } catch (NullPointerException e){
                 return false;
             }
         }
