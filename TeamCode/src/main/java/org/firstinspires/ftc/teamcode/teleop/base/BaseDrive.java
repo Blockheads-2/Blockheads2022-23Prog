@@ -120,11 +120,10 @@ public class BaseDrive extends OpMode{
         //set current orientation
         kinematics.setCurrents();
 
-        double wheelTurnAmount = kinematics.getWheelDirection(left_stick_x, left_stick_y)[0]; //how much the wheel should spin
         double robotTurnAmount = kinematics.getRobotDirection(right_stick_x, right_stick_y)[0]; //how much the robot should table-spin
         if (left_stick_x == 0 && left_stick_y == 0) robotTurnAmount = 0; //delete this when you implement "turn()"
 
-        if (Math.abs(wheelTurnAmount) > 45 || kinematics.firstMovement){ //if the wheels must turn more than 45 degrees, stop, snap, move
+        if (kinematics.shouldStop() || kinematics.shouldSnap() || kinematics.firstMovement){
             Kinematics.DriveType type;
             if (kinematics.shouldStop()) type = Kinematics.DriveType.STOP;
             else if (kinematics.shouldSnap()) type = Kinematics.DriveType.SNAP;
@@ -133,9 +132,9 @@ public class BaseDrive extends OpMode{
         } else if (kinematics.canSpline()){ //otherwise, spline
             kinematics.setPos(Kinematics.DriveType.SPLINE, left_stick_x, left_stick_y, robotTurnAmount, 1);
         } else{
-            telemetry.addLine("kinematics boolean thing is faulty");
+            telemetry.addLine("Something went terribly wrong!");
+            kinematics.setPos(Kinematics.DriveType.STOP, 0, 0, 0, 0);
         }
-        kinematics.setSpinPower();
         kinematics.logic();
 
         reset(); //snaps wheels back to 0 degrees if the robot has stopped moving
