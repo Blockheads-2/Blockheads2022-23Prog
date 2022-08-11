@@ -171,7 +171,7 @@ public class Kinematics {
         this.wheelTurnAmount = getWheelDirection(x, y)[0];
         this.robotTurnAmount = robotTurnAmount; //how much the robot heading should turn
         targetW = clamp(currentW + wheelTurnAmount);
-        targetR = clamp(currentR + robotTurnAmount); //the target orientation on a circle of (-179, 180]
+        targetR = clamp(currentR + robotTurnAmount); //the target orientation is on a circle of (-179, 180]
 
         //setting PIDs for rotation of wheels & robot
         snapWheelPID.setTargets(targetW, 0, 0, 0);

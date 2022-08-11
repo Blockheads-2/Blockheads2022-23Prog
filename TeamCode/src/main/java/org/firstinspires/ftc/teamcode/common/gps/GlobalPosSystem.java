@@ -79,8 +79,6 @@ public class GlobalPosSystem {
             otherAngle = (Math.PI / 2.0) - otherAngle;
         }
 
-        double wheelOrientation = Math.toRadians(rotationalDegrees + splineOrientation);
-
         if (translationalInches == 0){
             update(translationalInches * Math.sin(otherAngle), translationalInches * Math.cos(otherAngle) , rotationalDegrees, 0);
         /*
