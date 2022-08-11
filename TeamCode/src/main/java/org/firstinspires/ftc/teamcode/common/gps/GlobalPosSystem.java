@@ -31,6 +31,7 @@ public class GlobalPosSystem {
         }
         for (DcMotorEx motors : robot.dtMotors){
             motorClicksPose.put(motors, motors.getCurrentPosition()); //(key, value)
+            prevMotorClicks.put(motors, motorClicksPose.get(motors)); //(key, value)
         }
     }
 
@@ -39,10 +40,12 @@ public class GlobalPosSystem {
     }
 
     public void calculatePos(){
+        for (DcMotorEx motors : robot.dtMotors){
+            motorClicksPose.put(motors, motors.getCurrentPosition()); //(key, value)
+        }
         if (!goodGap()) return; //this may or may not be useful
         for (DcMotorEx motors : robot.dtMotors){
             prevMotorClicks.put(motors, motorClicksPose.get(motors)); //(key, value)
-            motorClicksPose.put(motors, motors.getCurrentPosition()); //(key, value)
         }
 
         //left
