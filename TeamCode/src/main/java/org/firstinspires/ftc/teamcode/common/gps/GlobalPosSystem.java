@@ -102,7 +102,7 @@ public class GlobalPosSystem {
         positionArr[1] += y * constants.INCHES_PER_CLICK;
         positionArr[2] += kinematics.clamp(wheelR * constants.DEGREES_PER_CLICK);
         positionArr[3] += kinematics.clamp(robotR * constants.DEGREES_PER_CLICK);
-
+        //wth does "R" stand for in "wheelR" and "robotR" ?????????????
         try {
             FileWriter myWriter = new FileWriter("gpsLog.txt");
             myWriter.write("GPS Log\n");
@@ -126,6 +126,7 @@ public class GlobalPosSystem {
         //Reset Motor Clicks
         for (DcMotorEx motors : robot.dtMotors){
             motorClicksPose.put(motors, 0);
+            prevMotorClicks.put(motors, 0); //(key, value)
         }
     }
 

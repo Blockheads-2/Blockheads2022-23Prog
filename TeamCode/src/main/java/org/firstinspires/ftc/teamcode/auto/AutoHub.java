@@ -61,7 +61,7 @@ public class AutoHub {
 
         //snap
         kinematics.setPos(Kinematics.DriveType.SNAP, x, y, 0, 1);
-        while (linearOpMode.opModeIsActive() && !kinematics.finished_snap){
+        while (linearOpMode.opModeIsActive() && kinematics.shouldSnap()){
             posSystem.calculatePos();
             kinematics.setCurrents();
             kinematics.logic();

@@ -107,6 +107,8 @@ public class BaseDrive extends OpMode{
 
         setVariables();
 
+        telemetry.update();
+
         setPower();
     }
 
@@ -128,8 +130,10 @@ public class BaseDrive extends OpMode{
             if (kinematics.shouldStop()) type = Kinematics.DriveType.STOP;
             else if (kinematics.shouldSnap()) type = Kinematics.DriveType.SNAP;
             else type = Kinematics.DriveType.LINEAR;
+            telemetry.addData("Drive Type: ", type);
             kinematics.setPos(type, left_stick_x, left_stick_y, robotTurnAmount, 1);
         } else if (kinematics.canSpline()){ //otherwise, spline
+            telemetry.addData("Drive Type: ", "Spline");
             kinematics.setPos(Kinematics.DriveType.SPLINE, left_stick_x, left_stick_y, robotTurnAmount, 1);
         } else{
             telemetry.addLine("Something went terribly wrong!");
