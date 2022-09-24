@@ -1,12 +1,10 @@
 package org.firstinspires.ftc.teamcode.common.gps;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import org.firstinspires.ftc.robotcore.internal.android.dx.util.IntIterator;
+
 import org.firstinspires.ftc.teamcode.common.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
-import org.firstinspires.ftc.teamcode.common.Kinematics;
+import org.firstinspires.ftc.teamcode.common.Kinematics.Kinematics;
 
 import java.util.HashMap;
 
