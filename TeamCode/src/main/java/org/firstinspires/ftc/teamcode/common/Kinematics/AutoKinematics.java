@@ -25,14 +25,10 @@ public class AutoKinematics extends Kinematics{
         this.speed = speed;
 
 
-        System.out.println("\nRobot Orientation Data----------------");
         //setting targets
         double targetWOrientation = wheelOptimization(x, y)[1];
         double turnAmountW = wheelOptimization(x, y)[0];
         this.robotTurnAmount = robotTurnAmount; //how much the robot heading should turn
-        System.out.println("Wheel Turn Amount: " + turnAmountW);
-        System.out.println("currentW " + currentW);
-        System.out.println("currentR " + currentR);
 
         targetW = targetWOrientation;
         optimizedTargetW = clamp(currentW + turnAmountW);
@@ -47,10 +43,6 @@ public class AutoKinematics extends Kinematics{
         splinemath.setPos(x, y, robotTurnAmount);
         linearmath.setInits(posSystem.getPositionArr()[0], posSystem.getPositionArr()[1]);
         linearmath.setPos(x, y, robotTurnAmount);
-
-        System.out.println("targetW " + targetW);
-        System.out.println("targetR " + targetR);
-        System.out.println("-----------------------");
     }
 
 
@@ -67,7 +59,6 @@ public class AutoKinematics extends Kinematics{
                 spinPower = linearmath.getSpinPower(posSystem.getPositionArr()[0], posSystem.getPositionArr()[1]);
                 break;
             default:
-                System.out.println("Switch Case did not work, line 204 Kinematics");
                 break;
         }
     }

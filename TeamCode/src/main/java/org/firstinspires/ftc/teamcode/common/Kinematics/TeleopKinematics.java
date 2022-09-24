@@ -22,7 +22,6 @@ public class TeleopKinematics extends Kinematics{
     }
 
     public void logic(){
-        System.out.println("firstMovement: " + firstMovement);
         if (!shouldSpline()){
             if (firstMovement) type = Kinematics.DriveType.STOP; //later on, make it so that it only STOPS if it was previously moving
             else if (shouldSnap()) type = Kinematics.DriveType.SNAP;
@@ -58,8 +57,6 @@ public class TeleopKinematics extends Kinematics{
                 break;
 
             case SPLINE:
-                System.out.println("Spline Reference: " + splineReference);
-
                 setLinearSpin();
                 if (Math.abs(currentW - targetW) >= constants.degreeTOLERANCE){
                     double throttle = (lx==0? 1: Math.tanh(Math.abs(ly / lx)));
@@ -93,22 +90,9 @@ public class TeleopKinematics extends Kinematics{
                 break;
 
             default:
-                System.out.println("Switch Case did not work, line 122 Kinematics");
                 type = DriveType.STOP;
                 break;
         }
-
-        System.out.println("\nDrive Data----------------");
-        System.out.println("DriveType: " + type);
-        System.out.println("spinPower: " + spinPower);
-        System.out.println("rotatePower " + rotatePower);
-        System.out.println("translationPower% " + translationPowerPercentage);
-        System.out.println("rotationPower% " + rotationPowerPercentage);
-        System.out.println("left throttle " + leftThrottle);
-        System.out.println("right throttle " + rightThrottle);
-        System.out.println("rotationSwitchMotors " + rotationSwitchMotors);
-        System.out.println("translationSwitchMotors " + translateSwitchMotors);
-        System.out.println("--------------------------\n");
 
         prevJoystickL = joystickL; //if driver doesn't move the joystick quickly enough, this thing will not work
         firstMovement = noMovementRequests();
@@ -123,18 +107,13 @@ public class TeleopKinematics extends Kinematics{
         if(Math.abs(turnAmount) > 180){
             turnAmount = 360 - Math.abs(turnAmount);
         }
-        System.out.println("Turn amount: " + turnAmount);
         if (Math.abs(turnAmount) <= 45 && !firstMovement){
-            System.out.println("if-statement cleared");
             if (joystickL != prevJoystickL){ //if the joystick has actually moved
-                System.out.println("Spline true");
                 return true;
             } else{ //the joystick has not moved
                 if (type==DriveType.SPLINE){
-                    System.out.println("Spline true " + type);
                     return true;
                 } else{
-                    System.out.println("Spline NOT true " + type);
                     return false;
                 }
                 // return (type==DriveType.SPLINE); //if doing x and joystick has not moved, keep doing x.
@@ -145,8 +124,6 @@ public class TeleopKinematics extends Kinematics{
 
 
     public void setPos(){
-        System.out.println("\nRobot Orientation Data----------------");
-
         //setting targets
         joystickL = Math.toDegrees(Math.atan2(lx, ly));
         targetW = wheelOptimization(lx, ly)[1]; //target orientation for wheel
@@ -160,15 +137,6 @@ public class TeleopKinematics extends Kinematics{
         //setting PIDs for rotation of wheels & robot
         snapWheelPID.setTargets(optimizedTargetW, 0.01, 0, 0);
         tableSpinWheelPID.setTargets(targetR, 0.025, 0, 0);
-
-        System.out.println("Wheel Turn Amount: " + turnAmountW);
-        System.out.println("currentW " + currentW);
-        System.out.println("currentR " + currentR);
-        System.out.println("targetW " + targetW);
-        System.out.println("targetR " + targetR);
-        System.out.println("prevJoyStickL " + prevJoystickL);
-        System.out.println("joystickL " + joystickL);
-        System.out.println("-----------------------\n");
     }
 
 
@@ -203,7 +171,6 @@ public class TeleopKinematics extends Kinematics{
         this.ly = ly;
         this.rx = rx;
         this.ry = ry;
-        System.out.println("\nLX: " + lx + "\nLY: " + ly + "\nRX: " + rx + "\nRY: " + ry);
     }
 
     public double[] getPower(){

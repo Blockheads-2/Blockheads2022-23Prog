@@ -51,7 +51,7 @@ public class SplineMath {
                     )
             );
         } catch (ArithmeticException e){
-            System.out.println("Error: " + e);
+//            System.out.println("Error: " + e);
         }
 
         distanceArr[0] = radius * theta; //center distance

@@ -131,7 +131,7 @@ public class GlobalPosSystem {
     private boolean goodGap(){
         for (int i = 0; i < 3; i++) {
             try{
-                if (Math.abs(motorClicksPose.get(robot.dtMotors[i]) - prevMotorClicks.get(robot.dtMotors[i])) <= constants.TOLERANCE) return false;
+                if (Math.abs(motorClicksPose.get(robot.dtMotors[i]) - prevMotorClicks.get(robot.dtMotors[i])) <= constants.clickTOLERANCE) return false;
             } catch (NullPointerException e){
                 return false;
             }

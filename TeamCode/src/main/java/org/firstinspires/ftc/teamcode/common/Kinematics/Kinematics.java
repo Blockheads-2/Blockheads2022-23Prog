@@ -50,7 +50,6 @@ public class Kinematics {
         resetWheelPID = new RotateSwerveModulePID();
         counteractSplinePID = new RotateSwerveModulePID();
         this.posSystem = posSystem;
-        System.out.println("kinematics initialized");
     }
 
     public void setCurrents(){
