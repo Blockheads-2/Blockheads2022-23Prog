@@ -33,6 +33,8 @@ public class TeleopKinematics extends Kinematics{
             type = Kinematics.DriveType.SPLINE;
         }
 
+        if (shouldTurn()) type = DriveType.TURN;
+
         boolean shouldTableSpin = (rx != 0 || ry != 0);
 
         switch(type){
@@ -80,7 +82,16 @@ public class TeleopKinematics extends Kinematics{
                 break;
 
             case TURN:
-                //...
+                double turnDirection = Math.signum(robotHeaderOptimization(rx, ry)[0]);
+                leftThrottle = (turnDirection == 1 ? -1 : 1);
+                rightThrottle = -leftThrottle;
+                rotationPowerPercentage = 0;
+                translationPowerPercentage = 1;
+                spinPower = Math.sqrt(Math.pow(rx, 2) + Math.pow(ry, 2));
+                //rotatePower
+                //rotationSwitchMotors
+                //translateSwitchMotors
+
                 break;
 
             case STOP: //this is NOT reset
@@ -126,6 +137,9 @@ public class TeleopKinematics extends Kinematics{
         } else return false;
     }
 
+    public boolean shouldTurn(){
+        return (lx == 0 && ly == 0 && (rx != 0 || ry != 0));
+    }
 
 
     public void setPos(){

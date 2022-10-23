@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.common.gps;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.common.Constants;
@@ -29,15 +30,10 @@ public class GlobalPosSystem {
             positionArr[i] = 0;
         }
 
-        motorClicksPose.put(robot.topL, robot.topL.getCurrentPosition());
-        motorClicksPose.put(robot.botL, robot.botL.getCurrentPosition());
-//        motorClicksPose.put(robot.topR, robot.topR.getCurrentPosition());
-//        motorClicksPose.put(robot.botR, robot.botR.getCurrentPosition());
-
-        prevMotorClicks.put(robot.topL, robot.topL.getCurrentPosition());
-        prevMotorClicks.put(robot.botL, robot.botL.getCurrentPosition());
-//        prevMotorClicks.put(robot.topR, robot.topR.getCurrentPosition());
-//        prevMotorClicks.put(robot.botR, robot.botR.getCurrentPosition());
+        for (DcMotorEx motor : robot.dtMotors){
+            motorClicksPose.put(motor, motor.getCurrentPosition());
+            prevMotorClicks.put(motor, motor.getCurrentPosition());
+        }
     }
 
     public void grabKinematics(Kinematics k){
@@ -45,15 +41,12 @@ public class GlobalPosSystem {
     }
 
     public void calculatePos(){
-        prevMotorClicks.put(robot.topL, motorClicksPose.get(robot.topL));
-        prevMotorClicks.put(robot.botL, motorClicksPose.get(robot.botL));
-//        prevMotorClicks.put(robot.topR, motorClicksPose.get(robot.topR));
-//        prevMotorClicks.put(robot.botR, motorClicksPose.get(robot.botR));
+        if (!goodGap()) return;
 
-        motorClicksPose.put(robot.topL, robot.topL.getCurrentPosition());
-        motorClicksPose.put(robot.botL, robot.botL.getCurrentPosition());
-//        motorClicksPose.put(robot.topR, robot.topR.getCurrentPosition());
-//        motorClicksPose.put(robot.botR, robot.botR.getCurrentPosition());
+        for (DcMotorEx motor : robot.dtMotors){
+            prevMotorClicks.put(motor, motorClicksPose.get(motor));
+            motorClicksPose.put(motor, motor.getCurrentPosition());
+        }
 
         //left
         int topL = motorClicksPose.get(robot.topL) - prevMotorClicks.get(robot.topL); //change in top left
@@ -64,14 +57,12 @@ public class GlobalPosSystem {
         rotateL *= constants.DEGREES_PER_CLICK;
 
         //right
-//        int topR = motorClicksPose.get(robot.topR) - prevMotorClicks.get(robot.topR); //change in top right
-//        int botR = motorClicksPose.get(robot.botR) - prevMotorClicks.get(robot.botR); //change in bottom right
-//        double translateR = (topR - botR) / 2.0;
-//        double rotateR = topR - translateR;
-//        translateR *= constants.INCHES_PER_CLICK;
-//        rotateR *= constants.DEGREES_PER_CLICK;
-        double rotateR = rotateL;
-        double translateR = translateL;
+        int topR = motorClicksPose.get(robot.topR) - prevMotorClicks.get(robot.topR); //change in top right
+        int botR = motorClicksPose.get(robot.botR) - prevMotorClicks.get(robot.botR); //change in bottom right
+        double translateR = (topR - botR) / 2.0;
+        double rotateR = topR - translateR;
+        translateR *= constants.INCHES_PER_CLICK;
+        rotateR *= constants.DEGREES_PER_CLICK;
 
         double rotationalDegrees = (rotateL + rotateR) / 2;
         double translationalInches = (translateL + translateR) / 2;
@@ -89,6 +80,15 @@ public class GlobalPosSystem {
 
             otherAngle = (Math.PI - theta) / 2.0; //unit: radians
             otherAngle = (Math.PI / 2.0) - otherAngle;
+        }
+
+        if (kinematics.getDriveType() == Kinematics.DriveType.TURN){
+            double radius = constants.DISTANCE_BETWEEN_MODULE_AND_CENTER;
+            double arc = Math.abs(translateL + translateR)/2.0;
+            double theta = arc / radius;
+            theta = Math.toDegrees(theta);
+            update(theta);
+            return;
         }
 
         if (translationalInches == 0){
@@ -112,18 +112,22 @@ public class GlobalPosSystem {
         positionArr[2] += kinematics.clamp(wheelR * constants.DEGREES_PER_CLICK);
         positionArr[3] += kinematics.clamp(robotR * constants.DEGREES_PER_CLICK);
         //wth does "R" stand for in "wheelR" and "robotR" ?????????????
-        try {
-            FileWriter myWriter = new FileWriter("gpsLog.txt");
-            myWriter.write("GPS Log\n");
-            myWriter.write((int) positionArr[0] + "\n");
-            myWriter.write((int) positionArr[1] + "\n");
-            myWriter.write((int) positionArr[2] + "\n");
-            myWriter.write((int) positionArr[3] + "\n\n");
-            myWriter.close();
-        } catch (IOException e) {
-           // System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
+//        try {
+//            FileWriter myWriter = new FileWriter("gpsLog.txt");
+//            myWriter.write("GPS Log\n");
+//            myWriter.write((int) positionArr[0] + "\n");
+//            myWriter.write((int) positionArr[1] + "\n");
+//            myWriter.write((int) positionArr[2] + "\n");
+//            myWriter.write((int) positionArr[3] + "\n\n");
+//            myWriter.close();
+//        } catch (IOException e) {
+//           // System.out.println("An error occurred.");
+//            e.printStackTrace();
+//        }
+    }
+
+    public void update(double robotR){
+        positionArr[3] += kinematics.clamp(robotR * constants.DEGREES_PER_CLICK);
     }
 
     public void hardResetGPS(){
@@ -133,27 +137,19 @@ public class GlobalPosSystem {
         }
 
         //Reset Motor Clicks
-        prevMotorClicks.put(robot.topL, 0);
-        prevMotorClicks.put(robot.botL, 0);
-        prevMotorClicks.put(robot.topR, 0);
-        prevMotorClicks.put(robot.botR, 0);
-
-        motorClicksPose.put(robot.topL, 0);
-        motorClicksPose.put(robot.botL, 0);
-        motorClicksPose.put(robot.topR, 0);
-        motorClicksPose.put(robot.botR, 0);
+        for (DcMotorEx motor : robot.dtMotors){
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motorClicksPose.put(motor, motor.getCurrentPosition());
+            prevMotorClicks.put(motor, motor.getCurrentPosition());
+        }
     }
 
-//    private boolean goodGap(){
-//        for (int i = 0; i < 3; i++) {
-//            try{
-//                if (Math.abs(motorClicksPose.get(robot.dtMotors[i]) - prevMotorClicks.get(robot.dtMotors[i])) <= constants.clickTOLERANCE) return false;
-//            } catch (NullPointerException e){
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
+    private boolean goodGap(){
+        for (DcMotorEx motor : robot.dtMotors){
+            if (Math.abs(motor.getCurrentPosition() - prevMotorClicks.get(motor)) <= constants.clickTOLERANCE) return false;
+        }
+        return true;
+    }
 
     public double[] getPositionArr() {
         return positionArr;

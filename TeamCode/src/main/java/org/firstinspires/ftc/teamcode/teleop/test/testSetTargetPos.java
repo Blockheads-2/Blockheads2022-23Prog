@@ -136,19 +136,35 @@ public class testSetTargetPos extends OpMode{
     private void setTargetSpinPosTest(int clicks){
         int botLCurrPos = robot.botL.getCurrentPosition();
         int topLCurrPos = robot.topL.getCurrentPosition();
+        int botRCurrPos = robot.botR.getCurrentPosition();
+        int topRCurrPos = robot.topR.getCurrentPosition();
+
         robot.botL.setTargetPosition(botLCurrPos + clicks);
         robot.topL.setTargetPosition(topLCurrPos + clicks);
+        robot.botR.setTargetPosition(botRCurrPos + clicks);
+        robot.topR.setTargetPosition(topRCurrPos + clicks);
 
         robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     private void setTargetRotatePosTest(int clicks){
-        robot.botL.setTargetPosition(-clicks);
-        robot.topL.setTargetPosition(clicks);
+        int botLCurrPos = robot.botL.getCurrentPosition();
+        int topLCurrPos = robot.topL.getCurrentPosition();
+        int botRCurrPos = robot.botR.getCurrentPosition();
+        int topRCurrPos = robot.topR.getCurrentPosition();
+
+        robot.botL.setTargetPosition(botLCurrPos + clicks);
+        robot.topL.setTargetPosition(topLCurrPos - clicks);
+        robot.botR.setTargetPosition(botRCurrPos + clicks);
+        robot.topR.setTargetPosition(topRCurrPos - clicks);
 
         robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     private void reset(){
