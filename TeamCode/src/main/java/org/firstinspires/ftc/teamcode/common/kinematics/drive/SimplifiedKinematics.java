@@ -85,8 +85,6 @@ public class SimplifiedKinematics {
         snapRightWheelPID.setTargets(0.03, 0, 0.01);
 
         accelerator = new Accelerator();
-
-
     }
 
     public void logic(){
@@ -191,7 +189,7 @@ public class SimplifiedKinematics {
 //    }
 
     public boolean shouldSnap(){
-        return (Math.abs(rightCurrentW - target) >= constants.degreeTOLERANCE);
+        return (Math.abs(turnAmountL) >= constants.degreeTOLERANCE || Math.abs(turnAmountR) >= constants.degreeTOLERANCE);
     }
 
     public double clamp(double degrees){
