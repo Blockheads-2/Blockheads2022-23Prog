@@ -13,9 +13,9 @@ import org.firstinspires.ftc.teamcode.common.Button;
 import org.firstinspires.ftc.teamcode.common.kinematics.ArmKinematics;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 
-@TeleOp(name = "Hardware Drive Mech", group = "Drive")
+@TeleOp(name = "Drive Mec", group = "Drive")
 
-public class HardwareDriveMec extends OpMode{
+public class DriveMec extends OpMode{
     //local class objects
     HardwareDrive robot = new HardwareDrive();
     Constants constants = new Constants();
@@ -108,7 +108,7 @@ public class HardwareDriveMec extends OpMode{
             drivePower = 1;
         else if (gamepad1.left_bumper)
             drivePower = 0.25;
-        
+
         return drivePower;
     }
 
