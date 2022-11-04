@@ -9,14 +9,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.Accelerator;
 import org.firstinspires.ftc.teamcode.common.Reset;
-import org.firstinspires.ftc.teamcode.common.kinematics.LinearKinematicsTest;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.Button;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
-import org.firstinspires.ftc.teamcode.common.kinematics.SimplifiedKinematics;
-import org.firstinspires.ftc.teamcode.common.kinematics.TurnKinematicsTest;
 
 @TeleOp(name="Test Turn", group="Drive")
 //@Disabled

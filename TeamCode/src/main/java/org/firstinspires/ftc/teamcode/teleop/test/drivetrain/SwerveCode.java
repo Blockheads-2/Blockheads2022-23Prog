@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
-import org.firstinspires.ftc.teamcode.common.kinematics.Kinematics;
+import org.firstinspires.ftc.teamcode.common.kinematics.drive.Kinematics;
 import org.firstinspires.ftc.teamcode.common.Reset;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.Button;
@@ -112,8 +112,8 @@ public class SwerveCode extends OpMode{
         telemetry.addData("Right W", posData[3]);
         telemetry.addData("R", posData[4]);
 
-        telemetry.addData("topL clicks", robot.topL.getCurrentPosition());
-        telemetry.addData("botL clicks", robot.botL.getCurrentPosition());
+//        telemetry.addData("topL clicks", robot.topL.getCurrentPosition());
+//        telemetry.addData("botL clicks", robot.botL.getCurrentPosition());
         telemetry.addData("topR clicks", robot.topR.getCurrentPosition());
         telemetry.addData("botR clicks", robot.botR.getCurrentPosition());
 
@@ -142,8 +142,8 @@ public class SwerveCode extends OpMode{
     void DriveTrainPowerEncoder(){
         posSystem.calculatePos();
 
-        int posBotL = robot.botL.getCurrentPosition();
-        int posTopL = robot.topL.getCurrentPosition();
+//        int posBotL = robot.botL.getCurrentPosition();
+//        int posTopL = robot.topL.getCurrentPosition();
         int posBotR = robot.botR.getCurrentPosition();
         int posTopR = robot.topR.getCurrentPosition();
 
@@ -160,18 +160,18 @@ public class SwerveCode extends OpMode{
         int rotationalTopR = -rotationalTopL;
         int rotationalBotR = -rotationalBotL;
 
-        robot.botL.setTargetPosition(posBotL + distanceBotL + rotationalBotL);
-        robot.topL.setTargetPosition(posTopL + distanceTopL + rotationalTopL);
+//        robot.botL.setTargetPosition(posBotL + distanceBotL + rotationalBotL);
+//        robot.topL.setTargetPosition(posTopL + distanceTopL + rotationalTopL);
         robot.botR.setTargetPosition(posBotR + distanceBotR + rotationalBotR);
         robot.topR.setTargetPosition(posTopR + distanceTopR + rotationalTopR);
 
-        robot.botL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        robot.topL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//        robot.botL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//        robot.topL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.botR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.topR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-        robot.botL.setPower(accelerator(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha) * 0.3);
-        robot.topL.setPower(accelerator(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha) * 0.3);
+//        robot.botL.setPower(accelerator(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha) * 0.3);
+//        robot.topL.setPower(accelerator(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha) * 0.3);
         robot.botR.setPower(accelerator(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha) * 0.3);
         robot.topR.setPower(accelerator(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha) * 0.3);
     }

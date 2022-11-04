@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.common.gps;
 
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
-import org.firstinspires.ftc.teamcode.common.kinematics.Kinematics;
+import org.firstinspires.ftc.teamcode.common.kinematics.drive.Kinematics;
 
 import java.util.HashMap;
 

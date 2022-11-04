@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.common.kinematics;
+package org.firstinspires.ftc.teamcode.common.kinematics.drive;
 
 import org.firstinspires.ftc.teamcode.common.Accelerator;
 import org.firstinspires.ftc.teamcode.common.Reset;
@@ -23,10 +23,9 @@ public class SimplifiedKinematics {
         NOT_INITIALIZED
     }
     public DriveType type = DriveType.NOT_INITIALIZED;
-    DriveType prevType = type;
 
     //robot's power
-    double leftRotatePower = 0.0;
+//    double leftRotatePower = 0.0;
     double rightRotatePower = 0.0;
     double spinPower = 0.0;
     double translatePerc = 0.0;
@@ -34,16 +33,16 @@ public class SimplifiedKinematics {
 
     //target clicks
     public int rightRotClicks = 0;
-    public int leftRotClicks = 0;
+//    public int leftRotClicks = 0;
     public int spinClicks = 0; //make protected later
 
-    int leftTurnDirectionW = 1;
-    int rightTurnDirectionW = 1;
-    int spinDirectionR = -1;
-    int spinDirectionL = -1;
+//    public int leftTurnDirectionW = 1;
+    public int rightTurnDirectionW = 1;
+    public int spinDirectionR = -1;
+//    public int spinDirectionL = -1;
 
     double target;
-    double turnAmountL;
+//    double turnAmountL;
     double turnAmountR;
     private enum Module{
         RIGHT,
@@ -52,7 +51,7 @@ public class SimplifiedKinematics {
 
     //current orientation
     GlobalPosSystem posSystem;
-    double leftCurrentW; //current wheel orientation
+//    double leftCurrentW; //current wheel orientation
     double rightCurrentW;
     double currentR; //current robot header orientation
 
@@ -62,10 +61,7 @@ public class SimplifiedKinematics {
 //    double joystickL = 0;
 
 
-    Accelerator toplAccelerator = new Accelerator();
-    Accelerator botlAccelerator = new Accelerator();
-    Accelerator toprAccelerator = new Accelerator();
-    Accelerator botrAccelerator = new Accelerator();
+    Accelerator accelerator;
 
     //PIDs
     protected SnapSwerveModulePID snapLeftWheelPID;
@@ -81,13 +77,14 @@ public class SimplifiedKinematics {
         snapRightWheelPID=new SnapSwerveModulePID();
         snapLeftWheelPID.setTargets(0.03, 0, 0.01);
         snapRightWheelPID.setTargets(0.03, 0, 0.01);
+
+        accelerator = new Accelerator();
     }
 
     public void logic(){
-        leftCurrentW = posSystem.getLeftWheelW();
+//        leftCurrentW = posSystem.getLeftWheelW();
         rightCurrentW = posSystem.getRightWheelW();
         currentR = posSystem.getPositionArr()[4];
-        prevType=type;
 
         target = Math.toDegrees(Math.atan2(lx, ly));
         if (lx == 0 && ly == 0) target = 0;
@@ -97,45 +94,40 @@ public class SimplifiedKinematics {
         if (noMovementRequests()){
             type=DriveType.STOP;
             spinPower = 0;
-            leftRotatePower = 0;
+//            leftRotatePower = 0;
             rightRotatePower = 0;
 
             spinClicks = 0;
             rightRotClicks = 0;
-            leftRotClicks = 0;
+//            leftRotClicks = 0;
 
             translatePerc = 0;
             rotatePerc = 0;
 
         } else if(shouldSnap()){
             type=DriveType.SNAP;
-            wheelOptimization(target, leftCurrentW, Module.LEFT);
+//            wheelOptimization(target, leftCurrentW, Module.LEFT);
             wheelOptimization(target, rightCurrentW, Module.RIGHT);
 
             spinPower = 0;
-            leftRotatePower = snapLeftWheelPID.update(turnAmountL * leftTurnDirectionW); //turnAmountL approaches 0, which is why we set our PID target to 0.
+//            leftRotatePower = snapLeftWheelPID.update(turnAmountL * leftTurnDirectionW); //turnAmountL approaches 0, which is why we set our PID target to 0.
             rightRotatePower = snapRightWheelPID.update(turnAmountR * rightTurnDirectionW);
 
             spinClicks = 0;
             rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE) * rightTurnDirectionW;
-            leftRotClicks = (int)(turnAmountL * constants.CLICKS_PER_DEGREE) * leftTurnDirectionW;
+//            leftRotClicks = (int)(turnAmountL * constants.CLICKS_PER_DEGREE) * leftTurnDirectionW;
             translatePerc=0;
             rotatePerc=1;
         } else{
             type=DriveType.LINEAR;
-            if(type==DriveType.LINEAR && prevType==DriveType.SNAP){
-                toplAccelerator.resetTimer();
-                botlAccelerator.resetTimer();
-                toprAccelerator.resetTimer();
-                botrAccelerator.resetTimer();
-            }
-            if (spinDirectionL != spinDirectionR){
-                //then something is wrong
-                spinDirectionL = spinDirectionR;
-            }
+
+//            if (spinDirectionL != spinDirectionR){
+//                //then something is wrong
+//                spinDirectionL = spinDirectionR;
+//            }
             spinPower = Math.sqrt(Math.pow(lx,2) + Math.pow(ly, 2));
             spinClicks = (int)(spinPower * 100) * spinDirectionR;
-            leftRotClicks = 0;
+//            leftRotClicks = 0;
             rightRotClicks = 0;
 
             translatePerc = 1;
@@ -161,30 +153,37 @@ public class SimplifiedKinematics {
 //            if(Math.abs(turnAmount) > 180){
 //                turnAmount = 360 - Math.abs(turnAmount);
 //            }
-//            //this.target=currentW+turnAmount;
-//            //this.target=clamp(this.target);
-//            if (module == Module.RIGHT){
-//                spinDirectionR *= -1;
-//            } else{
-//                spinDirectionL *= -1;
-//            }
+//            this.target=target-180;
+//            this.target=clamp(this.target);
+////            if (module == Module.RIGHT){
+////                spinDirectionR *= -1;
+////            } else{
+////                spinDirectionL *= -1;
+////            }
+//            spinDirectionR *= -1;
 //        }
 
-        switch (module){
-            case RIGHT:
-                rightTurnDirectionW = turnDirection;
-                turnAmountR = Math.abs(turnAmount);
-                break;
-
-            case LEFT:
-                leftTurnDirectionW = turnDirection;
-                turnAmountL =  Math.abs(turnAmount);
-                break;
-        }
+//        switch (module){
+//            case RIGHT:
+//                rightTurnDirectionW = turnDirection;
+//                turnAmountR = Math.abs(turnAmount);
+//                break;
+//
+//            case LEFT:
+//                leftTurnDirectionW = turnDirection;
+//                turnAmountL =  Math.abs(turnAmount);
+//                break;
+//        }
+        rightTurnDirectionW = turnDirection;
+        turnAmountR = Math.abs(turnAmount);
     }
 
+//    public boolean shouldSnap(){
+//        return (Math.abs(leftCurrentW - target) >= constants.degreeTOLERANCE || Math.abs(rightCurrentW - target) >= constants.degreeTOLERANCE);
+//    }
+
     public boolean shouldSnap(){
-        return (Math.abs(leftCurrentW - target) >= constants.degreeTOLERANCE || Math.abs(rightCurrentW - target) >= constants.degreeTOLERANCE);
+        return (Math.abs(rightCurrentW - target) >= constants.degreeTOLERANCE);
     }
 
     public double clamp(double degrees){
@@ -217,15 +216,15 @@ public class SimplifiedKinematics {
     public double[] getPower(){
         double[] motorPower = new double[4];
 
-        motorPower[0] = spinPower * translatePerc + leftRotatePower * rotatePerc; //top left
-        motorPower[1] = spinPower * translatePerc + leftRotatePower * rotatePerc; //bottom left
+//        motorPower[0] = spinPower * translatePerc + leftRotatePower * rotatePerc; //top left
+//        motorPower[1] = spinPower * translatePerc + leftRotatePower * rotatePerc; //bottom left
         motorPower[2] = spinPower * translatePerc + rightRotatePower * rotatePerc; //top right
         motorPower[3] = spinPower * translatePerc + rightRotatePower * rotatePerc; //bottom right
 
-        toplAccelerator.update(motorPower[0]);
-        botlAccelerator.update(motorPower[1]);
-        toprAccelerator.update(motorPower[2]);
-        botrAccelerator.update(motorPower[3]);
+//        accelerator.update(motorPower[0]);
+//        accelerator.update(motorPower[1]);
+        accelerator.update(motorPower[2], type);
+        accelerator.update(motorPower[3], type);
 
         return motorPower;
     }
@@ -233,8 +232,8 @@ public class SimplifiedKinematics {
 
     public int[] getClicks(){
         int[] clicks = new int[4];
-        clicks[0] = spinClicks + leftRotClicks; //left
-        clicks[1] = -spinClicks + leftRotClicks; //left
+//        clicks[0] = spinClicks + leftRotClicks; //left
+//        clicks[1] = -spinClicks + leftRotClicks; //left
         clicks[2] = spinClicks + rightRotClicks; //right
         clicks[3] = -spinClicks  + rightRotClicks; //right
         return clicks;
@@ -254,14 +253,22 @@ public class SimplifiedKinematics {
     public int getRightDirectionW(){
         return rightTurnDirectionW;
     }
-    public int getLeftDirectionW(){
-        return leftTurnDirectionW;
-    }
-    public double getLTurnAmount(){
-        return turnAmountL;
-    }
+//    public int getLeftDirectionW(){
+//        return leftTurnDirectionW;
+//    }
+//    public double getLTurnAmount(){
+//        return turnAmountL;
+//    }
     public double getRTurnAmount(){
         return turnAmountR;
+    }
+
+    public void switchRotateDirection(){
+        rightTurnDirectionW *= -1;
+    }
+
+    public void switchSpinDirection(){
+        spinDirectionR *= -1;
     }
 }
 

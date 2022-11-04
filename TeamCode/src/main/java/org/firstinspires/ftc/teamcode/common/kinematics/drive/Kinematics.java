@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.common.kinematics;
+package org.firstinspires.ftc.teamcode.common.kinematics.drive;
 
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
@@ -71,7 +71,7 @@ public class Kinematics {
     }
 
     public void setCurrents(){
-        leftCurrentW = posSystem.getLeftWheelW();
+//        leftCurrentW = posSystem.getLeftWheelW();
         rightCurrentW = posSystem.getRightWheelW();
         currentR = posSystem.getPositionArr()[4];
     }

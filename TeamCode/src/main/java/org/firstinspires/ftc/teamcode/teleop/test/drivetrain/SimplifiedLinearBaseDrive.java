@@ -7,15 +7,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.teamcode.common.Reset;
-import org.firstinspires.ftc.teamcode.common.kinematics.LinearKinematicsTest;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.Button;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
-import org.firstinspires.ftc.teamcode.common.kinematics.SimplifiedKinematics;
+import org.firstinspires.ftc.teamcode.common.kinematics.drive.SimplifiedKinematics;
 
 @TeleOp(name="Simplified Linear Base Drive Test", group="Drive")
 //@Disabled
@@ -106,9 +104,9 @@ public class SimplifiedLinearBaseDrive extends OpMode{
                 telemetry.addData("Y gamepad", -gamepad1.left_stick_y);
                 telemetry.addData("Target", kinematics.getTarget());
                 telemetry.addData("Right Turn Amount", kinematics.getRTurnAmount());
-                telemetry.addData("Left Turn Amount", kinematics.getLTurnAmount());
+//                telemetry.addData("Left Turn Amount", kinematics.getLTurnAmount());
                 telemetry.addData("Right Direction", kinematics.getRightDirectionW());
-                telemetry.addData("Left Direction", kinematics.getLeftDirectionW());
+//                telemetry.addData("Left Direction", kinematics.getLeftDirectionW());
                 telemetry.addData("Should Snap?", kinematics.shouldSnap());
                 telemetry.addData("Reset?", (kinematics.getDriveType() == SimplifiedKinematics.DriveType.STOP));
                 telemetry.addData("DriveType?", kinematics.getDriveType());
@@ -122,8 +120,8 @@ public class SimplifiedLinearBaseDrive extends OpMode{
                 telemetry.addData("R", posData[4]);
                 telemetry.addData("Power Top", kinematics.getPower()[0]);
                 telemetry.addData("Power Bottom", kinematics.getPower()[1]);
-                telemetry.addData("topL Clicks", robot.topL.getCurrentPosition());
-                telemetry.addData("botL Clicks", robot.botL.getCurrentPosition());
+//                telemetry.addData("topL Clicks", robot.topL.getCurrentPosition());
+//                telemetry.addData("botL Clicks", robot.botL.getCurrentPosition());
                 break;
         }
         
@@ -149,9 +147,9 @@ public class SimplifiedLinearBaseDrive extends OpMode{
     private void setVariables(){
         posSystem.calculatePos();
         //outputs of joysticks
-        double left_stick_x = -gamepad1.left_stick_x; //returns a value between [-1, 1]
+        double left_stick_x = gamepad1.left_stick_x; //returns a value between [-1, 1]
         double left_stick_y = -gamepad1.left_stick_y; //returns a value between [-1, 1]
-        double right_stick_x = -gamepad1.right_stick_x; //returns a value between [-1, 1]
+        double right_stick_x = gamepad1.right_stick_x; //returns a value between [-1, 1]
         double right_stick_y = -gamepad1.right_stick_y; //returns a value between [-1, 1]
 
         kinematics.getGamepad(left_stick_x, left_stick_y, right_stick_x, right_stick_y);
@@ -161,19 +159,19 @@ public class SimplifiedLinearBaseDrive extends OpMode{
 
     private void setPower(){
         int[] targetClicks = kinematics.getClicks();
-        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + targetClicks[0]);
-        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + targetClicks[1]);
+//        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + targetClicks[0]);
+//        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + targetClicks[1]);
         robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + targetClicks[2]);
         robot.botR.setTargetPosition(robot.botR.getCurrentPosition() + targetClicks[3]);
 
-        robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         double[] motorPower = kinematics.getPower();
-        robot.topL.setPower(motorPower[0] * constants.POWER_LIMITER);
-        robot.botL.setPower(motorPower[1] * constants.POWER_LIMITER);
+//        robot.topL.setPower(motorPower[0] * constants.POWER_LIMITER);
+//        robot.botL.setPower(motorPower[1] * constants.POWER_LIMITER);
         robot.topR.setPower(motorPower[2] * constants.POWER_LIMITER);
         robot.botR.setPower(motorPower[3] * constants.POWER_LIMITER);
     }

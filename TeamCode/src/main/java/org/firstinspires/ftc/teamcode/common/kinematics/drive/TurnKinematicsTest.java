@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.common.kinematics;
+package org.firstinspires.ftc.teamcode.common.kinematics.drive;
 
 import org.firstinspires.ftc.teamcode.common.Accelerator;
 import org.firstinspires.ftc.teamcode.common.Reset;

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.common.kinematics;
+package org.firstinspires.ftc.teamcode.common.kinematics.arm;
 
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 
