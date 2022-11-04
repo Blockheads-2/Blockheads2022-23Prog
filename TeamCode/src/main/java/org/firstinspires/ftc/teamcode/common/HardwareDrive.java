@@ -59,8 +59,8 @@ import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 public class HardwareDrive
 {
 
-//    public DcMotorEx  topL;
-//    public DcMotorEx  botL;
+    public DcMotorEx  topL;
+    public DcMotorEx  botL;
     public DcMotorEx  topR;
     public DcMotorEx  botR;
     public DcMotorEx  armBase;
@@ -99,8 +99,8 @@ public class HardwareDrive
 
         // Define and Initialize Motors
 
-//        topL = hwMap.get(DcMotorEx.class, "top_left");
-//        botL = hwMap.get(DcMotorEx.class, "bottom_left");
+        topL = hwMap.get(DcMotorEx.class, "top_left");
+        botL = hwMap.get(DcMotorEx.class, "bottom_left");
         topR = hwMap.get(DcMotorEx.class, "top_right");
         botR = hwMap.get(DcMotorEx.class, "bottom_right");
         armBase = hwMap.get(DcMotorEx.class, "arm_base");
@@ -123,8 +123,8 @@ public class HardwareDrive
 
 
         //Set Motor Directions
-//        botL.setDirection(DcMotorEx.Direction.REVERSE); //no clue if these 2 are supposed to be FORWARD
-//        topL.setDirection(DcMotorEx.Direction.REVERSE);
+        botL.setDirection(DcMotorEx.Direction.FORWARD); //no clue if these 2 are supposed to be FORWARD
+        topL.setDirection(DcMotorEx.Direction.FORWARD);
         botR.setDirection(DcMotorEx.Direction.FORWARD);
         topR.setDirection(DcMotorEx.Direction.FORWARD);
 
@@ -136,7 +136,7 @@ public class HardwareDrive
         // dtMotors[2].setDirection(DcMotorSimple.Direction.FORWARD);
         //dtMotors[3].setDirection(DcMotorSimple.Direction.FORWARD);
 
-        // Set all motors to zero power
+// Set all motors to zero power
         setMotorPower(0);
 
         // Set all motors to run without encoders.
@@ -149,26 +149,26 @@ public class HardwareDrive
     public void setMotorPower(double power){
         if (power == 0.0){
             // Grady Conwell Was Here
-//            botL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-//            topL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+            botL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+            topL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
             botR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
             topR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-//            topL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//            botL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            topL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            botL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             topR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             botR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         } else {
-//            botL.setPower(power);
-//            topL.setPower(power);
+            botL.setPower(power);
+            topL.setPower(power);
             botR.setPower(power);
             topR.setPower(power);
         }
     }
 
     public void setRunMode(DcMotorEx.RunMode runState){
-//        botL.setMode(runState);
-//        topL.setMode(runState);
+        botL.setMode(runState);
+        topL.setMode(runState);
         topR.setMode(runState);
         botR.setMode(runState);
         //make sure to not add arm here
@@ -176,8 +176,7 @@ public class HardwareDrive
 
 
     public boolean wheelsAreBusy(){
-        return (topR.isBusy() && botR.isBusy());
-//        return (topL.isBusy() && botL.isBusy() && topR.isBusy() && botR.isBusy());
+        return (topL.isBusy() && botL.isBusy() && topR.isBusy() && botR.isBusy());
     }
 
 

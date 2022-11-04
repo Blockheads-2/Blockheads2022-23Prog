@@ -15,7 +15,7 @@ public class Constants {
     public double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
     public double MAX_VELOCITY_DT = 2700; // unit is clicks/sec
     public double clickTOLERANCE = 10; //number of clicks or degrees the robot can be off by
-    public double degreeTOLERANCE = 5;
+    public double degreeTOLERANCE = 10;
 
     //Arm Constants
     public double CLICKS_PER_BASE_REV = 5281.1; //clicks per rev of base arm motor
