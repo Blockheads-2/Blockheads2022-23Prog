@@ -42,11 +42,6 @@ public class testTurn extends OpMode{
     public int spinDirectionR = 1;
     public int spinDirectionL = 1;
 
-    private enum Module{
-        RIGHT,
-        LEFT
-    }
-
     //current orientation
     double leftCurrentW; //current wheel orientation
     double rightCurrentW;
@@ -166,9 +161,12 @@ public class testTurn extends OpMode{
             rightRotClicks = 0;
             leftRotClicks = 0;
 
+            reset.reset(true);
+
 //            translatePerc = 0;
 //            rotatePerc = 0;
         } else if(shouldTurn()){
+            reset.reset(false);
             spinPower = trigger;
             leftRotatePower = 0;
             rightRotatePower = 0;
@@ -214,16 +212,6 @@ public class testTurn extends OpMode{
 
     public boolean noMovementRequests(){
         return (gamepad1.left_stick_x==0 && gamepad1.left_stick_y==0 && gamepad1.right_stick_x==0 && gamepad1.right_stick_y==0 && gamepad1.right_trigger == 0 && gamepad1.left_trigger == 0);
-    }
-
-    public double clamp(double degrees){
-        if (Math.abs(degrees) >= 360) degrees %= 360;
-
-        if (degrees < -179 || degrees > 180) {
-            int modulo = (int)Math.signum(degrees) * -180;
-            degrees = Math.floorMod((int)degrees, modulo);
-        }
-        return degrees;
     }
 
     /*

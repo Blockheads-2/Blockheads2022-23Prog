@@ -72,6 +72,9 @@ public class SimplifiedKinematics {
 
     public SimplifiedKinematics(GlobalPosSystem posSystem){
         this.posSystem = posSystem;
+        
+        snapLeftWheelPID = new SnapSwerveModulePID();
+        snapRightWheelPID = new SnapSwerveModulePID();
 
         snapLeftWheelPID=new SnapSwerveModulePID();
         snapRightWheelPID=new SnapSwerveModulePID();
