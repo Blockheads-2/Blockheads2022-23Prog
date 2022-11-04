@@ -211,13 +211,16 @@ public class ArmMotorTester extends OpMode{
 //            robot.armBase.setPower(0);
 //        }
 
-        if (a.getState() == Button.State.TAP){
-            power += 0.1;
-        } else if (b.getState() == Button.State.TAP){
-            power -= 0.1;
+        if (gamepad1.a){
+            servoTester();
         }
-        if (power < 0) power = 0;
-        else if (power > 1) power = 1;
+//        if (a.getState() == Button.State.TAP){
+//            power += 0.1;
+//        } else if (b.getState() == Button.State.TAP){
+//            power -= 0.1;
+//        }
+//        if (power < 0) power = 0;
+//        else if (power > 1) power = 1;
     }
 
     public void linearExtensionControl(){
@@ -259,6 +262,10 @@ public class ArmMotorTester extends OpMode{
             //ground pos
 
         }
+    }
+
+    public void servoTester(){
+        robot.claw.setPosition(0);
     }
 
     @Override

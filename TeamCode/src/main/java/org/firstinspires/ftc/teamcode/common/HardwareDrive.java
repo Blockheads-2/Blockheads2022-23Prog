@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode.common;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -66,7 +67,7 @@ public class HardwareDrive
     public DcMotor armTop;
 
 //    public Servo armServo;
-//    public Servo claw;
+    public Servo claw;
 
 //    public DcMotorEx[] dtMotors;
 
@@ -106,7 +107,7 @@ public class HardwareDrive
         armTop = hwMap.get(DcMotor.class, "arm_top");
 
 //        armServo = hwMap.get(Servo.class, "arm_servo");
-//        claw = hwMap.get(Servo.class, "claw");
+        claw = hwMap.get(Servo.class, "claw");
 
 
         //IMU initiation
