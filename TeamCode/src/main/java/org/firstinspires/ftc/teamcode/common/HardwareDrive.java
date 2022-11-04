@@ -66,7 +66,7 @@ public class HardwareDrive
     public DcMotorEx  armBase;
     public DcMotor armTop;
 
-//    public Servo armServo;
+    public Servo armServo;
     public Servo claw;
 
 //    public DcMotorEx[] dtMotors;
@@ -106,9 +106,8 @@ public class HardwareDrive
         armBase = hwMap.get(DcMotorEx.class, "arm_base");
         armTop = hwMap.get(DcMotor.class, "arm_top");
 
-//        armServo = hwMap.get(Servo.class, "arm_servo");
+        armServo = hwMap.get(Servo.class, "arm_servo");
         claw = hwMap.get(Servo.class, "claw");
-
 
         //IMU initiation
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -131,6 +130,8 @@ public class HardwareDrive
 
         armBase.setDirection(DcMotorEx.Direction.REVERSE);
         armTop.setDirection(DcMotor.Direction.FORWARD);
+
+        claw.setPosition(constants.INITIALIZED_CLAW);
 
         // dtMotors[2].setDirection(DcMotorSimple.Direction.FORWARD);
         //dtMotors[3].setDirection(DcMotorSimple.Direction.FORWARD);
