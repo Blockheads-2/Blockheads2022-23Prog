@@ -26,6 +26,8 @@ public class ArmMotorTester extends OpMode{
     Button y = new Button();
     Button a = new Button();
     Button b = new Button();
+    Button clawAngleDownButton = new Button();
+    Button clawAngleUpButton = new Button();
 
     ElapsedTime resetTimer = new ElapsedTime();
     View relativeLayout;
@@ -87,6 +89,8 @@ public class ArmMotorTester extends OpMode{
         y.update(gamepad2.y);
         a.update(gamepad2.a);
         b.update(gamepad2.b);
+        clawAngleDownButton.update(gamepad2.left_bumper);
+        clawAngleUpButton.update(gamepad2.right_bumper);
     }
 
     void UpdatePlayer2(){
@@ -209,11 +213,11 @@ public class ArmMotorTester extends OpMode{
         if(gamepad2.b){
             setTargetNegativeBase();
         }
-        if (gamepad2.right_bumper){
-            power += 0.1;
+        if (clawAngleDownButton.getState() == Button.State.TAP){
+            clawAngleDown();
         }
-        if (gamepad2.left_bumper){
-            power -= 0.1;
+        if (clawAngleUpButton.getState() == Button.State.TAP){
+            clawAngleUp();
         }
         if (gamepad2.dpad_right){
             coneGrab();
@@ -221,12 +225,7 @@ public class ArmMotorTester extends OpMode{
         if (gamepad2.dpad_left){
             coneBack();
         }
-        if (gamepad2.dpad_up){
-           clawAngleUp();
-        }
-        if (gamepad2.dpad_down){
-            clawAngleDown();
-        }
+
 
         if (robot.armBase.getCurrentPosition() != prevPosition){
                 robot.armBase.setTargetPosition(prevPosition);
@@ -248,7 +247,7 @@ public class ArmMotorTester extends OpMode{
         else if (power > 1) power = 1;
 
         if(clawPosition < 0) clawPosition = 0;
-        else if(clawPosition > 1) power = 1;
+        else if(clawPosition > 1) clawPosition = 1;
     }
 
     public void linearExtensionControl(){
