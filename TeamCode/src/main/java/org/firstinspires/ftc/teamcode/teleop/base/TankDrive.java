@@ -148,36 +148,55 @@ public class TankDrive extends OpMode{
         int distanceTopR = (int)(-gamepad1.left_stick_y * 100);
         int distanceBotR = (int)(gamepad1.left_stick_y * 100);
 
-        targetBotL = posBotL + distanceBotL;
-        targetTopL = posTopL + distanceTopL;
-        targetBotR = posBotR + distanceBotR;
-        targetTopR = posTopR + distanceTopR;
-        robot.botL.setTargetPosition(targetBotL);
-        robot.topL.setTargetPosition(targetTopL);
-        robot.botR.setTargetPosition(targetBotR);
-        robot.topR.setTargetPosition(targetTopR);
-
-        robot.botL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        robot.topL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        robot.botR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        robot.topR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
         powerL = acceleratorL.update(gamepad1.left_stick_y) * constants.POWER_LIMITER;
         powerR = acceleratorR.update(gamepad1.right_stick_y) * constants.POWER_LIMITER;
 
         if (powerL != 0 && powerR != 0) {
+            robot.botL.setTargetPosition(posBotL + distanceBotL);
+            robot.topL.setTargetPosition(posTopL + distanceTopL);
+            robot.botR.setTargetPosition(posBotR + distanceBotR);
+            robot.topR.setTargetPosition(posTopR + distanceTopR);
+
+            robot.botL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            robot.topL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            robot.botR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            robot.topR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
             robot.botL.setPower(powerL);
             robot.topL.setPower(powerL);
             robot.botR.setPower(powerR);
             robot.topR.setPower(powerR);
-        } else if (powerL == 0){
+
+        } else if (powerL == 0){ //powerR
+            robot.botR.setTargetPosition(posBotR + distanceBotR);
+            robot.topR.setTargetPosition(posTopR + distanceTopR);
+
+            robot.botR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            robot.topR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            robot.botL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            robot.topL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
+            robot.botL.setPower(0);
+            robot.topL.setPower(0);
             robot.botR.setPower(powerR);
             robot.topR.setPower(powerR);
+
             robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        } else {
-            robot.topL.setPower(powerL);
+        } else { //powerL
+            robot.botL.setTargetPosition(posBotL + distanceBotL);
+            robot.topL.setTargetPosition(posTopL + distanceTopL);
+
+            robot.topR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.botR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.botL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            robot.topL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
             robot.botL.setPower(powerL);
+            robot.topL.setPower(powerL);
+            robot.botR.setPower(0);
+            robot.topR.setPower(0);
+
             robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             robot.topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
