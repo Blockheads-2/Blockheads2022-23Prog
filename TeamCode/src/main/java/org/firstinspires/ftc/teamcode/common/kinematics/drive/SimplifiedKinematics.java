@@ -56,12 +56,6 @@ public class SimplifiedKinematics {
     double rightCurrentW;
     double currentR; //current robot header orientation
 
-    //tracking joystick
-//    int joystickCount = 0;
-//    double prevJoystickL = 0;
-//    double joystickL = 0;
-
-
     public Accelerator accelerator;
 
     //PIDs
@@ -103,12 +97,12 @@ public class SimplifiedKinematics {
         if (noMovementRequests()){
             type=DriveType.STOP;
             spinPower = 0;
-//            leftRotatePower = 0;
+            leftRotatePower = 0;
             rightRotatePower = 0;
 
             spinClicks = 0;
             rightRotClicks = 0;
-//            leftRotClicks = 0;
+            leftRotClicks = 0;
 
             translatePerc = 0;
             rotatePerc = 0;
@@ -187,10 +181,6 @@ public class SimplifiedKinematics {
         }
     }
 
-//    public boolean shouldSnap(){
-//        return (Math.abs(leftCurrentW - target) >= constants.degreeTOLERANCE || Math.abs(rightCurrentW - target) >= constants.degreeTOLERANCE);
-//    }
-
     public boolean shouldSnap(){
         return (Math.abs(turnAmountL) >= constants.degreeTOLERANCE || Math.abs(turnAmountR) >= constants.degreeTOLERANCE);
     }
@@ -211,16 +201,6 @@ public class SimplifiedKinematics {
         this.rx = rx;
         this.ry = ry;
     }
-
-//    private void trackJoystickL(){
-//        joystickCount++;
-//        if(joystickCount >= 3){
-//            joystickCount = 0;
-//            prevJoystickL = joystickL;
-//            joystickL = Math.toDegrees(Math.atan2(lx, ly));
-//        }
-//    }
-
 
     public double[] getPower(){
 
