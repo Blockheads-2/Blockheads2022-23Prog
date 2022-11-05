@@ -38,8 +38,8 @@ public class SimplifiedKinematics {
 
     public int leftTurnDirectionW = 1;
     public int rightTurnDirectionW = 1;
-    public int spinDirectionR = -1;
-    public int spinDirectionL = -1;
+    public int spinDirectionR = 1;
+    public int spinDirectionL = 1;
 
     double target;
     double turnAmountL;
@@ -146,6 +146,8 @@ public class SimplifiedKinematics {
     public void wheelOptimization(double target, double currentW, Module module, boolean after){ //returns how much the wheels should rotate in which direction
         double turnAmount = target - currentW;
         int turnDirection = (int)Math.signum(turnAmount);
+        spinDirectionR = 1;
+        spinDirectionL = 1;
 
         if(Math.abs(turnAmount) > 180){
             turnAmount = 360 - Math.abs(turnAmount);
@@ -164,9 +166,9 @@ public class SimplifiedKinematics {
             this.target=clamp(this.target);
             if(after){
                 if (module == Module.RIGHT){
-                    spinDirectionR *= -1;
+                    spinDirectionR = -1;
                 } else if (module==Module.LEFT){
-                    spinDirectionL *= -1;
+                    spinDirectionL = -1;
                 }
             }
         }
@@ -270,10 +272,12 @@ public class SimplifiedKinematics {
 
     public void switchRotateDirection(){
         rightTurnDirectionW *= -1;
+        leftTurnDirectionW *= -1;
     }
 
     public void switchSpinDirection(){
         spinDirectionR *= -1;
+        spinDirectionL *= -1;
     }
 }
 

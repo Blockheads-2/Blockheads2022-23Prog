@@ -85,7 +85,7 @@ public class SimplifiedLinearBaseDrive extends OpMode{
         if(x.getState() == Button.State.TAP){
             kinematics.switchRotateDirection();
         } else if (y.getState() == Button.State.TAP){
-            kinematics.switchRotateDirection();
+            kinematics.switchSpinDirection();
         }
 
         setVariables();
@@ -113,6 +113,8 @@ public class SimplifiedLinearBaseDrive extends OpMode{
                 telemetry.addData("Left Turn Amount", kinematics.getLTurnAmount());
                 telemetry.addData("Right Direction", kinematics.getRightDirectionW());
                 telemetry.addData("Left Direction", kinematics.getLeftDirectionW());
+                telemetry.addData("SpinR Direction", kinematics.spinDirectionR);
+                telemetry.addData("SpinL Direction", kinematics.spinDirectionL);
                 telemetry.addData("Should Snap?", kinematics.shouldSnap());
                 telemetry.addData("Reset?", (kinematics.getDriveType() == SimplifiedKinematics.DriveType.STOP));
                 telemetry.addData("DriveType?", kinematics.getDriveType());
