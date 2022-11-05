@@ -25,7 +25,6 @@ public class TankDrive extends OpMode{
     GlobalPosSystem posSystem;
     Kinematics kinematics;
 
-    private ElapsedTime runtime = new ElapsedTime();
     Constants constants = new Constants();
 
     Accelerator acceleratorR = new Accelerator();
@@ -61,7 +60,6 @@ public class TankDrive extends OpMode{
         reset = new Reset(robot, posSystem);
 
         telemetry.addData("Say", "Hello Driver");
-        runtime.reset();
 
         robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -138,35 +136,30 @@ public class TankDrive extends OpMode{
     void DriveTrainPowerEncoder(){
         posSystem.calculatePos();
 
-        int posBotL = robot.botL.getCurrentPosition();
-        int posTopL = robot.topL.getCurrentPosition() ;
-        int posBotR = robot.botR.getCurrentPosition();
-        int posTopR = robot.topR.getCurrentPosition();
-
         int distanceTopL = (int)(gamepad1.left_stick_y * 100);
         int distanceBotL = (int)(-gamepad1.left_stick_y * 100);
-        int distanceTopR = (int)(-gamepad1.right_stick_y * 100);
-        int distanceBotR = (int)(gamepad1.right_stick_y * 100);
+        int distanceTopR = (int)(gamepad1.right_stick_y * 100);
+        int distanceBotR = (int)(-gamepad1.right_stick_y * 100);
 
         powerL = acceleratorL.update(gamepad1.left_stick_y) * constants.POWER_LIMITER;
         powerR = acceleratorR.update(gamepad1.right_stick_y) * constants.POWER_LIMITER;
 
-        robot.botL.setTargetPosition(posBotL + distanceBotL);
-        robot.topL.setTargetPosition(posTopL + distanceTopL);
-        robot.botR.setTargetPosition(posBotR + distanceBotR);
-        robot.topR.setTargetPosition(posTopR + distanceTopR);
+        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + distanceBotL);
+        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + distanceTopL);
+        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() + distanceBotR);
+        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + distanceTopR);
 
-        if (powerL == 0 && powerR != 0){
-            powerL = powerR / 2.0;
-
-            robot.botL.setTargetPosition(posBotL - (distanceBotR/2));
-            robot.topL.setTargetPosition(posTopL - (distanceTopR/2));
-        } else if (powerR == 0 && powerL != 0){
-            powerR = powerL / 2.0;
-
-            robot.botR.setTargetPosition(posBotR - (distanceBotL/2));
-            robot.topR.setTargetPosition(posTopR - (distanceTopL/2));
-        }
+//        if (powerL == 0 && powerR != 0){
+//            powerL = powerR / 2.0;
+//
+//            robot.botL.setTargetPosition(posBotL - (distanceBotR/2));
+//            robot.topL.setTargetPosition(posTopL - (distanceTopR/2));
+//        } else if (powerR == 0 && powerL != 0){
+//            powerR = powerL / 2.0;
+//
+//            robot.botR.setTargetPosition(posBotR - (distanceBotL/2));
+//            robot.topR.setTargetPosition(posTopR - (distanceTopL/2));
+//        }
 
         robot.botL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.topL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
