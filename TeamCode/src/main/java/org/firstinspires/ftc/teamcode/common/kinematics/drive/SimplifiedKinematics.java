@@ -39,8 +39,8 @@ public class SimplifiedKinematics {
 
     public int leftTurnDirectionW = 1;
     public int rightTurnDirectionW = 1;
-    public int spinDirectionR = 1;
-    public int spinDirectionL = 1;
+    public int spinDirectionR = -1;
+    public int spinDirectionL = -1;
 
     double target;
     double turnAmountL;
