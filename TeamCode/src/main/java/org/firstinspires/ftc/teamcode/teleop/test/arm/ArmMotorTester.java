@@ -76,6 +76,9 @@ public class ArmMotorTester extends OpMode{
         telemetry.addData("Bottom", robot.armBase.getCurrentPosition());
         telemetry.addData("Power", power);
         telemetry.addData("Height", armKinematics.findHeightToGround(armKinematics.getPsi(robot.armBase.getCurrentPosition()), armKinematics.getTheta(robot.armTop.getCurrentPosition())));
+
+        telemetry.addData("Servo Position", robot.claw.getPosition());
+
         telemetry.update();
     }
 
