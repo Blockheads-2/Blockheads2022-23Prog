@@ -48,7 +48,16 @@ public class AutoDriveTest extends LinearOpMode {
 
     }
 
-    private void Movement(double translation, double rotation, double time){
+    private void Movement(String movementType, double rotation, double time){
+        switch (movementType){
+            case "Linear":
+                //cpde
+                
+                break;
+            case "LinearTurn":
+                //codeeee
+                break;
+        }
 
     }
 }

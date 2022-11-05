@@ -1,11 +1,12 @@
-//package org.firstinspires.ftc.teamcode.common.Kinematics;
+//package org.firstinspires.ftc.teamcode.common.kinematics.arm;
 //
-//
+//import org.firstinspires.ftc.teamcode.common.HardwareDrive;
+//import org.firstinspires.ftc.teamcode.common.kinematics.drive.Kinematics;
 //import org.firstinspires.ftc.teamcode.auto.Math.LinearMath;
 //import org.firstinspires.ftc.teamcode.auto.Math.SplineMath;
 //import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 //
-//public class AutoKinematics extends Kinematics{
+//public class AutoKinematics{
 //    SplineMath splinemath;
 //    LinearMath linearmath;
 //
@@ -14,10 +15,10 @@
 //    double robotTurnAmount = 0.0; //how much the robot should turn
 //    double speed = 0.0; //for autoMode (between 0~1)
 //
+//    HardwareDrive robot = new HardwareDrive();
 //
-//    public AutoKinematics(GlobalPosSystem posSystem) {
-//        super(posSystem);
-//    }
+//
+//    GlobalPosSystem posSystem = new GlobalPosSystem(robot);
 //
 //    public void setPos(double x, double y, double robotTurnAmount, double speed){
 //        this.x = x;
