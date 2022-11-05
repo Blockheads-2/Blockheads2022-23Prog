@@ -172,7 +172,11 @@ public class ArmMotorTester extends OpMode{
     }
 
     public void coneGrab(){
-        robot.claw.setPosition(0.3);
+        robot.claw.setPosition(0.6);
+    }
+
+    public void coneBack(){
+        robot.claw.setPosition(0);
     }
 
     void setArmPower(){
@@ -190,6 +194,8 @@ public class ArmMotorTester extends OpMode{
             power -= 0.1;
         } else if (gamepad1.dpad_right){
             coneGrab();
+        } else if (gamepad1.dpad_left){
+            coneBack();
         } else if (robot.armBase.getCurrentPosition() != prevPosition){
             robot.armBase.setTargetPosition(prevPosition);
             robot.armBase.setMode(DcMotor.RunMode.RUN_TO_POSITION);
