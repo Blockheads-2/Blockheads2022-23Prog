@@ -29,7 +29,7 @@ public class Constants {
     public double DEGS_PER_TOP_RADIUS_CLICK = DEGS_PER_TOP_CLICK * ARM_TOP_GEAR_REDUCTION;
 
     //Claw Constants
-    public double INITIALIZED_CLAW = 0; 
+    public double INITIALIZED_CLAW = 0.2;
     public double CLAW_POSITION = 0.5;
 
     //Swerve constants

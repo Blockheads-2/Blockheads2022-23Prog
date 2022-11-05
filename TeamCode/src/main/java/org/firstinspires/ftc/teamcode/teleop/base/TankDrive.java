@@ -139,7 +139,7 @@ public class TankDrive extends OpMode{
         posSystem.calculatePos();
 
         int posBotL = robot.botL.getCurrentPosition();
-        int posTopL = robot.topL.getCurrentPosition();
+        int posTopL = robot.topL.getCurrentPosition() ;
         int posBotR = robot.botR.getCurrentPosition();
         int posTopR = robot.topR.getCurrentPosition();
 
