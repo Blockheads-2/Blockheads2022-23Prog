@@ -42,16 +42,67 @@ public class AutoDriveTest extends LinearOpMode {
 
         waitForStart();
 
+        Movement("Linear", 10,10,0.5);
+
 
 
 
 
     }
 
-    private void Movement(String movementType, double rotation, double time){
+    private void Movement(String movementType, double x, double y, double power){
         switch (movementType){
             case "Linear":
                 //cpde
+                double targetAngle = Math.atan2(x, y);
+                double targetDistance = Math.sqrt((x*x)+(y*y));
+
+                int topLTargetRotation = (int) (targetAngle * constants.CLICKS_PER_DEGREE);
+                int botLTargetRotation = (int) (targetAngle * constants.CLICKS_PER_DEGREE);
+                int topRTargetRotation = (int) (targetAngle * constants.CLICKS_PER_DEGREE);
+                int botRTargetRotation = (int) (targetAngle * constants.CLICKS_PER_DEGREE);
+
+                robot.topL.setTargetPosition(topLTargetRotation);
+                robot.botL.setTargetPosition(botLTargetRotation);
+                robot.topR.setTargetPosition(topRTargetRotation);
+                robot.botR.setTargetPosition(botRTargetRotation);
+
+                robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                robot.topL.setPower(power);
+                robot.botL.setPower(power);
+                robot.topR.setPower(power);
+                robot.botR.setPower(power);
+
+
+
+                int topLTargetDistance = (int) (targetDistance * constants.CLICKS_PER_INCH);
+                int botLTargetDistance = (int) (-targetDistance * constants.CLICKS_PER_INCH);
+                int topRTargetDistance = (int) (targetDistance * constants.CLICKS_PER_INCH);
+                int botRTargetDistance = (int) (-targetDistance * constants.CLICKS_PER_INCH);
+
+                robot.topL.setTargetPosition(topLTargetDistance);
+                robot.botL.setTargetPosition(botLTargetDistance);
+                robot.topR.setTargetPosition(topRTargetDistance);
+                robot.botR.setTargetPosition(botRTargetDistance);
+
+                robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                robot.topL.setPower(power);
+                robot.botL.setPower(power);
+                robot.topR.setPower(power);
+                robot.botR.setPower(power);
+
+
+
+
+
 
                 break;
             case "LinearTurn":

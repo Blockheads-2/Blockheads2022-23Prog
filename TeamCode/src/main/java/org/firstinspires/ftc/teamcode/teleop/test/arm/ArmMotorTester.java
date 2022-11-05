@@ -171,6 +171,10 @@ public class ArmMotorTester extends OpMode{
         robot.armTop.setPower(power);
     }
 
+    public void coneGrab(){
+        robot.claw.setPosition(0.3);
+    }
+
     void setArmPower(){
         if (gamepad1.y){
             setTargetPositive();
@@ -184,6 +188,8 @@ public class ArmMotorTester extends OpMode{
             power += 0.1;
         } else if (gamepad1.left_bumper){
             power -= 0.1;
+        } else if (gamepad1.dpad_right){
+            coneGrab();
         } else if (robot.armBase.getCurrentPosition() != prevPosition){
             robot.armBase.setTargetPosition(prevPosition);
             robot.armBase.setMode(DcMotor.RunMode.RUN_TO_POSITION);
