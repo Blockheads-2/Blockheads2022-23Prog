@@ -19,6 +19,7 @@ public class SimplifiedKinematics {
     public enum DriveType{
         LINEAR,
         SNAP,
+        TURN,
         STOP,
         NOT_INITIALIZED
     }

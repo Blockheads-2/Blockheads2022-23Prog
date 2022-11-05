@@ -17,6 +17,7 @@ public class Accelerator {
 
     public double accelerationFactor = 0;
 
+
     public double update(double power, SimplifiedKinematics.DriveType dType){
         prevDriveType = currentDriveType;
         currentDriveType = dType;
