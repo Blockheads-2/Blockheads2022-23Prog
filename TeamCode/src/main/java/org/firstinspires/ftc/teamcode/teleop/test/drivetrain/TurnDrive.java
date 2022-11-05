@@ -172,7 +172,7 @@ public class TurnDrive extends OpMode{
         robot.botL.setTargetPosition(posBotL + distanceBotL);
         robot.topL.setTargetPosition(posTopL + distanceTopL);
         robot.botR.setTargetPosition(posBotR - distanceBotR);
-        robot.topR.setTargetPosition(posTopR - distanceTopR);`
+        robot.topR.setTargetPosition(posTopR - distanceTopR);
 
         robot.botL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.topL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
