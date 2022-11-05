@@ -39,6 +39,12 @@ public class SwerveCode extends OpMode{
     private int rotateR;
     private int rotateL;
 
+    private int targetTopR;
+    private int targetBotR;
+    private int targetTopL;
+    private int targetBotL;
+    private double power;
+
     public enum State{
         DRIVE,
         RESET
@@ -112,13 +118,17 @@ public class SwerveCode extends OpMode{
         telemetry.addData("Right W", posData[3]);
         telemetry.addData("R", posData[4]);
 
-//        telemetry.addData("topL clicks", robot.topL.getCurrentPosition());
-//        telemetry.addData("botL clicks", robot.botL.getCurrentPosition());
+        telemetry.addData("topL clicks", robot.topL.getCurrentPosition());
+        telemetry.addData("botL clicks", robot.botL.getCurrentPosition());
         telemetry.addData("topR clicks", robot.topR.getCurrentPosition());
         telemetry.addData("botR clicks", robot.botR.getCurrentPosition());
+        telemetry.addData("Power", power);
 
-        telemetry.addData("rotateR target", rotateR);
-        telemetry.addData("rotateL target", rotateL);
+        telemetry.addData("target topL", targetTopL);
+        telemetry.addData("target botL", targetBotL);
+        telemetry.addData("target topR", targetTopR);
+        telemetry.addData("target botR", targetBotR);
+
         telemetry.addData("isBusy", robot.wheelsAreBusy());
 
         telemetry.update();
@@ -160,20 +170,26 @@ public class SwerveCode extends OpMode{
         int rotationalTopR = -rotationalTopL;
         int rotationalBotR = -rotationalBotL;
 
-        robot.botL.setTargetPosition(posBotL + distanceBotL + rotationalBotL);
-        robot.topL.setTargetPosition(posTopL + distanceTopL + rotationalTopL);
-        robot.botR.setTargetPosition(posBotR + distanceBotR + rotationalBotR);
-        robot.topR.setTargetPosition(posTopR + distanceTopR + rotationalTopR);
+        targetBotL=posBotL + distanceBotL + rotationalBotL;
+        targetTopL=posTopL + distanceTopL + rotationalTopL;
+        targetBotR=posBotR + distanceBotR + rotationalBotR;
+        targetTopR=posTopR + distanceTopR + rotationalTopR;
+        robot.botL.setTargetPosition(targetBotL);
+        robot.topL.setTargetPosition(targetTopL);
+        robot.botR.setTargetPosition(targetBotR);
+        robot.topR.setTargetPosition(targetTopR);
 
         robot.botL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.topL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.botR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.topR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-        robot.botL.setPower(accelerator.update(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha) * 0.3);
-        robot.topL.setPower(accelerator.update(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha) * 0.3);
-        robot.botR.setPower(accelerator.update(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha) * 0.3);
-        robot.topR.setPower(accelerator.update(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha) * 0.3);
+        power = accelerator.update(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha) * constants.POWER_LIMITER;
+
+        robot.botL.setPower(power);
+        robot.topL.setPower(power);
+        robot.botR.setPower(power);
+        robot.topR.setPower(power);
     }
 
     public boolean noMovementRequests(){
