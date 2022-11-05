@@ -194,23 +194,32 @@ public class ArmMotorTester extends OpMode{
     void setArmPower(){
         if (gamepad2.y){
             setTargetPositive();
-        } else if (gamepad2.x){
+        }
+        if (gamepad2.x){
             setTargetNegative();
-        } else if(gamepad2.a){
+        }
+        if(gamepad2.a){
             setTargetPositiveBase();
-        } else if(gamepad2.b){
+        }
+        if(gamepad2.b){
             setTargetNegativeBase();
-        } else if (gamepad2.right_bumper){
+        }
+        if (gamepad2.right_bumper){
             power += 0.1;
-        } else if (gamepad2.left_bumper){
+        }
+        if (gamepad2.left_bumper){
             power -= 0.1;
-        } else if (gamepad2.dpad_right){
+        }
+        if (gamepad2.dpad_right){
             coneGrab();
-        } else if (gamepad2.dpad_left){
+        }
+        if (gamepad2.dpad_left){
             coneBack();
-        } else if (gamepad2.dpad_up){
+        }
+        if (gamepad2.dpad_up){
            clawAngleUp();
-        } else if (gamepad2.dpad_down){
+        }
+        if (gamepad2.dpad_down){
             clawAngleDown();
         }
 

@@ -32,6 +32,7 @@ public class Constants {
     public double INITIALIZED_CLAW = 0; 
     public double CLAW_POSITION = 0.5;
 
+
     //Swerve constants
         //module translation
     public double BLUE_REV_PER_GREEN = 17.0 / 16.0; //assuming other gear isn't messing stuff up, 17 revolutions of the input shaft = 16 revolutions of the wheel
