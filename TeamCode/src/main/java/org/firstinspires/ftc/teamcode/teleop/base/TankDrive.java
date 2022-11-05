@@ -151,31 +151,24 @@ public class TankDrive extends OpMode{
         powerL = acceleratorL.update(gamepad1.left_stick_y) * constants.POWER_LIMITER;
         powerR = acceleratorR.update(gamepad1.right_stick_y) * constants.POWER_LIMITER;
 
+//        robot.botL.setTargetPosition(posBotL + distanceBotL);
+//        robot.topL.setTargetPosition(posTopL + distanceTopL);
+//        robot.botR.setTargetPosition(posBotR + distanceBotR);
+//        robot.topR.setTargetPosition(posTopR + distanceTopR);
+//
+//        robot.botL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//        robot.topL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//        robot.botR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//        robot.topR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
         if (powerL != 0 && powerR != 0) {
-            robot.botL.setTargetPosition(posBotL + distanceBotL);
-            robot.topL.setTargetPosition(posTopL + distanceTopL);
-            robot.botR.setTargetPosition(posBotR + distanceBotR);
-            robot.topR.setTargetPosition(posTopR + distanceTopR);
-
-            robot.botL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            robot.topL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            robot.botR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            robot.topR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
             robot.botL.setPower(powerL);
             robot.topL.setPower(powerL);
             robot.botR.setPower(powerR);
             robot.topR.setPower(powerR);
 
         } else if (powerL == 0){ //powerR
-            robot.botR.setTargetPosition(posBotR + distanceBotR);
-            robot.topR.setTargetPosition(posTopR + distanceTopR);
-
-            robot.botR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            robot.topR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            robot.botL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            robot.topL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-
+//            powerL = powerR / 2.0;
             robot.botL.setPower(0);
             robot.topL.setPower(0);
             robot.botR.setPower(powerR);
@@ -184,14 +177,6 @@ public class TankDrive extends OpMode{
             robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         } else { //powerL
-            robot.botL.setTargetPosition(posBotL + distanceBotL);
-            robot.topL.setTargetPosition(posTopL + distanceTopL);
-
-            robot.topR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.botR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.botL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            robot.topL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
             robot.botL.setPower(powerL);
             robot.topL.setPower(powerL);
             robot.botR.setPower(0);
