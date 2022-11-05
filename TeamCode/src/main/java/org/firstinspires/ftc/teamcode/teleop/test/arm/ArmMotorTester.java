@@ -32,9 +32,8 @@ public class ArmMotorTester extends OpMode{
 
     int prevPosition;
 
-    public double power = 0.5;
-
-    public double clawPosition = robot.armServo.getPosition();
+    private double power = 0.5;
+    private double clawPosition;
 
     @Override
     public void init(){
@@ -47,6 +46,9 @@ public class ArmMotorTester extends OpMode{
     public void init_loop() { //Loop between "init" and "start"
         //  robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        clawPosition = robot.armServo.getPosition();
+
         robot.armBase.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.armTop.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -174,7 +176,7 @@ public class ArmMotorTester extends OpMode{
     }
 
     public void coneGrab(){
-        robot.claw.setPosition(0.6);
+        robot.claw.setPosition(1);
     }
 
     public void coneBack(){
