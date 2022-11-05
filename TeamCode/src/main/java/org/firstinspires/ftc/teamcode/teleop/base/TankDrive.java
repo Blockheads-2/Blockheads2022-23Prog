@@ -94,6 +94,7 @@ public class TankDrive extends OpMode{
     }
 
     void UpdatePlayer2(){
+
     }
 
     void UpdateTelemetry(){
@@ -148,8 +149,8 @@ public class TankDrive extends OpMode{
         int distanceTopR = (int)(-gamepad1.left_stick_y * 100);
         int distanceBotR = (int)(gamepad1.left_stick_y * 100);
 
-        powerL = acceleratorL.update(gamepad1.left_stick_y) * constants.POWER_LIMITER;
-        powerR = acceleratorR.update(gamepad1.right_stick_y) * constants.POWER_LIMITER;
+        powerL = acceleratorL.update(gamepad1.right_stick_y) * constants.POWER_LIMITER;
+        powerR = acceleratorR.update(gamepad1.left_stick_y) * constants.POWER_LIMITER;
 
 //        robot.botL.setTargetPosition(posBotL + distanceBotL);
 //        robot.topL.setTargetPosition(posTopL + distanceTopL);
@@ -162,22 +163,22 @@ public class TankDrive extends OpMode{
 //        robot.topR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
         if (powerL != 0 && powerR != 0) {
-            robot.botL.setPower(powerL);
+            robot.botL.setPower(-powerL);
             robot.topL.setPower(powerL);
             robot.botR.setPower(powerR);
-            robot.topR.setPower(powerR);
+            robot.topR.setPower(-powerR);
 
         } else if (powerL == 0){ //powerR
 //            powerL = powerR / 2.0;
             robot.botL.setPower(0);
             robot.topL.setPower(0);
             robot.botR.setPower(powerR);
-            robot.topR.setPower(powerR);
+            robot.topR.setPower(-powerR);
 
             robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         } else { //powerL
-            robot.botL.setPower(powerL);
+            robot.botL.setPower(-powerL);
             robot.topL.setPower(powerL);
             robot.botR.setPower(0);
             robot.topR.setPower(0);
