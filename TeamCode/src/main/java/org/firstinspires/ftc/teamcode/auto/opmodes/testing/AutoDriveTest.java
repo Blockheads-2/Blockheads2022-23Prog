@@ -49,6 +49,6 @@ public class AutoDriveTest extends LinearOpMode {
     }
 
     private void Movement(double translation, double rotation, double time){
-        
+
     }
 }
