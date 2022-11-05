@@ -183,7 +183,7 @@ public class ArmMotorTester extends OpMode{
     }
 
     public void coneGrab(){
-        robot.claw.setPosition(0.9);
+        robot.claw.setPosition(1);
     }
 
     public void coneBack(){
