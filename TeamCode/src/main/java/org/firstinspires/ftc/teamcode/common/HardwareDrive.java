@@ -132,6 +132,7 @@ public class HardwareDrive
         armTop.setDirection(DcMotor.Direction.FORWARD);
 
         claw.setPosition(constants.INITIALIZED_CLAW);
+        claw.setPosition(constants.INITIALIZED_CLAW);
 
         // dtMotors[2].setDirection(DcMotorSimple.Direction.FORWARD);
         //dtMotors[3].setDirection(DcMotorSimple.Direction.FORWARD);
