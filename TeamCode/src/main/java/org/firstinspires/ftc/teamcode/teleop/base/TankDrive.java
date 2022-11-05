@@ -55,6 +55,8 @@ public class TankDrive extends OpMode{
     @Override
     public void init() { //When "init" is clicked
         robot.init(hardwareMap);
+        posSystem = new GlobalPosSystem(robot);
+        kinematics = new Kinematics(posSystem);
         posSystem.grabKinematics(kinematics);
         reset = new Reset(robot, posSystem);
 
@@ -137,31 +139,39 @@ public class TankDrive extends OpMode{
         posSystem.calculatePos();
 
         int posBotL = robot.botL.getCurrentPosition();
-        int posTopL = robot.topL.getCurrentPosition();
+        int posTopL = robot.topL.getCurrentPosition() ;
         int posBotR = robot.botR.getCurrentPosition();
         int posTopR = robot.topR.getCurrentPosition();
 
         int distanceTopL = (int)(gamepad1.left_stick_y * 100);
         int distanceBotL = (int)(-gamepad1.left_stick_y * 100);
-        int distanceTopR = (int)(gamepad1.right_stick_y * 100);
-        int distanceBotR = (int)(-gamepad1.right_stick_y * 100);
+        int distanceTopR = (int)(-gamepad1.right_stick_y * 100);
+        int distanceBotR = (int)(gamepad1.right_stick_y * 100);
 
-        targetBotL = posBotL + distanceBotL;
-        targetTopL = posTopL + distanceTopL;
-        targetBotR = posBotR + distanceBotR;
-        targetTopR = posTopR + distanceTopR;
-        robot.botL.setTargetPosition(targetBotL);
-        robot.topL.setTargetPosition(targetTopL);
-        robot.botR.setTargetPosition(targetBotR);
-        robot.topR.setTargetPosition(targetTopR);
+        powerL = acceleratorL.update(gamepad1.left_stick_y) * constants.POWER_LIMITER;
+        powerR = acceleratorR.update(gamepad1.right_stick_y) * constants.POWER_LIMITER;
+
+        robot.botL.setTargetPosition(posBotL + distanceBotL);
+        robot.topL.setTargetPosition(posTopL + distanceTopL);
+        robot.botR.setTargetPosition(posBotR + distanceBotR);
+        robot.topR.setTargetPosition(posTopR + distanceTopR);
+
+        if (powerL == 0 && powerR != 0){
+            powerL = powerR / 2.0;
+
+            robot.botL.setTargetPosition(posBotL - (distanceBotR/2));
+            robot.topL.setTargetPosition(posTopL - (distanceTopR/2));
+        } else if (powerR == 0 && powerL != 0){
+            powerR = powerL / 2.0;
+
+            robot.botR.setTargetPosition(posBotR - (distanceBotL/2));
+            robot.topR.setTargetPosition(posTopR - (distanceTopL/2));
+        }
 
         robot.botL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.topL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.botR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.topR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-        powerL = acceleratorL.update(gamepad1.left_stick_y) * constants.POWER_LIMITER;
-        powerR = acceleratorR.update(gamepad1.right_stick_y) * constants.POWER_LIMITER;
 
         robot.botL.setPower(powerL);
         robot.topL.setPower(powerL);

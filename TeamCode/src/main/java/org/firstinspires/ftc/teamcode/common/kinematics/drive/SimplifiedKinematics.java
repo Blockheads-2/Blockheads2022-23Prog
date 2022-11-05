@@ -152,6 +152,15 @@ public class SimplifiedKinematics {
             turnDirection *= -1;
         }
 
+        if (target == 180){
+            turnAmount = 0;
+            spinDirectionL = 1;
+            spinDirectionR = 1;
+        } else{
+            spinDirectionL=-1;
+            spinDirectionR=-1;
+        }
+
 //        if(Math.abs(turnAmount) > 90){
 //            target += 180;
 //            target = clamp(target);
