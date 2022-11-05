@@ -148,7 +148,14 @@ public class TurnDrive extends OpMode{
 
         double rightTrigger = gamepad1.right_trigger;
         double leftTrigger = -gamepad1.left_trigger;
-        double trigger = Math.max(Math.abs(rightTrigger), Math.abs(leftTrigger));
+        double trigger;
+
+        if (Math.abs(leftTrigger) > Math.abs(rightTrigger)){
+            trigger = leftTrigger;
+        } else {
+            trigger = rightTrigger;
+        }
+
         SimplifiedKinematics.DriveType type;
         if (trigger == 0){
             type = SimplifiedKinematics.DriveType.STOP;

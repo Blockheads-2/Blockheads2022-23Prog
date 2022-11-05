@@ -139,34 +139,37 @@ public class SimplifiedKinematics {
     }
 
     public void wheelOptimization(double target, double currentW, Module module, boolean after){ //returns how much the wheels should rotate in which direction
+//        if (spinDirectionR == -1 && spinDirectionL == -1){
+//            currentW += 180;
+//            currentW = clamp(currentW);
+//        }
+
         double turnAmount = target - currentW;
         int turnDirection = (int)Math.signum(turnAmount);
-        spinDirectionR = 1;
-        spinDirectionL = 1;
 
         if(Math.abs(turnAmount) > 180){
             turnAmount = 360 - Math.abs(turnAmount);
             turnDirection *= -1;
         }
 
-        if(Math.abs(turnAmount) > 90){
-            target += 180;
-            target = clamp(target);
-            turnAmount = target - currentW;
-            turnDirection *= -1;
-            if(Math.abs(turnAmount) > 180){
-                turnAmount = 360 - Math.abs(turnAmount);
-            }
-            this.target=target-180;
-            this.target=clamp(this.target);
-            if(after){
-                if (module == Module.RIGHT){
-                    spinDirectionR = -1;
-                } else if (module==Module.LEFT){
-                    spinDirectionL = -1;
-                }
-            }
-        }
+//        if(Math.abs(turnAmount) > 90){
+//            target += 180;
+//            target = clamp(target);
+//            turnAmount = target - currentW;
+//            turnDirection *= -1;
+//            if(Math.abs(turnAmount) > 180){
+//                turnAmount = 360 - Math.abs(turnAmount);
+//            }
+//            this.target=target-180;
+//            this.target=clamp(this.target);
+//            if(after){
+//                if (module == Module.RIGHT){
+//                    spinDirectionR = -1;
+//                } else if (module==Module.LEFT){
+//                    spinDirectionL = -1;
+//                }
+//            }
+//        }
 
         switch (module){
             case RIGHT:
