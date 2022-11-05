@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.common.Accelerator;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.kinematics.drive.Kinematics;
 import org.firstinspires.ftc.teamcode.common.Reset;
@@ -28,8 +29,7 @@ public class SwerveCode extends OpMode{
     private ElapsedTime runtime = new ElapsedTime();
     Constants constants = new Constants();
 
-    ElapsedTime accelerationTimer = new ElapsedTime();
-    boolean isAccelerateCycle = false;
+    Accelerator accelerator = new Accelerator();
 
     Button x = new Button();
     Button y = new Button();
@@ -170,26 +170,10 @@ public class SwerveCode extends OpMode{
         robot.botR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.topR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-        robot.botL.setPower(accelerator(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha) * 0.3);
-        robot.topL.setPower(accelerator(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha) * 0.3);
-        robot.botR.setPower(accelerator(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha) * 0.3);
-        robot.topR.setPower(accelerator(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha) * 0.3);
-    }
-
-    public double accelerator(double power){
-        if (power == 0) return 0.0;
-
-        if (!isAccelerateCycle){
-            accelerationTimer.reset();
-            isAccelerateCycle = true;
-        }
-        double accelerationFactor = (Math.tanh(accelerationTimer.milliseconds() - 1.5) / 2.5) + 0.6;
-        power *= accelerationFactor;
-
-        if (power > 1) power = 1;
-        else if (power < -1) power = -1;
-
-        return power;
+        robot.botL.setPower(accelerator.update(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha) * 0.3);
+        robot.topL.setPower(accelerator.update(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha) * 0.3);
+        robot.botR.setPower(accelerator.update(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha) * 0.3);
+        robot.topR.setPower(accelerator.update(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha) * 0.3);
     }
 
     public boolean noMovementRequests(){
