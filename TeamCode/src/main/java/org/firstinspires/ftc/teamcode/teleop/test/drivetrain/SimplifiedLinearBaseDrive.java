@@ -90,7 +90,7 @@ public class SimplifiedLinearBaseDrive extends OpMode{
 
         setVariables();
 
-        if (kinematics.getDriveType()== SimplifiedKinematics.DriveType.STOP){
+        if (kinematics.getDriveType() == SimplifiedKinematics.DriveType.STOP){
             reset.reset(true);
         } else{
             reset.reset(false);
