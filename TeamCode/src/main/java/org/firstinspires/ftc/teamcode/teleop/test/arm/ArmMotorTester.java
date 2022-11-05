@@ -222,6 +222,12 @@ public class ArmMotorTester extends OpMode{
         }
         if (power < 0) power = 0;
         else if (power > 1) power = 1;
+
+        if (gamepad1.dpad_up){
+            setTargetPositiveBase();
+        } else if (gamepad1.dpad_down){
+            setTargetNegativeBase();
+        }
     }
 
     public void linearExtensionControl(){
