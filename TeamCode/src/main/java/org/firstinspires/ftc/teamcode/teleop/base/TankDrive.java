@@ -55,6 +55,8 @@ public class TankDrive extends OpMode{
     @Override
     public void init() { //When "init" is clicked
         robot.init(hardwareMap);
+        posSystem = new GlobalPosSystem(robot);
+        kinematics = new Kinematics(posSystem);
         posSystem.grabKinematics(kinematics);
         reset = new Reset(robot, posSystem);
 
@@ -141,10 +143,10 @@ public class TankDrive extends OpMode{
         int posBotR = robot.botR.getCurrentPosition();
         int posTopR = robot.topR.getCurrentPosition();
 
-        int distanceTopL = (int)(gamepad1.left_stick_y * 100);
-        int distanceBotL = (int)(-gamepad1.left_stick_y * 100);
-        int distanceTopR = (int)(gamepad1.right_stick_y * 100);
-        int distanceBotR = (int)(-gamepad1.right_stick_y * 100);
+        int distanceTopL = (int)(gamepad1.right_stick_y * 100);
+        int distanceBotL = (int)(-gamepad1.right_stick_y * 100);
+        int distanceTopR = (int)(-gamepad1.left_stick_y * 100);
+        int distanceBotR = (int)(gamepad1.left_stick_y * 100);
 
         targetBotL = posBotL + distanceBotL;
         targetTopL = posTopL + distanceTopL;
@@ -163,10 +165,22 @@ public class TankDrive extends OpMode{
         powerL = acceleratorL.update(gamepad1.left_stick_y) * constants.POWER_LIMITER;
         powerR = acceleratorR.update(gamepad1.right_stick_y) * constants.POWER_LIMITER;
 
-        robot.botL.setPower(powerL);
-        robot.topL.setPower(powerL);
-        robot.botR.setPower(powerR);
-        robot.topR.setPower(powerR);
+        if (powerL != 0 && powerR != 0) {
+            robot.botL.setPower(powerL);
+            robot.topL.setPower(powerL);
+            robot.botR.setPower(powerR);
+            robot.topR.setPower(powerR);
+        } else if (powerL == 0){
+            robot.botR.setPower(powerR);
+            robot.topR.setPower(powerR);
+            robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        } else {
+            robot.topL.setPower(powerL);
+            robot.botL.setPower(powerL);
+            robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
     }
 
     public boolean noMovementRequests(){
