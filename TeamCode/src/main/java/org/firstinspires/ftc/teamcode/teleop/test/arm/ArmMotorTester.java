@@ -228,12 +228,6 @@ public class ArmMotorTester extends OpMode{
 
 
         if (robot.armBase.getCurrentPosition() != prevPosition){
-                robot.armBase.setTargetPosition(prevPosition);
-                robot.armBase.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.armBase.setPower(0.1);
-        } else if (gamepad1.dpad_left){
-            coneBack();
-        } else if (robot.armBase.getCurrentPosition() != prevPosition){
             robot.armBase.setTargetPosition(prevPosition);
             robot.armBase.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.armBase.setPower(0.1);
