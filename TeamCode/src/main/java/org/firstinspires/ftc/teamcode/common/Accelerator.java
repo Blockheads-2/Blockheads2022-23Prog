@@ -33,7 +33,7 @@ public class Accelerator {
             isAccelerateCycle = true;
         }
 
-        accelerationFactor = accelerationTimer.seconds()/2 + 0.1;
+        accelerationFactor = (Math.pow(accelerationTimer.seconds(), 3)/3.0) + 0.1;
         power *= accelerationFactor;
 
         if (power > 1) power = 1;
@@ -54,7 +54,7 @@ public class Accelerator {
             isAccelerateCycle = true;
         }
 
-        accelerationFactor = accelerationTimer.seconds()/2 + 0.1;
+        accelerationFactor = (Math.pow(accelerationTimer.seconds(), 3)/3.0) + 0.1;
         power *= accelerationFactor;
 
         if (power > 1) power = 1;
