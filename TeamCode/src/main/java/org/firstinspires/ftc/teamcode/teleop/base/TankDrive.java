@@ -144,8 +144,8 @@ public class TankDrive extends OpMode{
         int posBotR = robot.botR.getCurrentPosition();
         int posTopR = robot.topR.getCurrentPosition();
 
-        int distanceTopL = (int)(gamepad1.right_stick_y * 100);
-        int distanceBotL = (int)(-gamepad1.right_stick_y * 100);
+        int distanceTopL = (int)(-gamepad1.right_stick_y * 100);
+        int distanceBotL = (int)(gamepad1.right_stick_y * 100);
         int distanceTopR = (int)(-gamepad1.left_stick_y * 100);
         int distanceBotR = (int)(gamepad1.left_stick_y * 100);
 
