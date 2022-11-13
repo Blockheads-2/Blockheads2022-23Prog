@@ -30,6 +30,7 @@ public class Constants {
 
     //Claw Constants
     public double INITIALIZED_CLAW = 0.5;
+    public double INITIALIZED_ARM_SERVO = 0;
 
     //Swerve constants
         //module translation
