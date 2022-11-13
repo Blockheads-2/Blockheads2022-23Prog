@@ -26,15 +26,13 @@ public class ArmMotorTester extends OpMode{
     Button y = new Button();
     Button a = new Button();
     Button b = new Button();
-    Button clawAngleDownButton = new Button();
-    Button clawAngleUpButton = new Button();
 
     ElapsedTime resetTimer = new ElapsedTime();
     View relativeLayout;
 
     int prevPosition;
 
-    private double power = 0.8;
+    private double power = 0.5;
     private double clawPosition;
 
     @Override
@@ -78,9 +76,6 @@ public class ArmMotorTester extends OpMode{
         telemetry.addData("Bottom", robot.armBase.getCurrentPosition());
         telemetry.addData("Power", power);
         telemetry.addData("Height", armKinematics.findHeightToGround(armKinematics.getPsi(robot.armBase.getCurrentPosition()), armKinematics.getTheta(robot.armTop.getCurrentPosition())));
-
-        telemetry.addData("Servo Position", robot.claw.getPosition());
-
         telemetry.update();
     }
 
@@ -89,8 +84,6 @@ public class ArmMotorTester extends OpMode{
         y.update(gamepad2.y);
         a.update(gamepad2.a);
         b.update(gamepad2.b);
-        clawAngleDownButton.update(gamepad2.left_bumper);
-        clawAngleUpButton.update(gamepad2.right_bumper);
     }
 
     void UpdatePlayer2(){
@@ -102,7 +95,7 @@ public class ArmMotorTester extends OpMode{
         int topCurrent = robot.armTop.getCurrentPosition();
 
       //  robot.armBase.setTargetPosition(baseCurrent + 100);
-        robot.armTop.setTargetPosition(topCurrent + 50);
+        robot.armTop.setTargetPosition(topCurrent + 10);
 
      //   robot.armBase.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.armTop.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -116,7 +109,7 @@ public class ArmMotorTester extends OpMode{
         int topCurrent = robot.armTop.getCurrentPosition();
 
        // robot.armBase.setTargetPosition(baseCurrent - 100);
-        robot.armTop.setTargetPosition(topCurrent - 50);
+        robot.armTop.setTargetPosition(topCurrent - 10);
 
       //  robot.armBase.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.armTop.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -130,7 +123,7 @@ public class ArmMotorTester extends OpMode{
         int topCurrent = robot.armTop.getCurrentPosition();
 
         //  robot.armBase.setTargetPosition(baseCurrent + 100);
-        robot.armBase.setTargetPosition(baseCurrent + 100);
+        robot.armBase.setTargetPosition(baseCurrent + 50);
 
         //   robot.armBase.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.armBase.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -144,7 +137,7 @@ public class ArmMotorTester extends OpMode{
         int topCurrent = robot.armTop.getCurrentPosition();
 
         //  robot.armBase.setTargetPosition(baseCurrent + 100);
-        robot.armBase.setTargetPosition(baseCurrent - 100);
+        robot.armBase.setTargetPosition(baseCurrent - 50);
 
         //   robot.armBase.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.armBase.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -183,11 +176,11 @@ public class ArmMotorTester extends OpMode{
     }
 
     public void coneGrab(){
-        robot.claw.setPosition(1);
+        robot.claw.setPosition(0.85);
     }
 
     public void coneBack(){
-        robot.claw.setPosition(0.5);
+        robot.claw.setPosition(0.2);
     }
 
     public void clawAngleUp(){
@@ -203,31 +196,33 @@ public class ArmMotorTester extends OpMode{
     void setArmPower(){
         if (gamepad2.y){
             setTargetPositive();
-        }
-        if (gamepad2.x){
+        } else if (gamepad2.x){
             setTargetNegative();
-        }
-        if(gamepad2.a){
+        } else if(gamepad2.a){
             setTargetPositiveBase();
-        }
-        if(gamepad2.b){
+        } else if(gamepad2.b){
             setTargetNegativeBase();
-        }
-        if (clawAngleDownButton.getState() == Button.State.TAP){
+        } else if (gamepad2.right_bumper){
+            power += 0.1;
+        } else if (gamepad2.left_bumper){
+            power -= 0.1;
+        } else if (gamepad2.dpad_right){
+            coneGrab();
+        } else if (gamepad2.dpad_left){
+            coneBack();
+        } else if (gamepad2.dpad_up){
+           clawAngleUp();
+        } else if (gamepad2.dpad_down){
             clawAngleDown();
         }
-        if (clawAngleUpButton.getState() == Button.State.TAP){
-            clawAngleUp();
-        }
-        if (gamepad2.dpad_right){
-            coneGrab();
-        }
-        if (gamepad2.dpad_left){
-            coneBack();
-        }
-
 
         if (robot.armBase.getCurrentPosition() != prevPosition){
+                robot.armBase.setTargetPosition(prevPosition);
+                robot.armBase.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.armBase.setPower(0.1);
+        } else if (gamepad1.dpad_left){
+            coneBack();
+        } else if (robot.armBase.getCurrentPosition() != prevPosition){
             robot.armBase.setTargetPosition(prevPosition);
             robot.armBase.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.armBase.setPower(0.1);
@@ -241,7 +236,7 @@ public class ArmMotorTester extends OpMode{
         else if (power > 1) power = 1;
 
         if(clawPosition < 0) clawPosition = 0;
-        else if(clawPosition > 1) clawPosition = 1;
+        else if(clawPosition > 1) power = 1;
     }
 
     public void linearExtensionControl(){

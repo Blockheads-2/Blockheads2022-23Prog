@@ -7,7 +7,7 @@ public class Constants {
     public double LOAD_ON = 0.6; //assumption
     public double RPM = 1150 * LOAD_ON; //690.  Not very accurate so don't rely on this number.
     public double RPS = RPM / 60.0; //11.5 ish motor revolutions per second, with load
-    public double POWER_LIMITER = 0.5;
+    public double POWER_LIMITER = 0.8;
 
     public double CLICKS_PER_BLUE_REV = 145.1; //clicks per rev of motor
 
@@ -29,8 +29,10 @@ public class Constants {
     public double DEGS_PER_TOP_RADIUS_CLICK = DEGS_PER_TOP_CLICK * ARM_TOP_GEAR_REDUCTION;
 
     //Claw Constants
-    public double INITIALIZED_CLAW = 0.5;
     public double INITIALIZED_ARM_SERVO = 0;
+
+    public double INITIALIZED_CLAW = 0.2;
+    public double CLAW_POSITION = 0.5;
 
     //Swerve constants
         //module translation
