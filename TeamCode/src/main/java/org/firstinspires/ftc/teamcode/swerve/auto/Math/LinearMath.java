@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto.Math;
+package org.firstinspires.ftc.teamcode.swerve.auto.Math;
 
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.pid.SpinPID;

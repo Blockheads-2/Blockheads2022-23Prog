@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto.opmodes.sample;
+package org.firstinspires.ftc.teamcode.swerve.auto.opmodes.sample;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -9,7 +9,7 @@ import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.firstinspires.ftc.teamcode.auto.AutoHub;
+import org.firstinspires.ftc.teamcode.swerve.auto.opmodes.sample.AutoHub;
 
 import java.util.ArrayList;
 
