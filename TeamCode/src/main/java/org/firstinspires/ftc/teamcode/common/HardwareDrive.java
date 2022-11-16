@@ -63,7 +63,8 @@ public class HardwareDrive
     public DcMotorEx  botL;
     public DcMotorEx  topR;
     public DcMotorEx  botR;
-    public DcMotorEx  armBase;
+    public DcMotorEx  armBase1;
+    public DcMotorEx armBase2;
     public DcMotor armTop;
 
     public Servo armServo;
@@ -103,7 +104,7 @@ public class HardwareDrive
         botL = hwMap.get(DcMotorEx.class, "bottom_left");
         topR = hwMap.get(DcMotorEx.class, "top_right");
         botR = hwMap.get(DcMotorEx.class, "bottom_right");
-        armBase = hwMap.get(DcMotorEx.class, "arm_base");
+        armBase1 = hwMap.get(DcMotorEx.class, "arm_base");
         armTop = hwMap.get(DcMotor.class, "arm_top");
 
         armServo = hwMap.get(Servo.class, "arm_servo");
@@ -128,7 +129,7 @@ public class HardwareDrive
         botR.setDirection(DcMotorEx.Direction.FORWARD);
         topR.setDirection(DcMotorEx.Direction.FORWARD);
 
-        armBase.setDirection(DcMotorEx.Direction.REVERSE);
+        armBase1.setDirection(DcMotorEx.Direction.REVERSE);
         armTop.setDirection(DcMotor.Direction.FORWARD);
 
         claw.setPosition(constants.INITIALIZED_CLAW);

@@ -26,6 +26,8 @@ public class ArmKinematics {
         return clicks * constants.DEGS_PER_TOP_CLICK;
     }
 
+    public double getOmega(double position){ return position * constants.CLAW_POSITION_TO_DEGREES; }
+
     public double findHeightToGround(double theta, double psi){
         double distance = 0; //distance from claw to ground
         double h1 = constants.ARM_BASE_RADIUS * Math.sin(theta);
@@ -38,7 +40,13 @@ public class ArmKinematics {
         double distance = 0; //distance from base of arm extending horizontally to claw
         double h1 = constants.ARM_BASE_RADIUS * Math.cos(theta);
         double h2 = constants.ARM_TOP_RADIUS * Math.cos(theta + psi - 180);
+        distance = h1 + h2;
         return distance;
+    }
+
+    public double subtractClawHeight(double position){
+        position -= constants.INITIALIZED_CLAW;
+        return position;
     }
 
     public void maintainHeightToGround(){

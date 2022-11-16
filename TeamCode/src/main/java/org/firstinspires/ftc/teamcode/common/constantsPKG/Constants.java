@@ -30,9 +30,10 @@ public class Constants {
 
     //Claw Constants
     public double INITIALIZED_ARM_SERVO = 0;
-
+    public double CLAW_POSITION_TO_DEGREES = 360;
     public double INITIALIZED_CLAW = 0.2;
     public double CLAW_POSITION = 0.5;
+    public double CLAW_RADIUS = 134.359; //mm
 
     //Swerve constants
         //module translation
