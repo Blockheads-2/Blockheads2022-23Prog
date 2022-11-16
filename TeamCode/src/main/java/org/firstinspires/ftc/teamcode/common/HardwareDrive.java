@@ -104,7 +104,8 @@ public class HardwareDrive
         botL = hwMap.get(DcMotorEx.class, "bottom_left");
         topR = hwMap.get(DcMotorEx.class, "top_right");
         botR = hwMap.get(DcMotorEx.class, "bottom_right");
-        armBase1 = hwMap.get(DcMotorEx.class, "arm_base");
+        armBase1 = hwMap.get(DcMotorEx.class, "arm_base1");
+        armBase2 = hwMap.get(DcMotorEx.class, "arm_base2");
         armTop = hwMap.get(DcMotor.class, "arm_top");
 
         armServo = hwMap.get(Servo.class, "arm_servo");
@@ -130,6 +131,7 @@ public class HardwareDrive
         topR.setDirection(DcMotorEx.Direction.FORWARD);
 
         armBase1.setDirection(DcMotorEx.Direction.REVERSE);
+        armBase2.setDirection(DcMotorSimple.Direction.FORWARD);
         armTop.setDirection(DcMotor.Direction.FORWARD);
 
         claw.setPosition(constants.INITIALIZED_CLAW);
@@ -137,14 +139,16 @@ public class HardwareDrive
         // dtMotors[2].setDirection(DcMotorSimple.Direction.FORWARD);
         //dtMotors[3].setDirection(DcMotorSimple.Direction.FORWARD);
 
-// Set all motors to zero power
+        // Set all motors to zero power
         setMotorPower(0);
+        armBase1.setPower(0);
+        armBase2.setPower(0);
+        armTop.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         setRunMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         setRunMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-
     }
 
     public void setMotorPower(double power){
@@ -175,11 +179,8 @@ public class HardwareDrive
         //make sure to not add arm here
     }
 
-
     public boolean wheelsAreBusy(){
         return (topL.isBusy() && botL.isBusy() && topR.isBusy() && botR.isBusy());
     }
-
-
 }
 

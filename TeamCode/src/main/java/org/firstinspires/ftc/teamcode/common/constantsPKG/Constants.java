@@ -19,10 +19,10 @@ public class Constants {
 
     //Arm Constants
     public double CLICKS_PER_BASE_REV = 5281.1; //clicks per rev of base arm motor
-    public double CLICKS_PER_TOP_REV =  288; //clicks per rev of top arm motor
-    public double DEGS_PER_BASE_CLICK = 5281.1 / 360; //degrees per base motor click
-    public double DEGS_PER_TOP_CLICK = 288.0 / 360.0; //degrees per top motor click
-    public double RATIO_CLICKS = 5281.1 / 288.0; //ratio of clicks between rev clicks to gobilda clicks
+    public double CLICKS_PER_TOP_REV =  537.7; //clicks per rev of top arm motor
+    public double DEGS_PER_BASE_CLICK = CLICKS_PER_BASE_REV / 360; //degrees per base motor click
+    public double DEGS_PER_TOP_CLICK = CLICKS_PER_TOP_REV / 360; //degrees per top motor click
+    public double RATIO_CLICKS = CLICKS_PER_BASE_REV / CLICKS_PER_TOP_REV; //ratio of clicks between rev clicks to gobilda clicks
     public double ARM_BASE_RADIUS = 440; //radius of first stage of arm(base powered by 5204 motor) (mm)
     public double ARM_TOP_RADIUS = 400; //radius of top stage of arm(powered by rev motor) (mm)
     public double ARM_TOP_GEAR_REDUCTION = 16.0 / 40; //motor is geared down for more torque(40% increase of torque)
