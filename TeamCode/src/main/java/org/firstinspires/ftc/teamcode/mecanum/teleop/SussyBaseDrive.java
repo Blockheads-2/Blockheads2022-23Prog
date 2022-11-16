@@ -1,26 +1,20 @@
-package org.firstinspires.ftc.teamcode.teleop.base;
+package org.firstinspires.ftc.teamcode.mecanum.teleop;
 
-import android.app.Activity;
 import android.view.View;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.common.SussyHardwareDrive;
-import org.firstinspires.ftc.teamcode.common.SussyConstants;
-
-import org.firstinspires.ftc.teamcode.common.SussyHardwareDrive;
+import org.firstinspires.ftc.teamcode.mecanum.common.MecanumConstants;
+import org.firstinspires.ftc.teamcode.mecanum.common.SussyHardwareDrive;
 
 @TeleOp(name="Sussy Base Drive", group="Drive")
 //@Disabled
 public class SussyBaseDrive extends OpMode{
     /* Declare OpMode members. */
     SussyHardwareDrive robot = new SussyHardwareDrive();
-    SussyConstants constants = new SussyConstants();
+    MecanumConstants constants = new MecanumConstants();
     private ElapsedTime runtime = new ElapsedTime();
 
     /** The relativeLayout field is used to aid in providing interesting visual feedback
@@ -44,6 +38,7 @@ public class SussyBaseDrive extends OpMode{
 
     @Override
     public void start() {
+//
     }
 
     @Override
@@ -63,9 +58,10 @@ public class SussyBaseDrive extends OpMode{
 
     void UpdateTelemetry(){
 
-        telemetry.addData("X", gamepad1.left_stick_x);
-        telemetry.addData("Y", -gamepad1.left_stick_y);
-        telemetry.addData("R", gamepad1.right_stick_x);
+        telemetry.addData("LF", robot.lf.getCurrentPosition());
+        telemetry.addData("LB", robot.lb.getCurrentPosition());
+        telemetry.addData("RF", robot.rf.getCurrentPosition());
+        telemetry.addData("RB", robot.rb.getCurrentPosition());
 
         //  telemetry.addData("Touch Sensor", robot.digitalTouch.getState());
         telemetry.update();
@@ -77,9 +73,9 @@ public class SussyBaseDrive extends OpMode{
         double directionR = Math.pow(gamepad1.right_stick_x, 1); //Turn
 
 
-        robot.lf.setPower((directionY + directionR - directionX) * drivePower);
+        robot.lf.setPower((directionY + directionR + directionX) * drivePower);
         robot.rf.setPower((directionY - directionR - directionX) * drivePower);
-        robot.lb.setPower((directionY + directionR + directionX) * drivePower);
+        robot.lb.setPower((directionY + directionR - directionX) * drivePower);
         robot.rb.setPower((directionY - directionR + directionX) * drivePower);
 
     }

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.swerve.auto.opmodes.sample;
 
 import android.app.Activity;
 import android.view.View;

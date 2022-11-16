@@ -1,22 +1,12 @@
-package org.firstinspires.ftc.teamcode.common;
+package org.firstinspires.ftc.teamcode.mecanum.common;
 
-import android.app.Activity;
-import android.hardware.Sensor;
-import android.view.View;
-
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.SwitchableLight;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.teamcode.mecanum.common.MecanumConstants;
 
 public class SussyHardwareDrive
 {
@@ -32,7 +22,7 @@ public class SussyHardwareDrive
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
     private ElapsedTime period  = new ElapsedTime();
-    SussyConstants constants = new SussyConstants();
+    MecanumConstants constants = new MecanumConstants();
 
     /* Constructor */
     public SussyHardwareDrive(){
@@ -63,9 +53,9 @@ public class SussyHardwareDrive
 
 
         //Reverse Motor
-        lf.setDirection(DcMotorEx.Direction.FORWARD);
-        lb.setDirection(DcMotorEx.Direction.FORWARD);
-        rf.setDirection(DcMotorEx.Direction.REVERSE);
+        lf.setDirection(DcMotorEx.Direction.REVERSE);
+        lb.setDirection(DcMotorEx.Direction.REVERSE);
+        rf.setDirection(DcMotorEx.Direction.FORWARD);
         rb.setDirection(DcMotorEx.Direction.FORWARD);
 
         // Set all motors to zero power

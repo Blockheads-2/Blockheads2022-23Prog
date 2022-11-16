@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teleop.test.drivetrain;
+package org.firstinspires.ftc.teamcode.swerve.test.drivetrain;
 
 import android.view.View;
 
@@ -17,40 +17,32 @@ import org.firstinspires.ftc.teamcode.common.Button;
 
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 
-@TeleOp(name="Swerve Code", group="Drive")
+@TeleOp(name="Tank Drive Test", group="Drive")
 //@Disabled
-public class SwerveCode extends OpMode{
+public class TankDriveTest extends OpMode{
     /* Declare OpMode members. */
     HardwareDrive robot = new HardwareDrive();
     GlobalPosSystem posSystem;
     Kinematics kinematics;
-    private double[] posData = new double[4];
 
-    private ElapsedTime runtime = new ElapsedTime();
     Constants constants = new Constants();
 
-    Accelerator accelerator = new Accelerator();
+    Accelerator acceleratorR = new Accelerator();
+    Accelerator acceleratorL = new Accelerator();
+    Reset reset;
+
 
     Button x = new Button();
     Button y = new Button();
     Button a = new Button();
     Button b = new Button();
 
-    private int rotateR;
-    private int rotateL;
-
     private int targetTopR;
     private int targetBotR;
     private int targetTopL;
     private int targetBotL;
-    private double power;
-
-    public enum State{
-        DRIVE,
-        RESET
-    }
-    State driveState = State.DRIVE;
-    Reset reset;
+    private double powerL;
+    private double powerR;
 
     //for resetting the robot's wheels' orientation
     ElapsedTime resetTimer = new ElapsedTime();
@@ -65,10 +57,9 @@ public class SwerveCode extends OpMode{
         posSystem = new GlobalPosSystem(robot);
         kinematics = new Kinematics(posSystem);
         posSystem.grabKinematics(kinematics);
-        reset = new Reset(robot,posSystem);
+        reset = new Reset(robot, posSystem);
 
         telemetry.addData("Say", "Hello Driver");
-        runtime.reset();
 
         robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -92,12 +83,11 @@ public class SwerveCode extends OpMode{
     }
 
     void UpdatePlayer1(){
-       // DriveTrainBasePower();
-        if (driveState == State.DRIVE){
-            DriveTrainPowerEncoder();
-            reset.reset(false);
-        } else if (driveState == State.RESET){
+        if (noMovementRequests()){
             reset.reset(true);
+        } else {
+            reset.reset(false);
+            DriveTrainPowerEncoder();
         }
     }
 
@@ -122,12 +112,13 @@ public class SwerveCode extends OpMode{
         telemetry.addData("botL clicks", robot.botL.getCurrentPosition());
         telemetry.addData("topR clicks", robot.topR.getCurrentPosition());
         telemetry.addData("botR clicks", robot.botR.getCurrentPosition());
-        telemetry.addData("Power", power);
+        telemetry.addData("PowerR", powerR);
+        telemetry.addData("PowerL", powerL);
 
-        telemetry.addData("target topL", targetTopL);
-        telemetry.addData("target botL", targetBotL);
-        telemetry.addData("target topR", targetTopR);
-        telemetry.addData("target botR", targetBotR);
+//        telemetry.addData("target topL", targetTopL);
+//        telemetry.addData("target botL", targetBotL);
+//        telemetry.addData("target topR", targetTopR);
+//        telemetry.addData("target botR", targetBotR);
 
         telemetry.addData("isBusy", robot.wheelsAreBusy());
 
@@ -139,57 +130,60 @@ public class SwerveCode extends OpMode{
         y.update(gamepad1.y);
         a.update(gamepad1.a);
         b.update(gamepad1.b);
-
-        if (x.getState() == Button.State.TAP){
-            driveState = State.RESET;
-
-        } else if (y.getState() == Button.State.TAP){
-            driveState = State.DRIVE;
-        }
     }
+    /*
+    The date is 11/5/2022.
+
+    We are currently in Victor's garage, and the keyboard is very nice.  However, there are no arrow keys and the "/" takes forever to type.
+
+    We are both mentally and physically dying as we are building this little piece of apoijwpeoifjawefawefawe.
+
+    To the future generations, this is a warning from us: cherish your lives! Life is more important than FTC unlesss you're a programer or mechanical person.
+
+     Nevermind, I figured out how to type arrow keys.  You use keys that don't even have an arrow symbol.
+
+     I believe it is within the common interest of the people to sleep.
+     */
+
 
 
     void DriveTrainPowerEncoder(){
         posSystem.calculatePos();
 
-        int posBotL = robot.botL.getCurrentPosition();
-        int posTopL = robot.topL.getCurrentPosition();
-        int posBotR = robot.botR.getCurrentPosition();
-        int posTopR = robot.topR.getCurrentPosition();
+        int distanceTopL = (int)(-gamepad1.right_stick_y * 100);
+        int distanceBotL = (int)(gamepad1.right_stick_y * 100);
+        int distanceTopR = (int)(-gamepad1.left_stick_y * 100);
+        int distanceBotR = (int)(gamepad1.left_stick_y * 100);
 
-        double alpha = 0.5;
-        double beta = 1 - alpha;
+        powerL = acceleratorL.update(gamepad1.right_stick_y) * constants.POWER_LIMITER;
+        powerR = acceleratorR.update(gamepad1.left_stick_y) * constants.POWER_LIMITER;
 
-        int distanceTopL = (int) (gamepad1.left_stick_y * 100 * beta);
-        int distanceBotL = (int) (-gamepad1.left_stick_y * 100 * beta);
-        int distanceTopR = distanceTopL;
-        int distanceBotR = distanceBotL;
+        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + distanceBotL);
+        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + distanceTopL);
+        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() + distanceBotR);
+        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + distanceTopR);
 
-        int rotationalTopL = -(int) (gamepad1.left_stick_x * 100 * alpha);
-        int rotationalBotL = -(int) (gamepad1.left_stick_x * 100 * alpha);
-        int rotationalTopR = -rotationalTopL;
-        int rotationalBotR = -rotationalBotL;
-
-        targetBotL=posBotL + distanceBotL + rotationalBotL;
-        targetTopL=posTopL + distanceTopL + rotationalTopL;
-        targetBotR=posBotR + distanceBotR + rotationalBotR;
-        targetTopR=posTopR + distanceTopR + rotationalTopR;
-        robot.botL.setTargetPosition(targetBotL);
-        robot.topL.setTargetPosition(targetTopL);
-        robot.botR.setTargetPosition(targetBotR);
-        robot.topR.setTargetPosition(targetTopR);
+//        if (powerL == 0 && powerR != 0){
+//            powerL = powerR / 2.0;
+//
+//            robot.botL.setTargetPosition(posBotL - (distanceBotR/2));
+//            robot.topL.setTargetPosition(posTopL - (distanceTopR/2));
+//        } else if (powerR == 0 && powerL != 0){
+//            powerR = powerL / 2.0;
+//
+//            robot.botR.setTargetPosition(posBotR - (distanceBotL/2));
+//            robot.topR.setTargetPosition(posTopR - (distanceTopL/2));
+//        }
 
         robot.botL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.topL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.botR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.topR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-        power = accelerator.update(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha) * constants.POWER_LIMITER;
-
-        robot.botL.setPower(power);
-        robot.topL.setPower(power);
-        robot.botR.setPower(power);
-        robot.topR.setPower(power);
+        robot.botL.setPower(powerL);
+        robot.topL.setPower(powerL);
+        robot.botR.setPower(powerR);
+        robot.topR.setPower(powerR);
     }
 
     public boolean noMovementRequests(){

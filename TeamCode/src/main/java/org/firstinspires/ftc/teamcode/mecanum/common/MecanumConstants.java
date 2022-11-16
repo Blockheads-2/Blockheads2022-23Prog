@@ -1,8 +1,6 @@
-package org.firstinspires.ftc.teamcode.common;
+package org.firstinspires.ftc.teamcode.mecanum.common;
 
-import org.checkerframework.checker.units.qual.C;
-
-public class SussyConstants {
+public class MecanumConstants {
 
     //Elevator Motor Positions
     public int elevatorPositionDown = 0; //Rest
