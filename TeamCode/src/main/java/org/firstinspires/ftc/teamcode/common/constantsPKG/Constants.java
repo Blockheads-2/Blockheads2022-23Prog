@@ -19,7 +19,7 @@ public class Constants {
 
     //Arm Constants
     public double CLICKS_PER_BASE_REV = 5281.1; //clicks per rev of base arm motor
-    public double CLICKS_PER_TOP_REV =  537.7; //clicks per rev of top arm motor
+    public double CLICKS_PER_TOP_REV =  1120.0; //clicks per rev of top arm motor
     public double DEGS_PER_BASE_CLICK = CLICKS_PER_BASE_REV / 360; //degrees per base motor click
     public double DEGS_PER_TOP_CLICK = CLICKS_PER_TOP_REV / 360; //degrees per top motor click
     public double RATIO_CLICKS = CLICKS_PER_BASE_REV / CLICKS_PER_TOP_REV; //ratio of clicks between rev clicks to gobilda clicks

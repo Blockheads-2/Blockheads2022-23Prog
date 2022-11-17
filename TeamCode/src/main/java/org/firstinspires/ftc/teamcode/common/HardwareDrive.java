@@ -63,8 +63,8 @@ public class HardwareDrive
     public DcMotorEx  botL;
     public DcMotorEx  topR;
     public DcMotorEx  botR;
-    public DcMotorEx  armBase1;
-    public DcMotorEx armBase2;
+    public DcMotorEx  armBaseLeft;
+    public DcMotorEx armBaseRight;
     public DcMotor armTop;
 
     public Servo armServo;
@@ -104,8 +104,8 @@ public class HardwareDrive
         botL = hwMap.get(DcMotorEx.class, "bottom_left");
         topR = hwMap.get(DcMotorEx.class, "top_right");
         botR = hwMap.get(DcMotorEx.class, "bottom_right");
-        armBase1 = hwMap.get(DcMotorEx.class, "arm_base1");
-        armBase2 = hwMap.get(DcMotorEx.class, "arm_base2");
+        armBaseLeft = hwMap.get(DcMotorEx.class, "arm_base_left");
+        armBaseRight = hwMap.get(DcMotorEx.class, "arm_base_right");
         armTop = hwMap.get(DcMotor.class, "arm_top");
 
         armServo = hwMap.get(Servo.class, "arm_servo");
@@ -130,8 +130,8 @@ public class HardwareDrive
         botR.setDirection(DcMotorEx.Direction.FORWARD);
         topR.setDirection(DcMotorEx.Direction.FORWARD);
 
-        armBase1.setDirection(DcMotorEx.Direction.REVERSE);
-        armBase2.setDirection(DcMotorSimple.Direction.FORWARD);
+        armBaseLeft.setDirection(DcMotorEx.Direction.REVERSE);
+        armBaseRight.setDirection(DcMotorSimple.Direction.FORWARD);
         armTop.setDirection(DcMotor.Direction.FORWARD);
 
         claw.setPosition(constants.INITIALIZED_CLAW);
@@ -141,8 +141,8 @@ public class HardwareDrive
 
         // Set all motors to zero power
         setMotorPower(0);
-        armBase1.setPower(0);
-        armBase2.setPower(0);
+        armBaseLeft.setPower(0);
+        armBaseRight.setPower(0);
         armTop.setPower(0);
 
         // Set all motors to run without encoders.

@@ -49,11 +49,13 @@ public class ArmMotorTester extends OpMode{
 
         clawPosition = robot.armServo.getPosition();
 
-        robot.armBase1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.armBaseLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.armBaseRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.armTop.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
-        robot.armBase1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.armBaseLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.armBaseRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.armTop.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
@@ -61,7 +63,7 @@ public class ArmMotorTester extends OpMode{
 
     @Override
     public void start(){
-        prevPosition = robot.armBase1.getCurrentPosition();
+        prevPosition = robot.armBaseLeft.getCurrentPosition();
     }
 
     @Override
@@ -73,9 +75,9 @@ public class ArmMotorTester extends OpMode{
 
     private void UpdateTelemetry() {
         telemetry.addData("Top", robot.armTop.getCurrentPosition());
-        telemetry.addData("Bottom", robot.armBase1.getCurrentPosition());
+        telemetry.addData("Bottom", robot.armBaseLeft.getCurrentPosition());
         telemetry.addData("Power", power);
-        telemetry.addData("Height", armKinematics.findHeightToGround(armKinematics.getPsi(robot.armBase1.getCurrentPosition()), armKinematics.getTheta(robot.armTop.getCurrentPosition())));
+        telemetry.addData("Height", armKinematics.findHeightToGround(armKinematics.getPsi(robot.armBaseLeft.getCurrentPosition()), armKinematics.getTheta(robot.armTop.getCurrentPosition())));
         telemetry.update();
     }
 
@@ -91,7 +93,7 @@ public class ArmMotorTester extends OpMode{
     }
 
     public void setTargetPositive(){
-        int baseCurrent = robot.armBase1.getCurrentPosition();
+        int baseCurrent = robot.armBaseLeft.getCurrentPosition();
         int topCurrent = robot.armTop.getCurrentPosition();
 
       //  robot.armBase.setTargetPosition(baseCurrent + 100);
@@ -105,7 +107,7 @@ public class ArmMotorTester extends OpMode{
     }
 
     public void setTargetNegative(){
-        int baseDegree = robot.armBase1.getCurrentPosition();
+        int baseDegree = robot.armBaseLeft.getCurrentPosition();
         int topCurrent = robot.armTop.getCurrentPosition();
 
        // robot.armBase.setTargetPosition(baseCurrent - 100);
@@ -119,62 +121,62 @@ public class ArmMotorTester extends OpMode{
     }
 
     public void setTargetPositiveBase(){
-        int base1Current = robot.armBase1.getCurrentPosition();
-        int base2Current = robot.armBase2.getCurrentPosition();
+        int base1Current = robot.armBaseLeft.getCurrentPosition();
+        int base2Current = robot.armBaseRight.getCurrentPosition();
 
-        robot.armBase1.setTargetPosition(base1Current + 100);
-        robot.armBase2.setTargetPosition(base2Current + 100);
+        robot.armBaseLeft.setTargetPosition(base1Current + 100);
+        robot.armBaseRight.setTargetPosition(base2Current + 100);
 
-        robot.armBase1.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        robot.armBase2.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        robot.armBaseLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        robot.armBaseRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-        robot.armBase1.setPower(power);
-        robot.armBase2.setPower(power);
+        robot.armBaseLeft.setPower(power);
+        robot.armBaseRight.setPower(power);
     }
 
     public void setTargetNegativeBase(){
-        int base1Current = robot.armBase1.getCurrentPosition();
-        int base2Current = robot.armBase2.getCurrentPosition();
+        int base1Current = robot.armBaseLeft.getCurrentPosition();
+        int base2Current = robot.armBaseRight.getCurrentPosition();
 
-        robot.armBase1.setTargetPosition(base1Current - 100);
-        robot.armBase2.setTargetPosition(base2Current - 100);
+        robot.armBaseLeft.setTargetPosition(base1Current - 100);
+        robot.armBaseRight.setTargetPosition(base2Current - 100);
 
-        robot.armBase1.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        robot.armBase2.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        robot.armBaseLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        robot.armBaseRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-        robot.armBase1.setPower(power);
-        robot.armBase2.setPower(power);
+        robot.armBaseLeft.setPower(power);
+        robot.armBaseRight.setPower(power);
     }
 
     public void maintainHeightToGroundPositive(){
-        int base1Current = robot.armBase1.getCurrentPosition();
-        int base2Current = robot.armBase2.getCurrentPosition();
+        int base1Current = robot.armBaseLeft.getCurrentPosition();
+        int base2Current = robot.armBaseRight.getCurrentPosition();
         int topCurrent = robot.armTop.getCurrentPosition();
 
 
-        robot.armBase1.setTargetPosition((int)((base1Current + (10 * constants.RATIO_CLICKS))));
-        robot.armBase2.setTargetPosition((int)((base2Current + (10 * constants.RATIO_CLICKS))));
+        robot.armBaseLeft.setTargetPosition((int)((base1Current + (10 * constants.RATIO_CLICKS))));
+        robot.armBaseRight.setTargetPosition((int)((base2Current + (10 * constants.RATIO_CLICKS))));
         robot.armTop.setTargetPosition(topCurrent - 10);
 
-        robot.armBase1.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        robot.armBase1.setPower(power);
+        robot.armBaseLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        robot.armBaseLeft.setPower(power);
 
-        robot.armBase2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.armBase2.setPower(power);
+        robot.armBaseRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.armBaseRight.setPower(power);
 
         robot.armTop.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.armTop.setPower(power);
     }
 
     public void maintainHeightToGroundNegative(){
-        double baseCurrent = robot.armBase1.getCurrentPosition();
+        double baseCurrent = robot.armBaseLeft.getCurrentPosition();
         double topCurrent = robot.armTop.getCurrentPosition();
 
-        robot.armBase1.setTargetPosition((int)((baseCurrent - (10 * constants.RATIO_CLICKS))));
+        robot.armBaseLeft.setTargetPosition((int)((baseCurrent - (10 * constants.RATIO_CLICKS))));
         robot.armTop.setTargetPosition((int)(topCurrent + 10));
 
-        robot.armBase1.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        robot.armBase1.setPower(power);
+        robot.armBaseLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        robot.armBaseLeft.setPower(power);
 
         robot.armTop.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.armTop.setPower(power);
@@ -221,17 +223,17 @@ public class ArmMotorTester extends OpMode{
             clawAngleDown();
         }
 
-        if (robot.armBase1.getCurrentPosition() != prevPosition){
-                robot.armBase1.setTargetPosition(prevPosition);
-                robot.armBase1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.armBase1.setPower(0.1);
+        if (robot.armBaseLeft.getCurrentPosition() != prevPosition){
+                robot.armBaseLeft.setTargetPosition(prevPosition);
+                robot.armBaseLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.armBaseLeft.setPower(0.1);
         } else if (gamepad1.dpad_left){
             coneBack();
         }  else {
             robot.armTop.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            robot.armBase1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.armBaseLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
-        prevPosition = robot.armBase1.getCurrentPosition();
+        prevPosition = robot.armBaseLeft.getCurrentPosition();
 
         if (power < 0) power = 0;
         else if (power > 1) power = 1;
@@ -242,12 +244,12 @@ public class ArmMotorTester extends OpMode{
 
     public void linearExtensionControl(){
         //angles for arm bottomg and top linkages
-        double psi = armKinematics.getPsi(robot.armBase1.getCurrentPosition());
+        double psi = armKinematics.getPsi(robot.armBaseLeft.getCurrentPosition());
         double theta = armKinematics.getTheta(robot.armTop.getCurrentPosition());
         double omega = armKinematics.getOmega(robot.armServo.getPosition());
 
         //current click position
-        double baseCurrent = robot.armBase1.getCurrentPosition();
+        double baseCurrent = robot.armBaseLeft.getCurrentPosition();
         double topCurrent = robot.armTop.getCurrentPosition();
         double armServoCurrent = robot.armServo.getPosition();
 
