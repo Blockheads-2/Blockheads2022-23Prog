@@ -43,9 +43,9 @@ public class RevisedKinematics {
     public int rightThrottle = -1;
     public int leftThrottle = -1;
 
-    double target = 0;
-    double turnAmountL = 0;
-    double turnAmountR = 0;
+    public double target = 0;
+    public double turnAmountL = 0;
+    public double turnAmountR = 0;
     private enum Module{
         RIGHT,
         LEFT
@@ -71,8 +71,6 @@ public class RevisedKinematics {
         snapLeftWheelPID = new SnapSwerveModulePID();
         snapRightWheelPID = new SnapSwerveModulePID();
 
-        snapLeftWheelPID=new SnapSwerveModulePID();
-        snapRightWheelPID=new SnapSwerveModulePID();
         snapLeftWheelPID.setTargets(0.03, 0, 0.01);
         snapRightWheelPID.setTargets(0.03, 0, 0.01);
 
@@ -106,7 +104,6 @@ public class RevisedKinematics {
         leftRotClicks = (int)(turnAmountL * constants.CLICKS_PER_DEGREE) * leftTurnDirectionW;
         rightRotatePower = snapRightWheelPID.update(turnAmountR);
         rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE) * rightTurnDirectionW;
-
     }
 
     public void wheelOptimization(double target, double currentW, Module module){ //returns how much the wheels should rotate in which direction
