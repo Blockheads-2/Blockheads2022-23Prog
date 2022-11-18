@@ -93,16 +93,12 @@ public class ArmMotorTester extends OpMode{
     }
 
     public void setTargetPositive(){
-        int baseCurrent = robot.armBaseLeft.getCurrentPosition();
         int topCurrent = robot.armTop.getCurrentPosition();
 
-      //  robot.armBase.setTargetPosition(baseCurrent + 100);
         robot.armTop.setTargetPosition(topCurrent + 10);
 
-     //   robot.armBase.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.armTop.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-      //  robot.armBase.setPower(0.3);
         robot.armTop.setPower(power);
     }
 
