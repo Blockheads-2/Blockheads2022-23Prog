@@ -213,7 +213,7 @@ public class ArmMotorTester extends OpMode{
         } else if (gamepad2.dpad_left){
             coneBack();
         } else if (gamepad2.dpad_up){
-           clawAngleUp();
+            clawAngleUp();
         } else if (gamepad2.dpad_down){
             clawAngleDown();
         }
