@@ -63,7 +63,8 @@ public class HardwareDrive
     public DcMotorEx  botL;
     public DcMotorEx  topR;
     public DcMotorEx  botR;
-    public DcMotorEx  armBase;
+    public DcMotorEx  armBaseLeft;
+    public DcMotorEx armBaseRight;
     public DcMotor armTop;
 
     public Servo armServo;
@@ -103,7 +104,8 @@ public class HardwareDrive
         botL = hwMap.get(DcMotorEx.class, "bottom_left");
         topR = hwMap.get(DcMotorEx.class, "top_right");
         botR = hwMap.get(DcMotorEx.class, "bottom_right");
-        armBase = hwMap.get(DcMotorEx.class, "arm_base");
+        armBaseLeft = hwMap.get(DcMotorEx.class, "arm_base_left");
+        armBaseRight = hwMap.get(DcMotorEx.class, "arm_base_right");
         armTop = hwMap.get(DcMotor.class, "arm_top");
 
         armServo = hwMap.get(Servo.class, "arm_servo");
@@ -128,7 +130,8 @@ public class HardwareDrive
         botR.setDirection(DcMotorEx.Direction.FORWARD);
         topR.setDirection(DcMotorEx.Direction.FORWARD);
 
-        armBase.setDirection(DcMotorEx.Direction.REVERSE);
+        armBaseLeft.setDirection(DcMotorEx.Direction.REVERSE);
+        armBaseRight.setDirection(DcMotorSimple.Direction.FORWARD);
         armTop.setDirection(DcMotor.Direction.FORWARD);
 
         claw.setPosition(constants.INITIALIZED_CLAW);
@@ -136,14 +139,16 @@ public class HardwareDrive
         // dtMotors[2].setDirection(DcMotorSimple.Direction.FORWARD);
         //dtMotors[3].setDirection(DcMotorSimple.Direction.FORWARD);
 
-// Set all motors to zero power
+        // Set all motors to zero power
         setMotorPower(0);
+        armBaseLeft.setPower(0);
+        armBaseRight.setPower(0);
+        armTop.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         setRunMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         setRunMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-
     }
 
     public void setMotorPower(double power){
@@ -174,11 +179,8 @@ public class HardwareDrive
         //make sure to not add arm here
     }
 
-
     public boolean wheelsAreBusy(){
         return (topL.isBusy() && botL.isBusy() && topR.isBusy() && botR.isBusy());
     }
-
-
 }
 
