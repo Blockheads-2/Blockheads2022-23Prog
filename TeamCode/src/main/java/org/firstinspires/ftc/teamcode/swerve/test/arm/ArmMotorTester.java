@@ -228,7 +228,7 @@ public class ArmMotorTester extends OpMode{
         if(clawPosition < 0) clawPosition = 0;
         else if(clawPosition > 1) power = 1;
     }
-    
+
     public void positions(){
         //positions: ground, low, mid, high
         //clicks:
@@ -256,11 +256,6 @@ public class ArmMotorTester extends OpMode{
             //ground pos
 
         }
-    }
-
-    public void servoTester(){
-        robot.claw.setPosition(0);
-        robot.armServo.setPosition(0);
     }
 
     @Override
