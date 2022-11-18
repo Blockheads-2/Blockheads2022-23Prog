@@ -96,9 +96,7 @@ public class ArmMotorTester extends OpMode{
         int topCurrent = robot.armTop.getCurrentPosition();
 
         robot.armTop.setTargetPosition(topCurrent + 10);
-
         robot.armTop.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
         robot.armTop.setPower(power);
     }
 
@@ -106,9 +104,7 @@ public class ArmMotorTester extends OpMode{
         int topCurrent = robot.armTop.getCurrentPosition();
 
         robot.armTop.setTargetPosition(topCurrent - 10);
-
         robot.armTop.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
         robot.armTop.setPower(power);
     }
 
@@ -232,22 +228,7 @@ public class ArmMotorTester extends OpMode{
         if(clawPosition < 0) clawPosition = 0;
         else if(clawPosition > 1) power = 1;
     }
-
-    public void linearExtensionControl(){
-        //angles for arm bottomg and top linkages
-        double psi = armKinematics.getPsi(robot.armBaseLeft.getCurrentPosition());
-        double theta = armKinematics.getTheta(robot.armTop.getCurrentPosition());
-        double omega = armKinematics.getOmega(robot.armServo.getPosition());
-
-        //current click position
-        double baseCurrent = robot.armBaseLeft.getCurrentPosition();
-        double topCurrent = robot.armTop.getCurrentPosition();
-        double armServoCurrent = robot.armServo.getPosition();
-
-        int baseTarget = 0;
-        int topTarget = 0;
-    }
-
+    
     public void positions(){
         //positions: ground, low, mid, high
         //clicks:
