@@ -149,7 +149,6 @@ public class ArmMotorTester extends OpMode{
         int baseRightCurrent = robot.armBaseRight.getCurrentPosition();
         int topCurrent = robot.armTop.getCurrentPosition();
 
-
         robot.armBaseLeft.setTargetPosition((int)((baseLeftCurrent + (10 * constants.RATIO_CLICKS))));
         robot.armBaseRight.setTargetPosition((int)((baseRightCurrent + (10 * constants.RATIO_CLICKS))));
         robot.armTop.setTargetPosition(topCurrent - 10);
