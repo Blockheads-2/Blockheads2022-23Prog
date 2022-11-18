@@ -99,22 +99,13 @@ public class HardwareDrive
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-
         topL = hwMap.get(DcMotorEx.class, "top_left");
         botL = hwMap.get(DcMotorEx.class, "bottom_left");
         topR = hwMap.get(DcMotorEx.class, "top_right");
         botR = hwMap.get(DcMotorEx.class, "bottom_right");
-<<<<<<< Updated upstream
         armBaseLeft = hwMap.get(DcMotorEx.class, "arm_base_left");
         armBaseRight = hwMap.get(DcMotorEx.class, "arm_base_right");
         armTop = hwMap.get(DcMotor.class, "arm_top");
-=======
-//        armBase = hwMap.get(DcMotorEx.class, "arm_base");
-//        armTop = hwMap.get(DcMotor.class, "arm_top");
->>>>>>> Stashed changes
-
-//        armServo = hwMap.get(Servo.class, "arm_servo");
-//        claw = hwMap.get(Servo.class, "claw");
 
         //IMU initiation
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -135,19 +126,9 @@ public class HardwareDrive
         botR.setDirection(DcMotorEx.Direction.FORWARD);
         topR.setDirection(DcMotorEx.Direction.FORWARD);
 
-<<<<<<< Updated upstream
         armBaseLeft.setDirection(DcMotorEx.Direction.REVERSE);
         armBaseRight.setDirection(DcMotorSimple.Direction.FORWARD);
         armTop.setDirection(DcMotor.Direction.FORWARD);
-=======
-//        armBase.setDirection(DcMotorEx.Direction.REVERSE);
-//        armTop.setDirection(DcMotor.Direction.FORWARD);
->>>>>>> Stashed changes
-
-//        claw.setPosition(constants.INITIALIZED_CLAW);
-
-        // dtMotors[2].setDirection(DcMotorSimple.Direction.FORWARD);
-        //dtMotors[3].setDirection(DcMotorSimple.Direction.FORWARD);
 
         // Set all motors to zero power
         setMotorPower(0);
