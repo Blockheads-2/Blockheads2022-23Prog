@@ -78,7 +78,7 @@ public class testMotor extends OpMode{
             case RUN:
                 DriveTrainPowerEncoder();
                 break;
-                
+
             case STOP:
                 robot.botL.setPower(0);
                 robot.topL.setPower(0);
@@ -95,6 +95,13 @@ public class testMotor extends OpMode{
         telemetry.addData("X", gamepad1.left_stick_x);
         telemetry.addData("Y", -gamepad1.left_stick_y);
         telemetry.addData("R", gamepad1.right_stick_x);
+
+        telemetry.addData("topL clicks", robot.topL.getCurrentPosition());
+        telemetry.addData("botL clicks", robot.botL.getCurrentPosition());
+        telemetry.addData("topR clicks", robot.topR.getCurrentPosition());
+        telemetry.addData("botR clicks", robot.botR.getCurrentPosition());
+
+        telemetry.addData("Drive State", dstate);
         telemetry.update();
     }
 
