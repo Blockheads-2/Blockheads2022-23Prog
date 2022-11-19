@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.mecanum.common;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -15,6 +17,13 @@ public class SussyHardwareDrive
     public DcMotorEx  rf   = null;
     public DcMotorEx  lb   = null;
     public DcMotorEx  rb   = null;
+    public DcMotorEx  abl;
+    public DcMotorEx abr;
+    public DcMotor at;
+
+    //Servos
+    public Servo armServo;
+    public Servo claw;
 
     //Sensor
     public BNO055IMU imu;
@@ -38,6 +47,10 @@ public class SussyHardwareDrive
         rf = hwMap.get(DcMotorEx.class, "right_front");
         lb = hwMap.get(DcMotorEx.class, "left_back");
         rb = hwMap.get(DcMotorEx.class, "right_back");
+        at = hwMap.get(DcMotor.class, "arm_top");
+        abl = hwMap.get(DcMotorEx.class, "arm_base_left");
+        abr = hwMap.get(DcMotorEx.class, "arm_base_right");
+
 
         //IMU initiation
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -52,11 +65,17 @@ public class SussyHardwareDrive
         imu.initialize(parameters);
 
 
-        //Reverse Motor
+        //Reverse Drivetrain Motors
         lf.setDirection(DcMotorEx.Direction.REVERSE);
         lb.setDirection(DcMotorEx.Direction.REVERSE);
         rf.setDirection(DcMotorEx.Direction.FORWARD);
         rb.setDirection(DcMotorEx.Direction.FORWARD);
+
+        //Reverse Arm Motors
+        at.setDirection(DcMotorEx.Direction.FORWARD);
+        abl.setDirection(DcMotorEx.Direction.FORWARD);
+        abr.setDirection(DcMotorEx.Direction.REVERSE);
+
 
         // Set all motors to zero power
         lf.setPower(0);
