@@ -30,7 +30,7 @@ public class ArmMotorTester extends OpMode{
     ElapsedTime resetTimer = new ElapsedTime();
     View relativeLayout;
 
-    int prevPosition;
+    int prevPosition = robot.armBaseLeft.getCurrentPosition();
 
     private double power = 0.5;
     private double clawPosition;
@@ -53,12 +53,9 @@ public class ArmMotorTester extends OpMode{
         robot.armBaseRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.armTop.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-
         robot.armBaseLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.armBaseRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.armTop.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
     }
 
     @Override
@@ -214,9 +211,7 @@ public class ArmMotorTester extends OpMode{
                 robot.armBaseLeft.setTargetPosition(prevPosition);
                 robot.armBaseLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.armBaseLeft.setPower(0.1);
-        } else if (gamepad1.dpad_left){
-            coneBack();
-        }  else {
+        } else {
             robot.armTop.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             robot.armBaseLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
