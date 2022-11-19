@@ -104,14 +104,10 @@ public class HardwareDrive
         botL = hwMap.get(DcMotorEx.class, "bottom_left");
         topR = hwMap.get(DcMotorEx.class, "top_right");
         botR = hwMap.get(DcMotorEx.class, "bottom_right");
-<<<<<<< Updated upstream
-        armBaseLeft = hwMap.get(DcMotorEx.class, "arm_base_left");
-        armBaseRight = hwMap.get(DcMotorEx.class, "arm_base_right");
-        armTop = hwMap.get(DcMotor.class, "arm_top");
-=======
-//        armBase = hwMap.get(DcMotorEx.class, "arm_base");
+//        armBaseLeft = hwMap.get(DcMotorEx.class, "arm_base_left");
+//        armBaseRight = hwMap.get(DcMotorEx.class, "arm_base_right");
 //        armTop = hwMap.get(DcMotor.class, "arm_top");
->>>>>>> Stashed changes
+
 
 //        armServo = hwMap.get(Servo.class, "arm_servo");
 //        claw = hwMap.get(Servo.class, "claw");
@@ -135,14 +131,9 @@ public class HardwareDrive
         botR.setDirection(DcMotorEx.Direction.FORWARD);
         topR.setDirection(DcMotorEx.Direction.FORWARD);
 
-<<<<<<< Updated upstream
-        armBaseLeft.setDirection(DcMotorEx.Direction.REVERSE);
-        armBaseRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        armTop.setDirection(DcMotor.Direction.FORWARD);
-=======
-//        armBase.setDirection(DcMotorEx.Direction.REVERSE);
+//        armBaseLeft.setDirection(DcMotorEx.Direction.REVERSE);
+//        armBaseRight.setDirection(DcMotorSimple.Direction.FORWARD);
 //        armTop.setDirection(DcMotor.Direction.FORWARD);
->>>>>>> Stashed changes
 
 //        claw.setPosition(constants.INITIALIZED_CLAW);
 

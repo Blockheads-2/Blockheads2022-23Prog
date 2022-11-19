@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.teamcode.common.Accelerator;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.kinematics.drive.Kinematics;
@@ -22,10 +23,18 @@ import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 public class testMotor extends OpMode{
     /* Declare OpMode members. */
     HardwareDrive robot = new HardwareDrive();
+    Constants constants = new Constants();
     Button x = new Button();
     Button y = new Button();
     Button a = new Button();
     Button b = new Button();
+
+    public enum DriveType{
+        CONTROLLER,
+        TEST_AB
+    }
+    DriveType dType = DriveType.TEST_AB;
+    boolean testAB = false;
 
     //for resetting the robot's wheels' orientation
     ElapsedTime resetTimer = new ElapsedTime();
@@ -33,12 +42,6 @@ public class testMotor extends OpMode{
      * in this sample application; you probably *don't* need this when you use a color sensor on your
      * robot. Note that you won't see anything change on the Driver Station, only on the Robot Controller. */
     View relativeLayout;
-
-    public enum DriveState{
-        RUN,
-        STOP
-    }
-    DriveState dstate = DriveState.STOP;
 
     @Override
     public void init() { //When "init" is clicked
@@ -68,24 +71,20 @@ public class testMotor extends OpMode{
     }
 
     void UpdatePlayer1(){
-        if (x.getState() == Button.State.TAP){
-            dstate = DriveState.RUN;
+        if(x.getState() == Button.State.TAP){
+            dType = DriveType.CONTROLLER;
         } else if (y.getState() == Button.State.TAP){
-            dstate = DriveState.STOP;
+            dType = DriveType.TEST_AB;
+            testAB = true;
         }
 
-        switch(dstate){
-            case RUN:
-                DriveTrainPowerEncoder();
-                break;
-
-            case STOP:
-                robot.botL.setPower(0);
-                robot.topL.setPower(0);
-                robot.botR.setPower(0);
-                robot.topR.setPower(0);
-                break;
+        if (dType == DriveType.CONTROLLER){
+            DriveTrainPowerEncoder();
+        } else if (dType == DriveType.TEST_AB && testAB){
+            testAB = false;
+            testAB();
         }
+
     }
 
     void UpdatePlayer2(){
@@ -101,7 +100,6 @@ public class testMotor extends OpMode{
         telemetry.addData("topR clicks", robot.topR.getCurrentPosition());
         telemetry.addData("botR clicks", robot.botR.getCurrentPosition());
 
-        telemetry.addData("Drive State", dstate);
         telemetry.update();
     }
 
@@ -129,12 +127,27 @@ public class testMotor extends OpMode{
         robot.botR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.topR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-        double power = 0.5;
+        double power = -gamepad1.left_stick_y * 0.4;
 
         robot.botL.setPower(power);
         robot.topL.setPower(power);
         robot.botR.setPower(power);
         robot.topR.setPower(power);
+    }
+
+    void testAB(){
+        int posBotL = robot.botL.getCurrentPosition();
+        int posTopL = robot.topL.getCurrentPosition();
+        int posBotR = robot.botR.getCurrentPosition();
+        int posTopR = robot.topR.getCurrentPosition();
+
+        double rotAmount = constants.CLICKS_PER_DEGREE * 360;
+        double spinAmount = constants.CLICKS_PER_INCH * constants.WHEEL_CIRCUMFERENCE;
+
+        robot.botL.setTargetPosition(posBotL + (int)(spinAmount + rotAmount));
+        robot.topL.setTargetPosition(posTopL + (int)(-spinAmount + rotAmount));
+        robot.botR.setTargetPosition(posBotR + (int)(spinAmount + rotAmount));
+        robot.topR.setTargetPosition(posTopR + (int)(-spinAmount + rotAmount));
     }
 
     public boolean noMovementRequests(){

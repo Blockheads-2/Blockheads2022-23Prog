@@ -22,9 +22,9 @@ public class SnapSwerveModulePID {
         timer.reset();
     }
 
-    public double update(double turnAmountLeft){
+    public double update(double turnAmount){
         //proportion
-        double error = target - turnAmountLeft;
+        double error = target - turnAmount;
         pError = error;
 
         //integral

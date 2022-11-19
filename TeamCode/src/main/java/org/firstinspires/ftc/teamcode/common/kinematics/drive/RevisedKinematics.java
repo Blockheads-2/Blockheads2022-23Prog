@@ -94,8 +94,6 @@ public class RevisedKinematics {
         wheelOptimization(target, leftCurrentW, Module.LEFT);
         wheelOptimization(target, rightCurrentW, Module.RIGHT);
 
-        if (noMovementRequests()) type=DriveType.STOP;
-
         spinPower = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
         spinClicksL = (int)(spinPower * 100 * leftThrottle);
         spinClicksR = (int)(spinPower * 100 * rightThrottle);
