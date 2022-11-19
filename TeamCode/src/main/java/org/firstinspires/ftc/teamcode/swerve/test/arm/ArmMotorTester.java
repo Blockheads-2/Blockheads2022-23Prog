@@ -26,6 +26,10 @@ public class ArmMotorTester extends OpMode{
     Button y = new Button();
     Button a = new Button();
     Button b = new Button();
+    Button dUp = new Button();
+    Button dRight = new Button();
+    Button dDown = new Button();
+    Button dLeft = new Button();
 
     ElapsedTime resetTimer = new ElapsedTime();
     View relativeLayout;
@@ -83,6 +87,10 @@ public class ArmMotorTester extends OpMode{
         y.update(gamepad2.y);
         a.update(gamepad2.a);
         b.update(gamepad2.b);
+        dUp.update(gamepad2.dpad_up);
+        dRight.update(gamepad2.dpad_right);
+        dDown.update(gamepad2.dpad_down);
+        dLeft.update(gamepad2.dpad_left);
     }
 
     void UpdatePlayer2(){
@@ -238,16 +246,16 @@ public class ArmMotorTester extends OpMode{
             //dpad down: low
             //dpad left: ground
 
-        if (gamepad2.dpad_up){
+        if (dUp.getState().equals(Button.State.TAP)){
             //high pos
 
-        } else if (gamepad2.dpad_right){
+        } else if (dRight.getState().equals(Button.State.TAP)){
             //mid pos
 
-        } else if (gamepad2.dpad_down){
+        } else if (dDown.getState().equals(Button.State.TAP)){
             //low pos
 
-        } else if (gamepad2.dpad_left){
+        } else if (dLeft.getState().equals(Button.State.TAP)){
             //ground pos
 
         }
