@@ -91,17 +91,33 @@ public class RevisedKinematics {
         if (lx == 0 && ly == 0) target = 0;
         else if (lx==0 && ly < 0) target=180;
         target=clamp(target);
-        wheelOptimization(target, leftCurrentW, Module.LEFT);
-        wheelOptimization(target, rightCurrentW, Module.RIGHT);
+
+        turnAmountL = wheelOptimization(target, leftCurrentW);
+        turnAmountR = wheelOptimization(target, rightCurrentW);
 
         spinPower = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
         spinClicksL = (int)(spinPower * 100 * leftThrottle);
         spinClicksR = (int)(spinPower * 100 * rightThrottle);
 
         leftRotatePower = snapLeftWheelPID.update(turnAmountL);
-        leftRotClicks = (int)(turnAmountL * constants.CLICKS_PER_DEGREE) * leftTurnDirectionW;
+        leftRotClicks = (int)(turnAmountL * constants.CLICKS_PER_DEGREE);
         rightRotatePower = snapRightWheelPID.update(turnAmountR);
-        rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE) * rightTurnDirectionW;
+        rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE);
+    }
+
+    public double wheelOptimization(double target, double currentW){ //returns how much the wheels should rotate in which direction
+        double target2 = (target < 0 ? target + 360 : target);
+        double current2 = (currentW < 0 ? currentW + 360 : currentW);
+
+        double turnAmount = target - currentW;
+        double turnAmount2 = target2 - current2;
+
+        if (Math.abs(turnAmount) < Math.abs(turnAmount2)){
+            return turnAmount;
+
+        } else{
+            return turnAmount2;
+        }
     }
 
     public void wheelOptimization(double target, double currentW, Module module){ //returns how much the wheels should rotate in which direction
