@@ -99,7 +99,6 @@ public class HardwareDrive
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-
         topL = hwMap.get(DcMotorEx.class, "top_left");
         botL = hwMap.get(DcMotorEx.class, "bottom_left");
         topR = hwMap.get(DcMotorEx.class, "top_right");
@@ -139,7 +138,6 @@ public class HardwareDrive
 
         // dtMotors[2].setDirection(DcMotorSimple.Direction.FORWARD);
         //dtMotors[3].setDirection(DcMotorSimple.Direction.FORWARD);
-
         // Set all motors to zero power
         setMotorPower(0);
         armBaseLeft.setPower(0);
