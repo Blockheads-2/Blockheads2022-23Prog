@@ -46,9 +46,10 @@ public class testTranslateGPS extends OpMode{
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();
 
-        int[] clicksArr = getClicks(constants.WHEEL_CIRCUMFERENCE, 0);
-        distanceClicks = clicksArr[0];
-        rotClicks = clicksArr[1];
+        double distance = constants.WHEEL_CIRCUMFERENCE;
+        double rot = 0;
+        distanceClicks = (int)(distance * constants.CLICKS_PER_INCH); //rotation clicks
+        rotClicks = (int)(rot * constants.CLICKS_PER_DEGREE);
 
         drive(distanceClicks, rotClicks);
     }
@@ -119,16 +120,6 @@ public class testTranslateGPS extends OpMode{
         robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-
-    public int[] getClicks(double distance, double rotation){
-        int[] clicks = new int[2];
-        double translationClicks = distance * constants.CLICKS_PER_INCH; //rotation clicks
-        double rotationClicks = rotation * constants.CLICKS_PER_DEGREE; //table spinning clicks
-
-        clicks[0] = (int)translationClicks;
-        clicks[1] = (int)rotationClicks;
-        return clicks;
     }
 
     public boolean works(){
