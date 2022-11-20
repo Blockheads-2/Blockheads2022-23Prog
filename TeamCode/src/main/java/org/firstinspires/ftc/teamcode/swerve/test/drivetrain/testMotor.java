@@ -33,7 +33,7 @@ public class testMotor extends OpMode{
         CONTROLLER,
         TEST_AB
     }
-    DriveType dType = DriveType.TEST_AB;
+    DriveType dType = DriveType.CONTROLLER;
     boolean testAB = false;
 
     //for resetting the robot's wheels' orientation
@@ -143,7 +143,8 @@ public class testMotor extends OpMode{
             int posTopR = robot.topR.getCurrentPosition();
 
             double rotAmount = constants.CLICKS_PER_DEGREE * 360;
-            double spinAmount = constants.CLICKS_PER_INCH * constants.WHEEL_CIRCUMFERENCE;
+//            double spinAmount = constants.CLICKS_PER_INCH * constants.WHEEL_CIRCUMFERENCE;
+            double spinAmount = 0;
 
             robot.botL.setTargetPosition(posBotL + (int)(spinAmount + rotAmount));
             robot.topL.setTargetPosition(posTopL + (int)(-spinAmount + rotAmount));

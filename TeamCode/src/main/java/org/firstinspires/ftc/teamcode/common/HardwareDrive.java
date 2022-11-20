@@ -136,13 +136,11 @@ public class HardwareDrive
 
 //        claw.setPosition(constants.INITIALIZED_CLAW);
 
-        // dtMotors[2].setDirection(DcMotorSimple.Direction.FORWARD);
-        //dtMotors[3].setDirection(DcMotorSimple.Direction.FORWARD);
         // Set all motors to zero power
         setMotorPower(0);
-        armBaseLeft.setPower(0);
-        armBaseRight.setPower(0);
-        armTop.setPower(0);
+//        armBaseLeft.setPower(0);
+//        armBaseRight.setPower(0);
+//        armTop.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.

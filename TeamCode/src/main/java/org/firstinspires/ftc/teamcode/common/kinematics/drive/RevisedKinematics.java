@@ -83,6 +83,9 @@ public class RevisedKinematics {
         this.rx = rx;
         this.ry = ry;
 
+        if (noMovementRequests()) type = DriveType.STOP;
+        else type = DriveType.LINEAR;
+
         leftCurrentW = posSystem.getPositionArr()[2];
         rightCurrentW = posSystem.getPositionArr()[3];
         currentR = posSystem.getPositionArr()[4];
