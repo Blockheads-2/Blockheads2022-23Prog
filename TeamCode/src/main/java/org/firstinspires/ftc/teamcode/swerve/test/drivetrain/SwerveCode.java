@@ -170,10 +170,10 @@ public class SwerveCode extends OpMode{
         int rotationalTopR = -rotationalTopL;
         int rotationalBotR = -rotationalBotL;
 
-        targetBotL=posBotL + distanceBotL + rotationalBotL;
-        targetTopL=posTopL + distanceTopL + rotationalTopL;
-        targetBotR=posBotR + distanceBotR + rotationalBotR;
-        targetTopR=posTopR + distanceTopR + rotationalTopR;
+        targetBotL = posBotL + distanceBotL + rotationalBotL;
+        targetTopL = posTopL + distanceTopL + rotationalTopL;
+        targetBotR = posBotR + distanceBotR + rotationalBotR;
+        targetTopR = posTopR + distanceTopR + rotationalTopR;
         robot.botL.setTargetPosition(targetBotL);
         robot.topL.setTargetPosition(targetTopL);
         robot.botR.setTargetPosition(targetBotR);
@@ -186,10 +186,21 @@ public class SwerveCode extends OpMode{
 
       //  power = accelerator.update(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha) * constants.POWER_LIMITER;
 
+     /*
+
         robot.botL.setPower(power);
         robot.topL.setPower(power);
         robot.botR.setPower(power);
         robot.topR.setPower(power);
+
+      */
+
+        robot.botL.setPower(gamepad1.left_stick_y);
+        robot.topL.setPower(-gamepad1.left_stick_y);
+        robot.botR.setPower(gamepad1.left_stick_y);
+        robot.topR.setPower(-gamepad1.left_stick_y);
+
+
     }
 
     public boolean noMovementRequests(){

@@ -63,15 +63,15 @@ public class HardwareDrive
     public DcMotorEx  botL;
     public DcMotorEx  topR;
     public DcMotorEx  botR;
+
+
     public DcMotorEx  armBaseRight;
     public DcMotorEx armBaseLeft;
     public DcMotor armTop;
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
+    public Servo claw;
 
-]
+
 
 
 
@@ -125,6 +125,8 @@ public class HardwareDrive
         claw = hwMap.get(Servo.class, "claw");
 
 
+
+
 //        armBase = hwMap.get(DcMotorEx.class, "arm_base");
 //        armTop = hwMap.get(DcMotorEx.class, "arm_top");
 
@@ -167,14 +169,12 @@ public class HardwareDrive
         setRunMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         setRunMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
-<<<<<<< Updated upstream
+
         armBaseRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armBaseLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armTop.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-=======
-        upperArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lowerArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
->>>>>>> Stashed changes
+
+
     }
 
     public void setMotorPower(double power){
