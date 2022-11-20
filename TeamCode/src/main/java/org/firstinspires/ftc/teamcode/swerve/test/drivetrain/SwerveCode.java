@@ -157,8 +157,8 @@ public class SwerveCode extends OpMode{
         int posBotR = robot.botR.getCurrentPosition();
         int posTopR = robot.topR.getCurrentPosition();
 
-        double alpha = 0.5;
-        double beta = 1 - alpha;
+        double alpha = 1;
+        double beta = 1;
 
         int distanceTopL = (int) (gamepad1.left_stick_y * 100 * beta);
         int distanceBotL = (int) (-gamepad1.left_stick_y * 100 * beta);
@@ -184,7 +184,7 @@ public class SwerveCode extends OpMode{
         robot.botR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.topR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-        power = accelerator.update(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha) * constants.POWER_LIMITER;
+      //  power = accelerator.update(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha) * constants.POWER_LIMITER;
 
         robot.botL.setPower(power);
         robot.topL.setPower(power);
