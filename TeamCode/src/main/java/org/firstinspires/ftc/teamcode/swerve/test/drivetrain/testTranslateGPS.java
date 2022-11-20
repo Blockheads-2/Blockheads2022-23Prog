@@ -111,7 +111,7 @@ public class testTranslateGPS extends OpMode{
     }
 
     public void drive(int distanceClicks, int rotClicks){
-        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - distanceClicks + rotClicks);
+        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - distanceClicks - rotClicks);
         robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + distanceClicks + rotClicks);
         robot.botR.setTargetPosition(robot.botR.getCurrentPosition() - distanceClicks + rotClicks);
         robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + distanceClicks + rotClicks);
@@ -120,14 +120,6 @@ public class testTranslateGPS extends OpMode{
         robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-
-    public boolean works(){
-        return (posSystem.dChange() && !posSystem.rChange() && !posSystem.wChange());
-    }
-
-    private void reset(){
-        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     /*
