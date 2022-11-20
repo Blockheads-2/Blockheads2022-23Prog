@@ -159,7 +159,7 @@ public class HardwareDrive
 //        claw.setPosition(constants.INITIALIZED_CLAW);
 
         // Set all motors to zero power
-        setMotorPower(0);
+//        setMotorPower(0);
 //        armBaseLeft.setPower(0);
 //        armBaseRight.setPower(0);
 //        armTop.setPower(0);
