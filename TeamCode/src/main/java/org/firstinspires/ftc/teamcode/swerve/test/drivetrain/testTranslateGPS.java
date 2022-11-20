@@ -117,8 +117,8 @@ public class testTranslateGPS extends OpMode{
     void DriveTrainPowerEncoder(){
         posSystem.calculatePos();
 
-//        robot.botL.setPower(0.5);
-//        robot.topL.setPower(0.5);
+        robot.botL.setPower(0.5);
+        robot.topL.setPower(0.5);
         robot.botR.setPower(0.5);
         robot.topR.setPower(0.5);
     }
