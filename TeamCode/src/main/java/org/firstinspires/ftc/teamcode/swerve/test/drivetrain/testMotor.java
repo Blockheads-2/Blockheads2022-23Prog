@@ -80,9 +80,9 @@ public class testMotor extends OpMode{
 
         if (dType == DriveType.CONTROLLER){
             DriveTrainPowerEncoder();
-        } else if (dType == DriveType.TEST_AB && testAB){
-            testAB = false;
+        } else if (dType == DriveType.TEST_AB){
             testAB();
+            testAB = false;
         }
 
     }
@@ -136,18 +136,26 @@ public class testMotor extends OpMode{
     }
 
     void testAB(){
-        int posBotL = robot.botL.getCurrentPosition();
-        int posTopL = robot.topL.getCurrentPosition();
-        int posBotR = robot.botR.getCurrentPosition();
-        int posTopR = robot.topR.getCurrentPosition();
+        if (testAB){
+            int posBotL = robot.botL.getCurrentPosition();
+            int posTopL = robot.topL.getCurrentPosition();
+            int posBotR = robot.botR.getCurrentPosition();
+            int posTopR = robot.topR.getCurrentPosition();
 
-        double rotAmount = constants.CLICKS_PER_DEGREE * 360;
-        double spinAmount = constants.CLICKS_PER_INCH * constants.WHEEL_CIRCUMFERENCE;
+            double rotAmount = constants.CLICKS_PER_DEGREE * 360;
+            double spinAmount = constants.CLICKS_PER_INCH * constants.WHEEL_CIRCUMFERENCE;
 
-        robot.botL.setTargetPosition(posBotL + (int)(spinAmount + rotAmount));
-        robot.topL.setTargetPosition(posTopL + (int)(-spinAmount + rotAmount));
-        robot.botR.setTargetPosition(posBotR + (int)(spinAmount + rotAmount));
-        robot.topR.setTargetPosition(posTopR + (int)(-spinAmount + rotAmount));
+            robot.botL.setTargetPosition(posBotL + (int)(spinAmount + rotAmount));
+            robot.topL.setTargetPosition(posTopL + (int)(-spinAmount + rotAmount));
+            robot.botR.setTargetPosition(posBotR + (int)(spinAmount + rotAmount));
+            robot.topR.setTargetPosition(posTopR + (int)(-spinAmount + rotAmount));
+        }
+
+        double power = 0.4;
+        robot.botL.setPower(power);
+        robot.topL.setPower(power);
+        robot.botR.setPower(power);
+        robot.topR.setPower(power);
     }
 
     public boolean noMovementRequests(){

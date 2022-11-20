@@ -90,7 +90,6 @@ public class RevisedKinematics {
         target = Math.toDegrees(Math.atan2(lx, ly));
         if (lx == 0 && ly == 0) target = 0;
         else if (lx==0 && ly < 0) target=180;
-        target=clamp(target);
 
         turnAmountL = wheelOptimization(target, leftCurrentW);
         turnAmountR = wheelOptimization(target, rightCurrentW);
