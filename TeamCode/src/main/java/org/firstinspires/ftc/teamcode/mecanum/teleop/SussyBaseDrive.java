@@ -132,26 +132,26 @@ public class SussyBaseDrive extends OpMode{
 
         if (bottomButton.is(Button.State.TAP)){
             robot.abl.setTargetPosition(constants.bottomMotorBottom);
-            robot.abr.setTargetPosition(constants.bottomMotorBottom);
-            robot.at.setTargetPosition(constants.topMotorBottom);
+            //robot.abr.setTargetPosition(constants.bottomMotorBottom);
+            //robot.at.setTargetPosition(constants.topMotorBottom);
         }
 
         if (lowButton.is(Button.State.TAP)){
             robot.abl.setTargetPosition(constants.bottomMotorLow);
-            robot.abr.setTargetPosition(constants.bottomMotorLow);
-            robot.at.setTargetPosition(constants.topMotorLow);
+            //robot.abr.setTargetPosition(constants.bottomMotorLow);
+            //robot.at.setTargetPosition(constants.topMotorLow);
         }
 
         if (midButton.is(Button.State.TAP)){
             robot.abl.setTargetPosition(constants.bottomMotorMid);
-            robot.abr.setTargetPosition(constants.bottomMotorMid);
-            robot.at.setTargetPosition(constants.topMotorMid);
+            //robot.abr.setTargetPosition(constants.bottomMotorMid);
+            //robot.at.setTargetPosition(constants.topMotorMid);
         }
 
         if (highButton.is(Button.State.TAP)){
             robot.abl.setTargetPosition(constants.bottomMotorHigh);
-            robot.abr.setTargetPosition(constants.bottomMotorHigh);
-            robot.at.setTargetPosition(constants.topMotorHigh);
+            //robot.abr.setTargetPosition(constants.bottomMotorHigh);
+            //robot.at.setTargetPosition(constants.topMotorHigh);
         }
 
     }
