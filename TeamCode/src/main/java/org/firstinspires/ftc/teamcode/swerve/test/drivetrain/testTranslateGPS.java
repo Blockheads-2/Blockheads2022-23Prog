@@ -72,7 +72,6 @@ public class testTranslateGPS extends OpMode{
     }
 
     void UpdatePlayer1(){
-        // DriveTrainBasePower();
         DriveTrainPowerEncoder();
     }
 
@@ -100,19 +99,6 @@ public class testTranslateGPS extends OpMode{
         b.update(gamepad1.b);
     }
 
-    void DriveTrainBasePower(){
-//        int powerBotL = 1;
-//        int powerTopL = 1;
-//
-//        if (gamepad1.dpad_up){
-//            robot.botL.setPower(powerBotL);
-//            robot.topL.setPower(powerTopL);
-//        }
-//        else{
-//            robot.botL.setPower(0);
-//            robot.topL.setPower(0);
-//        }
-    }
 
     void DriveTrainPowerEncoder(){
         posSystem.calculatePos();
