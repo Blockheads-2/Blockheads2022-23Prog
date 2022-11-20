@@ -83,11 +83,19 @@ public class SussyHardwareDrive
         lb.setPower(0);
         rb.setPower(0);
 
+        at.setPower(0);
+        abl.setPower(0);
+        abr.setPower(0);
+
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         lf.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         lb.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         rf.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         rb.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
+        at.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        abl.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        abr.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
     }
 }
