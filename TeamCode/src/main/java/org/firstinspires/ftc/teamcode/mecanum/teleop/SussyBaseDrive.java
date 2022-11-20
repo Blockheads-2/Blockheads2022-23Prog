@@ -19,6 +19,11 @@ public class SussyBaseDrive extends OpMode{
     MecanumConstants constants = new MecanumConstants();
     private ElapsedTime runtime = new ElapsedTime();
 
+    Button bottomButton = new Button();
+    Button lowButton = new Button();
+    Button midButton = new Button();
+    Button highButton = new Button();
+
     /** The relativeLayout field is used to aid in providing interesting visual feedback
      * in this sample application; you probably *don't* need this when you use a color sensor on your
      * robot. Note that you won't see anything change on the Driver Station, only on the Robot Controller. */
@@ -120,6 +125,35 @@ public class SussyBaseDrive extends OpMode{
             robot.lb.setPower(power);
             robot.rb.setPower(-power);
         }
+    }
+
+    void armMovement(){
+        //abl, abr, at
+
+        if (bottomButton.is(Button.State.TAP)){
+            robot.abl.setTargetPosition(constants.bottomMotorBottom);
+            //robot.abr.setTargetPosition(constants.bottomMotorBottom);
+            //robot.at.setTargetPosition(constants.topMotorBottom);
+        }
+
+        if (lowButton.is(Button.State.TAP)){
+            robot.abl.setTargetPosition(constants.bottomMotorLow);
+            //robot.abr.setTargetPosition(constants.bottomMotorLow);
+            //robot.at.setTargetPosition(constants.topMotorLow);
+        }
+
+        if (midButton.is(Button.State.TAP)){
+            robot.abl.setTargetPosition(constants.bottomMotorMid);
+            //robot.abr.setTargetPosition(constants.bottomMotorMid);
+            //robot.at.setTargetPosition(constants.topMotorMid);
+        }
+
+        if (highButton.is(Button.State.TAP)){
+            robot.abl.setTargetPosition(constants.bottomMotorHigh);
+            //robot.abr.setTargetPosition(constants.bottomMotorHigh);
+            //robot.at.setTargetPosition(constants.topMotorHigh);
+        }
+
     }
 
     double DriveTrainSpeed(){
