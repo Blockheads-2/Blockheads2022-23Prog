@@ -9,7 +9,7 @@ public class Constants {
     public double RPS = RPM / 60.0; //11.5 ish motor revolutions per second, with load
     public double POWER_LIMITER = 0.5;
 
-    public double CLICKS_PER_BLUE_REV = 145.1; //clicks per rev of motor
+    public double CLICKS_PER_BLUE_REV = 537.7; //clicks per rev of motor
 
     public double WHEEL_DIAMETER = 92 / 25.4; //unit is in inches
     public double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;

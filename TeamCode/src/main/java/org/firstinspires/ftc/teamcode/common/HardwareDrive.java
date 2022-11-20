@@ -61,11 +61,26 @@ public class HardwareDrive
 
     public DcMotorEx  topL;
     public DcMotorEx  botL;
+<<<<<<< Updated upstream
     public DcMotorEx  topR;
     public DcMotorEx  botR;
     public DcMotorEx  armBaseLeft;
     public DcMotorEx armBaseRight;
     public DcMotor armTop;
+=======
+
+    //motor for the lower arm
+    //motor for upper arm
+    //servo for claw
+    public DcMotorEx lowerArm;
+    public DcMotorEx upperArm;
+    public Servo claw;
+
+
+
+//    public DcMotorEx  armBase;
+//    public DcMotorEx armTop;
+>>>>>>> Stashed changes
 
     public Servo armServo;
     public Servo claw;
@@ -103,10 +118,21 @@ public class HardwareDrive
         botL = hwMap.get(DcMotorEx.class, "bottom_left");
         topR = hwMap.get(DcMotorEx.class, "top_right");
         botR = hwMap.get(DcMotorEx.class, "bottom_right");
+<<<<<<< Updated upstream
 //        armBaseLeft = hwMap.get(DcMotorEx.class, "arm_base_left");
 //        armBaseRight = hwMap.get(DcMotorEx.class, "arm_base_right");
 //        armTop = hwMap.get(DcMotor.class, "arm_top");
 
+=======
+
+        lowerArm = hwMap.get(DcMotorEx.class, "lower_arm");
+        upperArm = hwMap.get(DcMotorEx.class, "upper_arm");
+        claw = hwMap.get(Servo.class, "claw");
+
+
+//        armBase = hwMap.get(DcMotorEx.class, "arm_base");
+//        armTop = hwMap.get(DcMotorEx.class, "arm_top");
+>>>>>>> Stashed changes
 
 //        armServo = hwMap.get(Servo.class, "arm_servo");
 //        claw = hwMap.get(Servo.class, "claw");
@@ -136,18 +162,22 @@ public class HardwareDrive
 
 //        claw.setPosition(constants.INITIALIZED_CLAW);
 
-        // dtMotors[2].setDirection(DcMotorSimple.Direction.FORWARD);
-        //dtMotors[3].setDirection(DcMotorSimple.Direction.FORWARD);
         // Set all motors to zero power
         setMotorPower(0);
-        armBaseLeft.setPower(0);
-        armBaseRight.setPower(0);
-        armTop.setPower(0);
+//        armBaseLeft.setPower(0);
+//        armBaseRight.setPower(0);
+//        armTop.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         setRunMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         setRunMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+<<<<<<< Updated upstream
+=======
+
+        upperArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lowerArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+>>>>>>> Stashed changes
     }
 
     public void setMotorPower(double power){

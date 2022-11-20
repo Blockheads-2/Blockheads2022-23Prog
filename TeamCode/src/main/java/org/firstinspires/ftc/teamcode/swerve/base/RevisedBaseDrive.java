@@ -82,12 +82,7 @@ public class RevisedBaseDrive extends OpMode{
     }
 
     void UpdatePlayer1(){
-        if (noMovementRequests()){
-            reset.reset(true);
-        } else {
-            reset.reset(false);
-            DriveTrainPowerEncoder();
-        }
+        DriveTrainPowerEncoder();
     }
 
     void UpdatePlayer2(){
@@ -126,6 +121,13 @@ public class RevisedBaseDrive extends OpMode{
         posSystem.calculatePos();
 
         kinematics.logic(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, -gamepad1.right_stick_y);
+
+        if (kinematics.getDriveType() == RevisedKinematics.DriveType.STOP){
+            reset.reset(true);
+            return;
+        } else {
+            reset.reset(false);
+        }
 
         int[] targetClicks = kinematics.getClicks();
         robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + targetClicks[0]);
