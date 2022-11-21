@@ -28,6 +28,7 @@ public class TestControllerOpMode extends OpMode{
     double target = 0;
     double turnAmount = 0;
     double current = 0;
+    boolean firstMovement = false;
 
     TrackJoystick joystickTracker;
     /** The relativeLayout field is used to aid in providing interesting visual feedback
@@ -76,10 +77,10 @@ public class TestControllerOpMode extends OpMode{
         telemetry.addData("Current", current);
         telemetry.addData("Turn Amount", turnAmount);
         telemetry.addData("Joystick Change", joystickTracker.getChange());
-        telemetry.addData("> 90", joystickTracker.getChange() > 90);
+        telemetry.addData("> 90", joystickTracker.getAbsoluteChange() > 90);
         telemetry.addData("Current Joystick", joystickTracker.getCurrentJoystickL());
         telemetry.addData("Previous Joystick", joystickTracker.getPrevJoystickL());
-
+        telemetry.addData("First movement", firstMovement);
         telemetry.update();
     }
 
@@ -115,6 +116,8 @@ public class TestControllerOpMode extends OpMode{
         else if (left_stick_x==0 && left_stick_y < 0) target=180;
 
         turnAmount = wheelOptimization(target, current);
+
+        if (joystickTracker.getAbsoluteChange() > 90) firstMovement = true;
     }
 
     public double wheelOptimization(double target, double currentW){ //returns how much the wheels should rotate in which direction

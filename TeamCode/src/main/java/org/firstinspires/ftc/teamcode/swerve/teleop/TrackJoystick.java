@@ -5,10 +5,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class TrackJoystick {
     ElapsedTime timer = new ElapsedTime();
     double prevTime = 0;
-    double gap = 100;
+    double gap = 325; //play around with this number!
 
     double currentJoystickL = 0;
     double prevJoystickL = 0;
+
 
     public TrackJoystick(){
         timer.reset();
@@ -20,6 +21,8 @@ public class TrackJoystick {
             prevTime = timer.milliseconds();
         }
         currentJoystickL = Math.toDegrees(Math.atan2(lx, ly));
+        if (lx == 0 && ly == 0) currentJoystickL = 0;
+        else if (lx==0 && ly < 0) currentJoystickL=180;
     }
 
     public double getCurrentJoystickL(){
@@ -42,6 +45,21 @@ public class TrackJoystick {
 
         } else{
             return turnAmount2;
+        }
+    }
+
+    public double getAbsoluteChange(){
+        double curr2 = (currentJoystickL < 0 ? currentJoystickL + 360 : currentJoystickL);
+        double prev2 = (prevJoystickL < 0 ? prevJoystickL + 360 : prevJoystickL);
+
+        double turnAmount = currentJoystickL - prevJoystickL;
+        double turnAmount2 = curr2 - prev2;
+
+        if (Math.abs(turnAmount) < Math.abs(turnAmount2)){
+            return Math.abs(turnAmount);
+
+        } else{
+            return Math.abs(turnAmount2);
         }
     }
 }
