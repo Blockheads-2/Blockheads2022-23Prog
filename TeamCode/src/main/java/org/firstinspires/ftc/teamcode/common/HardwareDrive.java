@@ -64,6 +64,13 @@ public class HardwareDrive
     public DcMotorEx  topR;
     public DcMotorEx  botR;
 
+    private enum Motor{
+        TOPL,
+        BOTL,
+        TOPR,
+        BOTR
+    }
+
 
     public DcMotorEx  armBaseRight;
     public DcMotorEx armBaseLeft;
@@ -147,7 +154,7 @@ public class HardwareDrive
 
 
         //Set Motor Directions
-        botL.setDirection(DcMotorEx.Direction.FORWARD); //no clue if these 2 are supposed to be FORWARD
+        botL.setDirection(DcMotorEx.Direction.REVERSE); //no clue if these 2 are supposed to be FORWARD
         topL.setDirection(DcMotorEx.Direction.FORWARD);
         botR.setDirection(DcMotorEx.Direction.FORWARD);
         topR.setDirection(DcMotorEx.Direction.FORWARD);
