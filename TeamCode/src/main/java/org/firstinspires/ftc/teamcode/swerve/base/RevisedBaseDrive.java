@@ -91,8 +91,6 @@ public class RevisedBaseDrive extends OpMode{
     void UpdateTelemetry(){
         telemetry.addData("X", gamepad1.left_stick_x);
         telemetry.addData("Y", -gamepad1.left_stick_y);
-        telemetry.addData("Turn Direction Left", kinematics.leftTurnDirectionW);
-        telemetry.addData("Turn Direction Right", kinematics.rightTurnDirectionW);
         telemetry.addData("Spin Direction Left", kinematics.leftThrottle);
         telemetry.addData("Spin Direction Right", kinematics.rightThrottle);
         telemetry.addData("Turn Amount Left", kinematics.turnAmountL);

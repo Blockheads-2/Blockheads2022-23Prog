@@ -38,18 +38,12 @@ public class RevisedKinematics {
     public int spinClicksR = 0; //make protected later
     public int spinClicksL = 0; //make protected later
 
-    public int leftTurnDirectionW = 1;
-    public int rightTurnDirectionW = 1;
     public int rightThrottle = -1;
     public int leftThrottle = -1;
 
     public double target = 0;
     public double turnAmountL = 0;
     public double turnAmountR = 0;
-    private enum Module{
-        RIGHT,
-        LEFT
-    }
 
     //current orientation
     GlobalPosSystem posSystem;
@@ -122,36 +116,36 @@ public class RevisedKinematics {
         }
     }
 
-    public void wheelOptimization(double target, double currentW, Module module){ //returns how much the wheels should rotate in which direction
-        double turnAmount = target - currentW;
-        int turnDirection = (int)Math.signum(turnAmount);
-
-        if(Math.abs(turnAmount) > 180){
-            turnAmount = 360 - Math.abs(turnAmount);
-            turnDirection *= -1;
-        }
-
-        if (target == 180){
-            turnAmount = 0;
-            leftThrottle = 1;
-            rightThrottle = 1;
-        } else{
-            leftThrottle = -1;
-            rightThrottle =-1;
-        }
-
-        switch (module){
-            case RIGHT:
-                rightTurnDirectionW = turnDirection;
-                turnAmountR = Math.abs(turnAmount);
-                break;
-
-            case LEFT:
-                leftTurnDirectionW = turnDirection;
-                turnAmountL =  Math.abs(turnAmount);
-                break;
-        }
-    }
+//    public void wheelOptimization(double target, double currentW, Module module){ //returns how much the wheels should rotate in which direction
+//        double turnAmount = target - currentW;
+//        int turnDirection = (int)Math.signum(turnAmount);
+//
+//        if(Math.abs(turnAmount) > 180){
+//            turnAmount = 360 - Math.abs(turnAmount);
+//            turnDirection *= -1;
+//        }
+//
+//        if (target == 180){
+//            turnAmount = 0;
+//            leftThrottle = 1;
+//            rightThrottle = 1;
+//        } else{
+//            leftThrottle = -1;
+//            rightThrottle =-1;
+//        }
+//
+//        switch (module){
+//            case RIGHT:
+//                rightTurnDirectionW = turnDirection;
+//                turnAmountR = Math.abs(turnAmount);
+//                break;
+//
+//            case LEFT:
+//                leftTurnDirectionW = turnDirection;
+//                turnAmountL =  Math.abs(turnAmount);
+//                break;
+//        }
+//    }
 
     public double clamp(double degrees){
         if (Math.abs(degrees) >= 360) degrees %= 360;
@@ -198,12 +192,6 @@ public class RevisedKinematics {
     public double getTarget(){
         return target;
     }
-    public int getRightDirectionW(){
-        return rightTurnDirectionW;
-    }
-    public int getLeftDirectionW(){
-        return leftTurnDirectionW;
-    }
     public double getLTurnAmount(){
         return turnAmountL;
     }
@@ -211,10 +199,6 @@ public class RevisedKinematics {
         return turnAmountR;
     }
 
-    public void switchRotateDirection(){
-        rightTurnDirectionW *= -1;
-        leftTurnDirectionW *= -1;
-    }
 
     public void switchSpinDirection(){
         leftThrottle *= -1;

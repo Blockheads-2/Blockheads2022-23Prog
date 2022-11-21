@@ -47,7 +47,7 @@ public class testTranslateGPS extends OpMode{
         runtime.reset();
 
         double distance = constants.WHEEL_CIRCUMFERENCE;
-        double rot = 90;
+        double rot = 180;
         distanceClicks = (int)(distance * constants.CLICKS_PER_INCH); //rotation clicks
         rotClicks = (int)(rot * constants.CLICKS_PER_DEGREE);
 
