@@ -85,7 +85,8 @@ public class testTranslateGPS extends OpMode{
         }
         telemetry.addData("Xpos", posData[0]);
         telemetry.addData("Ypos", posData[1]);
-        telemetry.addData("W", posData[2]);
+        telemetry.addData("left W", posData[2]);
+        telemetry.addData("right W", posData[3]);
         telemetry.addData("R", posData[3]);
         telemetry.addData("Target Rot", rotClicks);
         telemetry.addData("Target Distance", distanceClicks);
@@ -111,7 +112,7 @@ public class testTranslateGPS extends OpMode{
     }
 
     public void drive(int distanceClicks, int rotClicks){
-        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - distanceClicks - rotClicks);
+        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - distanceClicks + rotClicks);
         robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + distanceClicks + rotClicks);
         robot.botR.setTargetPosition(robot.botR.getCurrentPosition() - distanceClicks + rotClicks);
         robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + distanceClicks + rotClicks);
