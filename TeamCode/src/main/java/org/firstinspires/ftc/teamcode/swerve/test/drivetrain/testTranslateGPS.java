@@ -46,7 +46,7 @@ public class testTranslateGPS extends OpMode{
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();
 
-        double distance = 0;
+        double distance = constants.WHEEL_CIRCUMFERENCE;
         double rot = 90;
         distanceClicks = (int)(distance * constants.CLICKS_PER_INCH); //rotation clicks
         rotClicks = (int)(rot * constants.CLICKS_PER_DEGREE);
@@ -80,14 +80,14 @@ public class testTranslateGPS extends OpMode{
     }
 
     void UpdateTelemetry(){
-        for(int i = 0; i < 4; i++){
+        for(int i = 0; i < 5; i++){
             posData[i] = posSystem.getPositionArr()[i];
         }
         telemetry.addData("Xpos", posData[0]);
         telemetry.addData("Ypos", posData[1]);
         telemetry.addData("left W", posData[2]);
         telemetry.addData("right W", posData[3]);
-        telemetry.addData("R", posData[3]);
+        telemetry.addData("R", posData[4]);
         telemetry.addData("Target Rot", rotClicks);
         telemetry.addData("Target Distance", distanceClicks);
 
