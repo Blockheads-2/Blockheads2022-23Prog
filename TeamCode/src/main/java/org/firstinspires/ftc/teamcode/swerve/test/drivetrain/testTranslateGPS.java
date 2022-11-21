@@ -25,6 +25,7 @@ public class testTranslateGPS extends OpMode{
     private ElapsedTime runtime = new ElapsedTime();
     int distanceClicks;
     int rotClicks;
+    int clampDegreesTest = 0;
 
     Button x = new Button();
     Button y = new Button();
@@ -74,6 +75,16 @@ public class testTranslateGPS extends OpMode{
 
     void UpdatePlayer1(){
         DriveTrainPowerEncoder();
+        if (x.getState() == Button.State.TAP){
+            clampDegreesTest += 10;
+        } else if (y.getState() == Button.State.TAP){
+            clampDegreesTest -= 10;
+        } else if (a.getState() == Button.State.TAP){
+            clampDegreesTest++;
+        } else if (b.getState() == Button.State.TAP){
+            clampDegreesTest--;
+        }
+        clampDegreesTest = (int)clamp(clampDegreesTest);
     }
 
     void UpdatePlayer2(){
@@ -97,6 +108,8 @@ public class testTranslateGPS extends OpMode{
         telemetry.addData("BotL Mode", robot.botL.getMode());
         telemetry.addData("TopR Mode", robot.topR.getMode());
         telemetry.addData("BotR Mode", robot.botR.getMode());
+
+        telemetry.addData("Clamp Degrees Test", clampDegreesTest);
         telemetry.update();
     }
 
@@ -128,6 +141,16 @@ public class testTranslateGPS extends OpMode{
         robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public double clamp(double degrees){
+        if (Math.abs(degrees) >= 360) degrees %= 360;
+
+        if (degrees < -179 || degrees > 180) {
+            int modulo = (int)Math.signum(degrees) * -180;
+            degrees = Math.floorMod((int)degrees, modulo);
+        }
+        return degrees;
     }
 
     /*
