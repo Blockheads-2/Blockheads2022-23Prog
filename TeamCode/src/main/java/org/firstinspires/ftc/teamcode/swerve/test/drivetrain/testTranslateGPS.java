@@ -147,9 +147,10 @@ public class testTranslateGPS extends OpMode{
         if (Math.abs(degrees) >= 360) degrees %= 360;
         if (degrees == -180) degrees = 180;
 
-        if (degrees < -180 || degrees > 180) {
-            int modulo = (int)Math.signum(degrees) * -180;
-            degrees = Math.floorMod((int)degrees, modulo);
+        if (degrees < -180){
+            degrees = 180 - (Math.abs(degrees) - 180);
+        } else if (degrees > 180){
+            degrees = -180 + (Math.abs(degrees) - 180);
         }
         return degrees;
     }
