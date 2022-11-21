@@ -149,8 +149,9 @@ public class RevisedKinematics {
 
     public double clamp(double degrees){
         if (Math.abs(degrees) >= 360) degrees %= 360;
+        if (degrees == -180) degrees = 180;
 
-        if (degrees < -179 || degrees > 180) {
+        if (degrees < -180 || degrees > 180) {
             int modulo = (int)Math.signum(degrees) * -180;
             degrees = Math.floorMod((int)degrees, modulo);
         }
@@ -163,11 +164,11 @@ public class RevisedKinematics {
         motorPower[2] = spinPower * translatePerc + rightRotatePower * rotatePerc; //top right
         motorPower[3] = spinPower * translatePerc + rightRotatePower * rotatePerc; //bottom right
 
-        motorPower[0] = accelerator.update(motorPower[0]);
-        motorPower[1] = accelerator.update(motorPower[1]);
-        motorPower[2] = accelerator.update(motorPower[2]);
-        motorPower[3] = accelerator.update(motorPower[3]);
+        double accelerationFactor = accelerator.update(1.0);
 
+        for (int i = 0; i < 4; i++){
+            motorPower[i] *= accelerationFactor;
+        }
         return motorPower;
     }
 
