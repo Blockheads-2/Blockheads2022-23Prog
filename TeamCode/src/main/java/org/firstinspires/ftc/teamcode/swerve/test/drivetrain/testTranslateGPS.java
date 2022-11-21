@@ -90,6 +90,16 @@ public class testTranslateGPS extends OpMode{
         telemetry.addData("R", posData[3]);
         telemetry.addData("Target Rot", rotClicks);
         telemetry.addData("Target Distance", distanceClicks);
+
+        telemetry.addData("TopL Clicks", robot.topL.getCurrentPosition());
+        telemetry.addData("BotL Clicks", robot.botL.getCurrentPosition());
+        telemetry.addData("TopR Clicks", robot.topR.getCurrentPosition());
+        telemetry.addData("BotR Clicks", robot.botR.getCurrentPosition());
+
+        telemetry.addData("TopL Mode", robot.topL.getMode());
+        telemetry.addData("BotL Mode", robot.botL.getMode());
+        telemetry.addData("TopR Mode", robot.topR.getMode());
+        telemetry.addData("BotR Mode", robot.botR.getMode());
         telemetry.update();
     }
 

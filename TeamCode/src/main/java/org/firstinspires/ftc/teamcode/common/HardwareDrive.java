@@ -120,7 +120,7 @@ public class HardwareDrive
 
         armBaseLeft = hwMap.get(DcMotorEx.class, "arm_base_left");
         armBaseRight = hwMap.get(DcMotorEx.class, "arm_base_right");
-        armTop = hwMap.get(DcMotorEx.class, "arm_top");
+//        armTop = hwMap.get(DcMotorEx.class, "arm_top");
 
         claw = hwMap.get(Servo.class, "claw");
 
@@ -172,7 +172,7 @@ public class HardwareDrive
 
         armBaseRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armBaseLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armTop.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        armTop.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
     }
