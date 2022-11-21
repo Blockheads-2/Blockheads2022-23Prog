@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.swerve.test.drivetrain;
 
 import android.view.View;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -16,7 +17,7 @@ import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.kinematics.drive.SimplifiedKinematics;
 
 @TeleOp(name="Simplified Linear Base Drive Test", group="Drive")
-//@Disabled
+@Disabled
 public class SimplifiedLinearBaseDrive extends OpMode{
     /* Declare OpMode members. */
     HardwareDrive robot = new HardwareDrive();

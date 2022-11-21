@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.common.Button;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
+import org.firstinspires.ftc.teamcode.swerve.teleop.TrackJoystick;
 
 @TeleOp(name="Test Controller", group="Drive")
 //@Disabled
@@ -27,6 +28,8 @@ public class TestControllerOpMode extends OpMode{
     double target = 0;
     double turnAmount = 0;
     double current = 0;
+
+    TrackJoystick joystickTracker;
     /** The relativeLayout field is used to aid in providing interesting visual feedback
      * in this sample application; you probably *don't* need this when you use a color sensor on your
      * robot. Note that you won't see anything change on the Driver Station, only on the Robot Controller. */
@@ -35,6 +38,7 @@ public class TestControllerOpMode extends OpMode{
     @Override
     public void init() { //When "init" is clicked
         robot.init(hardwareMap);
+        joystickTracker = new TrackJoystick();
 
         telemetry.addData("Say", "Hello Driver");
     }
@@ -71,6 +75,10 @@ public class TestControllerOpMode extends OpMode{
         telemetry.addData("Target", target);
         telemetry.addData("Current", current);
         telemetry.addData("Turn Amount", turnAmount);
+        telemetry.addData("Joystick Change", joystickTracker.getChange());
+        telemetry.addData("> 90", joystickTracker.getChange() > 90);
+        telemetry.addData("Current Joystick", joystickTracker.getCurrentJoystickL());
+        telemetry.addData("Previous Joystick", joystickTracker.getPrevJoystickL());
 
         telemetry.update();
     }
@@ -99,6 +107,8 @@ public class TestControllerOpMode extends OpMode{
         double left_stick_y = -gamepad1.left_stick_y; //returns a value between [-1, 1]
         double right_stick_x = gamepad1.right_stick_x; //returns a value between [-1, 1]
         double right_stick_y = -gamepad1.right_stick_y; //returns a value between [-1, 1]
+
+        joystickTracker.trackJoystickL(left_stick_x, left_stick_y);
 
         target = Math.toDegrees(Math.atan2(left_stick_x, left_stick_y));
         if (left_stick_x == 0 && left_stick_y == 0) target = 0;

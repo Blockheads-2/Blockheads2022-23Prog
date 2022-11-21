@@ -13,9 +13,9 @@ import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 
-@TeleOp(name="Test translate GPS", group="Drive")
+@TeleOp(name="Test Motors", group="Drive")
 //@Disabled
-public class testTranslateGPS extends OpMode{
+public class TestMotors extends OpMode{
     /* Declare OpMode members. */
     HardwareDrive robot = new HardwareDrive();
     GlobalPosSystem posSystem;
