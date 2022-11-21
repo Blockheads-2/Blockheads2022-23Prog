@@ -130,7 +130,6 @@ public class SimplifiedLinearBaseDrive extends OpMode{
                 telemetry.addData("R", posData[4]);
                 telemetry.addData("Power Top", motorPower[2]);
                 telemetry.addData("Power Bottom", motorPower[3]);
-                telemetry.addData("Acceleration Factor", kinematics.accelerator.accelerationFactor);
                 telemetry.addData("topL Clicks", robot.topL.getCurrentPosition());
                 telemetry.addData("botL Clicks", robot.botL.getCurrentPosition());
                 break;
