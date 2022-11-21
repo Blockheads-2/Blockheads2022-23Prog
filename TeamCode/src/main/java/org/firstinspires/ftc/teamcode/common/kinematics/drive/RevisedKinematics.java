@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.pid.LinearCorrectionPID;
 import org.firstinspires.ftc.teamcode.common.pid.RotateSwerveModulePID;
 import org.firstinspires.ftc.teamcode.common.pid.SnapSwerveModulePID;
+import org.firstinspires.ftc.teamcode.swerve.teleop.TrackJoystick;
 
 public class RevisedKinematics {
     protected Constants constants = new Constants();
@@ -51,10 +52,13 @@ public class RevisedKinematics {
     double currentR; //current robot header orientation
 
     public Accelerator accelerator;
+    TrackJoystick joystickTracker;
 
     //PIDs
     protected SnapSwerveModulePID snapLeftWheelPID;
     protected SnapSwerveModulePID snapRightWheelPID;
+
+    public boolean firstMovement = true;
 
     double[] motorPower = new double[4];
 
@@ -68,6 +72,7 @@ public class RevisedKinematics {
         snapRightWheelPID.setTargets(0.03, 0, 0.01);
 
         accelerator = new Accelerator();
+        joystickTracker = new TrackJoystick();
     }
 
     public void logic(double lx, double ly, double rx, double ry){
@@ -75,6 +80,7 @@ public class RevisedKinematics {
         this.ly = ly;
         this.rx = rx;
         this.ry = ry;
+        joystickTracker.trackJoystickL(lx, ly);
 
         if (noMovementRequests()) type = DriveType.STOP;
         else type = DriveType.LINEAR;
@@ -98,6 +104,20 @@ public class RevisedKinematics {
         leftRotClicks = (int)(turnAmountL * constants.CLICKS_PER_DEGREE);
         rightRotatePower = snapRightWheelPID.update(turnAmountR);
         rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE);
+
+        if (joystickTracker.getChange() > 90) firstMovement = true;
+
+        if (firstMovement){
+            if (Math.abs(turnAmountL) >= constants.degreeTOLERANCE || Math.abs(turnAmountR) >= constants.degreeTOLERANCE){
+                translatePerc = 0;
+                rotatePerc = 1;
+                spinPower = 0;
+                spinClicksL = 0;
+                spinClicksR = 0;
+            } else{
+                firstMovement = false;
+            }
+        }
     }
 
     public double wheelOptimization(double target, double currentW){ //returns how much the wheels should rotate in which direction
