@@ -73,13 +73,15 @@ public class GlobalPosSystem {
 //            baseAngle = (Math.PI / 2.0) - baseAngle;
 //        } //problem: this assumes that the modules are parallel.
 
-        if (Math.abs(hypotenuse) <= 0.20){
-            update(hypotenuse * Math.sin(baseAngle), hypotenuse * Math.cos(baseAngle), rotationalDegreesL, rotationalDegreesR, 0);
-        }
-        else{
-            double tableSpin = (rotationalDegreesL + rotationalDegreesR) / 2.0;
-            update(hypotenuse * Math.sin(baseAngle), hypotenuse * Math.cos(baseAngle), splineOrientation, splineOrientation, splineOrientation + tableSpin);
-        }
+//        if (Math.abs(hypotenuse) <= 0.20){
+//            update(hypotenuse * Math.sin(baseAngle), hypotenuse * Math.cos(baseAngle), rotationalDegreesL, rotationalDegreesR, 0);
+//        }
+//        else{
+//            double tableSpin = (rotationalDegreesL + rotationalDegreesR) / 2.0;
+//            update(hypotenuse * Math.sin(baseAngle), hypotenuse * Math.cos(baseAngle), splineOrientation, splineOrientation, splineOrientation + tableSpin);
+//        }
+
+        update(hypotenuse * Math.sin(baseAngle), hypotenuse * Math.cos(baseAngle), rotationalDegreesL, rotationalDegreesR, 0);
     }
 
     public void update ( double x, double y, double leftWheelW, double rightWheelW, double robotR){
