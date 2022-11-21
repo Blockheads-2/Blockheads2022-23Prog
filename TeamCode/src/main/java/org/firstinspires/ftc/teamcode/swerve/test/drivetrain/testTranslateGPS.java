@@ -80,14 +80,11 @@ public class testTranslateGPS extends OpMode{
     }
 
     void UpdateTelemetry(){
-        for(int i = 0; i < 5; i++){
-            posData[i] = posSystem.getPositionArr()[i];
-        }
-        telemetry.addData("Xpos", posData[0]);
-        telemetry.addData("Ypos", posData[1]);
-        telemetry.addData("left W", posData[2]);
-        telemetry.addData("right W", posData[3]);
-        telemetry.addData("R", posData[4]);
+        telemetry.addData("Xpos", posSystem.getPositionArr()[0]);
+        telemetry.addData("Ypos", posSystem.getPositionArr()[1]);
+        telemetry.addData("left W", posSystem.getPositionArr()[2]);
+        telemetry.addData("right W", posSystem.getPositionArr()[3]);
+        telemetry.addData("R", posSystem.getPositionArr()[4]);
         telemetry.addData("Target Rot", rotClicks);
         telemetry.addData("Target Distance", distanceClicks);
 
