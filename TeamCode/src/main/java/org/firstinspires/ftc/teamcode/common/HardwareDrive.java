@@ -64,6 +64,13 @@ public class HardwareDrive
     public DcMotorEx  topR;
     public DcMotorEx  botR;
 
+    private enum Motor{
+        TOPL,
+        BOTL,
+        TOPR,
+        BOTR
+    }
+
 
     public DcMotorEx  armBaseRight;
     public DcMotorEx armBaseLeft;
@@ -120,7 +127,7 @@ public class HardwareDrive
 
         armBaseLeft = hwMap.get(DcMotorEx.class, "arm_base_left");
         armBaseRight = hwMap.get(DcMotorEx.class, "arm_base_right");
-        armTop = hwMap.get(DcMotorEx.class, "arm_top");
+//        armTop = hwMap.get(DcMotorEx.class, "arm_top");
 
         claw = hwMap.get(Servo.class, "claw");
 
@@ -147,7 +154,7 @@ public class HardwareDrive
 
 
         //Set Motor Directions
-        botL.setDirection(DcMotorEx.Direction.FORWARD); //no clue if these 2 are supposed to be FORWARD
+        botL.setDirection(DcMotorEx.Direction.REVERSE); //no clue if these 2 are supposed to be FORWARD
         topL.setDirection(DcMotorEx.Direction.FORWARD);
         botR.setDirection(DcMotorEx.Direction.FORWARD);
         topR.setDirection(DcMotorEx.Direction.FORWARD);
@@ -172,7 +179,7 @@ public class HardwareDrive
 
         armBaseRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armBaseLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armTop.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        armTop.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
     }

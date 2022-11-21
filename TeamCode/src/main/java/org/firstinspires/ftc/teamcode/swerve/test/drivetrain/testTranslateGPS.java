@@ -46,9 +46,10 @@ public class testTranslateGPS extends OpMode{
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();
 
-        int[] clicksArr = getClicks(constants.WHEEL_CIRCUMFERENCE, 0);
-        distanceClicks = clicksArr[0];
-        rotClicks = clicksArr[1];
+        double distance = 0;
+        double rot = 90;
+        distanceClicks = (int)(distance * constants.CLICKS_PER_INCH); //rotation clicks
+        rotClicks = (int)(rot * constants.CLICKS_PER_DEGREE);
 
         drive(distanceClicks, rotClicks);
     }
@@ -72,7 +73,6 @@ public class testTranslateGPS extends OpMode{
     }
 
     void UpdatePlayer1(){
-        // DriveTrainBasePower();
         DriveTrainPowerEncoder();
     }
 
@@ -85,12 +85,21 @@ public class testTranslateGPS extends OpMode{
         }
         telemetry.addData("Xpos", posData[0]);
         telemetry.addData("Ypos", posData[1]);
-        telemetry.addData("W", posData[2]);
+        telemetry.addData("left W", posData[2]);
+        telemetry.addData("right W", posData[3]);
         telemetry.addData("R", posData[3]);
-        telemetry.addData("DriveType, ", posSystem.getDriveType());
         telemetry.addData("Target Rot", rotClicks);
         telemetry.addData("Target Distance", distanceClicks);
-        telemetry.addData("Working?", works());
+
+        telemetry.addData("TopL Clicks", robot.topL.getCurrentPosition());
+        telemetry.addData("BotL Clicks", robot.botL.getCurrentPosition());
+        telemetry.addData("TopR Clicks", robot.topR.getCurrentPosition());
+        telemetry.addData("BotR Clicks", robot.botR.getCurrentPosition());
+
+        telemetry.addData("TopL Mode", robot.topL.getMode());
+        telemetry.addData("BotL Mode", robot.botL.getMode());
+        telemetry.addData("TopR Mode", robot.topR.getMode());
+        telemetry.addData("BotR Mode", robot.botR.getMode());
         telemetry.update();
     }
 
@@ -102,57 +111,26 @@ public class testTranslateGPS extends OpMode{
         b.update(gamepad1.b);
     }
 
-    void DriveTrainBasePower(){
-//        int powerBotL = 1;
-//        int powerTopL = 1;
-//
-//        if (gamepad1.dpad_up){
-//            robot.botL.setPower(powerBotL);
-//            robot.topL.setPower(powerTopL);
-//        }
-//        else{
-//            robot.botL.setPower(0);
-//            robot.topL.setPower(0);
-//        }
-    }
 
     void DriveTrainPowerEncoder(){
         posSystem.calculatePos();
 
-//        robot.botL.setPower(0.5);
-//        robot.topL.setPower(0.5);
+        robot.botL.setPower(0.5);
+        robot.topL.setPower(0.5);
         robot.botR.setPower(0.5);
         robot.topR.setPower(0.5);
     }
 
     public void drive(int distanceClicks, int rotClicks){
-//        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - distanceClicks + rotClicks);
-//        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + distanceClicks + rotClicks);
+        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - distanceClicks + rotClicks);
+        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + distanceClicks + rotClicks);
         robot.botR.setTargetPosition(robot.botR.getCurrentPosition() - distanceClicks + rotClicks);
         robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + distanceClicks + rotClicks);
 
-//        robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-
-    public int[] getClicks(double distance, double rotation){
-        int[] clicks = new int[2];
-        double translationClicks = distance * constants.CLICKS_PER_INCH; //rotation clicks
-        double rotationClicks = rotation * constants.CLICKS_PER_DEGREE; //table spinning clicks
-
-        clicks[0] = (int)translationClicks;
-        clicks[1] = (int)rotationClicks;
-        return clicks;
-    }
-
-    public boolean works(){
-        return (posSystem.dChange() && !posSystem.rChange() && !posSystem.wChange());
-    }
-
-    private void reset(){
-        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     /*
