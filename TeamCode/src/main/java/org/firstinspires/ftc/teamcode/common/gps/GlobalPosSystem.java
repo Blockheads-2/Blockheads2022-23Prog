@@ -73,13 +73,15 @@ public class GlobalPosSystem {
 //            baseAngle = (Math.PI / 2.0) - baseAngle;
 //        } //problem: this assumes that the modules are parallel.
 
-        if (Math.abs(hypotenuse) <= 0.20){
-            update(hypotenuse * Math.sin(baseAngle), hypotenuse * Math.cos(baseAngle), rotationalDegreesL, rotationalDegreesR, 0);
-        }
-        else{
-            double tableSpin = (rotationalDegreesL + rotationalDegreesR) / 2.0;
-            update(hypotenuse * Math.sin(baseAngle), hypotenuse * Math.cos(baseAngle), splineOrientation, splineOrientation, splineOrientation + tableSpin);
-        }
+//        if (Math.abs(hypotenuse) <= 0.20){
+//            update(hypotenuse * Math.sin(baseAngle), hypotenuse * Math.cos(baseAngle), rotationalDegreesL, rotationalDegreesR, 0);
+//        }
+//        else{
+//            double tableSpin = (rotationalDegreesL + rotationalDegreesR) / 2.0;
+//            update(hypotenuse * Math.sin(baseAngle), hypotenuse * Math.cos(baseAngle), splineOrientation, splineOrientation, splineOrientation + tableSpin);
+//        }
+
+        update(hypotenuse * Math.sin(baseAngle), hypotenuse * Math.cos(baseAngle), rotationalDegreesL, rotationalDegreesR, 0);
     }
 
     public void update ( double x, double y, double leftWheelW, double rightWheelW, double robotR){
@@ -170,10 +172,12 @@ public class GlobalPosSystem {
 
     public double clamp(double degrees){
         if (Math.abs(degrees) >= 360) degrees %= 360;
+        if (degrees == -180) degrees = 180;
 
-        if (degrees < -179 || degrees > 180) {
-            int modulo = (int)Math.signum(degrees) * -180;
-            degrees = Math.floorMod((int)degrees, modulo);
+        if (degrees < -180){
+            degrees = 180 - (Math.abs(degrees) - 180);
+        } else if (degrees > 180){
+            degrees = -180 + (Math.abs(degrees) - 180);
         }
         return degrees;
     }

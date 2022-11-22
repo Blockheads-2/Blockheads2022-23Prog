@@ -13,9 +13,9 @@ import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 
-@TeleOp(name="Test translate GPS", group="Drive")
+@TeleOp(name="Test Motors", group="Drive")
 //@Disabled
-public class testTranslateGPS extends OpMode{
+public class TestMotors extends OpMode{
     /* Declare OpMode members. */
     HardwareDrive robot = new HardwareDrive();
     GlobalPosSystem posSystem;
@@ -25,6 +25,7 @@ public class testTranslateGPS extends OpMode{
     private ElapsedTime runtime = new ElapsedTime();
     int distanceClicks;
     int rotClicks;
+    int clampDegreesTest = 0;
 
     Button x = new Button();
     Button y = new Button();
@@ -46,8 +47,8 @@ public class testTranslateGPS extends OpMode{
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();
 
-        double distance = 0;
-        double rot = 90;
+        double distance = constants.WHEEL_CIRCUMFERENCE;
+        double rot = 180;
         distanceClicks = (int)(distance * constants.CLICKS_PER_INCH); //rotation clicks
         rotClicks = (int)(rot * constants.CLICKS_PER_DEGREE);
 
@@ -74,19 +75,27 @@ public class testTranslateGPS extends OpMode{
 
     void UpdatePlayer1(){
         DriveTrainPowerEncoder();
+        if (x.getState() == Button.State.TAP){
+            clampDegreesTest += 10;
+        } else if (y.getState() == Button.State.TAP){
+            clampDegreesTest -= 10;
+        } else if (a.getState() == Button.State.TAP){
+            clampDegreesTest++;
+        } else if (b.getState() == Button.State.TAP){
+            clampDegreesTest--;
+        }
+        clampDegreesTest = (int)clamp(clampDegreesTest);
     }
 
     void UpdatePlayer2(){
     }
 
     void UpdateTelemetry(){
-        for(int i = 0; i < 4; i++){
-            posData[i] = posSystem.getPositionArr()[i];
-        }
-        telemetry.addData("Xpos", posData[0]);
-        telemetry.addData("Ypos", posData[1]);
-        telemetry.addData("W", posData[2]);
-        telemetry.addData("R", posData[3]);
+        telemetry.addData("Xpos", posSystem.getPositionArr()[0]);
+        telemetry.addData("Ypos", posSystem.getPositionArr()[1]);
+        telemetry.addData("left W", posSystem.getPositionArr()[2]);
+        telemetry.addData("right W", posSystem.getPositionArr()[3]);
+        telemetry.addData("R", posSystem.getPositionArr()[4]);
         telemetry.addData("Target Rot", rotClicks);
         telemetry.addData("Target Distance", distanceClicks);
 
@@ -99,6 +108,8 @@ public class testTranslateGPS extends OpMode{
         telemetry.addData("BotL Mode", robot.botL.getMode());
         telemetry.addData("TopR Mode", robot.topR.getMode());
         telemetry.addData("BotR Mode", robot.botR.getMode());
+
+        telemetry.addData("Clamp Degrees Test", clampDegreesTest);
         telemetry.update();
     }
 
@@ -121,7 +132,7 @@ public class testTranslateGPS extends OpMode{
     }
 
     public void drive(int distanceClicks, int rotClicks){
-        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - distanceClicks - rotClicks);
+        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - distanceClicks + rotClicks);
         robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + distanceClicks + rotClicks);
         robot.botR.setTargetPosition(robot.botR.getCurrentPosition() - distanceClicks + rotClicks);
         robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + distanceClicks + rotClicks);
@@ -130,6 +141,18 @@ public class testTranslateGPS extends OpMode{
         robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public double clamp(double degrees){
+        if (Math.abs(degrees) >= 360) degrees %= 360;
+        if (degrees == -180) degrees = 180;
+
+        if (degrees < -180){
+            degrees = 180 - (Math.abs(degrees) - 180);
+        } else if (degrees > 180){
+            degrees = -180 + (Math.abs(degrees) - 180);
+        }
+        return degrees;
     }
 
     /*

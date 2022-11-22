@@ -70,6 +70,11 @@ public class SussyBaseDrive extends OpMode{
         testOne.update(gamepad1.y);
         testZero.update(gamepad1.b);
         testNegOne.update(gamepad1.a);
+
+        bottomButton.update(gamepad2.dpad_down);
+        lowButton.update(gamepad2.dpad_left);
+        midButton.update(gamepad2.dpad_right);
+        highButton.update(gamepad2.dpad_up);
     }
 
     void UpdatePlayer1(){

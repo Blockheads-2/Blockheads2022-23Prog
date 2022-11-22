@@ -1,23 +1,20 @@
-package org.firstinspires.ftc.teamcode.swerve.base;
+package org.firstinspires.ftc.teamcode.swerve.teleop.base;
 
 import android.view.View;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.Accelerator;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
-import org.firstinspires.ftc.teamcode.common.kinematics.drive.Kinematics;
 import org.firstinspires.ftc.teamcode.common.Reset;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.Button;
 
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.kinematics.drive.RevisedKinematics;
-import org.firstinspires.ftc.teamcode.common.kinematics.drive.SimplifiedKinematics;
 
 @TeleOp(name="Revised BaseDrive", group="Drive")
 //@Disabled
@@ -91,8 +88,6 @@ public class RevisedBaseDrive extends OpMode{
     void UpdateTelemetry(){
         telemetry.addData("X", gamepad1.left_stick_x);
         telemetry.addData("Y", -gamepad1.left_stick_y);
-        telemetry.addData("Turn Direction Left", kinematics.leftTurnDirectionW);
-        telemetry.addData("Turn Direction Right", kinematics.rightTurnDirectionW);
         telemetry.addData("Spin Direction Left", kinematics.leftThrottle);
         telemetry.addData("Spin Direction Right", kinematics.rightThrottle);
         telemetry.addData("Turn Amount Left", kinematics.turnAmountL);
