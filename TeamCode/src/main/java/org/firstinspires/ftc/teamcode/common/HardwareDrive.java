@@ -72,20 +72,14 @@ public class HardwareDrive
     }
 
 
-    public DcMotorEx  armBaseRight;
-    public DcMotorEx armBaseLeft;
-    public DcMotor armTop;
+//    public DcMotorEx  armBaseRight;
+//    public DcMotorEx armBaseLeft;
+//    public DcMotor armTop;
 
-    public Servo claw;
+//    public Servo claw;
 
-
-
-
-
-//    public DcMotorEx  armBase;
-//    public DcMotorEx armTop;
-
-    public Servo armServo;
+    
+//    public Servo armServo;
 
 //    public DcMotorEx[] dtMotors;
 
@@ -125,11 +119,11 @@ public class HardwareDrive
 //        armTop = hwMap.get(DcMotor.class, "arm_top");
 
 
-        armBaseLeft = hwMap.get(DcMotorEx.class, "arm_base_left");
-        armBaseRight = hwMap.get(DcMotorEx.class, "arm_base_right");
+//        armBaseLeft = hwMap.get(DcMotorEx.class, "arm_base_left");
+//        armBaseRight = hwMap.get(DcMotorEx.class, "arm_base_right");
 //        armTop = hwMap.get(DcMotorEx.class, "arm_top");
 
-        claw = hwMap.get(Servo.class, "claw");
+//        claw = hwMap.get(Servo.class, "claw");
 
 
 
@@ -137,7 +131,7 @@ public class HardwareDrive
 //        armBase = hwMap.get(DcMotorEx.class, "arm_base");
 //        armTop = hwMap.get(DcMotorEx.class, "arm_top");
 
-       armServo = hwMap.get(Servo.class, "arm_servo");
+//       armServo = hwMap.get(Servo.class, "arm_servo");
 //        claw = hwMap.get(Servo.class, "claw");
 
         //IMU initiation
@@ -177,8 +171,8 @@ public class HardwareDrive
         setRunMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
 
-        armBaseRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armBaseLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        armBaseRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        armBaseLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        armTop.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
