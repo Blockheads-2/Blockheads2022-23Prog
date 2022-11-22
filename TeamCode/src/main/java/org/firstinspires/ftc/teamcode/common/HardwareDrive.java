@@ -78,13 +78,10 @@ public class HardwareDrive
 
     public Servo claw;
 
-<<<<<<< Updated upstream
 
 //    public Servo armServo;
-=======
-    
+
     public Servo armServo;
->>>>>>> Stashed changes
 
 //    public DcMotorEx[] dtMotors;
 
