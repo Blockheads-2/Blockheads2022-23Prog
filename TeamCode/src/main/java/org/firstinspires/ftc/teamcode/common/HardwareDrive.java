@@ -72,14 +72,19 @@ public class HardwareDrive
     }
 
 
-//    public DcMotorEx  armBaseRight;
-//    public DcMotorEx armBaseLeft;
-//    public DcMotor armTop;
+    public DcMotorEx  armBaseRight;
+    public DcMotorEx armBaseLeft;
+    public DcMotor armTop;
 
-//    public Servo claw;
+    public Servo claw;
 
+<<<<<<< Updated upstream
 
 //    public Servo armServo;
+=======
+    
+    public Servo armServo;
+>>>>>>> Stashed changes
 
 //    public DcMotorEx[] dtMotors;
 

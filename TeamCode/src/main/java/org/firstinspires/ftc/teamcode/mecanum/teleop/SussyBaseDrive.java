@@ -163,8 +163,14 @@ public class SussyBaseDrive extends OpMode{
             robot.abl.setTargetPosition(constants.bottomMotorBottom);
             robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.abl.setPower(0.5);
-            //robot.abr.setTargetPosition(constants.bottomMotorBottom);
-            //robot.at.setTargetPosition(constants.topMotorBottom);
+
+            robot.abr.setTargetPosition(constants.bottomMotorBottom);
+            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abr.setPower(0.5);
+
+            robot.at.setTargetPosition(constants.topMotorBottom);
+            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.at.setPower(0.5);
         }
 
         if (lowButton.is(Button.State.TAP)){
@@ -172,8 +178,13 @@ public class SussyBaseDrive extends OpMode{
             robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.abl.setPower(0.5);
 
-            //robot.abr.setTargetPosition(constants.bottomMotorLow);
-            //robot.at.setTargetPosition(constants.topMotorLow);
+            robot.abr.setTargetPosition(constants.bottomMotorLow);
+            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abr.setPower(0.5);
+
+            robot.at.setTargetPosition(constants.topMotorLow);
+            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.at.setPower(0.5);
         }
 
         if (midButton.is(Button.State.TAP)){
@@ -181,8 +192,13 @@ public class SussyBaseDrive extends OpMode{
             robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.abl.setPower(0.5);
 
-            //robot.abr.setTargetPosition(constants.bottomMotorMid);
-            //robot.at.setTargetPosition(constants.topMotorMid);
+            robot.abr.setTargetPosition(constants.bottomMotorMid);
+            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abr.setPower(0.5);
+
+            robot.at.setTargetPosition(constants.topMotorMid);
+            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.at.setPower(0.5);
         }
 
         if (highButton.is(Button.State.TAP)){
@@ -190,8 +206,13 @@ public class SussyBaseDrive extends OpMode{
             robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.abl.setPower(0.5);
 
-            //robot.abr.setTargetPosition(constants.bottomMotorHigh);
-            //robot.at.setTargetPosition(constants.topMotorHigh);
+            robot.abr.setTargetPosition(constants.bottomMotorHigh);
+            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abr.setPower(0.5);
+
+            robot.at.setTargetPosition(constants.topMotorHigh);
+            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.at.setPower(0.5);
         }
 
     }
