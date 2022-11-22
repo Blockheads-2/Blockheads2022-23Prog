@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class TrackJoystick {
     ElapsedTime timer = new ElapsedTime();
     double prevTime = 0;
-    double gap = 325; //play around with this number!
+    double gap = 175; //play around with this number!
 
     double currentJoystickL = 0;
     double prevJoystickL = 0;

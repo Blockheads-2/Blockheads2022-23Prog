@@ -30,6 +30,12 @@ public class RevisedBaseDrive extends OpMode{
     Accelerator acceleratorL = new Accelerator();
     Reset reset;
 
+    private enum TelemetryData{
+        LEFT,
+        RIGHT
+    }
+    TelemetryData tData = TelemetryData.LEFT;
+
 
     Button x = new Button();
     Button y = new Button();
@@ -80,6 +86,12 @@ public class RevisedBaseDrive extends OpMode{
 
     void UpdatePlayer1(){
         DriveTrainPowerEncoder();
+
+        if (x.getState() == Button.State.TAP){
+            tData = TelemetryData.LEFT;
+        } else if (y.getState() == Button.State.TAP){
+            tData = TelemetryData.RIGHT;
+        }
     }
 
     void UpdatePlayer2(){
@@ -88,20 +100,32 @@ public class RevisedBaseDrive extends OpMode{
     void UpdateTelemetry(){
         telemetry.addData("X", gamepad1.left_stick_x);
         telemetry.addData("Y", -gamepad1.left_stick_y);
-        telemetry.addData("Spin Direction Left", kinematics.leftThrottle);
-        telemetry.addData("Spin Direction Right", kinematics.rightThrottle);
-        telemetry.addData("Turn Amount Left", kinematics.turnAmountL);
-        telemetry.addData("Turn Amount Right", kinematics.turnAmountR);
-        telemetry.addData("Target", kinematics.target);
-        telemetry.addData("left w",  posSystem.getLeftWheelW());
-        telemetry.addData("right w", posSystem.getRightWheelW());
-        telemetry.addData("r", posSystem.getPositionArr()[4]);
-        telemetry.addData("topl", robot.topL.getCurrentPosition());
-        telemetry.addData("botl", robot.botL.getCurrentPosition());
-        telemetry.addData("topr", robot.topR.getCurrentPosition());
-        telemetry.addData("botr", robot.botR.getCurrentPosition());
-        telemetry.addData("TopL Target Amount", robot.topL.getTargetPosition() - robot.topL.getCurrentPosition());
-        telemetry.addData("BotL Target Amount", robot.botL.getTargetPosition() - robot.botL.getCurrentPosition());
+        switch (tData){
+            case LEFT:
+                telemetry.addData("Spin Direction (Left)", kinematics.leftThrottle);
+                telemetry.addData("Turn Amount (Left)", kinematics.turnAmountL);
+                telemetry.addData("Target", kinematics.target);
+                telemetry.addData("Left W",  posSystem.getLeftWheelW());
+                telemetry.addData("R", posSystem.getPositionArr()[4]);
+                telemetry.addData("topL clicks", robot.topL.getCurrentPosition());
+                telemetry.addData("botL clicks", robot.botL.getCurrentPosition());
+                telemetry.addData("TopL Target Amount", robot.topL.getTargetPosition() - robot.topL.getCurrentPosition());
+                telemetry.addData("BotL Target Amount", robot.botL.getTargetPosition() - robot.botL.getCurrentPosition());
+                break;
+
+            case RIGHT:
+                telemetry.addData("Spin Direction (Right)", kinematics.rightThrottle);
+                telemetry.addData("Target", kinematics.target);
+                telemetry.addData("Turn Amount (Right)", kinematics.turnAmountR);
+                telemetry.addData("Right W", posSystem.getRightWheelW());
+                telemetry.addData("R", posSystem.getPositionArr()[4]);
+                telemetry.addData("topR clicks", robot.topR.getCurrentPosition());
+                telemetry.addData("botR clicks", robot.botR.getCurrentPosition());
+                telemetry.addData("TopR Target Amount", robot.topR.getTargetPosition() - robot.topR.getCurrentPosition());
+                telemetry.addData("BotR Target Amount", robot.botR.getTargetPosition() - robot.botR.getCurrentPosition());
+                break;
+        }
+        telemetry.addData("First movement", kinematics.firstMovement);
 
         telemetry.update();
     }
