@@ -105,7 +105,7 @@ public class RevisedKinematics {
         rightRotatePower = snapRightWheelPID.update(turnAmountR);
         rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE);
 
-        if (joystickTracker.getChange() > 90) firstMovement = true;
+        if (joystickTracker.getChange() > 90 || noMovementRequests()) firstMovement = true;
 
         if (firstMovement){
             if (Math.abs(turnAmountL) >= constants.degreeTOLERANCE || Math.abs(turnAmountR) >= constants.degreeTOLERANCE){
@@ -116,6 +116,8 @@ public class RevisedKinematics {
                 spinClicksR = 0;
             } else{
                 firstMovement = false;
+                translatePerc = 0.6;
+                rotatePerc = 0.4;
             }
         }
     }
@@ -184,11 +186,11 @@ public class RevisedKinematics {
         motorPower[2] = spinPower * translatePerc + rightRotatePower * rotatePerc; //top right
         motorPower[3] = spinPower * translatePerc + rightRotatePower * rotatePerc; //bottom right
 
-        double accelerationFactor = accelerator.update(1.0);
-
-        for (int i = 0; i < 4; i++){
-            motorPower[i] *= accelerationFactor;
-        }
+//        double accelerationFactor = accelerator.update(1.0);
+//
+//        for (int i = 0; i < 4; i++){
+//            motorPower[i] *= accelerationFactor;
+//        }
         return motorPower;
     }
 
