@@ -179,10 +179,10 @@ public class TurnDrive extends OpMode{
         robot.botR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.topR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-        robot.botL.setPower(accelerator.update(trigger, type) * constants.POWER_LIMITER);
-        robot.topL.setPower(accelerator.update(trigger, type) * constants.POWER_LIMITER);
-        robot.botR.setPower(accelerator.update(trigger, type) * constants.POWER_LIMITER);
-        robot.topR.setPower(accelerator.update(trigger, type) * constants.POWER_LIMITER);
+        robot.botL.setPower(trigger * constants.POWER_LIMITER);
+        robot.topL.setPower(trigger * constants.POWER_LIMITER);
+        robot.botR.setPower(trigger * constants.POWER_LIMITER);
+        robot.topR.setPower(trigger * constants.POWER_LIMITER);
     }
 
     public boolean noMovementRequests(){
