@@ -130,7 +130,7 @@ public class HardwareDrive
 //        armBase = hwMap.get(DcMotorEx.class, "arm_base");
 //        armTop = hwMap.get(DcMotorEx.class, "arm_top");
 
-//        armServo = hwMap.get(Servo.class, "arm_servo");
+       armServo = hwMap.get(Servo.class, "arm_servo");
 //        claw = hwMap.get(Servo.class, "claw");
 
         //IMU initiation

@@ -51,6 +51,10 @@ public class SussyHardwareDrive
         abl = hwMap.get(DcMotorEx.class, "arm_base_left");
         abr = hwMap.get(DcMotorEx.class, "arm_base_right");
 
+        claw = hwMap.get(Servo.class, "claw");
+        armServo = hwMap.get(Servo.class, "arm_servo");
+
+
 
         //IMU initiation
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();

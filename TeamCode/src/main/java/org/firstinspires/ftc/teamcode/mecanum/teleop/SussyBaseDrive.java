@@ -24,6 +24,9 @@ public class SussyBaseDrive extends OpMode{
     Button lowButton = new Button();
     Button midButton = new Button();
     Button highButton = new Button();
+    Button testOne = new Button();
+    Button testZero = new Button();
+    Button testNegOne = new Button();
 
     /** The relativeLayout field is used to aid in providing interesting visual feedback
      * in this sample application; you probably *don't* need this when you use a color sensor on your
@@ -48,7 +51,7 @@ public class SussyBaseDrive extends OpMode{
 
     @Override
     public void start() {
-//
+        //
     }
 
     @Override
@@ -64,6 +67,9 @@ public class SussyBaseDrive extends OpMode{
         lowButton.update(gamepad2.a);
         midButton.update(gamepad2.b);
         highButton.update(gamepad2.y);
+        testOne.update(gamepad1.y);
+        testZero.update(gamepad1.b);
+        testNegOne.update(gamepad1.a);
     }
 
     void UpdatePlayer1(){
@@ -72,6 +78,7 @@ public class SussyBaseDrive extends OpMode{
         DriveTrainBase(drivePower);
         DriveTrainSpeed();
         DriveMicroAdjust(0.4);
+        testServos();
         //OscillateServo();
     }
 
@@ -182,6 +189,21 @@ public class SussyBaseDrive extends OpMode{
             //robot.at.setTargetPosition(constants.topMotorHigh);
         }
 
+    }
+
+    void testServos(){
+        if (testOne.is(Button.State.TAP)){
+            robot.armServo.setPosition(1);
+            robot.claw.setPosition(1);
+        }
+        if (testZero.is(Button.State.TAP)){
+            robot.armServo.setPosition(0);
+            robot.claw.setPosition(0);
+        }
+        if (testNegOne.is(Button.State.TAP)){
+            robot.armServo.setPosition(-1);
+            robot.claw.setPosition(-1);
+        }
     }
 
     double DriveTrainSpeed(){
