@@ -100,7 +100,8 @@ public class RevisedBaseDrive extends OpMode{
         telemetry.addData("botl", robot.botL.getCurrentPosition());
         telemetry.addData("topr", robot.topR.getCurrentPosition());
         telemetry.addData("botr", robot.botR.getCurrentPosition());
-
+        telemetry.addData("TopL Target Amount", robot.topL.getTargetPosition() - robot.topL.getCurrentPosition());
+        telemetry.addData("BotL Target Amount", robot.botL.getTargetPosition() - robot.botL.getCurrentPosition());
 
         telemetry.update();
     }

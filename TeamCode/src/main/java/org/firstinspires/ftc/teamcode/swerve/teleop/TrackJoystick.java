@@ -62,4 +62,14 @@ public class TrackJoystick {
             return Math.abs(turnAmount2);
         }
     }
+
+    public void changeGapTime(int ms){
+        gap -= ms;
+        if (gap > 500) gap = 500;
+        else if (gap < 100) gap = 100;
+    }
+
+    public double getGapTime(){
+        return gap;
+    }
 }
