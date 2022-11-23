@@ -201,13 +201,9 @@ public class SussyBaseDrive extends OpMode{
             robot.armServo.setPosition(1);
             robot.claw.setPosition(1);
         }
-        if (testZero.is(Button.State.TAP)){
-            robot.armServo.setPosition(0);
+        if (testZero.is(Button.State.TAP)) {
+            robot.armServo.setPosition(constants.initializedArmServo);
             robot.claw.setPosition(0);
-        }
-        if (testNegOne.is(Button.State.TAP)){
-            robot.armServo.setPosition(-1);
-            robot.claw.setPosition(-1);
         }
     }
 
