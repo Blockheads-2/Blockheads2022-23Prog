@@ -37,6 +37,8 @@ public class TurnDrive extends OpMode{
     Button a = new Button();
     Button b = new Button();
 
+    double power = 0;
+
 
     public enum State{
         DRIVE,
@@ -111,9 +113,10 @@ public class TurnDrive extends OpMode{
         telemetry.addData("Left W", posData[2]);
         telemetry.addData("Right W", posData[3]);
         telemetry.addData("R", posData[4]);
+        telemetry.addData("Power", power);
 
-//        telemetry.addData("topL clicks", robot.topL.getCurrentPosition());
-//        telemetry.addData("botL clicks", robot.botL.getCurrentPosition());
+        telemetry.addData("topL clicks", robot.topL.getCurrentPosition());
+        telemetry.addData("botL clicks", robot.botL.getCurrentPosition());
         telemetry.addData("topR clicks", robot.topR.getCurrentPosition());
         telemetry.addData("botR clicks", robot.botR.getCurrentPosition());
 
@@ -156,13 +159,6 @@ public class TurnDrive extends OpMode{
             trigger = rightTrigger;
         }
 
-        SimplifiedKinematics.DriveType type;
-        if (trigger == 0){
-            type = SimplifiedKinematics.DriveType.STOP;
-        } else{
-            type = SimplifiedKinematics.DriveType.TURN;
-        }
-
         int distanceTopL = (int) (trigger * 100 * beta);
         int distanceBotL = (int) (-trigger * 100 * beta);
 
@@ -179,10 +175,11 @@ public class TurnDrive extends OpMode{
         robot.botR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.topR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-        robot.botL.setPower(accelerator.update(trigger, type) * constants.POWER_LIMITER);
-        robot.topL.setPower(accelerator.update(trigger, type) * constants.POWER_LIMITER);
-        robot.botR.setPower(accelerator.update(trigger, type) * constants.POWER_LIMITER);
-        robot.topR.setPower(accelerator.update(trigger, type) * constants.POWER_LIMITER);
+        power = trigger * constants.POWER_LIMITER;
+        robot.botL.setPower(power);
+        robot.topL.setPower(power);
+        robot.botR.setPower(power);
+        robot.topR.setPower(power);
     }
 
     public boolean noMovementRequests(){

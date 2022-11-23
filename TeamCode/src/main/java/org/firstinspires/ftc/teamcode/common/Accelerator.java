@@ -66,7 +66,7 @@ public class Accelerator {
             return 0.0;
         }
 
-        double accelerationFactor = (Math.pow(accelerationTimer.seconds(), 3)/3.0) + 0.1;
+        double accelerationFactor = (Math.pow(accelerationTimer.seconds(), 3)/4.0) + 0.3;
         power *= accelerationFactor;
 
         if (power > 1) power = 1;

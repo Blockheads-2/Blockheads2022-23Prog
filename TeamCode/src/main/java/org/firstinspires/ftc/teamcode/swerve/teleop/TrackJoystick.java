@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class TrackJoystick {
     ElapsedTime timer = new ElapsedTime();
     double prevTime = 0;
-    double gap = 325; //play around with this number!
+    double gap = 175; //play around with this number!
 
     double currentJoystickL = 0;
     double prevJoystickL = 0;
@@ -61,5 +61,15 @@ public class TrackJoystick {
         } else{
             return Math.abs(turnAmount2);
         }
+    }
+
+    public void changeGapTime(int ms){
+        gap -= ms;
+        if (gap > 500) gap = 500;
+        else if (gap < 100) gap = 100;
+    }
+
+    public double getGapTime(){
+        return gap;
     }
 }

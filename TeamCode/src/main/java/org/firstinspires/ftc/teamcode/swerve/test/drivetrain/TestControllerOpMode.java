@@ -81,6 +81,8 @@ public class TestControllerOpMode extends OpMode{
         telemetry.addData("Current Joystick", joystickTracker.getCurrentJoystickL());
         telemetry.addData("Previous Joystick", joystickTracker.getPrevJoystickL());
         telemetry.addData("First movement", firstMovement);
+        telemetry.addData("Gap time", joystickTracker.getGapTime());
+
         telemetry.update();
     }
 
@@ -97,6 +99,17 @@ public class TestControllerOpMode extends OpMode{
         } else if (y.getState() == Button.State.TAP){
             current -= 10;
         }
+
+        if (a.getState() == Button.State.TAP){
+            joystickTracker.changeGapTime(50);
+        } else if (b.getState() == Button.State.TAP){
+            joystickTracker.changeGapTime(-50);
+        }
+
+        if (x.getState() == Button.State.DOUBLE_TAP){
+            firstMovement = false;
+        }
+
         current = clamp(current);
 
         DriveTrainMove();

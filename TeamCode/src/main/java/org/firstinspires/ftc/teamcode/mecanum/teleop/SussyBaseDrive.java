@@ -5,6 +5,7 @@ import android.view.View;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.mecanum.common.MecanumConstants;
@@ -28,6 +29,8 @@ public class SussyBaseDrive extends OpMode{
     Button testZero = new Button();
     Button testNegOne = new Button();
 
+    private int prevPosition = 0;
+
     /** The relativeLayout field is used to aid in providing interesting visual feedback
      * in this sample application; you probably *don't* need this when you use a color sensor on your
      * robot. Note that you won't see anything change on the Driver Station, only on the Robot Controller. */
@@ -41,6 +44,7 @@ public class SussyBaseDrive extends OpMode{
 
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();
+        prevPosition = robot.abl.getCurrentPosition();
 
     }
 
@@ -67,9 +71,9 @@ public class SussyBaseDrive extends OpMode{
         lowButton.update(gamepad2.a);
         midButton.update(gamepad2.b);
         highButton.update(gamepad2.y);
-        testOne.update(gamepad1.y);
+        testOne.update(gamepad1.a);
         testZero.update(gamepad1.b);
-        testNegOne.update(gamepad1.a);
+        testNegOne.update(gamepad1.y);
 
         bottomButton.update(gamepad2.dpad_down);
         lowButton.update(gamepad2.dpad_left);
@@ -89,6 +93,7 @@ public class SussyBaseDrive extends OpMode{
 
     void UpdatePlayer2(){
         armMovement();
+        setArmPower();
         //OscillateServo();
     }
 
@@ -156,6 +161,77 @@ public class SussyBaseDrive extends OpMode{
         }
     }
 
+    public void setTargetPositive(){
+        int topCurrent = robot.at.getCurrentPosition();
+
+        robot.at.setTargetPosition(topCurrent + 10);
+        robot.at.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        robot.at.setPower(0.3);
+    }
+
+    public void setTargetNegative(){
+        int topCurrent = robot.at.getCurrentPosition();
+
+        robot.at.setTargetPosition(topCurrent - 10);
+        robot.at.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        robot.at.setPower(0.3);
+    }
+
+    public void setTargetPositiveBase(){
+        int baseLeftCurrent = robot.abl.getCurrentPosition();
+        int baseRightCurrent = robot.abr.getCurrentPosition();
+
+        robot.abl.setTargetPosition(baseLeftCurrent + 100);
+        robot.abr.setTargetPosition(baseRightCurrent + 100);
+
+        robot.abl.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        robot.abr.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+        robot.abl.setPower(0.3);
+        robot.abr.setPower(0.3);
+    }
+
+    public void setTargetNegativeBase(){
+        int baseLeftCurrent = robot.abl.getCurrentPosition();
+        int baseRightCurrent = robot.abr.getCurrentPosition();
+
+        robot.abl.setTargetPosition(baseLeftCurrent - 100);
+        robot.abr.setTargetPosition(baseRightCurrent - 100);
+
+        robot.abl.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        robot.abr.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+        robot.abl.setPower(0.3);
+        robot.abr.setPower(0.3);
+    }
+
+    void setArmPower(){
+        if (gamepad2.y){
+            setTargetPositive();
+        } else if (gamepad2.x){
+            setTargetNegative();
+        } else if(gamepad2.a){
+            setTargetPositiveBase();
+        } else if(gamepad2.b){
+            setTargetNegativeBase();
+        }
+
+        if (robot.abl.getCurrentPosition() != prevPosition){
+            robot.abl.setTargetPosition(prevPosition);
+            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abl.setPower(0.1);
+            robot.abr.setPower(0.1);
+        } else {
+            robot.at.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.abl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.abr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+        prevPosition = robot.abl.getCurrentPosition();
+
+    }
+
+
+
     void armMovement(){
         //abl, abr, at
 
@@ -163,8 +239,14 @@ public class SussyBaseDrive extends OpMode{
             robot.abl.setTargetPosition(constants.bottomMotorBottom);
             robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.abl.setPower(0.5);
-            //robot.abr.setTargetPosition(constants.bottomMotorBottom);
-            //robot.at.setTargetPosition(constants.topMotorBottom);
+
+            robot.abr.setTargetPosition(constants.bottomMotorBottom);
+            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abr.setPower(0.5);
+
+            robot.at.setTargetPosition(constants.topMotorBottom);
+            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.at.setPower(0.5);
         }
 
         if (lowButton.is(Button.State.TAP)){
@@ -172,8 +254,13 @@ public class SussyBaseDrive extends OpMode{
             robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.abl.setPower(0.5);
 
-            //robot.abr.setTargetPosition(constants.bottomMotorLow);
-            //robot.at.setTargetPosition(constants.topMotorLow);
+            robot.abr.setTargetPosition(constants.bottomMotorLow);
+            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abr.setPower(0.5);
+
+            robot.at.setTargetPosition(constants.topMotorLow);
+            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.at.setPower(0.5);
         }
 
         if (midButton.is(Button.State.TAP)){
@@ -181,8 +268,13 @@ public class SussyBaseDrive extends OpMode{
             robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.abl.setPower(0.5);
 
-            //robot.abr.setTargetPosition(constants.bottomMotorMid);
-            //robot.at.setTargetPosition(constants.topMotorMid);
+            robot.abr.setTargetPosition(constants.bottomMotorMid);
+            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abr.setPower(0.5);
+
+            robot.at.setTargetPosition(constants.topMotorMid);
+            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.at.setPower(0.5);
         }
 
         if (highButton.is(Button.State.TAP)){
@@ -190,8 +282,13 @@ public class SussyBaseDrive extends OpMode{
             robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.abl.setPower(0.5);
 
-            //robot.abr.setTargetPosition(constants.bottomMotorHigh);
-            //robot.at.setTargetPosition(constants.topMotorHigh);
+            robot.abr.setTargetPosition(constants.bottomMotorHigh);
+            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abr.setPower(0.5);
+
+            robot.at.setTargetPosition(constants.topMotorHigh);
+            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.at.setPower(0.5);
         }
 
     }
