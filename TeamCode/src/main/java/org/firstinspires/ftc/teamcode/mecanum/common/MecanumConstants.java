@@ -27,5 +27,4 @@ public class MecanumConstants {
     //Claw Position
     public double initializedArmServo = 0.5;
     public double initializedClaw = 0;
-    public double armMotorHigh = 0.3;
 }

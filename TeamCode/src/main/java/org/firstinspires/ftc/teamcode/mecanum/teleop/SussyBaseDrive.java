@@ -40,8 +40,6 @@ public class SussyBaseDrive extends OpMode{
     public void init() {
         robot.init(hardwareMap);
 
-
-
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();
         prevPosition = robot.abl.getCurrentPosition();
@@ -64,6 +62,13 @@ public class SussyBaseDrive extends OpMode{
         UpdatePlayer2();
         UpdateTelemetry();
         UpdateButton();
+    }
+
+    void updateTelemetry(){
+        telemetry.addData("Top", robot.at.getCurrentPosition());
+        telemetry.addData("Base Right", robot.abr.getCurrentPosition());
+        telemetry.addData("Base Left", robot.abl.getCurrentPosition());
+        telemetry.update();
     }
 
     void UpdateButton(){
@@ -181,8 +186,8 @@ public class SussyBaseDrive extends OpMode{
         int baseLeftCurrent = robot.abl.getCurrentPosition();
         int baseRightCurrent = robot.abr.getCurrentPosition();
 
-        robot.abl.setTargetPosition(baseLeftCurrent + 100);
-        robot.abr.setTargetPosition(baseRightCurrent + 100);
+        robot.abl.setTargetPosition(baseLeftCurrent + 20);
+        robot.abr.setTargetPosition(baseRightCurrent + 20);
 
         robot.abl.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.abr.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -195,8 +200,8 @@ public class SussyBaseDrive extends OpMode{
         int baseLeftCurrent = robot.abl.getCurrentPosition();
         int baseRightCurrent = robot.abr.getCurrentPosition();
 
-        robot.abl.setTargetPosition(baseLeftCurrent - 100);
-        robot.abr.setTargetPosition(baseRightCurrent - 100);
+        robot.abl.setTargetPosition(baseLeftCurrent - 20);
+        robot.abr.setTargetPosition(baseRightCurrent - 20);
 
         robot.abl.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.abr.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
