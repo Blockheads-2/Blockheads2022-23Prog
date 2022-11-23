@@ -38,7 +38,7 @@ public class RevisedKinematics {
     public int leftRotClicks = 0;
     public int spinClicksR = 0; //make protected later
     public int spinClicksL = 0; //make protected later
-    public int rightThrottle = 1;
+    public int rightThrottle = -1;
     public int leftThrottle = 1;
 
     public double target = 0;
@@ -105,7 +105,7 @@ public class RevisedKinematics {
         rightRotatePower = snapRightWheelPID.update(turnAmountR);
         rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE);
 
-        if (joystickTracker.getChange() > 90 || noMovementRequests()) firstMovement = true;
+        if (joystickTracker.getChange() > 90 ) firstMovement = true;
 
         if (firstMovement){
             if (Math.abs(turnAmountL) >= constants.degreeTOLERANCE || Math.abs(turnAmountR) >= constants.degreeTOLERANCE){
@@ -120,6 +120,8 @@ public class RevisedKinematics {
                 rotatePerc = 0.4;
             }
         }
+
+        if (noMovementRequests()) firstMovement = true;
     }
 
     public double wheelOptimization(double target, double currentW){ //returns how much the wheels should rotate in which direction
