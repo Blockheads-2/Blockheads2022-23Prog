@@ -22,5 +22,10 @@ public class MecanumConstants {
     //High
     public int bottomMotorHigh = 800;
     public int topMotorHigh = 560;
+    public int armMotorHigh;
+
+    //Claw Position
+    public double initializedArmServo = 0.5;
+    public double initializedClaw = 0;
     public double armMotorHigh = 0.3;
 }
