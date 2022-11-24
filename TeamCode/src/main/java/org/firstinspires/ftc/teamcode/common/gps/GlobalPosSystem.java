@@ -37,25 +37,34 @@ public class GlobalPosSystem {
 
     public void calculatePos(){
         updateHash();
+        calculateWheel();
+        calculateRobot();
+    }
 
+    public void calculateWheel(){
+        double rotateL = (robot.topL.getCurrentPosition() + robot.botL.getCurrentPosition()) / 2.0; //total rotation of left module
+        rotateL *= constants.DEGREES_PER_CLICK;
+        double rotateR = (robot.topR.getCurrentPosition() + robot.botR.getCurrentPosition()) / 2.0; //total rotation of right module
+        rotateR *= constants.DEGREES_PER_CLICK;
+
+        positionArr[2] = clamp(rotateL);
+        positionArr[3] = clamp(rotateR);
+    }
+
+    public void calculateRobot(){
         //right
         int topR = motorClicksPose.get("topR") - prevMotorClicks.get("topR"); //change in top right
         int botR = motorClicksPose.get("botR") - prevMotorClicks.get("botR"); //change in bottom right
         double translationalInchesR = (topR - botR) / 2.0;
-        double rotationalDegreesR = topR - translationalInchesR;
         translationalInchesR *= constants.INCHES_PER_CLICK;
-        rotationalDegreesR *= constants.DEGREES_PER_CLICK;
-        double currentAngleR = clamp(rotationalDegreesR + positionArr[3]);
+        double currentAngleR = positionArr[3];
 
         //left
         int topL = motorClicksPose.get("topL") - prevMotorClicks.get("topL"); //change in top left
         int botL = motorClicksPose.get("botL") - prevMotorClicks.get("botL"); //change in bottom left
         double translationalInchesL = (topL - botL) / 2.0;
-        double rotationalDegreesL = topL - translationalInchesL;
         translationalInchesL *= constants.INCHES_PER_CLICK;
-        rotationalDegreesL *= constants.DEGREES_PER_CLICK;
-
-        double currentAngleL = clamp(rotationalDegreesL + positionArr[2]);
+        double currentAngleL = positionArr[2];
 
         double splineOrientation = 0.0;
         double baseAngle = (currentAngleL + currentAngleR) / 2.0;
@@ -90,7 +99,7 @@ public class GlobalPosSystem {
 //            update(hypotenuse * Math.sin(baseAngle), hypotenuse * Math.cos(baseAngle), splineOrientation, splineOrientation, splineOrientation + tableSpin);
 //        }
 
-        update(hypotenuse * Math.sin(baseAngle), hypotenuse * Math.cos(baseAngle), rotationalDegreesL, rotationalDegreesR, 0);
+        update(hypotenuse * Math.sin(baseAngle), hypotenuse * Math.cos(baseAngle), 0, 0, 0);
     }
 
     public void update ( double x, double y, double leftWheelW, double rightWheelW, double robotR){
