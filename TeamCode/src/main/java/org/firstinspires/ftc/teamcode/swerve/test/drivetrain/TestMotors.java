@@ -95,6 +95,13 @@ public class TestMotors extends OpMode{
         telemetry.addData("Ypos", posSystem.getPositionArr()[1]);
         telemetry.addData("left W", posSystem.getPositionArr()[2]);
         telemetry.addData("right W", posSystem.getPositionArr()[3]);
+        int rotateL = (robot.topL.getCurrentPosition() + robot.botL.getCurrentPosition()) / 2; //total rotation of left module
+        rotateL *= constants.DEGREES_PER_CLICK;
+        int rotateR = (robot.topR.getCurrentPosition() + robot.botR.getCurrentPosition()) / 2; //total rotation of right module
+        rotateR *= constants.DEGREES_PER_CLICK;
+        telemetry.addData("Left W", rotateL);
+        telemetry.addData("Right W", rotateR);
+
         telemetry.addData("R", posSystem.getPositionArr()[4]);
         telemetry.addData("Target Rot", rotClicks);
         telemetry.addData("Target Distance", distanceClicks);

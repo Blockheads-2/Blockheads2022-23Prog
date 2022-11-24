@@ -108,17 +108,10 @@ public class TurnDrive extends OpMode{
 
         double[] posData = posSystem.getPositionArr();
 
-        int rotateL = (robot.topL.getCurrentPosition() + robot.botL.getCurrentPosition()) / 2; //total rotation of left module
-        rotateL *= constants.DEGREES_PER_CLICK;
-        int rotateR = (robot.topR.getCurrentPosition() + robot.botR.getCurrentPosition()) / 2; //total rotation of right module
-        rotateR *= constants.DEGREES_PER_CLICK;
-
         telemetry.addData("Xpos", posData[0]);
         telemetry.addData("Ypos", posData[1]);
         telemetry.addData("Left W (GPS)", posData[2]);
-        telemetry.addData("Left W", rotateL);
         telemetry.addData("Right W (GPS)", posData[3]);
-        telemetry.addData("Right W", rotateR);
         telemetry.addData("R", posData[4]);
         telemetry.addData("Power", power);
 
