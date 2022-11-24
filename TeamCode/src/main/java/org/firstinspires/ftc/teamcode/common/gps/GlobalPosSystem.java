@@ -62,7 +62,8 @@ public class GlobalPosSystem {
         baseAngle = Math.toRadians(baseAngle);
         double hypotenuse = (translationalInchesL + translationalInchesR) / 2.0;
 
-        if (Math.signum(translationalInchesL) == -1 * Math.signum(translationalInchesR) && Math.abs(translationalInchesL) - Math.abs(translationalInchesR) <= 1){
+
+        if (Math.signum(translationalInchesL) == -Math.signum(translationalInchesR) && Math.abs(Math.abs(translationalInchesL) - Math.abs(translationalInchesR)) <= 1){
             double arc = Math.max(translationalInchesL, translationalInchesR);
             double theta = arc / constants.DISTANCE_BETWEEN_MODULE_AND_CENTER;
             theta = (arc == translationalInchesR ? -theta : theta);

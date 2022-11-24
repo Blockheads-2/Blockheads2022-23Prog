@@ -64,14 +64,6 @@ public class HardwareDrive
     public DcMotorEx  topR;
     public DcMotorEx  botR;
 
-    private enum Motor{
-        TOPL,
-        BOTL,
-        TOPR,
-        BOTR
-    }
-
-
     public DcMotorEx  armBaseRight;
     public DcMotorEx armBaseLeft;
     public DcMotor armTop;
