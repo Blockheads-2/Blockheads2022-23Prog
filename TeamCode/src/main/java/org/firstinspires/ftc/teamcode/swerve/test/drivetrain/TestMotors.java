@@ -47,7 +47,7 @@ public class TestMotors extends OpMode{
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();
 
-        double distance = constants.WHEEL_CIRCUMFERENCE;
+        double distance = 0;
         double rot = 180;
         distanceClicks = (int)(distance * constants.CLICKS_PER_INCH); //rotation clicks
         rotClicks = (int)(rot * constants.CLICKS_PER_DEGREE);
