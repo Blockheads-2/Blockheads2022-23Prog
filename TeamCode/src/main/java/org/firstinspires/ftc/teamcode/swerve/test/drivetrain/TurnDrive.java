@@ -167,11 +167,11 @@ public class TurnDrive extends OpMode{
 
         robot.botL.setTargetPosition(posBotL + distanceBotL);
         robot.topL.setTargetPosition(posTopL + distanceTopL);
-//        robot.botR.setTargetPosition(posBotR - distanceBotR);
-//        robot.topR.setTargetPosition(posTopR - distanceTopR); //for some reason, the robot started registering this "backwards" movement as "forwards"
+        robot.botR.setTargetPosition(posBotR - distanceBotR);
+        robot.topR.setTargetPosition(posTopR - distanceTopR); //for some reason, the robot started registering this "backwards" movement as "forwards"
 
-        robot.botR.setTargetPosition(posBotR + distanceBotR);
-        robot.topR.setTargetPosition(posTopR + distanceTopR);
+//        robot.botR.setTargetPosition(posBotR + distanceBotR);
+//        robot.topR.setTargetPosition(posTopR + distanceTopR);
 
 
         robot.botL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
