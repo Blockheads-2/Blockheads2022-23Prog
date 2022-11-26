@@ -58,6 +58,7 @@ public class ArmMotorTester extends OpMode{
         robot.armBaseLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.armBaseRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.armTop.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        
 
         robot.armBaseLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.armBaseRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

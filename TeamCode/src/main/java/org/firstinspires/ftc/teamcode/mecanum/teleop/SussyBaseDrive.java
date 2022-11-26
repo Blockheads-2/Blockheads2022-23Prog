@@ -29,6 +29,11 @@ public class SussyBaseDrive extends OpMode{
     Button testZero = new Button();
     Button testNegOne = new Button();
 
+    Button y = new Button();
+    Button x = new Button();
+    Button a = new Button();
+    Button b = new Button();
+
     private int prevPosition = 0;
 
     /** The relativeLayout field is used to aid in providing interesting visual feedback
@@ -84,6 +89,11 @@ public class SussyBaseDrive extends OpMode{
         lowButton.update(gamepad2.dpad_left);
         midButton.update(gamepad2.dpad_right);
         highButton.update(gamepad2.dpad_up);
+
+        y.update(gamepad2.y);
+        x.update(gamepad2.x);
+        a.update(gamepad2.a);
+        b.update(gamepad2.b);
     }
 
     void UpdatePlayer1(){
@@ -108,6 +118,8 @@ public class SussyBaseDrive extends OpMode{
         telemetry.addData("LB", robot.lb.getCurrentPosition());
         telemetry.addData("RF", robot.rf.getCurrentPosition());
         telemetry.addData("RB", robot.rb.getCurrentPosition());
+
+        telemetry.addData("Current Position", robot.at.getCurrentPosition());
 
         //  telemetry.addData("Touch Sensor", robot.digitalTouch.getState());
         telemetry.update();
@@ -169,6 +181,9 @@ public class SussyBaseDrive extends OpMode{
     public void setTargetPositive(){
         int topCurrent = robot.at.getCurrentPosition();
 
+        telemetry.addData("Goal Position", topCurrent + 10);
+
+
         robot.at.setTargetPosition(topCurrent + 10);
         robot.at.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.at.setPower(0.3);
@@ -211,13 +226,13 @@ public class SussyBaseDrive extends OpMode{
     }
 
     void setArmPower(){
-        if (gamepad2.y){
+        if (y.is(Button.State.TAP)){
             setTargetPositive();
-        } else if (gamepad2.x){
+        } else if (x.is(Button.State.TAP)){
             setTargetNegative();
-        } else if(gamepad2.a){
+        } else if(a.is(Button.State.TAP)){
             setTargetPositiveBase();
-        } else if(gamepad2.b){
+        } else if(b.is(Button.State.TAP)){
             setTargetNegativeBase();
         }
 
