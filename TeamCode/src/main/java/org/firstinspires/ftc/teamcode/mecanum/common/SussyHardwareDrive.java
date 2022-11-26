@@ -19,7 +19,7 @@ public class SussyHardwareDrive
     public DcMotorEx  rb   = null;
     public DcMotorEx  abl;
     public DcMotorEx abr;
-    public DcMotor at;
+    public DcMotorEx at;
 
     //Servos
     public Servo armServo;
@@ -47,7 +47,7 @@ public class SussyHardwareDrive
         rf = hwMap.get(DcMotorEx.class, "right_front");
         lb = hwMap.get(DcMotorEx.class, "left_back");
         rb = hwMap.get(DcMotorEx.class, "right_back");
-        at = hwMap.get(DcMotor.class, "arm_top");
+        at = hwMap.get(DcMotorEx.class, "arm_top");
         abl = hwMap.get(DcMotorEx.class, "arm_base_left");
         abr = hwMap.get(DcMotorEx.class, "arm_base_right");
 
@@ -76,7 +76,7 @@ public class SussyHardwareDrive
         rb.setDirection(DcMotorEx.Direction.FORWARD);
 
         //Reverse Arm Motors
-        at.setDirection(DcMotorEx.Direction.FORWARD);
+        at.setDirection(DcMotorEx.Direction.REVERSE);
         abl.setDirection(DcMotorEx.Direction.FORWARD);
         abr.setDirection(DcMotorEx.Direction.REVERSE);
 
