@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.common.kinematics.drive;
 
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+
 import org.firstinspires.ftc.teamcode.common.Accelerator;
 import org.firstinspires.ftc.teamcode.common.Reset;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
@@ -105,8 +107,12 @@ public class RevisedKinematics {
         rightRotatePower = snapRightWheelPID.update(turnAmountR);
         rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE);
 
-        if (joystickTracker.getChange() > 90 ) firstMovement = true;
+        firstMovement();
+//        turn();
+    }
 
+    public void firstMovement(){
+        if (joystickTracker.getChange() > 90 ) firstMovement = true;
         if (firstMovement){
             if (Math.abs(turnAmountL) >= constants.degreeTOLERANCE || Math.abs(turnAmountR) >= constants.degreeTOLERANCE){
                 translatePerc = 0;
@@ -120,8 +126,23 @@ public class RevisedKinematics {
                 rotatePerc = 0.4;
             }
         }
-
         if (noMovementRequests()) firstMovement = true;
+    }
+
+    public void turn(Reset reset){
+        if (reset.checkWheelAllignment()){
+            spinClicksL = (int) (rx * 100 );
+            spinClicksR = (int) (-rx * 100);
+            spinPower = rx;
+
+            leftRotClicks = 0;
+            leftRotatePower = 0;
+            rightRotClicks = 0;
+            rightRotatePower = 0;
+
+            translatePerc = 1;
+            rotatePerc = 0;
+        }
     }
 
     public double wheelOptimization(double target, double currentW){ //returns how much the wheels should rotate in which direction
@@ -138,37 +159,6 @@ public class RevisedKinematics {
             return turnAmount2;
         }
     }
-
-//    public void wheelOptimization(double target, double currentW, Module module){ //returns how much the wheels should rotate in which direction
-//        double turnAmount = target - currentW;
-//        int turnDirection = (int)Math.signum(turnAmount);
-//
-//        if(Math.abs(turnAmount) > 180){
-//            turnAmount = 360 - Math.abs(turnAmount);
-//            turnDirection *= -1;
-//        }
-//
-//        if (target == 180){
-//            turnAmount = 0;
-//            leftThrottle = 1;
-//            rightThrottle = 1;
-//        } else{
-//            leftThrottle = -1;
-//            rightThrottle =-1;
-//        }
-//
-//        switch (module){
-//            case RIGHT:
-//                rightTurnDirectionW = turnDirection;
-//                turnAmountR = Math.abs(turnAmount);
-//                break;
-//
-//            case LEFT:
-//                leftTurnDirectionW = turnDirection;
-//                turnAmountL =  Math.abs(turnAmount);
-//                break;
-//        }
-//    }
 
     public double clamp(double degrees){
         if (Math.abs(degrees) >= 360) degrees %= 360;

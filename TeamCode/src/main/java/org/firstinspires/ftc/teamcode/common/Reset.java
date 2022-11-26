@@ -11,6 +11,8 @@ public class Reset {
     GlobalPosSystem globalPosSystem;
     Constants constants = new Constants();
     ElapsedTime gapTime = new ElapsedTime();
+    Accelerator accelerator = new Accelerator();
+    double power = 0;
     int waitForMS = 500;
     double prevTime=0;
     double currentTime=0;
@@ -18,6 +20,7 @@ public class Reset {
     boolean STOP_RESET_L = false;
     boolean STOP_RESET_R = false;
     boolean isResetCycle = false;
+    boolean allignedWheels = true;
 
     public Reset(HardwareDrive r, GlobalPosSystem gps){
         robot = r;
@@ -30,10 +33,11 @@ public class Reset {
             if(gapTime.milliseconds()-prevTime>waitForMS){
                 updateReset();
             }else{
-                robot.botL.setPower(0);
-                robot.topL.setPower(0);
-                robot.botR.setPower(0);
-                robot.topR.setPower(0);
+                power = accelerator.update(0);
+                robot.botL.setPower(power);
+                robot.topL.setPower(power);
+                robot.botR.setPower(power);
+                robot.topR.setPower(power);
             }
 
         } else{
@@ -42,6 +46,7 @@ public class Reset {
             isResetCycle = false;
             gapTime.reset();
             prevTime=gapTime.milliseconds();
+            allignedWheels = false;
         }
     }
 
@@ -72,10 +77,11 @@ public class Reset {
             robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            robot.botL.setPower(0.3);
-            robot.topL.setPower(0.3);
-            robot.botR.setPower(0.3);
-            robot.topR.setPower(0.3);
+            power = accelerator.update(0.5);
+            robot.botL.setPower(power);
+            robot.topL.setPower(power);
+            robot.botR.setPower(power);
+            robot.topR.setPower(power);
         }
 
         else{
@@ -86,15 +92,17 @@ public class Reset {
                 robot.topL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 robot.botL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-                robot.botL.setPower(0);
-                robot.topL.setPower(0);
+                power = accelerator.update(0);
+                robot.botL.setPower(power);
+                robot.topL.setPower(power);
 
                 globalPosSystem.hardResetGPS();
 
                 STOP_RESET_L = true;
             } else if (!STOP_RESET_L){
-                robot.botL.setPower(0.3);
-                robot.topL.setPower(0.3);
+                power = accelerator.update(0.5);
+                robot.botL.setPower(power);
+                robot.topL.setPower(power);
             }
 
             if (robot.topR.getCurrentPosition() == topRTarget && robot.botR.getCurrentPosition() == botRTarget){
@@ -104,16 +112,23 @@ public class Reset {
                 robot.topR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 robot.botR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-                robot.botR.setPower(0);
-                robot.topR.setPower(0);
+                power = accelerator.update(0);
+                robot.botR.setPower(power);
+                robot.topR.setPower(power);
 
                 globalPosSystem.hardResetGPS();
 
                 STOP_RESET_R = true;
             } else if (!STOP_RESET_R){
-                robot.botR.setPower(0.3);
-                robot.topR.setPower(0.3);
+                power = accelerator.update(0.5);
+                robot.botR.setPower(power);
+                robot.topR.setPower(power);
             }
         }
+        allignedWheels = (robot.topL.getCurrentPosition() == topLTarget && robot.botL.getCurrentPosition() == botLTarget && robot.topR.getCurrentPosition() == topRTarget && robot.botR.getCurrentPosition() == botRTarget);
+    }
+
+    public boolean checkWheelAllignment(){
+        return allignedWheels;
     }
 }
