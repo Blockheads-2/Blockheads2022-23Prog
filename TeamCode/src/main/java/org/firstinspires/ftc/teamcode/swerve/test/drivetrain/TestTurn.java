@@ -44,7 +44,7 @@ public class TestTurn extends OpMode{
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();
 
-        double distance = (Math.PI/2) * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER;
+        double distance = -(Math.PI/2) * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER;
         distanceClicks = (int)(distance * constants.CLICKS_PER_INCH); //rotation clicks
     }
 
