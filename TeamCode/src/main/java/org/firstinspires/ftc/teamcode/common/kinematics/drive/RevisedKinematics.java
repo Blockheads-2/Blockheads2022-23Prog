@@ -77,7 +77,7 @@ public class RevisedKinematics {
         joystickTracker = new TrackJoystick();
     }
 
-    public void logic(double lx, double ly, double rx, double ry){
+    public void logic(double lx, double ly, double rx, double ry, boolean allignedWheels){
         this.lx = lx;
         this.ly = ly;
         this.rx = rx;
@@ -108,7 +108,7 @@ public class RevisedKinematics {
         rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE);
 
         firstMovement();
-//        turn();
+        turn(allignedWheels);
     }
 
     public void firstMovement(){
@@ -129,8 +129,8 @@ public class RevisedKinematics {
         if (noMovementRequests()) firstMovement = true;
     }
 
-    public void turn(Reset reset){
-        if (reset.checkWheelAllignment()){
+    public void turn(boolean wheelsAlligned){
+        if (wheelsAlligned){
             spinClicksL = (int) (rx * 100 );
             spinClicksR = (int) (-rx * 100);
             spinPower = rx;
