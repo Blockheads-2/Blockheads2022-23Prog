@@ -13,19 +13,16 @@ import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 
-@TeleOp(name="Test Motors", group="Drive")
+@TeleOp(name="Test Turn", group="Drive")
 //@Disabled
-public class TestMotors extends OpMode{
+public class TestTurn extends OpMode{
     /* Declare OpMode members. */
     HardwareDrive robot = new HardwareDrive();
     GlobalPosSystem posSystem;
     Constants constants = new Constants();
-    private double[] posData = new double[4];
 
     private ElapsedTime runtime = new ElapsedTime();
     int distanceClicks;
-    int rotClicks;
-    int clampDegreesTest = 0;
 
     Button x = new Button();
     Button y = new Button();
@@ -47,22 +44,19 @@ public class TestMotors extends OpMode{
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();
 
-        double distance = 0;
-        double rot = 180;
+        double distance = (Math.PI/2) * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER;
         distanceClicks = (int)(distance * constants.CLICKS_PER_INCH); //rotation clicks
-        rotClicks = (int)(rot * constants.CLICKS_PER_DEGREE);
-
-        drive(distanceClicks, rotClicks);
     }
 
     @Override
     public void init_loop() { //Loop between "init" and "start"
-        //  robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        // robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     @Override
     public void start() { //When "start" is pressed
+        drive(distanceClicks);
     }
 
     @Override
@@ -75,16 +69,6 @@ public class TestMotors extends OpMode{
 
     void UpdatePlayer1(){
         DriveTrainPowerEncoder();
-        if (x.getState() == Button.State.TAP){
-            clampDegreesTest += 10;
-        } else if (y.getState() == Button.State.TAP){
-            clampDegreesTest -= 10;
-        } else if (a.getState() == Button.State.TAP){
-            clampDegreesTest++;
-        } else if (b.getState() == Button.State.TAP){
-            clampDegreesTest--;
-        }
-        clampDegreesTest = (int)clamp(clampDegreesTest);
     }
 
     void UpdatePlayer2(){
@@ -95,28 +79,13 @@ public class TestMotors extends OpMode{
         telemetry.addData("Ypos", posSystem.getPositionArr()[1]);
         telemetry.addData("left W", posSystem.getPositionArr()[2]);
         telemetry.addData("right W", posSystem.getPositionArr()[3]);
-        int rotateL = (robot.topL.getCurrentPosition() + robot.botL.getCurrentPosition()) / 2; //total rotation of left module
-        rotateL *= constants.DEGREES_PER_CLICK;
-        int rotateR = (robot.topR.getCurrentPosition() + robot.botR.getCurrentPosition()) / 2; //total rotation of right module
-        rotateR *= constants.DEGREES_PER_CLICK;
-        telemetry.addData("Left W", rotateL);
-        telemetry.addData("Right W", rotateR);
-
         telemetry.addData("R", posSystem.getPositionArr()[4]);
-        telemetry.addData("Target Rot", rotClicks);
         telemetry.addData("Target Distance", distanceClicks);
 
         telemetry.addData("TopL Clicks", robot.topL.getCurrentPosition());
         telemetry.addData("BotL Clicks", robot.botL.getCurrentPosition());
         telemetry.addData("TopR Clicks", robot.topR.getCurrentPosition());
         telemetry.addData("BotR Clicks", robot.botR.getCurrentPosition());
-
-        telemetry.addData("TopL Mode", robot.topL.getMode());
-        telemetry.addData("BotL Mode", robot.botL.getMode());
-        telemetry.addData("TopR Mode", robot.topR.getMode());
-        telemetry.addData("BotR Mode", robot.botR.getMode());
-
-        telemetry.addData("Clamp Degrees Test", clampDegreesTest);
         telemetry.update();
     }
 
@@ -138,30 +107,17 @@ public class TestMotors extends OpMode{
         robot.topR.setPower(0.5);
     }
 
-    public void drive(int distanceClicks, int rotClicks){
-        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - distanceClicks + rotClicks);
-        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + distanceClicks + rotClicks);
-        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() - distanceClicks + rotClicks);
-        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + distanceClicks + rotClicks);
+    public void drive(int distanceClicks){
+        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + distanceClicks);
+        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - distanceClicks);
+        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() - distanceClicks);
+        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() + distanceClicks);
 
         robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
-
-    public double clamp(double degrees){
-        if (Math.abs(degrees) >= 360) degrees %= 360;
-        if (degrees == -180) degrees = 180;
-
-        if (degrees < -180){
-            degrees = 180 - (Math.abs(degrees) - 180);
-        } else if (degrees > 180){
-            degrees = -180 + (Math.abs(degrees) - 180);
-        }
-        return degrees;
-    }
-
     /*
      * Code to run ONCE after the driver hits STOP
      */

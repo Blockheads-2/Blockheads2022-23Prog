@@ -125,6 +125,7 @@ public class RevisedBaseDrive extends OpMode{
 
                 break;
         }
+        telemetry.addData("Drive Type", kinematics.getDriveType());
         telemetry.addData("First movement", kinematics.firstMovement);
 
         telemetry.update();
@@ -140,7 +141,7 @@ public class RevisedBaseDrive extends OpMode{
     void DriveTrainPowerEncoder(){
         posSystem.calculatePos();
 
-        kinematics.logic(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, -gamepad1.right_stick_y);
+        kinematics.logic(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, -gamepad1.right_stick_y); //wheelAllignment is one loop late.
 
         if (kinematics.getDriveType() == RevisedKinematics.DriveType.STOP){
             reset.reset(true);

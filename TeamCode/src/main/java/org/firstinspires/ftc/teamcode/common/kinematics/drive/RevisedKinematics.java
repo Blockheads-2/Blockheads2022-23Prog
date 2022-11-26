@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.common.kinematics.drive;
 
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+
 import org.firstinspires.ftc.teamcode.common.Accelerator;
 import org.firstinspires.ftc.teamcode.common.Reset;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
@@ -21,6 +23,7 @@ public class RevisedKinematics {
         LINEAR,
         SNAP,
         STOP,
+        TURN,
         NOT_INITIALIZED
     }
     public DriveType type = DriveType.NOT_INITIALIZED;
@@ -39,7 +42,7 @@ public class RevisedKinematics {
     public int spinClicksR = 0; //make protected later
     public int spinClicksL = 0; //make protected later
     public int rightThrottle = -1;
-    public int leftThrottle = 1;
+    public int leftThrottle = -1;
 
     public double target = 0;
     public double turnAmountL = 0;
@@ -60,8 +63,6 @@ public class RevisedKinematics {
 
     public boolean firstMovement = true;
 
-    double[] motorPower = new double[4];
-
     public RevisedKinematics(GlobalPosSystem posSystem){
         this.posSystem = posSystem;
 
@@ -80,33 +81,50 @@ public class RevisedKinematics {
         this.ly = ly;
         this.rx = rx;
         this.ry = ry;
+
+        //tracking the joystick's movement
         joystickTracker.trackJoystickL(lx, ly);
 
         if (noMovementRequests()) type = DriveType.STOP;
         else type = DriveType.LINEAR;
 
+        //determining current position
         leftCurrentW = posSystem.getPositionArr()[2];
         rightCurrentW = posSystem.getPositionArr()[3];
         currentR = posSystem.getPositionArr()[4];
 
+        //determining targets, and how much we want to turn
         target = Math.toDegrees(Math.atan2(lx, ly));
         if (lx == 0 && ly == 0) target = 0;
         else if (lx==0 && ly < 0) target=180;
-
         turnAmountL = wheelOptimization(target, leftCurrentW);
         turnAmountR = wheelOptimization(target, rightCurrentW);
 
+        //determining spin power
         spinPower = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
         spinClicksL = (int)(spinPower * 100 * leftThrottle);
         spinClicksR = (int)(spinPower * 100 * rightThrottle);
 
+        //determining rotational power
         leftRotatePower = snapLeftWheelPID.update(turnAmountL);
         leftRotClicks = (int)(turnAmountL * constants.CLICKS_PER_DEGREE);
         rightRotatePower = snapRightWheelPID.update(turnAmountR);
         rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE);
 
-        if (joystickTracker.getChange() > 90 ) firstMovement = true;
+        //determining whether to focus more on spinning or more on rotating
+        rotatePerc = Math.abs((turnAmountL + turnAmountR)/180); //turnAmount / 90 --> percentage
+        if (rotatePerc > 0.5) rotatePerc = 0.5;
+        translatePerc = 1 - rotatePerc;
 
+        //determining "firstMovement" actions, if it is the robot's "firstMovement."
+        firstMovement();
+
+        //determining values from right stick input.
+        rightStick();
+    }
+
+    public void firstMovement(){
+        if (joystickTracker.getChange() > 90 || noMovementRequests()) firstMovement = true;
         if (firstMovement){
             if (Math.abs(turnAmountL) >= constants.degreeTOLERANCE || Math.abs(turnAmountR) >= constants.degreeTOLERANCE){
                 translatePerc = 0;
@@ -120,8 +138,25 @@ public class RevisedKinematics {
                 rotatePerc = 0.4;
             }
         }
+    }
 
-        if (noMovementRequests()) firstMovement = true;
+    public void rightStick(){
+        if (Math.abs(leftCurrentW) < constants.degreeTOLERANCE && Math.abs(rightCurrentW) < constants.degreeTOLERANCE && lx == 0 && ly == 0 && (rx != 0 || ry != 0)){
+            spinClicksL = (int) (-rx * 100);
+            spinClicksR = (int) (rx * 100);
+            spinPower = rx;
+
+            leftRotClicks = 0;
+            leftRotatePower = 0;
+            rightRotClicks = 0;
+            rightRotatePower = 0;
+
+            translatePerc = 1;
+            rotatePerc = 0;
+            type = DriveType.TURN;
+        } else{
+            //spline
+        }
     }
 
     public double wheelOptimization(double target, double currentW){ //returns how much the wheels should rotate in which direction
@@ -139,37 +174,6 @@ public class RevisedKinematics {
         }
     }
 
-//    public void wheelOptimization(double target, double currentW, Module module){ //returns how much the wheels should rotate in which direction
-//        double turnAmount = target - currentW;
-//        int turnDirection = (int)Math.signum(turnAmount);
-//
-//        if(Math.abs(turnAmount) > 180){
-//            turnAmount = 360 - Math.abs(turnAmount);
-//            turnDirection *= -1;
-//        }
-//
-//        if (target == 180){
-//            turnAmount = 0;
-//            leftThrottle = 1;
-//            rightThrottle = 1;
-//        } else{
-//            leftThrottle = -1;
-//            rightThrottle =-1;
-//        }
-//
-//        switch (module){
-//            case RIGHT:
-//                rightTurnDirectionW = turnDirection;
-//                turnAmountR = Math.abs(turnAmount);
-//                break;
-//
-//            case LEFT:
-//                leftTurnDirectionW = turnDirection;
-//                turnAmountL =  Math.abs(turnAmount);
-//                break;
-//        }
-//    }
-
     public double clamp(double degrees){
         if (Math.abs(degrees) >= 360) degrees %= 360;
         if (degrees == -180) degrees = 180;
@@ -183,16 +187,15 @@ public class RevisedKinematics {
     }
 
     public double[] getPower(){
+        double[] motorPower = new double[4];
         motorPower[0] = spinPower * translatePerc + leftRotatePower * rotatePerc; //top left
         motorPower[1] = spinPower * translatePerc + leftRotatePower * rotatePerc; //bottom left
         motorPower[2] = spinPower * translatePerc + rightRotatePower * rotatePerc; //top right
         motorPower[3] = spinPower * translatePerc + rightRotatePower * rotatePerc; //bottom right
 
-//        double accelerationFactor = accelerator.update(1.0);
-//
-//        for (int i = 0; i < 4; i++){
-//            motorPower[i] *= accelerationFactor;
-//        }
+        for (int i = 0; i < 4; i++){
+            motorPower[i] = accelerator.update(motorPower[i]);
+        }
         return motorPower;
     }
 
