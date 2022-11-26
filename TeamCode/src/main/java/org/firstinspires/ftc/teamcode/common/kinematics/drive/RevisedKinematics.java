@@ -63,8 +63,6 @@ public class RevisedKinematics {
 
     public boolean firstMovement = true;
 
-    double[] motorPower = new double[4];
-
     public RevisedKinematics(GlobalPosSystem posSystem){
         this.posSystem = posSystem;
 
@@ -83,36 +81,45 @@ public class RevisedKinematics {
         this.ly = ly;
         this.rx = rx;
         this.ry = ry;
+
+        //tracking the joystick's movement
         joystickTracker.trackJoystickL(lx, ly);
 
         if (noMovementRequests()) type = DriveType.STOP;
         else type = DriveType.LINEAR;
 
+        //determining current position
         leftCurrentW = posSystem.getPositionArr()[2];
         rightCurrentW = posSystem.getPositionArr()[3];
         currentR = posSystem.getPositionArr()[4];
 
+        //determining targets, and how much we want to turn
         target = Math.toDegrees(Math.atan2(lx, ly));
         if (lx == 0 && ly == 0) target = 0;
         else if (lx==0 && ly < 0) target=180;
-
         turnAmountL = wheelOptimization(target, leftCurrentW);
         turnAmountR = wheelOptimization(target, rightCurrentW);
 
+        //determining spin power
         spinPower = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
         spinClicksL = (int)(spinPower * 100 * leftThrottle);
         spinClicksR = (int)(spinPower * 100 * rightThrottle);
 
+        //determining rotational power
         leftRotatePower = snapLeftWheelPID.update(turnAmountL);
         leftRotClicks = (int)(turnAmountL * constants.CLICKS_PER_DEGREE);
         rightRotatePower = snapRightWheelPID.update(turnAmountR);
         rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE);
 
+        //determining whether to focus more on spinning or more on rotating
         rotatePerc = Math.abs((turnAmountL + turnAmountR)/180); //turnAmount / 90 --> percentage
         if (rotatePerc > 0.5) rotatePerc = 0.5;
         translatePerc = 1 - rotatePerc;
 
+        //determining "firstMovement" actions, if it is the robot's "firstMovement."
         firstMovement();
+
+        //determining values from right stick input.
         rightStick();
     }
 
@@ -135,8 +142,8 @@ public class RevisedKinematics {
 
     public void rightStick(){
         if (Math.abs(leftCurrentW) < constants.degreeTOLERANCE && Math.abs(rightCurrentW) < constants.degreeTOLERANCE && lx == 0 && ly == 0 && (rx != 0 || ry != 0)){
-            spinClicksL = (int) (-rx * 100);
-            spinClicksR = (int) (rx * 100);
+            spinClicksL = (int) (-rx * 300);
+            spinClicksR = (int) (rx * 300);
             spinPower = rx;
 
             leftRotClicks = 0;
@@ -180,6 +187,7 @@ public class RevisedKinematics {
     }
 
     public double[] getPower(){
+        double[] motorPower = new double[4];
         motorPower[0] = spinPower * translatePerc + leftRotatePower * rotatePerc; //top left
         motorPower[1] = spinPower * translatePerc + leftRotatePower * rotatePerc; //bottom left
         motorPower[2] = spinPower * translatePerc + rightRotatePower * rotatePerc; //top right
