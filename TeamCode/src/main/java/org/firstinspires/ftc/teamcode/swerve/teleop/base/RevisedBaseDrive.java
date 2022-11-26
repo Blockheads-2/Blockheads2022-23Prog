@@ -125,6 +125,7 @@ public class RevisedBaseDrive extends OpMode{
 
                 break;
         }
+        telemetry.addData("Drive Type", kinematics.getDriveType());
         telemetry.addData("First movement", kinematics.firstMovement);
 
         telemetry.update();

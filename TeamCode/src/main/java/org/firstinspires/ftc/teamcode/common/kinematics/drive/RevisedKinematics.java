@@ -23,6 +23,7 @@ public class RevisedKinematics {
         LINEAR,
         SNAP,
         STOP,
+        TURN,
         NOT_INITIALIZED
     }
     public DriveType type = DriveType.NOT_INITIALIZED;
@@ -133,9 +134,9 @@ public class RevisedKinematics {
     }
 
     public void rightStick(){
-        if (Math.abs(leftCurrentW) < constants.degreeTOLERANCE && Math.abs(rightCurrentW) < constants.degreeTOLERANCE && lx == 0 && ly == 0){
-            spinClicksL = (int) (rx * 100 );
-            spinClicksR = (int) (-rx * 100);
+        if (Math.abs(leftCurrentW) < constants.degreeTOLERANCE && Math.abs(rightCurrentW) < constants.degreeTOLERANCE && lx == 0 && ly == 0 && (rx != 0 || ry != 0)){
+            spinClicksL = (int) (-rx * 100);
+            spinClicksR = (int) (rx * 100);
             spinPower = rx;
 
             leftRotClicks = 0;
@@ -145,6 +146,7 @@ public class RevisedKinematics {
 
             translatePerc = 1;
             rotatePerc = 0;
+            type = DriveType.TURN;
         } else{
             //spline
         }
@@ -183,11 +185,9 @@ public class RevisedKinematics {
         motorPower[2] = spinPower * translatePerc + rightRotatePower * rotatePerc; //top right
         motorPower[3] = spinPower * translatePerc + rightRotatePower * rotatePerc; //bottom right
 
-//        double accelerationFactor = accelerator.update(1.0);
-//
-//        for (int i = 0; i < 4; i++){
-//            motorPower[i] *= accelerationFactor;
-//        }
+        for (int i = 0; i < 4; i++){
+            motorPower[i] = accelerator.update(motorPower[i]);
+        }
         return motorPower;
     }
 
