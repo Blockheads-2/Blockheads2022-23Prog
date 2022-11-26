@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.common.gps;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.kinematics.drive.Kinematics;
@@ -17,6 +21,10 @@ public class GlobalPosSystem {
 
     HardwareDrive robot;
 
+    Orientation lastOrientation;
+    Orientation currentOrientation;
+    double currAngle = 0;
+
     public GlobalPosSystem(HardwareDrive robot){
         this.robot = robot;
 
@@ -29,6 +37,9 @@ public class GlobalPosSystem {
         prevMotorClicks.put("botR", motorClicksPose.get("botR"));
         prevMotorClicks.put("topL", motorClicksPose.get("topL"));
         prevMotorClicks.put("botL", motorClicksPose.get("botL"));
+
+        currentOrientation = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        lastOrientation = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
     }
 
     public void grabKinematics(Kinematics k){
@@ -50,6 +61,46 @@ public class GlobalPosSystem {
         positionArr[2] = clamp(rotateL);
         positionArr[3] = clamp(rotateR);
     }
+
+    public void calculateHeader(){ //add this after implementing the extension hub onto the robot
+        // Get current orientation
+        currentOrientation = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        // Change in angle = current angle - previous angle
+        double deltaAngle = currentOrientation.firstAngle - lastOrientation.firstAngle;
+
+        // Gyro only ranges from -179 to 180
+        // If it turns -1 degree over from -179 to 180, subtract 360 from the 359 to get -1
+        if (deltaAngle <= -180) {
+            deltaAngle += 360;
+        } else if (deltaAngle > 180) {
+            deltaAngle -= 360;
+        }
+
+        // Add change in angle to current angle to get current angle
+        currAngle += deltaAngle;
+        lastOrientation = currentOrientation;
+    }
+
+//    public void calculateHeader(){ //add this after implementing the extension hub onto the robot
+//        // Get current orientation
+//        currentOrientation = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+//
+//        currAngle += currentOrientation.firstAngle;
+//        // Gyro only ranges from -179 to 180
+//        // If it turns -1 degree over from -179 to 180, subtract 360 from the 359 to get -1
+//        if (currAngle <= -180) {
+//            currAngle += 360;
+//        } else if (currAngle > 180) {
+//            currAngle -= 360;
+//        }
+//    }
+
+//    public void calculateHeader(){ //add this after implementing the extension hub onto the robot
+//        // Get current orientation
+//        currentOrientation = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+//        currAngle = currentOrientation.firstAngle;
+//    }
 
     public void calculateRobot(){
         //right
