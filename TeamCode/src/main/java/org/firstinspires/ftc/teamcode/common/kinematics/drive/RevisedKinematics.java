@@ -121,6 +121,10 @@ public class RevisedKinematics {
 
         //determining values from right stick input.
         rightStick();
+
+
+        //unnecessary function but useful for telemetry
+        stop();
     }
 
     public void firstMovement(){
@@ -156,6 +160,26 @@ public class RevisedKinematics {
             type = DriveType.TURN;
         } else{
             //spline
+        }
+    }
+
+    public void stop(){
+        if (type == DriveType.STOP){
+            target = 0;
+            turnAmountL = 0;
+            turnAmountR = 0;
+
+            spinPower = 0;
+            spinClicksR = 0;
+            spinClicksL = 0;
+
+            rightRotatePower = 0;
+            leftRotatePower = 0;
+            rightRotClicks = 0;
+            leftRotClicks = 0;
+
+            translatePerc = 0;
+            rotatePerc = 0;
         }
     }
 
