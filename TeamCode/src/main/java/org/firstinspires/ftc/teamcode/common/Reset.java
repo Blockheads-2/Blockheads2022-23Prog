@@ -20,7 +20,6 @@ public class Reset {
     boolean STOP_RESET_L = false;
     boolean STOP_RESET_R = false;
     boolean isResetCycle = false;
-    boolean allignedWheels = true;
 
     public Reset(HardwareDrive r, GlobalPosSystem gps){
         robot = r;
@@ -46,7 +45,6 @@ public class Reset {
             isResetCycle = false;
             gapTime.reset();
             prevTime=gapTime.milliseconds();
-            allignedWheels = false;
         }
     }
 
@@ -125,10 +123,5 @@ public class Reset {
                 robot.topR.setPower(power);
             }
         }
-        allignedWheels = (robot.topL.getCurrentPosition() == topLTarget && robot.botL.getCurrentPosition() == botLTarget && robot.topR.getCurrentPosition() == topRTarget && robot.botR.getCurrentPosition() == botRTarget);
-    }
-
-    public boolean checkWheelAllignment(){
-        return allignedWheels;
     }
 }

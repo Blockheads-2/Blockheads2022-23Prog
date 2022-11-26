@@ -77,7 +77,7 @@ public class RevisedKinematics {
         joystickTracker = new TrackJoystick();
     }
 
-    public void logic(double lx, double ly, double rx, double ry, boolean allignedWheels){
+    public void logic(double lx, double ly, double rx, double ry){
         this.lx = lx;
         this.ly = ly;
         this.rx = rx;
@@ -107,12 +107,16 @@ public class RevisedKinematics {
         rightRotatePower = snapRightWheelPID.update(turnAmountR);
         rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE);
 
+        rotatePerc = Math.abs((turnAmountL + turnAmountR)/180); //turnAmount / 90 --> percentage
+        if (rotatePerc > 0.5) rotatePerc = 0.5;
+        translatePerc = 1 - rotatePerc;
+
         firstMovement();
-        turn(allignedWheels);
+        rightStick();
     }
 
     public void firstMovement(){
-        if (joystickTracker.getChange() > 90 ) firstMovement = true;
+        if (joystickTracker.getChange() > 90 || noMovementRequests()) firstMovement = true;
         if (firstMovement){
             if (Math.abs(turnAmountL) >= constants.degreeTOLERANCE || Math.abs(turnAmountR) >= constants.degreeTOLERANCE){
                 translatePerc = 0;
@@ -126,11 +130,10 @@ public class RevisedKinematics {
                 rotatePerc = 0.4;
             }
         }
-        if (noMovementRequests()) firstMovement = true;
     }
 
-    public void turn(boolean wheelsAlligned){
-        if (wheelsAlligned){
+    public void rightStick(){
+        if (Math.abs(leftCurrentW) < constants.degreeTOLERANCE && Math.abs(rightCurrentW) < constants.degreeTOLERANCE && lx == 0 && ly == 0){
             spinClicksL = (int) (rx * 100 );
             spinClicksR = (int) (-rx * 100);
             spinPower = rx;
@@ -142,6 +145,8 @@ public class RevisedKinematics {
 
             translatePerc = 1;
             rotatePerc = 0;
+        } else{
+            //spline
         }
     }
 
