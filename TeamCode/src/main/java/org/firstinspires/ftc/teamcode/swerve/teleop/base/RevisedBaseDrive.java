@@ -106,8 +106,8 @@ public class RevisedBaseDrive extends OpMode{
                 telemetry.addData("botL clicks", robot.botL.getCurrentPosition());
                 telemetry.addData("TopL Target Amount", robot.topL.getTargetPosition() - robot.topL.getCurrentPosition());
                 telemetry.addData("BotL Target Amount", robot.botL.getTargetPosition() - robot.botL.getCurrentPosition());
-                telemetry.addData("TopL Power", powerTopL);
-                telemetry.addData("BotL Power", powerBotL);
+                telemetry.addData("Rotate Power", kinematics.leftRotatePower);
+                telemetry.addData("Clicks target", kinematics.spinClicksL + kinematics.leftRotClicks);
                 break;
 
             case RIGHT:
@@ -120,11 +120,11 @@ public class RevisedBaseDrive extends OpMode{
                 telemetry.addData("botR clicks", robot.botR.getCurrentPosition());
                 telemetry.addData("TopR Target Amount", robot.topR.getTargetPosition() - robot.topR.getCurrentPosition());
                 telemetry.addData("BotR Target Amount", robot.botR.getTargetPosition() - robot.botR.getCurrentPosition());
-                telemetry.addData("TopR Power", powerTopR);
-                telemetry.addData("BotR Power", powerBotR);
-
+                telemetry.addData("Rotate Power", kinematics.rightRotatePower);
+                telemetry.addData("Clicks target", kinematics.spinClicksR + kinematics.rightRotClicks);
                 break;
         }
+        telemetry.addData("TopL Spin Power", kinematics.spinPower);
         telemetry.addData("Drive Type", kinematics.getDriveType());
         telemetry.addData("First movement", kinematics.firstMovement);
 

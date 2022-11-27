@@ -29,9 +29,9 @@ public class RevisedKinematics {
     public DriveType type = DriveType.NOT_INITIALIZED;
 
     //robot's power
-    double leftRotatePower = 0.0;
-    double rightRotatePower = 0.0;
-    double spinPower = 0.0;
+    public double leftRotatePower = 0.0;
+    public double rightRotatePower = 0.0;
+    public double spinPower = 0.0;
 
     double translatePerc = 0.6; //placeholder for now
     double rotatePerc = 0.4;
