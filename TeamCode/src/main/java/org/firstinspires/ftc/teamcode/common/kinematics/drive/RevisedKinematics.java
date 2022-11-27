@@ -42,7 +42,7 @@ public class RevisedKinematics {
     public int spinClicksR = 0; //make protected later
     public int spinClicksL = 0; //make protected later
     public int rightThrottle = -1;
-    public int leftThrottle = -1;
+    public int leftThrottle = 1;
 
     public double target = 0;
     public double turnAmountL = 0;
@@ -112,7 +112,7 @@ public class RevisedKinematics {
         rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE);
 
         //determining whether to focus more on spinning or more on rotating
-        rotatePerc = Math.abs((turnAmountL + turnAmountR)/180); //turnAmount / 90 --> percentage
+        rotatePerc = (Math.abs(turnAmountL) + Math.abs(turnAmountR)) / 180.0; //turnAmount / 90 --> percentage
         if (rotatePerc > 0.5) rotatePerc = 0.5;
         translatePerc = 1 - rotatePerc;
 
@@ -144,18 +144,26 @@ public class RevisedKinematics {
     }
 
     public void rightStick(){
-        if (Math.abs(leftCurrentW) < 10 && Math.abs(rightCurrentW) < 10 && lx == 0 && ly == 0 && (rx != 0 || ry != 0)){
-            spinClicksL = (int) (-rx * 100);
-            spinClicksR = (int) (rx * 100);
+        if (Math.abs(leftCurrentW - currentR) < 15 && Math.abs(rightCurrentW - currentR) < 15 && lx == 0 && ly == 0 && (rx != 0 || ry != 0)){
+            leftThrottle = 1;
+            rightThrottle = 1;
+            spinClicksL = (int) (rx * 100 * leftThrottle);
+            spinClicksR = (int) (rx * 100 * rightThrottle);
             spinPower = rx;
 
-            leftRotClicks = 0;
-            leftRotatePower = 0;
-            rightRotClicks = 0;
-            rightRotatePower = 0;
+            rotatePerc = (Math.abs(turnAmountL) + Math.abs(turnAmountR)) / 60.0; //turnAmount / 30 --> percentage
+            if (rotatePerc > 0.5) rotatePerc = 0.5;
+            translatePerc = 1 - rotatePerc;
 
-            translatePerc = 1;
-            rotatePerc = 0;
+            turnAmountL = -leftCurrentW;
+            leftRotClicks = (int)(turnAmountL * constants.CLICKS_PER_DEGREE);
+            leftRotatePower = snapLeftWheelPID.update(turnAmountL);
+
+            turnAmountR = -rightCurrentW;
+            rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE);
+            rightRotatePower = snapRightWheelPID.update(turnAmountR);
+
+
             type = DriveType.TURN;
         } else{
             //spline

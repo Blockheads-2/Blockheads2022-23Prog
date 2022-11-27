@@ -49,6 +49,9 @@ public class GlobalPosSystem {
     public void calculatePos(){
         updateHash();
         calculateWheel();
+        calculateHeader();
+        positionArr[2] += positionArr[4];
+        positionArr[2] += positionArr[4];
         calculateRobot();
     }
 
@@ -78,29 +81,10 @@ public class GlobalPosSystem {
         }
 
         // Add change in angle to current angle to get current angle
-        currAngle += deltaAngle;
+        currAngle -= deltaAngle; //we subtract instead of add because we subtract the c
         lastOrientation = currentOrientation;
+        positionArr[4] = currAngle;
     }
-
-//    public void calculateHeader(){ //add this after implementing the extension hub onto the robot
-//        // Get current orientation
-//        currentOrientation = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-//
-//        currAngle += currentOrientation.firstAngle;
-//        // Gyro only ranges from -179 to 180
-//        // If it turns -1 degree over from -179 to 180, subtract 360 from the 359 to get -1
-//        if (currAngle <= -180) {
-//            currAngle += 360;
-//        } else if (currAngle > 180) {
-//            currAngle -= 360;
-//        }
-//    }
-
-//    public void calculateHeader(){ //add this after implementing the extension hub onto the robot
-//        // Get current orientation
-//        currentOrientation = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-//        currAngle = currentOrientation.firstAngle;
-//    }
 
     public void calculateRobot(){
         //right
@@ -123,14 +107,15 @@ public class GlobalPosSystem {
         double hypotenuse = (translationalInchesL + translationalInchesR) / 2.0;
 
 
-        if (Math.signum(translationalInchesL) == -Math.signum(translationalInchesR) && Math.abs(Math.abs(translationalInchesL) - Math.abs(translationalInchesR)) <= 0.3){
-            double arc = Math.max(translationalInchesL, translationalInchesR);
-            double theta = arc / constants.DISTANCE_BETWEEN_MODULE_AND_CENTER;
-            theta = (arc == translationalInchesR ? -theta : theta);
-            theta = Math.toDegrees(theta);
-            update(0, 0, theta, theta, theta);
-            return;
-        }
+//        if (Math.signum(translationalInchesL) == -Math.signum(translationalInchesR) && Math.abs(Math.abs(translationalInchesL) - Math.abs(translationalInchesR)) <= 0.3){
+//            double arc = Math.max(translationalInchesL, translationalInchesR);
+//            double theta = arc / constants.DISTANCE_BETWEEN_MODULE_AND_CENTER;
+//            theta = (arc == translationalInchesR ? -theta : theta);
+//            theta = Math.toDegrees(theta);
+//            update(0, 0, theta, theta, theta);
+//            return;
+//        }
+
 //        double bigArc = Math.max(translationalInchesL, translationalInchesR); //unit: inches
 //        double smallArc = Math.min(translationalInchesL, translationalInchesR); //unit: inches
 //        if (Math.abs(bigArc - smallArc) <= 0.1){
@@ -195,8 +180,8 @@ public class GlobalPosSystem {
     }
 
     public void hardResetGPS(){
-        positionArr[2]=0;
-        positionArr[3]=0;
+        positionArr[2]=positionArr[4];
+        positionArr[3]=positionArr[4];
 
         motorClicksPose.put("topR", robot.topR.getCurrentPosition());
         motorClicksPose.put("botR", robot.botR.getCurrentPosition());
