@@ -144,7 +144,7 @@ public class RevisedKinematics {
     }
 
     public void rightStick(){
-        if (Math.abs(leftCurrentW) < constants.degreeTOLERANCE && Math.abs(rightCurrentW) < constants.degreeTOLERANCE && lx == 0 && ly == 0 && (rx != 0 || ry != 0)){
+        if (Math.abs(leftCurrentW) < 10 && Math.abs(rightCurrentW) < 10 && lx == 0 && ly == 0 && (rx != 0 || ry != 0)){
             spinClicksL = (int) (-rx * 100);
             spinClicksR = (int) (rx * 100);
             spinPower = rx;
