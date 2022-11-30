@@ -183,17 +183,17 @@ public class SussyBaseDrive extends OpMode{
         telemetry.addData("Goal Position", topCurrent + 10);
 
 
-        robot.at.setTargetPosition(topCurrent + 10);
+        robot.at.setTargetPosition(topCurrent + 30);
         robot.at.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        robot.at.setPower(0.3);
+        robot.at.setPower(0.75);
     }
 
     public void setTargetNegative(){
         int topCurrent = robot.at.getCurrentPosition();
 
-        robot.at.setTargetPosition(topCurrent - 10);
+        robot.at.setTargetPosition(topCurrent - 30);
         robot.at.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        robot.at.setPower(0.3);
+        robot.at.setPower(0.75);
     }
 
     public void setTargetPositiveBase(){
@@ -225,9 +225,9 @@ public class SussyBaseDrive extends OpMode{
     }
 
     void setArmPower(){
-        if (y.is(Button.State.TAP)){
+        if (gamepad2.y){
             setTargetPositive();
-        } else if (x.is(Button.State.TAP)){
+        } else if (gamepad2.x){
             setTargetNegative();
         } else if(a.is(Button.State.TAP)){
             setTargetPositiveBase();
@@ -248,8 +248,6 @@ public class SussyBaseDrive extends OpMode{
         prevPosition = robot.abl.getCurrentPosition();
 
     }
-
-
 
     void armMovement(){
         //abl, abr, at
@@ -309,7 +307,6 @@ public class SussyBaseDrive extends OpMode{
             robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.at.setPower(0.5);
         }
-
     }
 
     void testServos(){
@@ -326,18 +323,13 @@ public class SussyBaseDrive extends OpMode{
     double DriveTrainSpeed(){
         double drivePower = 0.75;
 
-
-
         if (gamepad1.right_bumper)
             drivePower = 1;
         else if (gamepad1.left_bumper)
             drivePower = 0.25;
 
-
         return drivePower;
     }
-
-    
 
     /*
      * Code to run ONCE after the driver hits STOP
