@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.swerve.auto.opmodes.AutoHub;
 
 import java.util.ArrayList;
 
-@Autonomous(name = "autoTemplateThingy", group = "Routes")
+@Autonomous(name = "autoTemplateThingy thingy", group = "Routes")
 abstract public class autoTemplateThingy extends LinearOpMode{
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;

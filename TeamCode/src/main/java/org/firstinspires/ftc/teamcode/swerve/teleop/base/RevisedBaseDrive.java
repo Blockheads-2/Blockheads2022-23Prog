@@ -87,6 +87,12 @@ public class RevisedBaseDrive extends OpMode{
         } else if (y.getState() == Button.State.TAP){
             tData = TelemetryData.RIGHT;
         }
+
+        if (a.getState() == Button.State.TAP){
+            kinematics.switchRightSpinDirection();
+        } else if (b.getState() == Button.State.TAP){
+            kinematics.switchLeftSpinDirection();
+        }
     }
 
     void UpdatePlayer2(){
