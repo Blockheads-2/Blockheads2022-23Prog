@@ -27,4 +27,15 @@ public class MecanumConstants {
     //Claw Position
     public double initializedArmServo = 0.5;
     public double initializedClaw = 0;
+
+    //Distance Between Odo and Center
+    public double horizontalDistanceOdo = 6.25;
+    public double midDistanceOdo = 3.0;
+
+    //Degrees Per Inch Auto
+    public double degree = 23.47/90;
+
+    //Drive Train Constants
+    public double maxVelocityDT = 2700;
+    public double clicksPerInch = 45.285;
 }
