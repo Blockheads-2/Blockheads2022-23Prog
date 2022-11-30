@@ -4,12 +4,14 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class SpinPID {
+public class AutoPID {
     private double kp, ki, kd;
     private double pError;
 
     private ElapsedTime timer = new ElapsedTime();
-    private double target;
+    private double targetX;
+    private double targetY;
+
     private double prevError = 0;
     private double prevTime = 0;
     private double accumulatedError = 0;
@@ -18,13 +20,13 @@ public class SpinPID {
     private final static Logger LOGGER =
             Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-    public SpinPID(){
+    public AutoPID(){
         timer.reset();
     }
 
-    public double update(double current){
+    public double update(double x, double y){
         //proportion
-        double error = target - current;
+        double error = Math.sqrt(Math.pow(targetX - x, 2) + Math.pow(targetY - y, 2));
 
         //integral
         accumulatedError = Math.abs(accumulatedError) * Math.signum(error); //ensures that accumulatedError and the error have the same sign
@@ -47,11 +49,12 @@ public class SpinPID {
         return motorPower;
     }
 
-    public void setTargets(double target, double kp, double ki, double kd){
+    public void setTargets(double targetX, double targetY, double kp, double ki, double kd){
         this.kp = kp;
         this.ki = ki;
         this.kd = kd;
-        this.target = target;
+        this.targetX = targetX;
+        this.targetY = targetY;
     }
 
 

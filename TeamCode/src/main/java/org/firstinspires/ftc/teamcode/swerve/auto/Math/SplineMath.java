@@ -11,6 +11,8 @@ public class SplineMath {
     private int LinitClick;
     private double x;
     private double y;
+    private double radius;
+    private double theta;
     private double turnAmount; //amount robot header should turn (for table-spinning)
 
     public SplineMath(){
@@ -33,8 +35,8 @@ public class SplineMath {
 
     public double[] returnDistance(){
         double[] distanceArr = new double[3];
-        double radius = ((x * x) + (y * y)) / (2 * x);
-        double theta = 0;
+        radius = ((x * x) + (y * y)) / (2 * x);
+        theta = 0;
 
         if (x==0){ //linear movement if x=0. No splining
             distanceArr[0] = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
@@ -88,5 +90,9 @@ public class SplineMath {
 
         double distance = Math.abs(currentClickL - LinitClick) * constants.CLICKS_PER_INCH;
         return (distanceL >= distanceR ? 1 * spinPIDL.update(distance) : (distanceR / distanceL) * spinPIDL.update(distance));
+    }
+
+    public double getRunTime(double rate){
+        return (radius * theta * constants.CLICKS_PER_INCH) / rate;
     }
 }

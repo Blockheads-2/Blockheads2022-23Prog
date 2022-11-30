@@ -17,6 +17,8 @@ public class Constants {
     public double clickTOLERANCE = 10; //number of clicks or degrees the robot can be off by
     public double degreeTOLERANCE = 5;
 
+    public double MAX_VELOCITY;
+
     //Arm Constants
     public double CLICKS_PER_BASE_REV = 5281.1; //clicks per rev of base arm motor
     public double CLICKS_PER_TOP_REV =  1120.0; //clicks per rev of top arm motor

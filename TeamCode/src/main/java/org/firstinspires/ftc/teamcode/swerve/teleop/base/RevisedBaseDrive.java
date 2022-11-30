@@ -127,6 +127,9 @@ public class RevisedBaseDrive extends OpMode{
         telemetry.addData("TopL Spin Power", kinematics.spinPower);
         telemetry.addData("Drive Type", kinematics.getDriveType());
         telemetry.addData("First movement", kinematics.firstMovement);
+        telemetry.addData("X pos", posSystem.getPositionArr()[0]);
+        telemetry.addData("Y pos", posSystem.getPositionArr()[1]);
+
 
         telemetry.update();
     }

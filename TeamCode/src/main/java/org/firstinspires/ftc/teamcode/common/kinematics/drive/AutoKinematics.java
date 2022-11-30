@@ -6,18 +6,20 @@ import org.firstinspires.ftc.teamcode.common.Accelerator;
 import org.firstinspires.ftc.teamcode.common.Reset;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
+import org.firstinspires.ftc.teamcode.common.pid.AutoPID;
 import org.firstinspires.ftc.teamcode.common.pid.LinearCorrectionPID;
 import org.firstinspires.ftc.teamcode.common.pid.RotateSwerveModulePID;
 import org.firstinspires.ftc.teamcode.common.pid.SnapSwerveModulePID;
+import org.firstinspires.ftc.teamcode.common.pid.SpinPID;
 import org.firstinspires.ftc.teamcode.swerve.teleop.TrackJoystick;
 
-public class RevisedKinematics {
+public class AutoKinematics {
     protected Constants constants = new Constants();
 
-    private double lx;
-    private double ly;
-    private double rx;
-    private double ry;
+    double x;
+    double y;
+    double finalAngle;
+    double power;
 
     public enum DriveType{
         LINEAR,
@@ -58,16 +60,19 @@ public class RevisedKinematics {
     TrackJoystick joystickTracker;
 
     //PIDs
-    protected SnapSwerveModulePID snapLeftWheelPID;
-    protected SnapSwerveModulePID snapRightWheelPID;
+    SnapSwerveModulePID snapLeftWheelPID;
+    SnapSwerveModulePID snapRightWheelPID;
+    AutoPID spinPID;
+
 
     public boolean firstMovement = true;
 
-    public RevisedKinematics(GlobalPosSystem posSystem){
+    public AutoKinematics(GlobalPosSystem posSystem){
         this.posSystem = posSystem;
 
         snapLeftWheelPID = new SnapSwerveModulePID();
         snapRightWheelPID = new SnapSwerveModulePID();
+        spinPID = new AutoPID();
 
         snapLeftWheelPID.setTargets(0.03, 0, 0.01);
         snapRightWheelPID.setTargets(0.03, 0, 0.01);
@@ -76,14 +81,18 @@ public class RevisedKinematics {
         joystickTracker = new TrackJoystick();
     }
 
-    public void logic(double lx, double ly, double rx, double ry){
-        this.lx = lx;
-        this.ly = ly;
-        this.rx = rx;
-        this.ry = ry;
+    public void setPos(double x, double y, double theta, double speed){
+        this.x = x;
+        this.y = y;
+        this.finalAngle = theta;
+        this.power = speed;
 
+        spinPID.setTargets(x, y, 0.03, 0, 0.01);
+    }
+
+    public void logic(){
         //tracking the joystick's movement
-        joystickTracker.trackJoystickL(lx, ly);
+//        joystickTracker.trackJoystickL(x, y);
 
         if (noMovementRequests()) type = DriveType.STOP;
         else type = DriveType.LINEAR;
@@ -94,14 +103,14 @@ public class RevisedKinematics {
         currentR = posSystem.getPositionArr()[4];
 
         //determining targets, and how much we want to turn
-        target = Math.toDegrees(Math.atan2(lx, ly));
-        if (lx == 0 && ly == 0) target = 0;
-        else if (lx==0 && ly < 0) target=180;
+        target = Math.toDegrees(Math.atan2(x, y));
+        if (x == 0 && y == 0) target = 0;
+        else if (x==0 && y < 0) target=180;
         turnAmountL = wheelOptimization(target, leftCurrentW);
         turnAmountR = wheelOptimization(target, rightCurrentW);
 
         //determining spin power
-        spinPower = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
+        spinPower = spinPID.update(posSystem.getPositionArr()[0], posSystem.getPositionArr()[1]);
         spinClicksL = (int)(spinPower * 100 * leftThrottle);
         spinClicksR = (int)(spinPower * 100 * rightThrottle);
 
@@ -120,8 +129,8 @@ public class RevisedKinematics {
         firstMovement();
 
         //determining values from right stick input.
-        rightStick();
-        
+//        rightStick();
+
         //unnecessary function but useful for telemetry
         stop();
     }
@@ -143,32 +152,32 @@ public class RevisedKinematics {
         }
     }
 
-    public void rightStick(){
-        if (Math.abs(leftCurrentW - currentR) < constants.degreeTOLERANCE && Math.abs(rightCurrentW - currentR) < constants.degreeTOLERANCE && lx == 0 && ly == 0 && (rx != 0 || ry != 0)){
-            leftThrottle = 1;
-            rightThrottle = 1;
-            spinClicksL = (int) (rx * 100 * leftThrottle);
-            spinClicksR = (int) (rx * 100 * rightThrottle);
-            spinPower = rx;
-
-            rotatePerc = (Math.abs(turnAmountL) + Math.abs(turnAmountR)) / 60.0; //turnAmount / 30 --> percentage
-            if (rotatePerc > 0.5) rotatePerc = 0.5;
-            translatePerc = 1 - rotatePerc;
-
-            turnAmountL = -leftCurrentW;
-            leftRotClicks = (int)(turnAmountL * constants.CLICKS_PER_DEGREE);
-            leftRotatePower = snapLeftWheelPID.update(turnAmountL);
-
-            turnAmountR = -rightCurrentW;
-            rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE);
-            rightRotatePower = snapRightWheelPID.update(turnAmountR);
-
-
-            type = DriveType.TURN;
-        } else{
-            //spline
-        }
-    }
+//    public void rightStick(){
+//        if (Math.abs(leftCurrentW - currentR) < constants.degreeTOLERANCE && Math.abs(rightCurrentW - currentR) < constants.degreeTOLERANCE && lx == 0 && ly == 0 && (rx != 0 || ry != 0)){
+//            leftThrottle = 1;
+//            rightThrottle = 1;
+//            spinClicksL = (int) (rx * 100 * leftThrottle);
+//            spinClicksR = (int) (rx * 100 * rightThrottle);
+//            spinPower = rx;
+//
+//            rotatePerc = (Math.abs(turnAmountL) + Math.abs(turnAmountR)) / 60.0; //turnAmount / 30 --> percentage
+//            if (rotatePerc > 0.5) rotatePerc = 0.5;
+//            translatePerc = 1 - rotatePerc;
+//
+//            turnAmountL = -leftCurrentW;
+//            leftRotClicks = (int)(turnAmountL * constants.CLICKS_PER_DEGREE);
+//            leftRotatePower = snapLeftWheelPID.update(turnAmountL);
+//
+//            turnAmountR = -rightCurrentW;
+//            rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE);
+//            rightRotatePower = snapRightWheelPID.update(turnAmountR);
+//
+//
+//            type = DriveType.TURN;
+//        } else{
+//            //spline
+//        }
+//    }
 
     public void stop(){
         if (type == DriveType.STOP){
@@ -245,7 +254,7 @@ public class RevisedKinematics {
     }
 
     public boolean noMovementRequests(){
-        return (lx==0 && ly==0 && rx==0 && ry==0);
+        return (x==0 && y==0 && finalAngle==0);
     }
 
     public double getTarget(){
