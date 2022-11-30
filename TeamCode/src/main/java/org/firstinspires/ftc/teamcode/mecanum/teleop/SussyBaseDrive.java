@@ -250,8 +250,6 @@ public class SussyBaseDrive extends OpMode{
 
     }
 
-
-
     void armMovement(){
         //abl, abr, at
 
@@ -310,7 +308,6 @@ public class SussyBaseDrive extends OpMode{
             robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.at.setPower(0.5);
         }
-
     }
 
     void testServos(){
@@ -327,18 +324,13 @@ public class SussyBaseDrive extends OpMode{
     double DriveTrainSpeed(){
         double drivePower = 0.75;
 
-
-
         if (gamepad1.right_bumper)
             drivePower = 1;
         else if (gamepad1.left_bumper)
             drivePower = 0.25;
 
-
         return drivePower;
     }
-
-    
 
     /*
      * Code to run ONCE after the driver hits STOP
