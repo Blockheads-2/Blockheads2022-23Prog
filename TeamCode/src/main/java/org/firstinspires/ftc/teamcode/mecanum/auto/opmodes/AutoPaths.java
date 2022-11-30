@@ -9,13 +9,26 @@ import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.firstinspires.ftc.teamcode.mecanum.auto.AutoHubMecanum;
+import org.firstinspires.ftc.teamcode.mecanum.auto.AutoHub;
+
+import org.firstinspires.ftc.teamcode.mecanum.auto.AutoHub;
+import org.firstinspires.ftc.teamcode.common.HardwareDrive;
+import org.firstinspires.ftc.teamcode.mecanum.common.Constants;
+
 
 import java.util.ArrayList;
 
 @Autonomous(name = "autoTemplateThingy", group = "Routes")
+//@Disabled
 abstract public class AutoPaths extends LinearOpMode{
+
     OpenCvCamera camera;
+    AutoHub dispatch;
+    HardwareDrive robot = new HardwareDrive();
+    Constants constants = new Constants();
+
+
+
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
     static final double FEET_PER_METER = 3.28084;
@@ -40,12 +53,10 @@ abstract public class AutoPaths extends LinearOpMode{
     final int THRESHOLD_NUM_FRAMES_NO_DETECTION_BEFORE_LOW_DECIMATION = 4;
     int aprilTagId;
 
-    AutoHubMecanum dispatch;
-
     @Override
     public void runOpMode()
     {
-        dispatch = new AutoHubMecanum(this);
+        dispatch = new AutoHub(this);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cameraMonitorViewId"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
@@ -132,6 +143,9 @@ abstract public class AutoPaths extends LinearOpMode{
         switch (aprilTagId) {
             case 0: {
                 //stick code for one dot here
+                dispatch.constantHeading(0.7,0,20,0.001,0,0.0003);
+                dispatch.turnPID(-90,0.7);
+                dispatch.constantHeading(0.7,);
                 break;
             }
             case 1: {

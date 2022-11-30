@@ -8,17 +8,16 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.mecanum.common.MecanumConstants;
-import org.firstinspires.ftc.teamcode.mecanum.common.SussyHardwareDrive;
-import org.firstinspires.ftc.teamcode.common.HardwareDrive;
+import org.firstinspires.ftc.teamcode.mecanum.common.Constants;
+import org.firstinspires.ftc.teamcode.mecanum.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.Button;
 
 @TeleOp(name="Sussy Base Drive", group="Drive")
 //@Disabled
 public class SussyBaseDrive extends OpMode{
     /* Declare OpMode members. */
-    SussyHardwareDrive robot = new SussyHardwareDrive();
-    MecanumConstants constants = new MecanumConstants();
+    HardwareDrive robot = new HardwareDrive();
+    Constants constants = new Constants();
     private ElapsedTime runtime = new ElapsedTime();
 
     Button bottomButton = new Button();

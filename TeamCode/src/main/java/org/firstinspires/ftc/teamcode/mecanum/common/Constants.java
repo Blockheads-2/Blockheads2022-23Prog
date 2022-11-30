@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.mecanum.common;
 
-public class MecanumConstants {
+public class Constants {
 
     //Arm Positions
 

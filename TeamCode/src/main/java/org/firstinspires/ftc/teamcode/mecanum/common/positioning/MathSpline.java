@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.mecanum.common.positioning;
 
-import org.firstinspires.ftc.teamcode.mecanum.common.MecanumConstants;
-import org.firstinspires.ftc.teamcode.mecanum.common.positioning.AbsPose;
+import org.firstinspires.ftc.teamcode.mecanum.common.Constants;
 
 
 public class MathSpline {
@@ -14,7 +13,7 @@ public class MathSpline {
     double pLeft = 0; //power of left wheel
     double pRight = 0; //power of right wheel
 
-    MecanumConstants constants = new MecanumConstants();
+    Constants constants = new Constants();
     AbsPose absPose = new AbsPose();
 
     //Variables for Math

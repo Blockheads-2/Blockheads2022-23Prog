@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.mecanum.common.positioning;
 
-import org.firstinspires.ftc.teamcode.mecanum.common.MecanumConstants;
-import org.firstinspires.ftc.teamcode.mecanum.common.positioning.AbsPose;
+import org.firstinspires.ftc.teamcode.mecanum.common.Constants;
 
 public class MathConstHead {
     double psi = 0; //final x
@@ -13,7 +12,7 @@ public class MathConstHead {
     double omegaSquared = 0;
     double psiOverOmega = 0;
 
-    MecanumConstants constants = new MecanumConstants();
+    Constants constants = new Constants();
     AbsPose absPose = new AbsPose();
 
 

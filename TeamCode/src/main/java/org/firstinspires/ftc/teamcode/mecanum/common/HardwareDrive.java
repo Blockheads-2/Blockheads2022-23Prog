@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.mecanum.common;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -8,9 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 
-import org.firstinspires.ftc.teamcode.mecanum.common.MecanumConstants;
-
-public class SussyHardwareDrive
+public class HardwareDrive
 {
     //Motors
     public DcMotorEx  lf   = null;
@@ -31,10 +28,10 @@ public class SussyHardwareDrive
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
     private ElapsedTime period  = new ElapsedTime();
-    MecanumConstants constants = new MecanumConstants();
+    Constants constants = new Constants();
 
     /* Constructor */
-    public SussyHardwareDrive(){
+    public HardwareDrive(){
 
     }
 

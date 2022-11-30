@@ -3,47 +3,35 @@ package org.firstinspires.ftc.teamcode.mecanum.auto;
 import static android.os.SystemClock.sleep;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.view.View;
 
-import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
-import com.qualcomm.robotcore.hardware.SwitchableLight;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.mecanum.common.MecanumConstants;
-import org.firstinspires.ftc.teamcode.mecanum.common.SussyHardwareDrive;
+import org.firstinspires.ftc.teamcode.mecanum.common.Constants;
+import org.firstinspires.ftc.teamcode.mecanum.common.HardwareDrive;
 
 import org.firstinspires.ftc.teamcode.mecanum.common.pid.TurnPIDController;
-import org.firstinspires.ftc.teamcode.mecanum.common.pid.VelocityPIDController;
 import org.firstinspires.ftc.teamcode.mecanum.common.positioning.MathConstHead;
 import org.firstinspires.ftc.teamcode.mecanum.common.positioning.MathSpline;
 
-import java.util.List;
 
-
-public class AutoHubMecanum {
+public class AutoHub {
 
     private final LinearOpMode linearOpMode;
 
 
     /* Declare OpMode members. */
-    SussyHardwareDrive robot;   // Use a Pushbot's hardware
+    HardwareDrive robot;   // Use a Pushbot's hardware
     HardwareMap hardwareMap;
     private ElapsedTime runtime = new ElapsedTime();
-    MecanumConstants constants = new MecanumConstants();
+    Constants constants = new Constants();
     MathSpline mathSpline = new MathSpline();
     MathConstHead mathConstHead = new MathConstHead();
 
@@ -65,12 +53,12 @@ public class AutoHubMecanum {
 
     View relativeLayout;
 
-    public AutoHubMecanum(LinearOpMode plinear){
+    public AutoHub(LinearOpMode plinear){
 
         linearOpMode = plinear;
         hardwareMap = linearOpMode.hardwareMap;
 
-        robot = new SussyHardwareDrive();
+        robot = new HardwareDrive();
 
         robot.init(hardwareMap);
 
