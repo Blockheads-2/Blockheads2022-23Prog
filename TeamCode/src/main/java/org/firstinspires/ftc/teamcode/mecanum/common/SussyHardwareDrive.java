@@ -76,7 +76,7 @@ public class SussyHardwareDrive
         rb.setDirection(DcMotorEx.Direction.FORWARD);
 
         //Reverse Arm Motors
-        at.setDirection(DcMotorEx.Direction.REVERSE);
+        at.setDirection(DcMotorEx.Direction.FORWARD);
         abl.setDirection(DcMotorEx.Direction.FORWARD);
         abr.setDirection(DcMotorEx.Direction.REVERSE);
 
