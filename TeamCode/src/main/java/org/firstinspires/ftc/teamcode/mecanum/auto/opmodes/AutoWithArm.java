@@ -11,16 +11,15 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.firstinspires.ftc.teamcode.mecanum.auto.AutoHub;
 
-import org.firstinspires.ftc.teamcode.mecanum.auto.AutoHub;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.mecanum.common.Constants;
 
 
 import java.util.ArrayList;
 
-@Autonomous(name = "Auto Paths", group = "Routes")
+@Autonomous(name = "Arm Auto", group = "Routes")
 //@Disabled
-public class AutoPaths extends LinearOpMode{
+public class AutoWithArm extends LinearOpMode{
 
     OpenCvCamera camera;
     AutoHub dispatch;
@@ -143,22 +142,54 @@ public class AutoPaths extends LinearOpMode{
         switch (aprilTagId) {
             case 0: {
                 //stick code for one dot here
-                dispatch.constantHeading(0.7,0,24,0.001,0,0.0003);
-                dispatch.turnPID(-90,0.7);
+
+                //1) Score on Top
+                dispatch.constantHeading(0.7,0,20,0.001,0,0.0003);
+                dispatch.turnPID(-60,0.7);
                 dispatch.constantHeading(0.7,0,24,0.001,0,0.003);
+
+                dispatch.moveArmTop();
+
+                //Move to Position 1
+                dispatch.turnAbsPID(0,0);
+                dispatch.constantHeading (0.7, 0, -10, .001, 0, .003);
+                dispatch.turnAbsPID(0, 0);
                 dispatch.turnPID(90,0.7);
                 break;
             }
             case 1: {
                 //stick code for two dots here
-                dispatch.constantHeading(0.7,0,24,0.001,0,0.0003);
+
+                //1) Score on Top
+                dispatch.constantHeading(0.7,0,20,0.001,0,0.0003);
+                dispatch.turnPID(-60,0.7);
+                dispatch.constantHeading(0.7,0,24,0.001,0,0.003);
+                dispatch.moveArmTop();
+
+                //2 Move to Position 2
+                dispatch.turnAbsPID(0,0);
+                dispatch.constantHeading (0.7, 0, -10, .001, 0, .003);
+                dispatch.turnPID(90,0);
+                dispatch.constantHeading(0.7, 0, 15, .001, 0, .003);
+                dispatch.turnAbsPID(0, 0);
+
                 break;
             }
             case 2: {
                 //stick code for three dots here
-                dispatch.constantHeading(0.7,0,24,0.001,0,0.0003);
-                dispatch.turnPID(90,0.7);
+                //1) Score on Top
+                dispatch.constantHeading(0.7,0,20,0.001,0,0.0003);
+                dispatch.turnPID(-60,0.7);
                 dispatch.constantHeading(0.7,0,24,0.001,0,0.003);
+                dispatch.moveArmTop();
+
+                //2 Move to Position 3
+                dispatch.turnAbsPID(0,0);
+                dispatch.constantHeading (0.7, 0, -10, .001, 0, .003);
+                dispatch.turnPID(90,0);
+                dispatch.constantHeading(0.7, 0, 30, .001, 0, .003);
+                dispatch.turnAbsPID(0, 0);
+
                 break;
             }
         }

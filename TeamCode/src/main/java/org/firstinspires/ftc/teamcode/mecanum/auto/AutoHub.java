@@ -816,4 +816,32 @@ public class AutoHub {
 //
 //        return checkOver || checkOver2;
 //    }
+
+    public void moveArmMid(){
+        robot.abl.setTargetPosition(constants.bottomMotorMid);
+        robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.abl.setPower(0.5);
+
+        robot.abr.setTargetPosition(constants.bottomMotorMid);
+        robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.abr.setPower(0.5);
+
+        robot.at.setTargetPosition(constants.topMotorMid);
+        robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.at.setPower(0.5);
+    }
+
+    public void moveArmTop(){
+        robot.abl.setTargetPosition(constants.bottomMotorHigh);
+        robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.abl.setPower(0.5);
+
+        robot.abr.setTargetPosition(constants.bottomMotorHigh);
+        robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.abr.setPower(0.5);
+
+        robot.at.setTargetPosition(constants.topMotorHigh);
+        robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.at.setPower(0.5);
+    }
 }

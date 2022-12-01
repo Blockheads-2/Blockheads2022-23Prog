@@ -19,9 +19,9 @@ public class LinearMath { //Note: snap() is used in the auto class separately. T
         spinPID = new SpinPID();
     }
 
-    public void setInits(double initXClicks, double initYClicks){
-        initialX = initXClicks * constants.INCHES_PER_CLICK;
-        initialY = initYClicks * constants.INCHES_PER_CLICK;
+    public void setInits(double x, double y){
+        initialX = x;
+        initialY = y;
     }
 
     public void setPos(double x, double y, double theta){
@@ -47,11 +47,13 @@ public class LinearMath { //Note: snap() is used in the auto class separately. T
         return clicks;
     }
 
-    public double getSpinPower(double currentXClicks, double currentYClicks){
-        currentXClicks *= constants.INCHES_PER_CLICK;
-        currentYClicks *= constants.INCHES_PER_CLICK;
-        double distanceTravelled = Math.sqrt(Math.pow(currentXClicks - initialX, 2) + Math.pow(currentYClicks - initialY, 2));
+    public double getSpinPower(double x, double y){
+        double distanceTravelled = Math.sqrt(Math.pow(x - initialX, 2) + Math.pow(y - initialY, 2));
 
         return spinPID.update(distanceTravelled);
+    }
+
+    public double getRunTime(double rate){
+        return (getDistance() * constants.CLICKS_PER_INCH) / rate;
     }
 }

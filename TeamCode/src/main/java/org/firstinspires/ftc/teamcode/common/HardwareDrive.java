@@ -201,7 +201,7 @@ public class HardwareDrive
     }
 
     public boolean wheelsAreBusy(){
-        return (topL.isBusy() && botL.isBusy() && topR.isBusy() && botR.isBusy());
+        return (topL.isBusy() || botL.isBusy() || topR.isBusy() || botR.isBusy());
     }
 }
 

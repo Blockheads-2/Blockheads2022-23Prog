@@ -124,4 +124,8 @@ public class Reset {
             }
         }
     }
+
+    public boolean finishedReset(){
+        return (STOP_RESET_L && STOP_RESET_R);
+    }
 }

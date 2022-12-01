@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.swerve.auto.opmodes.sample;
+package org.firstinspires.ftc.teamcode.swerve.auto.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -9,11 +9,11 @@ import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.firstinspires.ftc.teamcode.swerve.auto.opmodes.sample.AutoHub;
+import org.firstinspires.ftc.teamcode.swerve.auto.opmodes.AutoHub;
 
 import java.util.ArrayList;
 
-@Autonomous(name = "autoTemplateThingy", group = "Routes")
+@Autonomous(name = "autoTemplateThingy thingy", group = "Routes")
 abstract public class autoTemplateThingy extends LinearOpMode{
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;

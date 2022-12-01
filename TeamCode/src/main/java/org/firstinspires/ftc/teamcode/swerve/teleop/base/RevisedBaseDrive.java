@@ -87,6 +87,12 @@ public class RevisedBaseDrive extends OpMode{
         } else if (y.getState() == Button.State.TAP){
             tData = TelemetryData.RIGHT;
         }
+
+        if (a.getState() == Button.State.TAP){
+            kinematics.switchRightSpinDirection();
+        } else if (b.getState() == Button.State.TAP){
+            kinematics.switchLeftSpinDirection();
+        }
     }
 
     void UpdatePlayer2(){
@@ -127,6 +133,9 @@ public class RevisedBaseDrive extends OpMode{
         telemetry.addData("TopL Spin Power", kinematics.spinPower);
         telemetry.addData("Drive Type", kinematics.getDriveType());
         telemetry.addData("First movement", kinematics.firstMovement);
+        telemetry.addData("X pos", posSystem.getPositionArr()[0]);
+        telemetry.addData("Y pos", posSystem.getPositionArr()[1]);
+
 
         telemetry.update();
     }
