@@ -107,4 +107,32 @@ public class AutoHubJR {
             reset.reset(true);
         }
     }
+
+    public void telemetryData(){
+
+        linearOpMode.telemetry.addData("X pos", posSystem.getPositionArr()[0]);
+        linearOpMode.telemetry.addData("Y pos", posSystem.getPositionArr()[1]);
+        linearOpMode.telemetry.addData("Left W",  posSystem.getLeftWheelW());
+        linearOpMode.telemetry.addData("Right W", posSystem.getRightWheelW());
+        linearOpMode.telemetry.addData("R", posSystem.getPositionArr()[4]);
+
+        linearOpMode.telemetry.addData("Spin Direction (Left)", kinematics.leftThrottle);
+        linearOpMode.telemetry.addData("Spin Direction (Right)", kinematics.rightThrottle);
+
+        linearOpMode.telemetry.addData("topL clicks", robot.topL.getCurrentPosition());
+        linearOpMode.telemetry.addData("botL clicks", robot.botL.getCurrentPosition());
+        linearOpMode.telemetry.addData("topR clicks", robot.topR.getCurrentPosition());
+        linearOpMode.telemetry.addData("botR clicks", robot.botR.getCurrentPosition());
+        linearOpMode.telemetry.addData("Left Rotate Power", kinematics.leftRotatePower);
+        linearOpMode.telemetry.addData("Right Rotate Power", kinematics.rightRotatePower);
+
+        linearOpMode.telemetry.addData("Right Clicks target", kinematics.spinClicksR + kinematics.rightRotClicks);
+
+        linearOpMode.telemetry.addData("TopL Spin Power", kinematics.spinPower);
+        linearOpMode.telemetry.addData("TopR Spin Power", kinematics.spinPower);
+        linearOpMode.telemetry.addData("Drive Type", kinematics.getDriveType());
+        linearOpMode.telemetry.addData("First movement", kinematics.firstMovement);
+
+        linearOpMode.telemetry.update();
+    }
 }

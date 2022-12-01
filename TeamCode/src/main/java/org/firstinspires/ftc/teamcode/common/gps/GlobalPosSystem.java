@@ -105,17 +105,7 @@ public class GlobalPosSystem {
         double baseAngle = (currentAngleL + currentAngleR) / 2.0;
         baseAngle = Math.toRadians(baseAngle);
         double hypotenuse = (translationalInchesL + translationalInchesR) / 2.0;
-
-
-//        if (Math.signum(translationalInchesL) == -Math.signum(translationalInchesR) && Math.abs(Math.abs(translationalInchesL) - Math.abs(translationalInchesR)) <= 0.3){
-//            double arc = Math.max(translationalInchesL, translationalInchesR);
-//            double theta = arc / constants.DISTANCE_BETWEEN_MODULE_AND_CENTER;
-//            theta = (arc == translationalInchesR ? -theta : theta);
-//            theta = Math.toDegrees(theta);
-//            update(0, 0, theta, theta, theta);
-//            return;
-//        }
-
+//
 //        double bigArc = Math.max(translationalInchesL, translationalInchesR); //unit: inches
 //        double smallArc = Math.min(translationalInchesL, translationalInchesR); //unit: inches
 //        if (Math.abs(bigArc - smallArc) <= 0.1){
@@ -126,14 +116,6 @@ public class GlobalPosSystem {
 //            baseAngle = (Math.PI - theta) / 2.0; //unit: radians
 //            baseAngle = (Math.PI / 2.0) - baseAngle;
 //        } //problem: this assumes that the modules are parallel.
-
-//        if (Math.abs(hypotenuse) <= 0.20){
-//            update(hypotenuse * Math.sin(baseAngle), hypotenuse * Math.cos(baseAngle), rotationalDegreesL, rotationalDegreesR, 0);
-//        }
-//        else{
-//            double tableSpin = (rotationalDegreesL + rotationalDegreesR) / 2.0;
-//            update(hypotenuse * Math.sin(baseAngle), hypotenuse * Math.cos(baseAngle), splineOrientation, splineOrientation, splineOrientation + tableSpin);
-//        }
 
         update(hypotenuse * Math.sin(baseAngle), hypotenuse * Math.cos(baseAngle), 0, 0, 0);
     }
