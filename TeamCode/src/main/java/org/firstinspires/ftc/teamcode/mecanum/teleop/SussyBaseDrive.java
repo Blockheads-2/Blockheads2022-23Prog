@@ -182,7 +182,6 @@ public class SussyBaseDrive extends OpMode{
 
         telemetry.addData("Goal Position", topCurrent + 10);
 
-
         robot.at.setTargetPosition(topCurrent + 30);
         robot.at.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.at.setPower(0.75);
@@ -245,8 +244,8 @@ public class SussyBaseDrive extends OpMode{
             robot.abl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             robot.abr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
-        prevPosition = robot.abl.getCurrentPosition();
 
+        prevPosition = robot.abl.getCurrentPosition();
     }
 
     void armMovement(){
