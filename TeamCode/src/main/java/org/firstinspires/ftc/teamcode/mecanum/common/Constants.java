@@ -25,8 +25,11 @@ public class Constants {
     public int armMotorHigh;
 
     //Claw Position
-    public double initializedArmServo = 0.5;
-    public double initializedClaw = 0;
+    public double clawUp = 0;
+    public double clawDown = 0.8;
+    public double openClaw = 0.5;
+    public double closeClaw = 1;
+
 
     //Distance Between Odo and Center
     public double horizontalDistanceOdo = 6.25;
