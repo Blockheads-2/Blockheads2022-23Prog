@@ -29,6 +29,7 @@ public class SussyBaseDrive extends OpMode{
     Button testOne = new Button();
     Button testZero = new Button();
     Button testNegOne = new Button();
+    Button zeroButton = new Button();
 
     Button y = new Button();
     Button x = new Button();
@@ -54,7 +55,12 @@ public class SussyBaseDrive extends OpMode{
 
     @Override
     public void init_loop() {
-
+        robot.at.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.at.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.abl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.abl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.abr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.abr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     @Override
@@ -70,12 +76,12 @@ public class SussyBaseDrive extends OpMode{
         UpdateButton();
     }
 
-    void updateTelemetry(){
+    /*void updateTelemetry(){
         telemetry.addData("Top", robot.at.getCurrentPosition());
         telemetry.addData("Base Right", robot.abr.getCurrentPosition());
         telemetry.addData("Base Left", robot.abl.getCurrentPosition());
         telemetry.update();
-    }
+    }*/
 
     void UpdateButton(){
 
@@ -87,6 +93,7 @@ public class SussyBaseDrive extends OpMode{
         lowButton.update(gamepad2.dpad_left);
         midButton.update(gamepad2.dpad_right);
         highButton.update(gamepad2.dpad_up);
+        zeroButton.update(gamepad2.left_stick_button);
 
         y.update(gamepad2.y);
         x.update(gamepad2.x);
@@ -100,12 +107,13 @@ public class SussyBaseDrive extends OpMode{
         DriveTrainBase(drivePower);
         DriveTrainSpeed();
         DriveMicroAdjust(0.4);
-        testServos();
+        //testServos();
         //OscillateServo();
     }
 
     void UpdatePlayer2(){
-        armMovement();
+        //armMovement();
+        ArmPresets();
         setArmPower();
         //OscillateServo();
     }
@@ -234,6 +242,7 @@ public class SussyBaseDrive extends OpMode{
             setTargetNegativeBase();
         }
 
+        /*
         if (robot.abl.getCurrentPosition() != prevPosition){
             robot.abl.setTargetPosition(prevPosition);
             robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -245,6 +254,8 @@ public class SussyBaseDrive extends OpMode{
             robot.abr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
+         */
+
         prevPosition = robot.abl.getCurrentPosition();
     }
 
@@ -252,10 +263,10 @@ public class SussyBaseDrive extends OpMode{
         //abl, abr, at
 
         if (bottomButton.is(Button.State.TAP)){
-            atPos -= 10;
+            atPos -= 20;
             robot.at.setTargetPosition(atPos);
             robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.at.setPower(0.5);
+            robot.at.setPower(1);
 
 
             /*robot.abl.setTargetPosition(constants.bottomMotorBottom);
@@ -273,16 +284,15 @@ public class SussyBaseDrive extends OpMode{
 
         if (lowButton.is(Button.State.TAP)){
 
-            if (abPos >= 10)
-                abPos -= 10;
+            abPos -= 20;
 
             robot.abl.setTargetPosition(abPos);
             robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.abl.setPower(0.5);
+            robot.abl.setPower(1);
 
             robot.abr.setTargetPosition(abPos);
             robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.abr.setPower(0.5);
+            robot.abr.setPower(1);
             telemetry.addData("Current Top Arm # Clicks", abPos);
 
             /*robot.abl.setTargetPosition(constants.bottomMotorLow);
@@ -299,14 +309,14 @@ public class SussyBaseDrive extends OpMode{
         }
 
         if (midButton.is(Button.State.TAP)){
-            abPos += 10;
+            abPos += 20;
             robot.abl.setTargetPosition(abPos);
             robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.abl.setPower(0.5);
+            robot.abl.setPower(1);
 
             robot.abr.setTargetPosition(abPos);
             robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.abr.setPower(0.5);
+            robot.abr.setPower(1);
 
             telemetry.addData("Current Top Arm # Clicks", abPos);
 
@@ -324,11 +334,11 @@ public class SussyBaseDrive extends OpMode{
         }
 
         if (highButton.is(Button.State.TAP)){
-            atPos += 10;
+            atPos += 20;
 
             robot.at.setTargetPosition(atPos);
             robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.at.setPower(0.5);
+            robot.at.setPower(1);
             telemetry.addData("Current Bottom Arm # Clicks", atPos);
 
 
@@ -369,6 +379,92 @@ public class SussyBaseDrive extends OpMode{
         return drivePower;
     }
 
+    void ArmPresets(){
+        if (bottomButton.is(Button.State.TAP)){
+            robot.abl.setTargetPosition(constants.bottomMotorBottom);
+            robot.abr.setTargetPosition(constants.bottomMotorBottom);
+            robot.at.setTargetPosition(constants.topMotorBottom);
+
+            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            robot.armServo.setPosition(constants.armServoBottom);
+
+            robot.abl.setPower(1);
+            robot.abr.setPower(1);
+            robot.at.setPower(1);
+
+        }
+
+        if (lowButton.is(Button.State.TAP)){
+            robot.abl.setTargetPosition(constants.bottomMotorLow);
+            robot.abr.setTargetPosition(constants.bottomMotorLow);
+            robot.at.setTargetPosition(constants.topMotorLow);
+
+            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            robot.armServo.setPosition(constants.armServoLow);
+
+            robot.abl.setPower(1);
+            robot.abr.setPower(1);
+            robot.at.setPower(1);
+
+        }
+
+        if (midButton.is(Button.State.TAP)){
+            robot.abl.setTargetPosition(constants.bottomMotorMid);
+            robot.abr.setTargetPosition(constants.bottomMotorMid);
+            robot.at.setTargetPosition(constants.topMotorMid);
+
+            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            robot.armServo.setPosition(constants.armServoMid);
+
+            robot.abl.setPower(1);
+            robot.abr.setPower(1);
+            robot.at.setPower(1);
+
+        }
+
+        if (highButton.is(Button.State.TAP)){
+            robot.abl.setTargetPosition(constants.bottomMotorBottom);
+            robot.abr.setTargetPosition(constants.bottomMotorBottom);
+            robot.at.setTargetPosition(constants.topMotorBottom);
+
+            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            robot.armServo.setPosition(constants.armServoHigh);
+
+            robot.abl.setPower(1);
+            robot.abr.setPower(1);
+            robot.at.setPower(1);
+
+        }
+
+        if (zeroButton.is(Button.State.TAP)){
+            robot.abl.setTargetPosition(0);
+            robot.abr.setTargetPosition(0);
+            robot.at.setTargetPosition(0);
+
+            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            robot.armServo.setPosition(0);
+
+            robot.abl.setPower(1);
+            robot.abr.setPower(1);
+            robot.at.setPower(1);
+
+        }
+    }
     /*
      * Code to run ONCE after the driver hits STOP
      */

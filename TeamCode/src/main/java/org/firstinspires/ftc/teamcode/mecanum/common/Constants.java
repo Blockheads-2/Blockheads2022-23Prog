@@ -5,24 +5,24 @@ public class Constants {
     //Arm Positions
 
     //Bottom
-    public int bottomMotorBottom = 1300;
-    public int topMotorBottom = 260;
-    public double armMotorBottom = 0.3;
+    public int bottomMotorBottom = 1120;
+    public int topMotorBottom = 60;
+    public double armServoBottom = 0.05;
 
     //Low
-    public int bottomMotorLow = 500;
-    public int topMotorLow = 350;
-    public double armMotorLow = 0.3;
+    public int bottomMotorLow = 140;
+    public int topMotorLow = 120;
+    public double armServoLow = 0.4;
 
     //Mid
-    public int bottomMotorMid = 400;
-    public int topMotorMid = 460;
-    public double armMotorMid = 0.3;
+    public int bottomMotorMid = 420;
+    public int topMotorMid = 340;
+    public double armServoMid = 0.4;
     
     //High
-    public int bottomMotorHigh = 800;
-    public int topMotorHigh = 560;
-    public int armMotorHigh;
+    public int bottomMotorHigh = 600;
+    public int topMotorHigh = 600;
+    public double armServoHigh = 0.2;
 
     //Claw Position
     public double clawUp = 0;
