@@ -57,7 +57,7 @@ public class AutoKinematics {
     double currentR; //current robot header orientation
 
     public Accelerator accelerator;
-    TrackJoystick joystickTracker;
+//    TrackJoystick joystickTracker;
 
     //PIDs
     SnapSwerveModulePID snapLeftWheelPID;
@@ -78,7 +78,7 @@ public class AutoKinematics {
         snapRightWheelPID.setTargets(0.03, 0, 0.01);
 
         accelerator = new Accelerator();
-        joystickTracker = new TrackJoystick();
+//        joystickTracker = new TrackJoystick();
     }
 
     public void setPos(double x, double y, double theta, double speed){
@@ -110,7 +110,7 @@ public class AutoKinematics {
         turnAmountR = wheelOptimization(target, rightCurrentW);
 
         //determining spin power
-        spinPower = spinPID.update(posSystem.getPositionArr()[0], posSystem.getPositionArr()[1]);
+        spinPower = spinPID.update(posSystem.getPositionArr()[0], posSystem.getPositionArr()[1], posSystem.getPositionArr()[3]);
         spinClicksL = (int)(spinPower * 100 * leftThrottle);
         spinClicksR = (int)(spinPower * 100 * rightThrottle);
 
@@ -136,7 +136,8 @@ public class AutoKinematics {
     }
 
     public void firstMovement(){
-        if (joystickTracker.getChange() > 90 || noMovementRequests()) firstMovement = true;
+//        if (joystickTracker.getChange() > 90 || noMovementRequests()) firstMovement = true;
+        if (noMovementRequests()) firstMovement = true;
         if (firstMovement){
             if (Math.abs(turnAmountL) >= constants.degreeTOLERANCE || Math.abs(turnAmountR) >= constants.degreeTOLERANCE){
                 translatePerc = 0;

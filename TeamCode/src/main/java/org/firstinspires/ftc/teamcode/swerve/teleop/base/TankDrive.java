@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.swerve.teleop.base;
 
 import android.view.View;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -18,7 +19,7 @@ import org.firstinspires.ftc.teamcode.common.Button;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 
 @TeleOp(name="Tank Drive", group="Drive")
-//@Disabled
+@Disabled
 public class TankDrive extends OpMode{
     /* Declare OpMode members. */
     HardwareDrive robot = new HardwareDrive();

@@ -5,7 +5,7 @@ public class Constants {
     //Arm Positions
 
     //Bottom
-    public int bottomMotorBottom = 1250;
+    public int bottomMotorBottom = 1175;
     public int topMotorBottom = 60;
     public double armServoBottom = 0.05;
 
@@ -41,5 +41,5 @@ public class Constants {
     public double maxVelocityDT = 2700;
     public double clicksPerInch = 45.285;
 
-    public double topMotorPower = 0.7;
+    public double topMotorPower = 0.6;
 }

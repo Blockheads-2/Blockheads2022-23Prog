@@ -96,9 +96,5 @@ public class HardwareDrive
         at.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         abl.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         abr.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-
-        at.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        abl.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        abr.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
     }
 }
