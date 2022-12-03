@@ -17,15 +17,6 @@ public class AutoPID {
     private double prevTime = 0;
     private double accumulatedError = 0;
 
-<<<<<<< HEAD
-=======
-    enum Facing{
-        AWAY,
-        TOWARDS
-    }
-
-
->>>>>>> 388d5835d36bd6a2b6d5bb1fb894db7961cf3307
     private final static Logger LOGGER =
             Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
@@ -70,21 +61,5 @@ public class AutoPID {
         this.kd = kd;
         this.targetX = targetX;
         this.targetY = targetY;
-    }
-
-<<<<<<< HEAD
-=======
-//    Facing getFacing(double t1, double x, double y){
-//         double psi = Math.atan2(y, x);
-//
-//     }
-
-
->>>>>>> 388d5835d36bd6a2b6d5bb1fb894db7961cf3307
-    public void makeSomeLog() {
-        // add some code of your choice here
-        // Moving to the logging part now
-        LOGGER.log(Level.INFO, "Error: " + pError);
-
     }
 }
