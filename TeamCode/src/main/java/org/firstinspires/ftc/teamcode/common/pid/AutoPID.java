@@ -16,6 +16,11 @@ public class AutoPID {
     private double prevTime = 0;
     private double accumulatedError = 0;
 
+    enum Quadrant{
+        ABOVE,
+        BELOW
+    }
+
 
     private final static Logger LOGGER =
             Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
@@ -24,9 +29,13 @@ public class AutoPID {
         timer.reset();
     }
 
-    public double update(double x, double y){
+    public double update(double x, double y, double theta){
         //proportion
-        double error = Math.sqrt(Math.pow(targetX - x, 2) + Math.pow(targetY - y, 2));
+        double error = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+        double errorY = targetY - y;
+        double psi = Math.atan2(targetY - y, targetX - x);
+//        if ()
+
 
         //integral
         accumulatedError = Math.abs(accumulatedError) * Math.signum(error); //ensures that accumulatedError and the error have the same sign
@@ -56,6 +65,9 @@ public class AutoPID {
         this.targetX = targetX;
         this.targetY = targetY;
     }
+
+//    Quadrant getQuadrant(double t1){
+//    }
 
 
     public void makeSomeLog() {

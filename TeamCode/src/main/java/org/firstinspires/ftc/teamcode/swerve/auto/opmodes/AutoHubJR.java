@@ -56,7 +56,6 @@ public class AutoHubJR {
 
         linearOpMode.telemetry.addData("Status", "Waiting on Camera");
         linearOpMode.telemetry.update();
-
     }
 
     //for now, we'll leave it as last year's template, but it might be a good idea to be constantly calculating its position and
