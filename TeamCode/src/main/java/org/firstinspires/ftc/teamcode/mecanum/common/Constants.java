@@ -5,7 +5,7 @@ public class Constants {
     //Arm Positions
 
     //Bottom
-    public int bottomMotorBottom = 1120;
+    public int bottomMotorBottom = 1250;
     public int topMotorBottom = 60;
     public double armServoBottom = 0.05;
 
@@ -20,9 +20,9 @@ public class Constants {
     public double armServoMid = 0.4;
     
     //High
-    public int bottomMotorHigh = 600;
-    public int topMotorHigh = 600;
-    public double armServoHigh = 0.2;
+    public int bottomMotorHigh = 450;
+    public int topMotorHigh = 450;
+    public double armServoHigh = 0.7;
 
     //Claw Position
     public double clawUp = 0;
@@ -41,4 +41,6 @@ public class Constants {
     //Drive Train Constants
     public double maxVelocityDT = 2700;
     public double clicksPerInch = 45.285;
+
+    public double topMotorPower = 0.7;
 }
