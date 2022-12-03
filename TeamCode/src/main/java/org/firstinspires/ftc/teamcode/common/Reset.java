@@ -13,9 +13,8 @@ public class Reset {
     Constants constants = new Constants();
     ElapsedTime gapTime = new ElapsedTime();
     Accelerator accelerator = new Accelerator();
-//    SnapSwerveModulePID pid = new SnapSwerveModulePID(); //use this later after Grady installs limit switches
     double power = 0;
-    int waitForMS = 500;
+    int waitForMS = 400;
     double prevTime=0;
     double currentTime=0;
 
@@ -51,6 +50,7 @@ public class Reset {
     }
 
     private void updateReset(){
+        globalPosSystem.calculatePos();
         int rotateL = (int)(globalPosSystem.getLeftWheelW() * constants.CLICKS_PER_DEGREE); //total rotation of left module
         int rotateR = (int)(globalPosSystem.getRightWheelW() * constants.CLICKS_PER_DEGREE); //total rotation of right module
 
@@ -98,8 +98,6 @@ public class Reset {
                 robot.botL.setPower(power);
                 robot.topL.setPower(power);
 
-                globalPosSystem.hardResetGPS();
-
                 STOP_RESET_L = true;
             } else if (!STOP_RESET_L){
                 power = accelerator.update(0.7);
@@ -121,14 +119,14 @@ public class Reset {
                 robot.botR.setPower(power);
                 robot.topR.setPower(power);
 
-                globalPosSystem.hardResetGPS();
-
                 STOP_RESET_R = true;
             } else if (!STOP_RESET_R){
                 power = accelerator.update(0.7);
                 robot.botR.setPower(power);
                 robot.topR.setPower(power);
             }
+
+            if (finishedReset()) globalPosSystem.hardResetGPS();
         }
     }
 

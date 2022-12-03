@@ -51,7 +51,7 @@ public class GlobalPosSystem {
         calculateWheel();
         calculateHeader();
         positionArr[2] += positionArr[4]; //we are only allowed to constantly add to the position because we overwrite it each loop in calculateWheel().
-        positionArr[2] += positionArr[4];
+        positionArr[3] += positionArr[4];
         calculateRobot();
     }
 
