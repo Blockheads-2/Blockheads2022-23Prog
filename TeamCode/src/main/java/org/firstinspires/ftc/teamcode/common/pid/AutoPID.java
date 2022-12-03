@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.common.pid;
 
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,9 +17,9 @@ public class AutoPID {
     private double prevTime = 0;
     private double accumulatedError = 0;
 
-    enum Quadrant{
-        ABOVE,
-        BELOW
+    enum Facing{
+        AWAY,
+        TOWARDS
     }
 
 
@@ -66,8 +67,10 @@ public class AutoPID {
         this.targetY = targetY;
     }
 
-//    Quadrant getQuadrant(double t1){
-//    }
+    Facing getFacing(double t1, double x, double y){
+         double psi = Math.atan2(y, x);
+         
+     }
 
 
     public void makeSomeLog() {
