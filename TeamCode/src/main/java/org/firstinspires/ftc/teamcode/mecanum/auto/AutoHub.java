@@ -586,6 +586,81 @@ public class AutoHub {
         }
     }
 
+    public void constantHeading(double speed, double xPose, double yPose, boolean stop) {
+        mathConstHead.setFinalPose(xPose,yPose);
+
+        double targetAngle = getAbsoluteAngle();
+        TurnPIDController pidTurn = new TurnPIDController(targetAngle, 0.03, 0, 0.01);
+
+        double distance = mathConstHead.returnDistance();
+        double radianAngle = mathConstHead.returnAngle();
+
+        int newLeftFrontTarget;
+        int newRightFrontTarget;
+        int newLeftBackTarget;
+        int newRightBackTarget;
+        double timeoutS;
+
+        double ratioAddPose = Math.cos(radianAngle) + Math.sin(radianAngle);
+        double ratioSubPose = Math.cos(radianAngle) - Math.sin(radianAngle);
+        double addPose = (ratioAddPose * COUNTS_PER_INCH * distance);
+        double subtractPose = (ratioSubPose * COUNTS_PER_INCH * distance);
+
+        timeoutS = distance / (speed * constants.clicksPerInch);
+
+        // Ensure that the opmode is still active
+        if (linearOpMode.opModeIsActive()) {
+            // reset the timeout time and start motion.
+            runtime.reset();
+
+            while (linearOpMode.opModeIsActive() && (runtime.seconds() < timeoutS) && !over) {
+                // Determine new target position, and pass to motor controller
+                newLeftFrontTarget = (int) (robot.lf.getCurrentPosition() + addPose);
+                newRightFrontTarget = (int) (robot.rf.getCurrentPosition() + subtractPose);
+                newLeftBackTarget = (int) (robot.lb.getCurrentPosition() + subtractPose);
+                newRightBackTarget = (int) (robot.rb.getCurrentPosition() + addPose);
+
+                robot.lf.setTargetPosition(newLeftFrontTarget);
+                robot.rf.setTargetPosition(newRightFrontTarget);
+                robot.lb.setTargetPosition(newLeftBackTarget);
+                robot.rb.setTargetPosition(newRightBackTarget);
+
+                // Turn On RUN_TO_POSITION
+                robot.lf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.rf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.lb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.rb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                //checkButton();
+                //detectColor();
+
+                double angleCorrection = pidTurn.update(getAbsoluteAngle());
+
+                robot.lf.setVelocity((speed * constants.maxVelocityDT * ratioAddPose) - (speed * angleCorrection * constants.maxVelocityDT));
+                robot.rf.setVelocity((speed * constants.maxVelocityDT * ratioSubPose) + (speed * angleCorrection * constants.maxVelocityDT));
+                robot.lb.setVelocity((speed * constants.maxVelocityDT * ratioSubPose) - (speed * angleCorrection * constants.maxVelocityDT));
+                robot.rb.setVelocity((speed * constants.maxVelocityDT * ratioAddPose) + (speed * angleCorrection * constants.maxVelocityDT));
+
+                //linearOpMode.telemetry.addData("Time",timeoutS);
+                linearOpMode.telemetry.update();
+
+            }
+
+            // Stop all motion;
+            if (stop) {
+                robot.lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                robot.rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                robot.lb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                robot.rb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            }
+
+            // Turn off RUN_TO_POSITION
+            robot.lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+    }
+
     public void constVarHead(double speed, double xPose, double yPose, double turnAngle, double timeOut){
 
         mathConstHead.setFinalPose(xPose,yPose);
@@ -732,7 +807,7 @@ public class AutoHub {
         linearOpMode.telemetry.update();
     }
     void turnMath(double targetAngle, double timeoutS) {
-        TurnPIDController pid = new TurnPIDController(targetAngle, 0.01, 0, 0.003);
+        TurnPIDController pid = new TurnPIDController(targetAngle, 0.001, 0, 0.0003);
         linearOpMode.telemetry.setMsTransmissionInterval(50);
         // Checking lastSlope to make sure that it's not oscillating when it quits
         runtime.reset();

@@ -146,9 +146,9 @@ public class AutoPaths extends LinearOpMode{
             case 0: {
                 //stick code for one dot here
                 dispatch.constantHeading(0.7,0,3,0.001,0,0.0003);
-                dispatch.turn(-90);
+                dispatch.turnAbsPID(-90, 2);
                 dispatch.constantHeading(0.7,0,24,0.001,0,0.0003);
-                dispatch.turn(90);
+                dispatch.turnAbsPID(90,2);
                 dispatch.constantHeading(0.7,0,24,0.001,0,0.0003);
                 break;
             }
@@ -160,9 +160,9 @@ public class AutoPaths extends LinearOpMode{
             case 2: {
                 //stick code for three dots here
                 dispatch.constantHeading(0.7,0,3,0.001,0,0.0003);
-                dispatch.turn(90);
+                dispatch.turnAbsPID(90,2);
                 dispatch.constantHeading(0.7,0,24,0.001,0,0.0003);
-                dispatch.turn(-90);
+                dispatch.turnAbsPID(-90,2);
                 dispatch.constantHeading(0.7,0,24,0.001,0,0.003);
                 break;
             }
