@@ -59,8 +59,8 @@ public class gSwerveZoom extends OpMode {
     public void go(){
         robot.topL.setTargetPosition((int)(robot.topL.getCurrentPosition() + gamepad1.left_stick_y));
         robot.botL.setTargetPosition((int)(robot.botL.getCurrentPosition() + gamepad1.left_stick_y) * -1); // set the bottom gear to the inverse of the top
-        robot.topR.setTargetPosition((int)(robot.topR.getCurrentPosition() + gamepad1.left_stick_y));
-        robot.botR.setTargetPosition((int)(robot.botR.getCurrentPosition() + gamepad1.left_stick_y) * -1);
+        robot.topR.setTargetPosition((int)(robot.topR.getCurrentPosition() + gamepad1.right_stick_y));
+        robot.botR.setTargetPosition((int)(robot.botR.getCurrentPosition() + gamepad1.right_stick_y) * -1);
     }
 
     public void loop() { //Loop between "start" and "stop"
