@@ -67,10 +67,10 @@ public class AutoPID {
         this.targetY = targetY;
     }
 
-    Facing getFacing(double t1, double x, double y){
-         double psi = Math.atan2(y, x);
-         
-     }
+//    Facing getFacing(double t1, double x, double y){
+//         double psi = Math.atan2(y, x);
+//
+//     }
 
 
     public void makeSomeLog() {
