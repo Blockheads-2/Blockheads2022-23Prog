@@ -42,6 +42,9 @@ public class testIMU extends LinearOpMode{
     double cx = 402.145;
     double cy = 221.506;
 
+    boolean value = false;
+
+
     // UNITS ARE METERS
     double tagsize = 0.045;
 
@@ -81,7 +84,13 @@ public class testIMU extends LinearOpMode{
         //telemetry.setMsTransmissionInterval(50);
         while (!opModeIsActive())
         {
-           telemetry.addData("IMU READING", dispatch.getAbsoluteAngle());
+            if (gamepad1.a){
+                value = true;
+            }
+            while (!value){
+                telemetry.addData("IMU READING", dispatch.getAbsoluteAngle());
+
+            }
 
         }
 
