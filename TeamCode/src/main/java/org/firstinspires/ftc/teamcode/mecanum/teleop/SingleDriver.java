@@ -84,7 +84,6 @@ public class SingleDriver extends OpMode{
     void UpdatePlayer1(){
         DriveTrainBase(drivePower);
         DriveMicroAdjust(0.4);
-        ArmPresets();
         ClawControl();
     }
 
@@ -173,76 +172,8 @@ public class SingleDriver extends OpMode{
     }
 
 
-
-    void ArmPresets(){
-        if (bottomButton.is(Button.State.TAP)){
-            robot.at.setTargetPosition(constants.topMotorBottom);
-            robot.abl.setTargetPosition(constants.bottomMotorBottom);
-            robot.abr.setTargetPosition(constants.bottomMotorBottom);
-
-            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            robot.armServo.setPosition(constants.armServoBottom);
-
-            robot.abl.setPower(0.9);
-            robot.abr.setPower(0.9);
-            robot.at.setPower(constants.topMotorPower);
-
-        }
-
-        if (lowButton.is(Button.State.TAP)){
-            robot.abl.setTargetPosition(constants.bottomMotorLow);
-            robot.abr.setTargetPosition(constants.bottomMotorLow);
-            robot.at.setTargetPosition(constants.topMotorLow);
-
-            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            robot.armServo.setPosition(constants.armServoLow);
-
-            robot.abl.setPower(1);
-            robot.abr.setPower(1);
-            robot.at.setPower(constants.topMotorPower);
-        }
-
-        if (midButton.is(Button.State.TAP)){
-            robot.abl.setTargetPosition(constants.bottomMotorMid);
-            robot.abr.setTargetPosition(constants.bottomMotorMid);
-            robot.at.setTargetPosition(constants.topMotorMid);
-
-            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            robot.armServo.setPosition(constants.armServoMid);
-
-            robot.abl.setPower(1);
-            robot.abr.setPower(1);
-            robot.at.setPower(constants.topMotorPower);
-        }
-
-        if (highButton.is(Button.State.TAP)){
-            robot.abl.setTargetPosition(constants.bottomMotorHigh);
-            robot.abr.setTargetPosition(constants.bottomMotorHigh);
-            robot.at.setTargetPosition(constants.topMotorHigh);
-
-            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            robot.armServo.setPosition(constants.armServoHigh);
-
-            robot.abl.setPower(1);
-            robot.abr.setPower(1);
-            robot.at.setPower(constants.topMotorPower);
-        }
-    }
-
     void ClawControl(){
-        if (gamepad1.left_trigger == 1){
+        if (gamepad1.left_bumper){
             if (clawClose){
                 robot.claw.setPosition(0.9);
             }
