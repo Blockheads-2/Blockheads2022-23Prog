@@ -84,14 +84,17 @@ public class testIMU extends LinearOpMode{
         //telemetry.setMsTransmissionInterval(50);
         while (!opModeIsActive())
         {
-            if (gamepad1.a){
-                value = true;
-            }
+
             while (!value){
+
+                if (gamepad1.a){
+                    value = true;
+                }
+
                 telemetry.addData("IMU READING", dispatch.getAbsoluteAngle());
+                telemetry.update();
 
             }
-
         }
 
 
