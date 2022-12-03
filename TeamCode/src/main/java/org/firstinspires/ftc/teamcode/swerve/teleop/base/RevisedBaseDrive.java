@@ -89,9 +89,9 @@ public class RevisedBaseDrive extends OpMode{
         }
 
         if (a.getState() == Button.State.TAP){
-            kinematics.switchRightSpinDirection();
-        } else if (b.getState() == Button.State.TAP){
             kinematics.switchLeftSpinDirection();
+        } else if (b.getState() == Button.State.TAP){
+            kinematics.switchRightSpinDirection();
         }
     }
 

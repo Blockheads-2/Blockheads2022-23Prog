@@ -77,8 +77,7 @@ public class AutoPaths extends LinearOpMode{
             }
         });
 
-        waitForStart();
-        //telemetry.setMsTransmissionInterval(50);
+
         while (!opModeIsActive())
         {
             // Calling getDetectionsUpdate() will only return an object if there was a new frame
@@ -121,15 +120,15 @@ public class AutoPaths extends LinearOpMode{
                     for(AprilTagDetection detection : detections)
                     {
                         aprilTagId = detection.id;
-                        /*
+
                         telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
-                        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
-                        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
-                        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
-                        telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
-                        telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
-                        telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
-                        */
+//                        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
+//                        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
+//                        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
+//                        telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
+//                        telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
+//                        telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
+
                     }
 
 
@@ -140,13 +139,16 @@ public class AutoPaths extends LinearOpMode{
 
             sleep(20);
         }
+
+        waitForStart();
+        //telemetry.setMsTransmissionInterval(50);
         switch (aprilTagId) {
             case 0: {
                 //stick code for one dot here
                 dispatch.constantHeading(0.7,0,3,0.001,0,0.0003);
-                dispatch.turnPID(-90,0.7);
+                dispatch.turnAbsPID(-90, 2);
                 dispatch.constantHeading(0.7,0,24,0.001,0,0.0003);
-                dispatch.turnPID(90,0.7);
+                dispatch.turnAbsPID(90,2);
                 dispatch.constantHeading(0.7,0,24,0.001,0,0.0003);
                 break;
             }
@@ -158,9 +160,9 @@ public class AutoPaths extends LinearOpMode{
             case 2: {
                 //stick code for three dots here
                 dispatch.constantHeading(0.7,0,3,0.001,0,0.0003);
-                dispatch.turnPID(90,0.7);
+                dispatch.turnAbsPID(90,2);
                 dispatch.constantHeading(0.7,0,24,0.001,0,0.0003);
-                dispatch.turnPID(-90,0.7);
+                dispatch.turnAbsPID(-90,2);
                 dispatch.constantHeading(0.7,0,24,0.001,0,0.003);
                 break;
             }
