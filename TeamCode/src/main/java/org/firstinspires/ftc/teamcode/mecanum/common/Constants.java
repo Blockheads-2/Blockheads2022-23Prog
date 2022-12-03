@@ -30,13 +30,12 @@ public class Constants {
     public double openClaw = 0.5;
     public double closeClaw = 1;
 
-
     //Distance Between Odo and Center
     public double horizontalDistanceOdo = 6.25;
     public double midDistanceOdo = 3.0;
 
     //Degrees Per Inch Auto
-    public double degree = 23.47/90;
+    public double degree = 23.47 / 90;
 
     //Drive Train Constants
     public double maxVelocityDT = 2700;
