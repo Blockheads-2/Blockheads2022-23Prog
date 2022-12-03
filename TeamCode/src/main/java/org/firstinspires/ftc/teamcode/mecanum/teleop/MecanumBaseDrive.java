@@ -1,22 +1,20 @@
 package org.firstinspires.ftc.teamcode.mecanum.teleop;
 
 import android.view.View;
-import static android.os.SystemClock.sleep;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.mecanum.common.Constants;
 import org.firstinspires.ftc.teamcode.mecanum.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.Button;
 
-@TeleOp(name="Sussy Base Drive", group="Drive")
+@TeleOp(name="Mecanum Base Drive", group="Drive")
 //@Disabled
-public class SussyBaseDrive extends OpMode{
+public class MecanumBaseDrive extends OpMode{
     /* Declare OpMode members. */
     HardwareDrive robot = new HardwareDrive();
     Constants constants = new Constants();
@@ -440,9 +438,10 @@ public class SussyBaseDrive extends OpMode{
 
             robot.armServo.setPosition(constants.armServoBottom);
 
-            robot.at.setPower(constants.topMotorPower);
             robot.abl.setPower(0.9);
             robot.abr.setPower(0.9);
+            robot.at.setPower(constants.topMotorPower);
+
         }
 
         if (lowButton.is(Button.State.TAP)){
@@ -492,7 +491,7 @@ public class SussyBaseDrive extends OpMode{
             robot.abr.setPower(1);
             robot.at.setPower(constants.topMotorPower);
         }
-
+/*
         if (zeroButton.is(Button.State.TAP)){
             robot.abl.setTargetPosition(0);
             robot.abr.setTargetPosition(0);
@@ -508,6 +507,8 @@ public class SussyBaseDrive extends OpMode{
             robot.abr.setPower(1);
             robot.at.setPower(1);
         }
+
+ */
     }
 
     void ClawControl(){

@@ -5,7 +5,7 @@ public class Constants {
     //Arm Positions
 
     //Bottom
-    public int bottomMotorBottom = 1250;
+    public int bottomMotorBottom = 1175;
     public int topMotorBottom = 60;
     public double armServoBottom = 0.05;
 
