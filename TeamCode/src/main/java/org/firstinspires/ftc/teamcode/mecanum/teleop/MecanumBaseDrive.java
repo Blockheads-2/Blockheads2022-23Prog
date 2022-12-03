@@ -438,8 +438,8 @@ public class MecanumBaseDrive extends OpMode{
 
             robot.armServo.setPosition(constants.armServoBottom);
 
-            robot.abl.setPower(0.9);
-            robot.abr.setPower(0.9);
+            robot.abl.setPower(0.7);
+            robot.abr.setPower(0.7);
             robot.at.setPower(constants.topMotorPower);
 
         }
@@ -455,8 +455,8 @@ public class MecanumBaseDrive extends OpMode{
 
             robot.armServo.setPosition(constants.armServoLow);
 
-            robot.abl.setPower(1);
-            robot.abr.setPower(1);
+            robot.abl.setPower(0.7);
+            robot.abr.setPower(0.7);
             robot.at.setPower(constants.topMotorPower);
         }
 
