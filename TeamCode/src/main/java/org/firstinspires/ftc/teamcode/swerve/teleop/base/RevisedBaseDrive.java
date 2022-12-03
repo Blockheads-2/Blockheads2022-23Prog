@@ -101,41 +101,42 @@ public class RevisedBaseDrive extends OpMode{
     void UpdateTelemetry(){
         telemetry.addData("X", gamepad1.left_stick_x);
         telemetry.addData("Y", -gamepad1.left_stick_y);
+
+        telemetry.addData("X pos", posSystem.getPositionArr()[0]);
+        telemetry.addData("Y pos", posSystem.getPositionArr()[1]);
+        telemetry.addData("Left W",  posSystem.getLeftWheelW());
+        telemetry.addData("Right W", posSystem.getRightWheelW());
+        telemetry.addData("R", posSystem.getPositionArr()[4]);
         switch (tData){
             case LEFT:
                 telemetry.addData("Spin Direction (Left)", kinematics.leftThrottle);
                 telemetry.addData("Turn Amount (Left)", kinematics.turnAmountL);
                 telemetry.addData("Target", kinematics.target);
-                telemetry.addData("Left W",  posSystem.getLeftWheelW());
-                telemetry.addData("R", posSystem.getPositionArr()[4]);
                 telemetry.addData("topL clicks", robot.topL.getCurrentPosition());
                 telemetry.addData("botL clicks", robot.botL.getCurrentPosition());
                 telemetry.addData("TopL Target Amount", robot.topL.getTargetPosition() - robot.topL.getCurrentPosition());
                 telemetry.addData("BotL Target Amount", robot.botL.getTargetPosition() - robot.botL.getCurrentPosition());
-                telemetry.addData("Rotate Power", kinematics.leftRotatePower);
-                telemetry.addData("Clicks target", kinematics.spinClicksL + kinematics.leftRotClicks);
+                telemetry.addData("Rotate Power", kinematics.telLeftRotatePower);
+                telemetry.addData("Spin clicks target", kinematics.spinClicksL);
+                telemetry.addData("Rotate clicks target",  kinematics.leftRotClicks);
                 break;
 
             case RIGHT:
                 telemetry.addData("Spin Direction (Right)", kinematics.rightThrottle);
                 telemetry.addData("Target", kinematics.target);
                 telemetry.addData("Turn Amount (Right)", kinematics.turnAmountR);
-                telemetry.addData("Right W", posSystem.getRightWheelW());
-                telemetry.addData("R", posSystem.getPositionArr()[4]);
                 telemetry.addData("topR clicks", robot.topR.getCurrentPosition());
                 telemetry.addData("botR clicks", robot.botR.getCurrentPosition());
                 telemetry.addData("TopR Target Amount", robot.topR.getTargetPosition() - robot.topR.getCurrentPosition());
                 telemetry.addData("BotR Target Amount", robot.botR.getTargetPosition() - robot.botR.getCurrentPosition());
-                telemetry.addData("Rotate Power", kinematics.rightRotatePower);
-                telemetry.addData("Clicks target", kinematics.spinClicksR + kinematics.rightRotClicks);
+                telemetry.addData("Rotate Power", kinematics.telRightRotatePower);
+                telemetry.addData("Spin clicks target", kinematics.spinClicksR);
+                telemetry.addData("Rotate clicks target",  kinematics.rightRotClicks);
                 break;
         }
-        telemetry.addData("TopL Spin Power", kinematics.spinPower);
+        telemetry.addData("Spin Power", kinematics.telSpinPower);
         telemetry.addData("Drive Type", kinematics.getDriveType());
         telemetry.addData("First movement", kinematics.firstMovement);
-        telemetry.addData("X pos", posSystem.getPositionArr()[0]);
-        telemetry.addData("Y pos", posSystem.getPositionArr()[1]);
-
 
         telemetry.update();
     }

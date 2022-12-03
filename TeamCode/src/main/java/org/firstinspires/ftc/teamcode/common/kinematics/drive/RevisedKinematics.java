@@ -29,9 +29,13 @@ public class RevisedKinematics {
     public DriveType type = DriveType.NOT_INITIALIZED;
 
     //robot's power
-    public double leftRotatePower = 0.0;
-    public double rightRotatePower = 0.0;
-    public double spinPower = 0.0;
+    private double leftRotatePower = 0.0;
+    private double rightRotatePower = 0.0;
+    private double spinPower = 0.0;
+
+    public double telLeftRotatePower = 0.0;
+    public double telRightRotatePower = 0.0;
+    public double telSpinPower = 0.0;
 
     double translatePerc = 0.6; //placeholder for now
     double rotatePerc = 0.4;
@@ -41,9 +45,8 @@ public class RevisedKinematics {
     public int leftRotClicks = 0;
     public int spinClicksR = 0; //make protected later
     public int spinClicksL = 0; //make protected later
-    public int rightThrottle = 1;
-    public int leftThrottle = 1;
-
+    public int rightThrottle;
+    public int leftThrottle;
     public double target = 0;
     public double turnAmountL = 0;
     public double turnAmountR = 0;
@@ -74,6 +77,9 @@ public class RevisedKinematics {
 
         accelerator = new Accelerator();
         joystickTracker = new TrackJoystick();
+
+        rightThrottle = 1;
+        leftThrottle = 1;
     }
 
     public void logic(double lx, double ly, double rx, double ry){
@@ -112,7 +118,7 @@ public class RevisedKinematics {
         rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE);
 
         //determining whether to focus more on spinning or more on rotating
-        rotatePerc = (Math.abs(turnAmountL) + Math.abs(turnAmountR)) / 180.0; //turnAmount / 90 --> percentage
+        rotatePerc = (Math.abs(turnAmountL) + Math.abs(turnAmountR)) / 70; //turnAmount / 35 --> percentage
         if (rotatePerc > 0.5) rotatePerc = 0.5;
         translatePerc = 1 - rotatePerc;
 
@@ -146,7 +152,7 @@ public class RevisedKinematics {
     public void rightStick(){
         if (Math.abs(leftCurrentW - currentR) < constants.degreeTOLERANCE && Math.abs(rightCurrentW - currentR) < constants.degreeTOLERANCE && lx == 0 && ly == 0 && (rx != 0 || ry != 0)){
             leftThrottle = 1;
-            rightThrottle = 1;
+            rightThrottle = -1;
             spinClicksL = (int) (rx * 100 * leftThrottle);
             spinClicksR = (int) (rx * 100 * rightThrottle);
             spinPower = rx;
@@ -194,15 +200,21 @@ public class RevisedKinematics {
         double target2 = (target < 0 ? target + 360 : target);
         double current2 = (currentW < 0 ? currentW + 360 : currentW);
 
-        double turnAmount = target - currentW;
+        double turnAmount1 = target - currentW;
         double turnAmount2 = target2 - current2;
+        double turnAmount = (Math.abs(turnAmount1) < Math.abs(turnAmount2) ? turnAmount1 : turnAmount2);
 
-        if (Math.abs(turnAmount) < Math.abs(turnAmount2)){
-            return turnAmount;
+//        if(Math.abs(turnAmount) > 90){
+//            turnAmount %= 180;
+//            turnAmount *= -1;
+//
+//            if(Math.abs(turnAmount) > 180){
+//                turnAmount = 360 - Math.abs(turnAmount);
+//            }
+////            this.translateSwitchMotors *= -1; //needs to be fixed, or else the wheels will oscilate a lot.
+//        }
 
-        } else{
-            return turnAmount2;
-        }
+        return turnAmount;
     }
 
     public double clamp(double degrees){
@@ -223,6 +235,10 @@ public class RevisedKinematics {
         motorPower[1] = spinPower * translatePerc + leftRotatePower * rotatePerc; //bottom left
         motorPower[2] = spinPower * translatePerc + rightRotatePower * rotatePerc; //top right
         motorPower[3] = spinPower * translatePerc + rightRotatePower * rotatePerc; //bottom right
+
+        telLeftRotatePower = leftRotatePower * rotatePerc;
+        telRightRotatePower = rightRotatePower * rotatePerc;
+        telSpinPower = spinPower * translatePerc;
 
         for (int i = 0; i < 4; i++){
             motorPower[i] = accelerator.update(motorPower[i]);

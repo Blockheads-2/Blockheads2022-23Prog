@@ -141,26 +141,6 @@ public class GlobalPosSystem {
         return positionArr[3];
     }
 
-    public boolean xChange(){
-        return (Math.abs(positionArr[0]) <= 0.3);
-    }
-
-    public boolean yChange(){
-        return (Math.abs(positionArr[1]) <= 0.3);
-    }
-
-    public boolean dChange(){
-        return (xChange() || yChange());
-    }
-
-    public boolean wChange(){
-        return (Math.abs(positionArr[2]) <= 1);
-    }
-
-    public boolean rChange(){
-        return (Math.abs(positionArr[3]) <= 1);
-    }
-
     public void hardResetGPS(){
         positionArr[2]=positionArr[4];
         positionArr[3]=positionArr[4];

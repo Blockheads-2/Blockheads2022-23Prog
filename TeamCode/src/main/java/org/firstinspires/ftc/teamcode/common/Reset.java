@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
+import org.firstinspires.ftc.teamcode.common.pid.SnapSwerveModulePID;
 
 public class Reset {
     HardwareDrive robot;
@@ -12,6 +13,7 @@ public class Reset {
     Constants constants = new Constants();
     ElapsedTime gapTime = new ElapsedTime();
     Accelerator accelerator = new Accelerator();
+//    SnapSwerveModulePID pid = new SnapSwerveModulePID(); //use this later after Grady installs limit switches
     double power = 0;
     int waitForMS = 500;
     double prevTime=0;
@@ -49,9 +51,8 @@ public class Reset {
     }
 
     private void updateReset(){
-        int rotateL = (robot.topL.getCurrentPosition() + robot.botL.getCurrentPosition()) / 2; //total rotation of left module
-        int rotateR = (robot.topR.getCurrentPosition() + robot.botR.getCurrentPosition()) / 2; //total rotation of right module
-        //this won't work once you implement table-spinning.  Will probably need to use the GPS then.
+        int rotateL = (int)(globalPosSystem.getLeftWheelW() * constants.CLICKS_PER_DEGREE); //total rotation of left module
+        int rotateR = (int)(globalPosSystem.getRightWheelW() * constants.CLICKS_PER_DEGREE); //total rotation of right module
 
         rotateL %= constants.CLICKS_PER_PURPLE_REV;
         rotateR %= constants.CLICKS_PER_PURPLE_REV;
@@ -75,7 +76,7 @@ public class Reset {
             robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            power = accelerator.update(0.5);
+            power = accelerator.update(0.7);
             robot.botL.setPower(power);
             robot.topL.setPower(power);
             robot.botR.setPower(power);
@@ -84,6 +85,9 @@ public class Reset {
 
         else{
             if (robot.topL.getCurrentPosition() == topLTarget && robot.botL.getCurrentPosition() == botLTarget){
+                robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
                 robot.topL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 robot.botL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -98,12 +102,15 @@ public class Reset {
 
                 STOP_RESET_L = true;
             } else if (!STOP_RESET_L){
-                power = accelerator.update(0.5);
+                power = accelerator.update(0.7);
                 robot.botL.setPower(power);
                 robot.topL.setPower(power);
             }
 
             if (robot.topR.getCurrentPosition() == topRTarget && robot.botR.getCurrentPosition() == botRTarget){
+                robot.topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
                 robot.topR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 robot.botR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -118,7 +125,7 @@ public class Reset {
 
                 STOP_RESET_R = true;
             } else if (!STOP_RESET_R){
-                power = accelerator.update(0.5);
+                power = accelerator.update(0.7);
                 robot.botR.setPower(power);
                 robot.topR.setPower(power);
             }

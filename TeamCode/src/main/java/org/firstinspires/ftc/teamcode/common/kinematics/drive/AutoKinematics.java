@@ -110,7 +110,7 @@ public class AutoKinematics {
         turnAmountR = wheelOptimization(target, rightCurrentW);
 
         //determining spin power
-        spinPower = spinPID.update(posSystem.getPositionArr()[0], posSystem.getPositionArr()[1], posSystem.getPositionArr()[3]);
+        spinPower = spinPID.update(posSystem.getPositionArr()[0], posSystem.getPositionArr()[1]);
         spinClicksL = (int)(spinPower * 100 * leftThrottle);
         spinClicksR = (int)(spinPower * 100 * rightThrottle);
 

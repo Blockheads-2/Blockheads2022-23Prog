@@ -4,13 +4,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class AutoPID {
+public class ArmPID {
     private double kp, ki, kd;
     private double pError;
 
     private ElapsedTime timer = new ElapsedTime();
-    private double targetX;
-    private double targetY;
+    private double targetClicks;
 
     private double prevError = 0;
     private double prevTime = 0;
@@ -19,19 +18,13 @@ public class AutoPID {
     private final static Logger LOGGER =
             Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-    public AutoPID(){
+    public ArmPID(){
         timer.reset();
     }
 
-    public double update(double x, double y){
+    public double update(double currClicks){
         //proportion
-        double errorX = targetX - x;
-        double errorY = targetY - y;
-        double error = (0.5 * errorX) + (0.5 * errorY);//this still doesn't work...?
-
-        /*
-        smaller target - currentClicks = negative error
-         */
+        double error = targetClicks - currClicks;
 
         //integral
         accumulatedError = Math.abs(accumulatedError) * Math.signum(error); //ensures that accumulatedError and the error have the same sign
@@ -45,27 +38,15 @@ public class AutoPID {
         prevTime = timer.milliseconds();
 
         double motorPower = Math.tanh(kp * error + ki * accumulatedError + kd * slope) * 0.9 + (0.1 * Math.signum(error));
-        //multiply by 0.9 because robot is heavy (heavy + friction = wheels slide while turning = inaccurate). The 0.9 somewhat compensates for that
-        //0.1 * Math.signum(error) gives the robot a little kick towards the direction of the error
-        //probably not necessary for swerve...
-
-        //alternative: motorPower =  Math.tanh(kp * error + ki * accumulatedError + kd * slope);
+        //double motorPower =  Math.tanh(kp * error + ki * accumulatedError + kd * slope);
 
         return motorPower;
     }
 
-    public void setTargets(double targetX, double targetY, double kp, double ki, double kd){
+    public void setTargets(double targetClicks, double kp, double ki, double kd){
         this.kp = kp;
         this.ki = ki;
         this.kd = kd;
-        this.targetX = targetX;
-        this.targetY = targetY;
-    }
-
-    public void makeSomeLog() {
-        // add some code of your choice here
-        // Moving to the logging part now
-        LOGGER.log(Level.INFO, "Error: " + pError);
-
+        this.targetClicks = targetClicks;
     }
 }
