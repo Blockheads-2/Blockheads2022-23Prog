@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.mecanum.auto;
 import static android.os.SystemClock.sleep;
 
 import android.app.Activity;
+import android.sax.StartElementListener;
 import android.view.View;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -727,6 +728,8 @@ public class AutoHub {
     }
     public void turnAbsPID(double absDegrees, double timeOut){
         turnMath(-absDegrees, timeOut);
+        linearOpMode.telemetry.addData("IMU READING", getAbsoluteAngle());
+        linearOpMode.telemetry.update();
     }
     void turnMath(double targetAngle, double timeoutS) {
         TurnPIDController pid = new TurnPIDController(targetAngle, 0.01, 0, 0.003);
