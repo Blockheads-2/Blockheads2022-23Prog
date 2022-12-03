@@ -57,18 +57,22 @@ public class gSwerveZoom extends OpMode {
         return (gamepad1.left_stick_x == 0 && gamepad1.left_stick_y == 0 && gamepad1.right_stick_x == 0 && gamepad1.right_stick_y == 0);
     }
     public void go(){
-        robot.topL.setTargetPosition((int)(robot.topL.getCurrentPosition() + gamepad1.left_stick_y));
-        robot.botL.setTargetPosition((int)(robot.botL.getCurrentPosition() + gamepad1.left_stick_y) * -1); // set the bottom gear to the inverse of the top
-        robot.topR.setTargetPosition((int)(robot.topR.getCurrentPosition() + gamepad1.right_stick_y));
-        robot.botR.setTargetPosition((int)(robot.botR.getCurrentPosition() + gamepad1.right_stick_y) * -1);
-        robot.topL.setPower(.7);
-        robot.botL.setPower(.7);
-        robot.topR.setPower(.7);
-        robot.botR.setPower(.7);
+
+        robot.topL.setTargetPosition((int)(robot.topL.getCurrentPosition() + gamepad1.left_stick_y * 100));
+        robot.botL.setTargetPosition((int)(robot.botL.getCurrentPosition() + gamepad1.left_stick_y) * -100); // set the bottom gear to the inverse of the top
+        robot.topR.setTargetPosition((int)(robot.topR.getCurrentPosition() + gamepad1.right_stick_y * 100));
+        robot.botR.setTargetPosition((int)(robot.botR.getCurrentPosition() + gamepad1.right_stick_y) * -100);
+
         robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        robot.topL.setPower(.7);
+        robot.botL.setPower(.7);
+        robot.topR.setPower(.7);
+        robot.botR.setPower(.7);
+
     }
 
     public void loop() { //Loop between "start" and "stop"
