@@ -803,8 +803,6 @@ public class AutoHub {
     }
     public void turnAbsPID(double absDegrees, double timeOut){
         turnMath(-absDegrees, timeOut);
-        linearOpMode.telemetry.addData("IMU READING", getAbsoluteAngle());
-        linearOpMode.telemetry.update();
     }
     void turnMath(double targetAngle, double timeoutS) {
         TurnPIDController pid = new TurnPIDController(targetAngle, 0.001, 0, 0.0003);
