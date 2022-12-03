@@ -82,7 +82,7 @@ public class testIMU extends LinearOpMode{
 
         waitForStart();
         //telemetry.setMsTransmissionInterval(50);
-        while (!opModeIsActive())
+        while (opModeIsActive())
         {
 
             while (!value){
