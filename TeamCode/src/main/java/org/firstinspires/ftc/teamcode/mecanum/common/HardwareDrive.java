@@ -52,8 +52,6 @@ public class HardwareDrive
         claw = hwMap.get(Servo.class, "claw");
         armServo = hwMap.get(Servo.class, "arm_servo");
 
-
-
         //IMU initiation
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -78,7 +76,6 @@ public class HardwareDrive
         abl.setDirection(DcMotorEx.Direction.FORWARD);
         abr.setDirection(DcMotorEx.Direction.REVERSE);
 
-
         // Set all motors to zero power
         lf.setPower(0);
         rf.setPower(0);
@@ -100,5 +97,8 @@ public class HardwareDrive
         abl.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         abr.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
+        at.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        abl.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        abr.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
     }
 }

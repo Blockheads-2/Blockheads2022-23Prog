@@ -137,7 +137,6 @@ public class SussyBaseDrive extends OpMode{
         double directionY = -Math.pow(gamepad1.left_stick_y, 1); //Forward
         double directionR = Math.pow(gamepad1.right_stick_x, 1); //Turn
 
-
         robot.lf.setPower((directionY + directionR + directionX) * drivePower);
         robot.rf.setPower((directionY - directionR - directionX) * drivePower);
         robot.lb.setPower((directionY + directionR - directionX) * drivePower);
@@ -145,39 +144,35 @@ public class SussyBaseDrive extends OpMode{
 
     }
 
-    void DriveMicroAdjust(double power){
-        if (gamepad1.dpad_up){
+    void DriveMicroAdjust(double power) {
+        if (gamepad1.dpad_up) {
             robot.lf.setPower(power);
             robot.rf.setPower(power);
             robot.lb.setPower(power);
             robot.rb.setPower(power);
-        }
-        else if (gamepad1.dpad_down){
+        } else if (gamepad1.dpad_down) {
             robot.lf.setPower(-power);
             robot.rf.setPower(-power);
             robot.lb.setPower(-power);
             robot.rb.setPower(-power);
-        }
-        else if (gamepad1.dpad_right){
+        } else if (gamepad1.dpad_right) {
             robot.lf.setPower(power);
             robot.rf.setPower(-power);
             robot.lb.setPower(-power);
             robot.rb.setPower(power);
-        }
-        else if (gamepad1.dpad_left){
+        } else if (gamepad1.dpad_left) {
             robot.lf.setPower(-power);
             robot.rf.setPower(power);
             robot.lb.setPower(power);
             robot.rb.setPower(-power);
         }
 
-        if (gamepad1.left_trigger == 1){
+        if (gamepad1.left_trigger == 1) {
             robot.lf.setPower(-power);
             robot.rf.setPower(power);
             robot.lb.setPower(-power);
             robot.rb.setPower(power);
-        }
-        else if (gamepad1.right_trigger == 1){
+        } else if (gamepad1.right_trigger == 1) {
             robot.lf.setPower(power);
             robot.rf.setPower(-power);
             robot.lb.setPower(power);
@@ -188,7 +183,7 @@ public class SussyBaseDrive extends OpMode{
     public void setTargetPositive(){
         int topCurrent = robot.at.getCurrentPosition();
 
-        telemetry.addData("Goal Position", topCurrent + 10);
+        telemetry.addData("Goal Position", topCurrent + 30);
 
         robot.at.setTargetPosition(topCurrent + 30);
         robot.at.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -197,6 +192,8 @@ public class SussyBaseDrive extends OpMode{
 
     public void setTargetNegative(){
         int topCurrent = robot.at.getCurrentPosition();
+
+        telemetry.addData("Goal Position", topCurrent - 30);
 
         robot.at.setTargetPosition(topCurrent - 30);
         robot.at.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -213,8 +210,8 @@ public class SussyBaseDrive extends OpMode{
         robot.abl.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.abr.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-        robot.abl.setPower(0.3);
-        robot.abr.setPower(0.3);
+        robot.abl.setPower(0.75);
+        robot.abr.setPower(0.75);
     }
 
     public void setTargetNegativeBase(){
@@ -227,18 +224,18 @@ public class SussyBaseDrive extends OpMode{
         robot.abl.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.abr.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-        robot.abl.setPower(0.3);
-        robot.abr.setPower(0.3);
+        robot.abl.setPower(0.75);
+        robot.abr.setPower(0.75);
     }
 
     void setArmPower(){
         if (gamepad2.y){
             setTargetPositive();
-        } else if (gamepad2.x){
+        } else if(gamepad2.x){
             setTargetNegative();
-        } else if(a.is(Button.State.TAP)){
+        } else if(gamepad2.b){
             setTargetPositiveBase();
-        } else if(b.is(Button.State.TAP)){
+        } else if(gamepad2.a){
             setTargetNegativeBase();
         }
 
@@ -262,6 +259,7 @@ public class SussyBaseDrive extends OpMode{
     void armMovement(){
         //abl, abr, at
 
+<<<<<<< Updated upstream
         if (bottomButton.is(Button.State.TAP)){
             atPos -= 20;
             robot.at.setTargetPosition(atPos);
@@ -355,6 +353,99 @@ public class SussyBaseDrive extends OpMode{
             robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.at.setPower(0.5);*/
         }
+=======
+//        if (bottomButton.is(Button.State.TAP)){
+//            atPos -= 10;
+//            robot.at.setTargetPosition(atPos);
+//            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            robot.at.setPower(0.5);
+//
+//            /*robot.abl.setTargetPosition(constants.bottomMotorBottom);
+//            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            robot.abl.setPower(0.5);
+//
+//            robot.abr.setTargetPosition(constants.bottomMotorBottom);
+//            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            robot.abr.setPower(0.5);
+//
+//            robot.at.setTargetPosition(constants.topMotorBottom);
+//            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            robot.at.setPower(0.5);*/
+//        }
+//
+//        if (lowButton.is(Button.State.TAP)){
+//
+//            if (abPos >= 10)
+//                abPos -= 10;
+//
+//            robot.abl.setTargetPosition(abPos);
+//            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            robot.abl.setPower(0.5);
+//
+//            robot.abr.setTargetPosition(abPos);
+//            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            robot.abr.setPower(0.5);
+//            telemetry.addData("Current Top Arm # Clicks", abPos);
+//
+//            /*robot.abl.setTargetPosition(constants.bottomMotorLow);
+//            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            robot.abl.setPower(0.5);
+//
+//            robot.abr.setTargetPosition(constants.bottomMotorLow);
+//            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            robot.abr.setPower(0.5);
+//
+//            robot.at.setTargetPosition(constants.topMotorLow);
+//            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            robot.at.setPower(0.5);*/
+//        }
+//
+//        if (midButton.is(Button.State.TAP)){
+//            abPos += 10;
+//            robot.abl.setTargetPosition(abPos);
+//            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            robot.abl.setPower(0.5);
+//
+//            robot.abr.setTargetPosition(abPos);
+//            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            robot.abr.setPower(0.5);
+//
+//            telemetry.addData("Current Top Arm # Clicks", abPos);
+//
+//            /*robot.abl.setTargetPosition(constants.bottomMotorMid);
+//            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            robot.abl.setPower(0.5);
+//
+//            robot.abr.setTargetPosition(constants.bottomMotorMid);
+//            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            robot.abr.setPower(0.5);
+//
+//            robot.at.setTargetPosition(constants.topMotorMid);
+//            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            robot.at.setPower(0.5);*/
+//        }
+//
+//        if (highButton.is(Button.State.TAP)){
+//            atPos += 10;
+//
+//            robot.at.setTargetPosition(atPos);
+//            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            robot.at.setPower(0.5);
+//            telemetry.addData("Current Bottom Arm # Clicks", atPos);
+//
+//            /*robot.abl.setTargetPosition(constants.bottomMotorHigh);
+//            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            robot.abl.setPower(0.5);
+//
+//            robot.abr.setTargetPosition(constants.bottomMotorHigh);
+//            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            robot.abr.setPower(0.5);
+//
+//            robot.at.setTargetPosition(constants.topMotorHigh);
+//            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            robot.at.setPower(0.5);*/
+//        }
+>>>>>>> Stashed changes
     }
 
     void testServos(){
