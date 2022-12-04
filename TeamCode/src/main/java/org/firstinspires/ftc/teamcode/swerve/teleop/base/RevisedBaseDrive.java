@@ -99,8 +99,10 @@ public class RevisedBaseDrive extends OpMode{
     }
 
     void UpdateTelemetry(){
-        telemetry.addData("X", gamepad1.left_stick_x);
-        telemetry.addData("Y", -gamepad1.left_stick_y);
+        telemetry.addData("Left Stick X", gamepad1.left_stick_x);
+        telemetry.addData("Left Stick Y", -gamepad1.left_stick_y);
+        telemetry.addData("Right Stick X", gamepad1.right_stick_x);
+        telemetry.addData("Right Stick Y", -gamepad1.right_stick_y);
 
         telemetry.addData("X pos", posSystem.getPositionArr()[0]);
         telemetry.addData("Y pos", posSystem.getPositionArr()[1]);
