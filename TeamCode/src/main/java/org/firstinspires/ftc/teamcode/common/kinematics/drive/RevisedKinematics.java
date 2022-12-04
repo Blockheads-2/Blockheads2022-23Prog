@@ -79,7 +79,7 @@ public class RevisedKinematics {
         joystickTracker = new TrackJoystick();
 
         rightThrottle = 1;
-        leftThrottle = 1;
+        leftThrottle = -1;
     }
 
     public void logic(double lx, double ly, double rx, double ry){
