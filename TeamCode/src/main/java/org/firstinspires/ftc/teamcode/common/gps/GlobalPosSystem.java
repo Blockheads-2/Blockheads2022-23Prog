@@ -7,6 +7,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.kinematics.drive.Kinematics;
+import org.firstinspires.ftc.teamcode.common.kinematics.drive.RevisedKinematics;
 
 import java.util.HashMap;
 
@@ -14,6 +15,7 @@ public class GlobalPosSystem {
 
     Constants constants = new Constants();
     Kinematics kinematics;
+    RevisedKinematics revisedKinematics;
 
     private double[] positionArr = new double[5];
     public HashMap<String, Integer> motorClicksPose = new HashMap<>();
@@ -44,6 +46,10 @@ public class GlobalPosSystem {
 
     public void grabKinematics(Kinematics k){
         kinematics = k;
+    }
+
+    public void grabKinematics(RevisedKinematics k){
+        revisedKinematics = k;
     }
 
     public void calculatePos(){
@@ -103,17 +109,23 @@ public class GlobalPosSystem {
         double baseAngle = (currentAngleL + currentAngleR) / 2.0;
         baseAngle = Math.toRadians(baseAngle);
         double hypotenuse = (translationalInchesL + translationalInchesR) / 2.0;
-//
-//        double bigArc = Math.max(translationalInchesL, translationalInchesR); //unit: inches
-//        double smallArc = Math.min(translationalInchesL, translationalInchesR); //unit: inches
-//        if (Math.abs(bigArc - smallArc) <= 0.1){
-//            double radius = ((bigArc + smallArc) * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER) / (bigArc - smallArc); //unit: inches
-//            double theta = (bigArc - smallArc) / (2 * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER); //unit: radians
-//            hypotenuse = Math.sqrt((2 * radius * radius) * (1 - Math.cos(theta)));
-//            splineOrientation = Math.toDegrees(theta);
-//            baseAngle = (Math.PI - theta) / 2.0; //unit: radians
-//            baseAngle = (Math.PI / 2.0) - baseAngle;
-//        } //problem: this assumes that the modules are parallel.
+
+//        if (revisedKinematics.getDriveType() == RevisedKinematics.DriveType.SPLINE){
+//            double bigArc = Math.max(translationalInchesL, translationalInchesR); //unit: inches
+//            double smallArc = Math.min(translationalInchesL, translationalInchesR); //unit: inches
+//            if (Math.abs(bigArc - smallArc) <= 0.1){
+//                double radius = ((bigArc + smallArc) * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER) / (bigArc - smallArc); //unit: inches
+//                double theta = (bigArc - smallArc) / (2 * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER); //unit: radians
+//                hypotenuse = Math.sqrt((2 * radius * radius) * (1 - Math.cos(theta)));
+//                splineOrientation = Math.toDegrees(theta);
+//                baseAngle = (Math.PI - theta) / 2.0; //unit: radians
+//                baseAngle = (Math.PI / 2.0) - baseAngle;
+//            } //problem: this assumes that the modules are parallel.
+//        } else if (revisedKinematics.getDriveType() == RevisedKinematics.DriveType.TURN){
+//            positionArr[2] += positionArr[4];
+//            positionArr[3] += positionArr[4];
+//        }
+
 
         update(hypotenuse * Math.sin(baseAngle), hypotenuse * Math.cos(baseAngle), 0, 0, 0);
     }

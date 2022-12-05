@@ -24,6 +24,7 @@ public class RevisedKinematics {
         SNAP,
         STOP,
         TURN,
+        SPLINE,
         NOT_INITIALIZED
     }
     public DriveType type = DriveType.NOT_INITIALIZED;
@@ -206,7 +207,7 @@ public class RevisedKinematics {
 
         rightThrottle = 1;
         leftThrottle = -1;
-        
+
 //        if(Math.abs(turnAmount) > 90){
 //            turnAmount %= 180;
 //            turnAmount *= -1;
