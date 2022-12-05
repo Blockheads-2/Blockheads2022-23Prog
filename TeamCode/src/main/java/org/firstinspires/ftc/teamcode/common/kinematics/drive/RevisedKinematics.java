@@ -122,9 +122,6 @@ public class RevisedKinematics {
         if (rotatePerc > 0.5) rotatePerc = 0.5;
         translatePerc = 1 - rotatePerc;
 
-        rightThrottle = 1;
-        leftThrottle = -1;
-
         //determining "firstMovement" actions, if it is the robot's "firstMovement."
         firstMovement();
 
@@ -207,6 +204,9 @@ public class RevisedKinematics {
         double turnAmount2 = target2 - current2;
         double turnAmount = (Math.abs(turnAmount1) < Math.abs(turnAmount2) ? turnAmount1 : turnAmount2);
 
+        rightThrottle = 1;
+        leftThrottle = -1;
+        
 //        if(Math.abs(turnAmount) > 90){
 //            turnAmount %= 180;
 //            turnAmount *= -1;
