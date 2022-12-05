@@ -140,8 +140,10 @@ public class GlobalPosSystem {
     }
 
     public void hardResetGPS(){
-        positionArr[2]=positionArr[4];
-        positionArr[3]=positionArr[4];
+//        positionArr[2]=positionArr[4];
+//        positionArr[3]=positionArr[4];
+        positionArr[2]=0;
+        positionArr[3]=0;
 
         motorClicksPose.put("topR", robot.topR.getCurrentPosition());
         motorClicksPose.put("botR", robot.botR.getCurrentPosition());

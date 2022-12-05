@@ -122,6 +122,9 @@ public class RevisedKinematics {
         if (rotatePerc > 0.5) rotatePerc = 0.5;
         translatePerc = 1 - rotatePerc;
 
+        rightThrottle = 1;
+        leftThrottle = -1;
+
         //determining "firstMovement" actions, if it is the robot's "firstMovement."
         firstMovement();
 
@@ -151,7 +154,7 @@ public class RevisedKinematics {
 
     public void rightStick(){
         if (Math.abs(leftCurrentW - currentR) < constants.degreeTOLERANCE && Math.abs(rightCurrentW - currentR) < constants.degreeTOLERANCE && lx == 0 && ly == 0 && (rx != 0 || ry != 0)){
-            leftThrottle = leftThrottle;
+//            leftThrottle = leftThrottle;
             rightThrottle *= -1;
             spinClicksL = (int) (rx * 100 * leftThrottle);
             spinClicksR = (int) (rx * 100 * rightThrottle);
