@@ -64,6 +64,9 @@ public class RevisedKinematics {
     //PIDs
     protected SnapSwerveModulePID snapLeftWheelPID;
     protected SnapSwerveModulePID snapRightWheelPID;
+    public double kp = 0.03;
+    public double ki = 0;
+    public double kd = 0.01;
 
     public boolean firstMovement = true;
 
@@ -73,8 +76,8 @@ public class RevisedKinematics {
         snapLeftWheelPID = new SnapSwerveModulePID();
         snapRightWheelPID = new SnapSwerveModulePID();
 
-        snapLeftWheelPID.setTargets(0.03, 0, 0.01);
-        snapRightWheelPID.setTargets(0.03, 0, 0.01);
+        snapLeftWheelPID.setTargets(kp, ki, kd);
+        snapRightWheelPID.setTargets(kp, ki, kd);
 
         accelerator = new Accelerator();
         joystickTracker = new TrackJoystick();
