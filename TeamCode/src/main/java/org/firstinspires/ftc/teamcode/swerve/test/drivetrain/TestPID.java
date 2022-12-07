@@ -124,6 +124,7 @@ public class TestPID extends OpMode{
         telemetry.addData("KP", kinematics.kp);
         telemetry.addData("KI", kinematics.ki);
         telemetry.addData("KD", kinematics.kd);
+        telemetry.addData("Add?", add);
 
         telemetry.addData("Left Stick X", gamepad1.left_stick_x);
         telemetry.addData("Left Stick Y", -gamepad1.left_stick_y);
@@ -170,6 +171,7 @@ public class TestPID extends OpMode{
         y.update(gamepad1.y);
         a.update(gamepad1.a);
         b.update(gamepad1.b);
+
         p.update(gamepad2.x);
         i.update(gamepad2.y);
         d.update(gamepad2.a);
