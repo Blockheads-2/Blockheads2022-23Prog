@@ -56,6 +56,7 @@ public class RevisedBaseDrive extends OpMode{
         robot.init(hardwareMap);
         posSystem = new GlobalPosSystem(robot);
         kinematics = new RevisedKinematics(posSystem);
+        posSystem.grabKinematics(kinematics);
         reset = new Reset(robot, posSystem);
 
         telemetry.addData("Say", "Hello Driver");

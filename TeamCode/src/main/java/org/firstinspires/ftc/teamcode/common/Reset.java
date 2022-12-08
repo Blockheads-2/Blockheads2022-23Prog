@@ -88,12 +88,6 @@ public class Reset {
                 robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-                robot.topL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                robot.botL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-                robot.topL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                robot.botL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
                 power = accelerator.update(0);
                 robot.botL.setPower(power);
                 robot.topL.setPower(power);
@@ -109,12 +103,6 @@ public class Reset {
                 robot.topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-                robot.topR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                robot.botR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-                robot.topR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                robot.botR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
                 power = accelerator.update(0);
                 robot.botR.setPower(power);
                 robot.topR.setPower(power);
@@ -126,7 +114,18 @@ public class Reset {
                 robot.topR.setPower(power);
             }
 
-            if (finishedReset()) globalPosSystem.hardResetGPS();
+            if (finishedReset()) {
+                robot.topL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.botL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.topR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.botR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+                robot.topL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.botL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.topR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.botR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                globalPosSystem.hardResetGPS();
+            }
         }
     }
 

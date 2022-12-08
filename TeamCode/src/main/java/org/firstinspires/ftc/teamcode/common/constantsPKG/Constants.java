@@ -11,8 +11,8 @@ public class Constants {
 
     public double CLICKS_PER_BLUE_REV = 537.7; //clicks per rev of motor
 
-    public double WHEEL_DIAMETER = 92 / 25.4; //unit is in inches
-    public double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
+    public double WHEEL_DIAMETER = 92 / 25.4; //3.622 inches
+    public double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER; //11.378 inches
     public double MAX_VELOCITY_DT = 2700; // unit is clicks/sec
     public double clickTOLERANCE = 10; //number of clicks or degrees the robot can be off by
     public double degreeTOLERANCE = 5;

@@ -46,8 +46,8 @@ public class RevisedKinematics {
     public int leftRotClicks = 0;
     public int spinClicksR = 0; //make protected later
     public int spinClicksL = 0; //make protected later
-    public int rightThrottle;
-    public int leftThrottle;
+    public int rightThrottle = 1;
+    public int leftThrottle = 1;
     public double target = 0;
     public double turnAmountL = 0;
     public double turnAmountR = 0;
