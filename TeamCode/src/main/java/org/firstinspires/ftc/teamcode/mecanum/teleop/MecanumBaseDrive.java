@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.common.pid.ArmPID;
 import org.firstinspires.ftc.teamcode.mecanum.common.Constants;
 import org.firstinspires.ftc.teamcode.mecanum.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.Button;
@@ -40,6 +41,10 @@ public class MecanumBaseDrive extends OpMode{
     boolean clawUp = false;
 
     private int prevPosition = 0;
+
+    ArmPID atPID = new ArmPID();
+    ArmPID ablPID = new ArmPID();
+    ArmPID abrPID = new ArmPID();
 
     /** The relativeLayout field is used to aid in providing interesting visual feedback
      * in this sample application; you probably *don't* need this when you use a color sensor on your
@@ -428,9 +433,13 @@ public class MecanumBaseDrive extends OpMode{
 
     void ArmPresets(){
         if (bottomButton.is(Button.State.TAP)){
-            robot.at.setTargetPosition(constants.topMotorBottom);
-            robot.abl.setTargetPosition(constants.bottomMotorBottom);
-            robot.abr.setTargetPosition(constants.bottomMotorBottom);
+            atPID.setTargets(constants.topMotorBottom, robot.at.getCurrentPosition(), 0.4, 0, 0.2);
+            ablPID.setTargets(constants.topMotorBottom, robot.abl.getCurrentPosition(), 0.4, 0, 0.2);
+            abrPID.setTargets(constants.topMotorBottom, robot.abr.getCurrentPosition(), 0.4, 0, 0.2);
+
+            robot.at.setTargetPosition(robot.at.getCurrentPosition() + constants.topMotorBottom);
+            robot.abl.setTargetPosition(robot.abl.getCurrentPosition() + constants.bottomMotorBottom);
+            robot.abr.setTargetPosition(robot.abr.getCurrentPosition() + constants.bottomMotorBottom);
 
             robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -438,16 +447,19 @@ public class MecanumBaseDrive extends OpMode{
 
             robot.armServo.setPosition(constants.armServoBottom);
 
-            robot.abl.setPower(0.7);
-            robot.abr.setPower(0.7);
-            robot.at.setPower(constants.topMotorPower);
-
+            robot.abl.setPower(ablPID.update(robot.abl.getCurrentPosition()));
+            robot.abr.setPower(abrPID.update(robot.abr.getCurrentPosition()));
+            robot.at.setPower(ablPID.update(robot.at.getCurrentPosition()));
         }
 
         if (lowButton.is(Button.State.TAP)){
-            robot.abl.setTargetPosition(constants.bottomMotorLow);
-            robot.abr.setTargetPosition(constants.bottomMotorLow);
-            robot.at.setTargetPosition(constants.topMotorLow);
+            atPID.setTargets(constants.topMotorLow, robot.at.getCurrentPosition(), 0.4, 0, 0.2);
+            ablPID.setTargets(constants.bottomMotorLow, robot.abl.getCurrentPosition(), 0.4, 0, 0.2);
+            abrPID.setTargets(constants.bottomMotorLow, robot.abr.getCurrentPosition(), 0.4, 0, 0.2);
+
+            robot.abl.setTargetPosition(robot.abl.getCurrentPosition() + constants.bottomMotorLow);
+            robot.abr.setTargetPosition(robot.abr.getCurrentPosition() + constants.bottomMotorLow);
+            robot.at.setTargetPosition(robot.at.getCurrentPosition() + constants.topMotorLow);
 
             robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -455,12 +467,16 @@ public class MecanumBaseDrive extends OpMode{
 
             robot.armServo.setPosition(constants.armServoLow);
 
-            robot.abl.setPower(0.7);
-            robot.abr.setPower(0.7);
-            robot.at.setPower(constants.topMotorPower);
+            robot.abl.setPower(ablPID.update(robot.abl.getCurrentPosition()));
+            robot.abr.setPower(abrPID.update(robot.abr.getCurrentPosition()));
+            robot.at.setPower(ablPID.update(robot.at.getCurrentPosition()));
         }
 
         if (midButton.is(Button.State.TAP)){
+            atPID.setTargets(constants.topMotorMid, robot.at.getCurrentPosition(), 0.4, 0, 0.2);
+            ablPID.setTargets(constants.bottomMotorMid, robot.abl.getCurrentPosition(), 0.4, 0, 0.2);
+            abrPID.setTargets(constants.bottomMotorMid, robot.abr.getCurrentPosition(), 0.4, 0, 0.2);
+
             robot.abl.setTargetPosition(constants.bottomMotorMid);
             robot.abr.setTargetPosition(constants.bottomMotorMid);
             robot.at.setTargetPosition(constants.topMotorMid);
@@ -471,12 +487,16 @@ public class MecanumBaseDrive extends OpMode{
 
             robot.armServo.setPosition(constants.armServoMid);
 
-            robot.abl.setPower(1);
-            robot.abr.setPower(1);
-            robot.at.setPower(constants.topMotorPower);
+            robot.abl.setPower(ablPID.update(robot.abl.getCurrentPosition()));
+            robot.abr.setPower(abrPID.update(robot.abr.getCurrentPosition()));
+            robot.at.setPower(ablPID.update(robot.at.getCurrentPosition()));
         }
 
         if (highButton.is(Button.State.TAP)){
+            atPID.setTargets(constants.topMotorHigh, robot.at.getCurrentPosition(), 0.4, 0, 0.2);
+            ablPID.setTargets(constants.bottomMotorHigh, robot.abl.getCurrentPosition(), 0.4, 0, 0.2);
+            abrPID.setTargets(constants.bottomMotorHigh, robot.abr.getCurrentPosition(), 0.4, 0, 0.2);
+
             robot.abl.setTargetPosition(constants.bottomMotorHigh);
             robot.abr.setTargetPosition(constants.bottomMotorHigh);
             robot.at.setTargetPosition(constants.topMotorHigh);
@@ -487,9 +507,9 @@ public class MecanumBaseDrive extends OpMode{
 
             robot.armServo.setPosition(constants.armServoHigh);
 
-            robot.abl.setPower(1);
-            robot.abr.setPower(1);
-            robot.at.setPower(constants.topMotorPower);
+            robot.abl.setPower(ablPID.update(robot.abl.getCurrentPosition()));
+            robot.abr.setPower(abrPID.update(robot.abr.getCurrentPosition()));
+            robot.at.setPower(ablPID.update(robot.at.getCurrentPosition()));
         }
 /*
         if (zeroButton.is(Button.State.TAP)){

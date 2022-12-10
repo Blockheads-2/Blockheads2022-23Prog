@@ -134,8 +134,8 @@ public class GlobalPosSystem {
 
     public void update ( double x, double y, double leftWheelW, double rightWheelW, double robotR){
         //update
-        positionArr[0] += (x * 1.5);
-        positionArr[1] += (y * 1.5);
+        positionArr[0] += (x);
+        positionArr[1] += (y);
         positionArr[2] += leftWheelW;
         positionArr[3] += rightWheelW;
         positionArr[4] += robotR;
