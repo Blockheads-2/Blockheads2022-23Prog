@@ -437,9 +437,9 @@ public class MecanumBaseDrive extends OpMode{
             ablPID.setTargets(constants.topMotorBottom, robot.abl.getCurrentPosition(), 0.4, 0, 0.2);
             abrPID.setTargets(constants.topMotorBottom, robot.abr.getCurrentPosition(), 0.4, 0, 0.2);
 
-            robot.at.setTargetPosition(robot.at.getCurrentPosition() + constants.topMotorBottom);
-            robot.abl.setTargetPosition(robot.abl.getCurrentPosition() + constants.bottomMotorBottom);
-            robot.abr.setTargetPosition(robot.abr.getCurrentPosition() + constants.bottomMotorBottom);
+            robot.at.setTargetPosition(constants.topMotorBottom);
+            robot.abl.setTargetPosition(constants.bottomMotorBottom);
+            robot.abr.setTargetPosition(constants.bottomMotorBottom);
 
             robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -457,9 +457,9 @@ public class MecanumBaseDrive extends OpMode{
             ablPID.setTargets(constants.bottomMotorLow, robot.abl.getCurrentPosition(), 0.4, 0, 0.2);
             abrPID.setTargets(constants.bottomMotorLow, robot.abr.getCurrentPosition(), 0.4, 0, 0.2);
 
-            robot.abl.setTargetPosition(robot.abl.getCurrentPosition() + constants.bottomMotorLow);
-            robot.abr.setTargetPosition(robot.abr.getCurrentPosition() + constants.bottomMotorLow);
-            robot.at.setTargetPosition(robot.at.getCurrentPosition() + constants.topMotorLow);
+            robot.abl.setTargetPosition(constants.bottomMotorLow);
+            robot.abr.setTargetPosition(constants.bottomMotorLow);
+            robot.at.setTargetPosition(constants.topMotorLow);
 
             robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
