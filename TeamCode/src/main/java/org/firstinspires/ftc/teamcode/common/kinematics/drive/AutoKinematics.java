@@ -79,6 +79,9 @@ public class AutoKinematics {
 
         accelerator = new Accelerator();
 //        joystickTracker = new TrackJoystick();
+
+        rightThrottle = 1;
+        leftThrottle = -1;
     }
 
     public void setPos(double x, double y, double theta, double speed){
@@ -204,15 +207,24 @@ public class AutoKinematics {
         double target2 = (target < 0 ? target + 360 : target);
         double current2 = (currentW < 0 ? currentW + 360 : currentW);
 
-        double turnAmount = target - currentW;
+        double turnAmount1 = target - currentW;
         double turnAmount2 = target2 - current2;
+        double turnAmount = (Math.abs(turnAmount1) < Math.abs(turnAmount2) ? turnAmount1 : turnAmount2);
 
-        if (Math.abs(turnAmount) < Math.abs(turnAmount2)){
-            return turnAmount;
+        rightThrottle = 1;
+        leftThrottle = -1;
 
-        } else{
-            return turnAmount2;
-        }
+//        if(Math.abs(turnAmount) > 90){
+//            turnAmount %= 180;
+//            turnAmount *= -1;
+//
+//            if(Math.abs(turnAmount) > 180){
+//                turnAmount = 360 - Math.abs(turnAmount);
+//            }
+////            this.translateSwitchMotors *= -1; //needs to be fixed, or else the wheels will oscilate a lot.
+//        }
+
+        return turnAmount;
     }
 
     public double clamp(double degrees){
