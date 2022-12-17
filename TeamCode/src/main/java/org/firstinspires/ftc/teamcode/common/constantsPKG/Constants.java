@@ -54,6 +54,34 @@ public class Constants {
     public double tableSpinRotPercAllocation = 0.5;
     public double tableSpinSpinPercAllocation = 0.5;
 
+    //Arm Constants!!
+    //Bottom
+    public int bottomMotorBottom = 1175;
+    public int topMotorBottom = 60;
+    public double armServoBottom = 0.05;
+
+    //Low
+    public int bottomMotorLow = 140;
+    public int topMotorLow = 120;
+    public double armServoLow = 0.4;
+
+    //Mid
+    public int bottomMotorMid = 420;
+    public int topMotorMid = 340;
+    public double armServoMid = 0.4;
+
+    //High
+    public int bottomMotorHigh = 450;
+    public int topMotorHigh = 450;
+    public double armServoHigh = 0.7;
+
+    //Claw Position
+    public double clawUp = 0;
+    public double clawDown = 0.8;
+    public double openClaw = 0.5;
+    public double closeClaw = 1;
+
+
     //Distance Between swerve module and Center
     public double MM_INCH = 1/2.56;
     public double DISTANCE_BETWEEN_MODULE_AND_CENTER = 3.406; //3.405512

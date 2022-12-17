@@ -27,9 +27,9 @@ public class MecanumBaseDrive extends OpMode{
     Button lowButton = new Button();
     Button midButton = new Button();
     Button highButton = new Button();
-    Button testOne = new Button();
-    Button testZero = new Button();
-    Button testNegOne = new Button();
+//    Button testOne = new Button();
+//    Button testZero = new Button();
+//    Button testNegOne = new Button();
     Button zeroButton = new Button();
 
     Button clawAngleButton = new Button();
@@ -94,9 +94,9 @@ public class MecanumBaseDrive extends OpMode{
 
     void UpdateButton(){
 
-        testOne.update(gamepad1.a);
-        testZero.update(gamepad1.b);
-        testNegOne.update(gamepad1.y);
+//        testOne.update(gamepad1.a);
+//        testZero.update(gamepad1.b);
+//        testNegOne.update(gamepad1.y);
 
         bottomButton.update(gamepad2.dpad_down);
         lowButton.update(gamepad2.dpad_left);
