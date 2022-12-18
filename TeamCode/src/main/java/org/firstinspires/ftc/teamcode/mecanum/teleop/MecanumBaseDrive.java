@@ -197,35 +197,6 @@ public class MecanumBaseDrive extends OpMode{
         }
 
          */
-
-//    void setArmPower(){
-//        if (gamepad2.y){
-//            setTargetPositive();
-//        } else if (gamepad2.x){
-//            setTargetNegative();
-//        } else if(a.is(Button.State.TAP)){
-//            setTargetPositiveBase();
-//        } else if(b.is(Button.State.TAP)){
-//            setTargetNegativeBase();
-//        }
-//
-//        /*
-//        if (robot.abl.getCurrentPosition() != prevPosition){
-//            robot.abl.setTargetPosition(prevPosition);
-//            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            robot.abl.setPower(0.1);
-//            robot.abr.setPower(0.1);
-//        } else {
-//            robot.at.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//            robot.abl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//            robot.abr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        }
-//
-//         */
-//
-//        prevPosition = robot.abl.getCurrentPosition();
-//    }
-
     void armMovement(){
         //abl, abr, at
 
@@ -517,14 +488,18 @@ public class MecanumBaseDrive extends OpMode{
                 robot.claw.setPosition(0.9);
             }
             else{
-                robot.claw.setPosition(0.5);
+                robot.claw.setPosition(constants.openClaw);
             }
             clawClose = !clawClose;
         }
         if (clawAngleButton.is(Button.State.TAP)){
             robot.armServo.setPosition(0);
         }
-        robot.armServo.setPosition(0.7*  gamepad2.right_trigger);
+        robot.armServo.setPosition(0.7 *  gamepad2.right_trigger);
+
+        if (clawGrabButton.is(Button.State.DOUBLE_TAP)){
+            robot.claw.setPosition(0);
+        }
     }
     /*
      * Code to run ONCE after the driver hits STOP
