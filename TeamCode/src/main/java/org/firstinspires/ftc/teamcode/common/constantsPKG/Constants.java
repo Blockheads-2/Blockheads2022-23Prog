@@ -7,12 +7,11 @@ public class Constants {
     public double LOAD_ON = 0.6; //assumption
     public double RPM = 1150 * LOAD_ON; //690.  Not very accurate so don't rely on this number.
     public double RPS = RPM / 60.0; //11.5 ish motor revolutions per second, with load
-    public double POWER_LIMITER = 0.7;
+    public double POWER_LIMITER = 0.9;
 
-    public double CLICKS_PER_BLUE_REV = 537.7; //clicks per rev of motor
-
-    public double WHEEL_DIAMETER = 92 / 25.4; //unit is in inches
-    public double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
+    public double CLICKS_PER_BLUE_REV = 537.7; //clicks per rev of motors
+    public double WHEEL_DIAMETER = 92 / 25.4; //3.622 inches
+    public double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER; //11.378 inches
     public double MAX_VELOCITY_DT = 2700; // unit is clicks/sec
     public double clickTOLERANCE = 10; //number of clicks or degrees the robot can be off by
     public double degreeTOLERANCE = 5;
@@ -40,7 +39,7 @@ public class Constants {
     //Swerve constants
         //module translation
     public double BLUE_REV_PER_GREEN = 17.0 / 16.0; //assuming other gear isn't messing stuff up, 17 revolutions of the input shaft = 16 revolutions of the wheel
-    public double CLICKS_PER_INCH = BLUE_REV_PER_GREEN * CLICKS_PER_BLUE_REV * (1.0 / WHEEL_CIRCUMFERENCE); //~13.549 clicks per inch
+    public double CLICKS_PER_INCH = (BLUE_REV_PER_GREEN * CLICKS_PER_BLUE_REV * (1.0 / WHEEL_CIRCUMFERENCE)) * (2.0/3.0); //~13.549 clicks per inch
     public double INCHES_PER_CLICK = 1.0 / CLICKS_PER_INCH; //~0.029 inches per click
 
     //module rotation
@@ -54,6 +53,34 @@ public class Constants {
 
     public double tableSpinRotPercAllocation = 0.5;
     public double tableSpinSpinPercAllocation = 0.5;
+
+    //Arm Constants!!
+    //Bottom
+    public int bottomMotorBottom = 1175;
+    public int topMotorBottom = 60;
+    public double armServoBottom = 0.05;
+
+    //Low
+    public int bottomMotorLow = 140;
+    public int topMotorLow = 120;
+    public double armServoLow = 0.4;
+
+    //Mid
+    public int bottomMotorMid = 420;
+    public int topMotorMid = 340;
+    public double armServoMid = 0.4;
+
+    //High
+    public int bottomMotorHigh = 450;
+    public int topMotorHigh = 450;
+    public double armServoHigh = 0.7;
+
+    //Claw Position
+    public double clawUp = 0;
+    public double clawDown = 0.8;
+    public double openClaw = 0.5;
+    public double closeClaw = 1;
+
 
     //Distance Between swerve module and Center
     public double MM_INCH = 1/2.56;

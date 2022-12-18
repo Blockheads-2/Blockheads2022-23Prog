@@ -60,7 +60,7 @@ public class AutoHubJR {
 
     //for now, we'll leave it as last year's template, but it might be a good idea to be constantly calculating its position and
     // how much it needs to go to lessen error.
-    void Move(DriveType movementType, double x, double y, double finalAngle, double speed){
+    public void Move(DriveType movementType, double x, double y, double finalAngle, double speed){
 
 //        double powerTopL;
 //        double powerBotL;
