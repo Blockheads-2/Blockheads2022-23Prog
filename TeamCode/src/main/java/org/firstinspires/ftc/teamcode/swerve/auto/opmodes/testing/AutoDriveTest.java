@@ -43,11 +43,6 @@ public class AutoDriveTest extends LinearOpMode {
         waitForStart();
 
         Movement("Linear", 10,10,0.5);
-
-
-
-
-
     }
 
     private void Movement(String movementType, double x, double y, double power){

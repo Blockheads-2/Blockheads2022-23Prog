@@ -7,6 +7,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.kinematics.drive.Kinematics;
+import org.firstinspires.ftc.teamcode.common.kinematics.drive.RevisedKinematics;
 
 import java.util.HashMap;
 
@@ -14,6 +15,7 @@ public class GlobalPosSystem {
 
     Constants constants = new Constants();
     Kinematics kinematics;
+    RevisedKinematics revisedKinematics;
 
     private double[] positionArr = new double[5];
     public HashMap<String, Integer> motorClicksPose = new HashMap<>();
@@ -46,12 +48,14 @@ public class GlobalPosSystem {
         kinematics = k;
     }
 
+    public void grabKinematics(RevisedKinematics k){
+        revisedKinematics = k;
+    }
+
     public void calculatePos(){
         updateHash();
         calculateWheel();
         calculateHeader();
-        positionArr[2] += positionArr[4]; //we are only allowed to constantly add to the position because we overwrite it each loop in calculateWheel().
-        positionArr[2] += positionArr[4];
         calculateRobot();
     }
 
@@ -92,6 +96,7 @@ public class GlobalPosSystem {
         int botR = motorClicksPose.get("botR") - prevMotorClicks.get("botR"); //change in bottom right
         double translationalInchesR = (topR - botR) / 2.0;
         translationalInchesR *= constants.INCHES_PER_CLICK;
+        translationalInchesR *= Math.signum(revisedKinematics.rightThrottle);
         double currentAngleR = positionArr[3];
 
         //left
@@ -99,31 +104,38 @@ public class GlobalPosSystem {
         int botL = motorClicksPose.get("botL") - prevMotorClicks.get("botL"); //change in bottom left
         double translationalInchesL = (topL - botL) / 2.0;
         translationalInchesL *= constants.INCHES_PER_CLICK;
+        translationalInchesL *= Math.signum(revisedKinematics.leftThrottle);
         double currentAngleL = positionArr[2];
 
         double splineOrientation = 0.0;
         double baseAngle = (currentAngleL + currentAngleR) / 2.0;
         baseAngle = Math.toRadians(baseAngle);
         double hypotenuse = (translationalInchesL + translationalInchesR) / 2.0;
-//
-//        double bigArc = Math.max(translationalInchesL, translationalInchesR); //unit: inches
-//        double smallArc = Math.min(translationalInchesL, translationalInchesR); //unit: inches
-//        if (Math.abs(bigArc - smallArc) <= 0.1){
-//            double radius = ((bigArc + smallArc) * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER) / (bigArc - smallArc); //unit: inches
-//            double theta = (bigArc - smallArc) / (2 * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER); //unit: radians
-//            hypotenuse = Math.sqrt((2 * radius * radius) * (1 - Math.cos(theta)));
-//            splineOrientation = Math.toDegrees(theta);
-//            baseAngle = (Math.PI - theta) / 2.0; //unit: radians
-//            baseAngle = (Math.PI / 2.0) - baseAngle;
-//        } //problem: this assumes that the modules are parallel.
+
+//        if (revisedKinematics.getDriveType() == RevisedKinematics.DriveType.SPLINE){
+//            double bigArc = Math.max(translationalInchesL, translationalInchesR); //unit: inches
+//            double smallArc = Math.min(translationalInchesL, translationalInchesR); //unit: inches
+//            if (Math.abs(bigArc - smallArc) <= 0.1){
+//                double radius = ((bigArc + smallArc) * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER) / (bigArc - smallArc); //unit: inches
+//                double theta = (bigArc - smallArc) / (2 * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER); //unit: radians
+//                hypotenuse = Math.sqrt((2 * radius * radius) * (1 - Math.cos(theta)));
+//                splineOrientation = Math.toDegrees(theta);
+//                baseAngle = (Math.PI - theta) / 2.0; //unit: radians
+//                baseAngle = (Math.PI / 2.0) - baseAngle;
+//            } //problem: this assumes that the modules are parallel.
+//        } else if (revisedKinematics.getDriveType() == RevisedKinematics.DriveType.TURN){
+//            positionArr[2] += positionArr[4];
+//            positionArr[3] += positionArr[4];
+//        }
+
 
         update(hypotenuse * Math.sin(baseAngle), hypotenuse * Math.cos(baseAngle), 0, 0, 0);
     }
 
     public void update ( double x, double y, double leftWheelW, double rightWheelW, double robotR){
         //update
-        positionArr[0] += x;
-        positionArr[1] += y;
+        positionArr[0] += (x);
+        positionArr[1] += (y);
         positionArr[2] += leftWheelW;
         positionArr[3] += rightWheelW;
         positionArr[4] += robotR;
@@ -141,29 +153,11 @@ public class GlobalPosSystem {
         return positionArr[3];
     }
 
-    public boolean xChange(){
-        return (Math.abs(positionArr[0]) <= 0.3);
-    }
-
-    public boolean yChange(){
-        return (Math.abs(positionArr[1]) <= 0.3);
-    }
-
-    public boolean dChange(){
-        return (xChange() || yChange());
-    }
-
-    public boolean wChange(){
-        return (Math.abs(positionArr[2]) <= 1);
-    }
-
-    public boolean rChange(){
-        return (Math.abs(positionArr[3]) <= 1);
-    }
-
     public void hardResetGPS(){
-        positionArr[2]=positionArr[4];
-        positionArr[3]=positionArr[4];
+//        positionArr[2]=positionArr[4];
+//        positionArr[3]=positionArr[4];
+        positionArr[2]=0;
+        positionArr[3]=0;
 
         motorClicksPose.put("topR", robot.topR.getCurrentPosition());
         motorClicksPose.put("botR", robot.botR.getCurrentPosition());

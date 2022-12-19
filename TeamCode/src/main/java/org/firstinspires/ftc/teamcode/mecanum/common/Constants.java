@@ -27,7 +27,7 @@ public class Constants {
     //Claw Position
     public double clawUp = 0;
     public double clawDown = 0.8;
-    public double openClaw = 0.5;
+    public double openClaw = 0;
     public double closeClaw = 1;
 
     //Distance Between Odo and Center
