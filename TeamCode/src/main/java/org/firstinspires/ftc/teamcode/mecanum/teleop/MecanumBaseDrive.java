@@ -21,6 +21,7 @@ public class MecanumBaseDrive extends OpMode{
     private ElapsedTime runtime = new ElapsedTime();
 
     public int abPos = 0, atPos = 0;
+    private double clawAngleCounter = 0;
 
     Button bottomButton = new Button();
     Button lowButton = new Button();
@@ -118,6 +119,7 @@ public class MecanumBaseDrive extends OpMode{
         //armMovement();
         ArmPresets();
         ClawControl();
+        //armMicroAdjust(0.55);
         //setArmPower();
     }
 
@@ -436,7 +438,7 @@ public class MecanumBaseDrive extends OpMode{
             robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            robot.armServo.setPosition(constants.armServoBottom);
+            clawAngleCounter = 0;
 
             robot.abl.setPower(0.7);
             robot.abr.setPower(0.7);
@@ -455,8 +457,8 @@ public class MecanumBaseDrive extends OpMode{
 
             robot.armServo.setPosition(constants.armServoLow);
 
-            robot.abl.setPower(0.7);
-            robot.abr.setPower(0.7);
+            robot.abl.setPower(1);
+            robot.abr.setPower(1);
             robot.at.setPower(constants.topMotorPower);
         }
 
@@ -524,11 +526,52 @@ public class MecanumBaseDrive extends OpMode{
         if (clawAngleButton.is(Button.State.TAP)){
             robot.armServo.setPosition(0);
         }
-        robot.armServo.setPosition(0.7*  gamepad2.right_trigger);
+
+        if (gamepad2.right_trigger == 1){
+            clawAngleCounter += 0.1;
+        }
+        if (gamepad2.left_trigger == 1){
+            clawAngleCounter -= 0.1;
+        }
+        if (clawAngleCounter > 0.7){
+            clawAngleCounter = 0.7;
+        }
+        if (clawAngleCounter < 0){
+            clawAngleCounter = 0;
+        }
+        robot.armServo.setPosition(clawAngleCounter);
     }
     /*
      * Code to run ONCE after the driver hits STOP
      */
+
+    void armMicroAdjust(double power){
+        if (gamepad2.dpad_up) {
+            robot.at.setTargetPosition(robot.at.getCurrentPosition() + 20);
+            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.at.setPower(power);
+        } else if (gamepad2.dpad_down) {
+            robot.at.setTargetPosition(robot.at.getCurrentPosition() - 20);
+            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.at.setPower(power);
+        } else if (gamepad2.dpad_right) {
+            robot.abl.setTargetPosition(robot.abl.getCurrentPosition() + 100);
+            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abl.setPower(power);
+
+            robot.abr.setTargetPosition(robot.abr.getCurrentPosition() + 100);
+            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abr.setPower(power);
+        } else if (gamepad2.dpad_left) {
+            robot.abl.setTargetPosition(robot.abl.getCurrentPosition() - 100);
+            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abl.setPower(power);
+
+            robot.abr.setTargetPosition(robot.abr.getCurrentPosition() - 100);
+            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abr.setPower(power);
+        }
+    }
     @Override
     public void stop() {
     }
