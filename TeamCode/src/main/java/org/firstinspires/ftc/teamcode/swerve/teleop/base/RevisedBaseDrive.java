@@ -39,11 +39,6 @@ public class RevisedBaseDrive extends OpMode{
     Button a = new Button();
     Button b = new Button();
 
-    private double powerTopL = 0;
-    private double powerBotL = 0;
-    private double powerTopR = 0;
-    private double powerBotR = 0;
-
     //ARM ATTRIBUTES
     public int abPos = 0, atPos = 0;
 
@@ -148,7 +143,7 @@ public class RevisedBaseDrive extends OpMode{
                 telemetry.addData("botL clicks", robot.botL.getCurrentPosition());
                 telemetry.addData("TopL Target Amount", robot.topL.getTargetPosition() - robot.topL.getCurrentPosition());
                 telemetry.addData("BotL Target Amount", robot.botL.getTargetPosition() - robot.botL.getCurrentPosition());
-                telemetry.addData("Rotate Power", kinematics.telLeftRotatePower);
+                telemetry.addData("Rotate Power L", kinematics.telLeftRotatePower);
                 telemetry.addData("Spin clicks target", kinematics.spinClicksL);
                 telemetry.addData("Rotate clicks target",  kinematics.leftRotClicks);
                 break;
@@ -161,17 +156,18 @@ public class RevisedBaseDrive extends OpMode{
                 telemetry.addData("botR clicks", robot.botR.getCurrentPosition());
                 telemetry.addData("TopR Target Amount", robot.topR.getTargetPosition() - robot.topR.getCurrentPosition());
                 telemetry.addData("BotR Target Amount", robot.botR.getTargetPosition() - robot.botR.getCurrentPosition());
-                telemetry.addData("Rotate Power", kinematics.telRightRotatePower);
+                telemetry.addData("Rotate Power R", kinematics.telRightRotatePower);
                 telemetry.addData("Spin clicks target", kinematics.spinClicksR);
                 telemetry.addData("Rotate clicks target",  kinematics.rightRotClicks);
                 break;
         }
         telemetry.addData("Spin Power", kinematics.telSpinPower);
         telemetry.addData("Drive Type", kinematics.getDriveType());
-        telemetry.addData("First movement", kinematics.firstMovement);
+//        telemetry.addData("First movement", kinematics.firstMovement);
 
         telemetry.addData("Current Top Arm Click Position", robot.at.getCurrentPosition());
-        telemetry.addData("Current Bottom Arm Click Position", robot.abl.getCurrentPosition());
+        telemetry.addData("Current Arm bottom left Click Position", robot.abl.getCurrentPosition());
+        telemetry.addData("Current Arm bottom right Click Position", robot.abr.getCurrentPosition());
 
         telemetry.update();
     }
@@ -222,15 +218,10 @@ public class RevisedBaseDrive extends OpMode{
         robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         double[] motorPower = kinematics.getPower();
-        robot.topL.setPower(motorPower[0] * constants.POWER_LIMITER);
-        robot.botL.setPower(motorPower[1] * constants.POWER_LIMITER);
-        robot.topR.setPower(motorPower[2] * constants.POWER_LIMITER);
-        robot.botR.setPower(motorPower[3] * constants.POWER_LIMITER);
-
-        powerTopL = motorPower[0] * constants.POWER_LIMITER;
-        powerBotL = motorPower[1] * constants.POWER_LIMITER;
-        powerTopR = motorPower[2] * constants.POWER_LIMITER;
-        powerBotR = motorPower[3] * constants.POWER_LIMITER;
+        robot.topL.setPower(motorPower[0]);
+        robot.botL.setPower(motorPower[1]);
+        robot.topR.setPower(motorPower[2]);
+        robot.botR.setPower(motorPower[3]);
     }
 
     public boolean noMovementRequests(){
