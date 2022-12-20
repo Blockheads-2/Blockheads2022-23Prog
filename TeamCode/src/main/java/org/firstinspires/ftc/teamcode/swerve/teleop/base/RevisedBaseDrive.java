@@ -72,6 +72,8 @@ public class RevisedBaseDrive extends OpMode{
 
 
     //for resetting the robot's wheels' orientation
+
+    //for resetting the robot's wheels' orientation
     ElapsedTime resetTimer = new ElapsedTime();
     /** The relativeLayout field is used to aid in providing interesting visual feedback
      * in this sample application; you probably *don't* need this when you use a color sensor on your
@@ -172,7 +174,8 @@ public class RevisedBaseDrive extends OpMode{
 
         telemetry.addData("Current Top Arm Click Position", robot.at.getCurrentPosition());
         telemetry.addData("Current Bottom Arm Click Position", robot.abl.getCurrentPosition());
-
+        telemetry.addData("Current Arm bottom left Click Position", robot.abl.getCurrentPosition());
+        telemetry.addData("Current Arm bottom right Click Position", robot.abr.getCurrentPosition());
         telemetry.update();
     }
 
@@ -238,7 +241,54 @@ public class RevisedBaseDrive extends OpMode{
     }
 
     void ArmPresets(){
-        if (bottomButton.is(Button.State.TAP)){
+        int currentPosBl = robot.abl.getCurrentPosition();
+        int currentPosBr = robot.abr.getCurrentPosition();
+        int currentPosT = robot.at.getCurrentPosition();
+        
+        if (gamepad2.dpad_up){
+            robot.abl.setTargetPosition(currentPosBl + 15);
+            robot.abr.setTargetPosition(currentPosBr + 15);
+
+            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            robot.abl.setPower(1);
+            robot.abr.setPower(1);
+        }
+
+        if (gamepad2.dpad_down){
+            robot.abl.setTargetPosition(currentPosBl - 15);
+            robot.abr.setTargetPosition(currentPosBr - 15);
+
+            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            robot.abl.setPower(1);
+            robot.abr.setPower(1);
+        }
+
+        if (gamepad2.dpad_right){
+            robot.at.setTargetPosition(currentPosT + 15);
+
+            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            robot.at.setPower(1);
+        }
+
+        if (gamepad2.dpad_left){
+            robot.at.setTargetPosition(currentPosT - 15);
+
+            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            robot.at.setPower(1);
+        }
+
+        telemetry.addData("Bottom Right Arm Position", robot.abr.getCurrentPosition());
+        telemetry.addData("Bottom Left Arm Position", robot.abl.getCurrentPosition());
+        telemetry.addData("Top Arm Position", robot.at.getCurrentPosition());
+
+        /*if (bottomButton.is(Button.State.TAP)){
+>>>>>>> parent of f15f959 (fads)
             atPID.setTargets(constants.topMotorBottom, robot.at.getCurrentPosition(), 0.4, 0, 0.2);
             ablPID.setTargets(constants.topMotorBottom, robot.abl.getCurrentPosition(), 0.4, 0, 0.2);
             abrPID.setTargets(constants.topMotorBottom, robot.abr.getCurrentPosition(), 0.4, 0, 0.2);
