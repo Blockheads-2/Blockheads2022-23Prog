@@ -68,11 +68,6 @@ public class RevisedBaseDrive extends OpMode{
 
     private int prevPosition = 0;
 
-    ArmPID atPID = new ArmPID();
-    ArmPID ablPID = new ArmPID();
-    ArmPID abrPID = new ArmPID();
-
-
 //for resetting the robot's wheels' orientation
     ElapsedTime resetTimer = new ElapsedTime();
     /** The relativeLayout field is used to aid in providing interesting visual feedback
@@ -170,9 +165,9 @@ public class RevisedBaseDrive extends OpMode{
         telemetry.addData("Drive Type", kinematics.getDriveType());
 //        telemetry.addData("First movement", kinematics.firstMovement);
 
-        telemetry.addData("Current Top Arm Click Position", robot.at.getCurrentPosition());
-        telemetry.addData("Current Arm bottom left Click Position", robot.abl.getCurrentPosition());
-        telemetry.addData("Current Arm bottom right Click Position", robot.abr.getCurrentPosition());
+        telemetry.addData("Current Top Arm Click Position", robot.armTop.getCurrentPosition());
+        telemetry.addData("Current Arm bottom left Click Position", robot.armBaseLeft.getCurrentPosition());
+        telemetry.addData("Current Arm bottom right Click Position", robot.armBaseRight.getCurrentPosition());
 
         telemetry.update();
     }
@@ -220,16 +215,16 @@ public class RevisedBaseDrive extends OpMode{
 
     void ArmPresets(){
 
-        int currentPosBl = robot.abl.getCurrentPosition();
-        int currentPosBr = robot.abr.getCurrentPosition();
-        int currentPosT = robot.at.getCurrentPosition();
+        int currentPosBl = robot.armBaseLeft.getCurrentPosition();
+        int currentPosBr = robot.armBaseRight.getCurrentPosition();
+        int currentPosT = robot.armTop.getCurrentPosition();
 
         if (gamepad2.dpad_up){
-            robot.abl.setTargetPosition(currentPosBl + 15);
-            robot.abr.setTargetPosition(currentPosBr + 15   );
+            robot.armBaseLeft.setTargetPosition(currentPosBl + 15);
+            robot.armBaseRight.setTargetPosition(currentPosBr + 15);
 
-            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.armBaseLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             robot.abl.setPower(1);
             robot.abr.setPower(1);
