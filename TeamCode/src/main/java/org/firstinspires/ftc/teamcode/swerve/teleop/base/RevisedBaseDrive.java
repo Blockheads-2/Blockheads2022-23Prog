@@ -44,8 +44,6 @@ public class RevisedBaseDrive extends OpMode{
     private double powerTopR = 0;
     private double powerBotR = 0;
 
-    public int posTopArm = 0;
-
     //ARM ATTRIBUTES
     public int abPos = 0, atPos = 0;
 
@@ -240,54 +238,7 @@ public class RevisedBaseDrive extends OpMode{
     }
 
     void ArmPresets(){
-
-        int currentPosBl = robot.abl.getCurrentPosition();
-        int currentPosBr = robot.abr.getCurrentPosition();
-        int currentPosT = robot.at.getCurrentPosition();
-
-        if (gamepad2.dpad_up){
-            robot.abl.setTargetPosition(currentPosBl + 15);
-            robot.abr.setTargetPosition(currentPosBr + 15   );
-
-            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            robot.abl.setPower(1);
-            robot.abr.setPower(1);
-        }
-
-        if (gamepad2.dpad_down){
-            robot.abl.setTargetPosition(currentPosBl - 15);
-            robot.abr.setTargetPosition(currentPosBr - 15);
-
-            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            robot.abl.setPower(1);
-            robot.abr.setPower(1);
-        }
-
-        if (gamepad2.dpad_right){
-            robot.at.setTargetPosition(currentPosT + 15);
-
-            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            robot.at.setPower(1);
-        }
-
-        if (gamepad2.dpad_left){
-            robot.at.setTargetPosition(currentPosT - 15);
-
-            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            robot.at.setPower(1);
-        }
-
-        telemetry.addData("Bottom Right Arm Position", robot.abr.getCurrentPosition());
-        telemetry.addData("Bottom Left Arm Position", robot.abl.getCurrentPosition());
-        telemetry.addData("Top Arm Position", robot.at.getCurrentPosition());
-
-        /*if (bottomButton.is(Button.State.TAP)){
+        if (bottomButton.is(Button.State.TAP)){
             atPID.setTargets(constants.topMotorBottom, robot.at.getCurrentPosition(), 0.4, 0, 0.2);
             ablPID.setTargets(constants.topMotorBottom, robot.abl.getCurrentPosition(), 0.4, 0, 0.2);
             abrPID.setTargets(constants.topMotorBottom, robot.abr.getCurrentPosition(), 0.4, 0, 0.2);
@@ -391,7 +342,7 @@ public class RevisedBaseDrive extends OpMode{
                 robot.claw.setPosition(0.9);
             }
             else{
-                robot.claw.setPosition(constants.openClaw);
+                robot.claw.setPosition(0.5);
             }
             clawClose = !clawClose;
         }
