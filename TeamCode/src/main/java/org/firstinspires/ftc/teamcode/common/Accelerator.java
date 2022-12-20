@@ -15,6 +15,23 @@ public class Accelerator {
         accelerationTimer = new ElapsedTime();
     }
 
+
+    public double update(double power){
+        if (power == 0) {
+            accelerationTimer.reset();
+            return 0.0;
+        }
+
+        double accelerationFactor = (Math.pow(accelerationTimer.seconds(), 0.5)/ 2) + 0.4;
+        power *= accelerationFactor;
+
+        if (power > 1) power = 1;
+        else if (power < -1) power = -1;
+
+        return power;
+    }
+
+
     public double update(double power, SimplifiedKinematics.DriveType dType){
         prevDriveType = currentDriveType;
         currentDriveType = dType;
@@ -59,19 +76,4 @@ public class Accelerator {
 //
 //        return power;
 //    }
-
-    public double update(double power){
-        if (power == 0) {
-            accelerationTimer.reset();
-            return 0.0;
-        }
-
-        double accelerationFactor = (Math.pow(accelerationTimer.seconds(), 0.5)/ 2) + 0.3;
-        power *= accelerationFactor;
-
-        if (power > 1) power = 1;
-        else if (power < -1) power = -1;
-
-        return power;
-    }
 }

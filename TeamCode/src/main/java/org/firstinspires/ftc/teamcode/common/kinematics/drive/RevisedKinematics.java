@@ -238,18 +238,22 @@ public class RevisedKinematics {
 
     public double[] getPower(){
         double[] motorPower = new double[4];
-        motorPower[0] = spinPower * translatePerc + leftRotatePower * rotatePerc; //top left
-        motorPower[1] = spinPower * translatePerc + leftRotatePower * rotatePerc; //bottom left
-        motorPower[2] = spinPower * translatePerc + rightRotatePower * rotatePerc; //top right
-        motorPower[3] = spinPower * translatePerc + rightRotatePower * rotatePerc; //bottom right
-
-        telLeftRotatePower = leftRotatePower * rotatePerc;
-        telRightRotatePower = rightRotatePower * rotatePerc;
-        telSpinPower = spinPower * translatePerc;
+        motorPower[0] = (spinPower * translatePerc + leftRotatePower * rotatePerc); //top left
+        motorPower[1] = (spinPower * translatePerc + leftRotatePower * rotatePerc); //bottom left
+        motorPower[2] = (spinPower * translatePerc + rightRotatePower * rotatePerc); //top right
+        motorPower[3] = (spinPower * translatePerc + rightRotatePower * rotatePerc); //bottom right
 
         for (int i = 0; i < 4; i++){
             motorPower[i] = accelerator.update(motorPower[i]);
+            motorPower[i] *= constants.POWER_LIMITER;
+//            if (motorPower[i] > constants.POWER_LIMITER) motorPower[i] = constants.POWER_LIMITER;
+//            else if (motorPower[i] < -constants.POWER_LIMITER) motorPower[i] = -constants.POWER_LIMITER;
         }
+
+        telLeftRotatePower = leftRotatePower * rotatePerc * constants.POWER_LIMITER;
+        telRightRotatePower = rightRotatePower * rotatePerc * constants.POWER_LIMITER;
+        telSpinPower = spinPower * translatePerc * constants.POWER_LIMITER;
+
         return motorPower;
     }
 

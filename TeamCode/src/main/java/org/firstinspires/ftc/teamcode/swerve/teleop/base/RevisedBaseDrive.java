@@ -15,7 +15,6 @@ import org.firstinspires.ftc.teamcode.common.Button;
 
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.kinematics.drive.RevisedKinematics;
-import org.firstinspires.ftc.teamcode.common.pid.ArmPID;
 
 @TeleOp(name="Revised BaseDrive", group="Drive")
 //@Disabled
@@ -33,6 +32,7 @@ public class RevisedBaseDrive extends OpMode{
         RIGHT
     }
     TelemetryData tData = TelemetryData.LEFT;
+
 
     Button x = new Button();
     Button y = new Button();
@@ -71,9 +71,13 @@ public class RevisedBaseDrive extends OpMode{
     ArmPID abrPID = new ArmPID();
 
 
+<<<<<<< HEAD
     //for resetting the robot's wheels' orientation
 
     //for resetting the robot's wheels' orientation
+=======
+//for resetting the robot's wheels' orientation
+>>>>>>> parent of 9dd6207 (Revert "Merge branch 'master' of https://github.com/Blockheads-2/Blockheads2022-23Prog")
     ElapsedTime resetTimer = new ElapsedTime();
     /** The relativeLayout field is used to aid in providing interesting visual feedback
      * in this sample application; you probably *don't* need this when you use a color sensor on your
@@ -126,8 +130,6 @@ public class RevisedBaseDrive extends OpMode{
     }
 
     void UpdatePlayer2(){
-        ArmPresets();
-        ClawControl();
     }
 
     void UpdateTelemetry(){
@@ -150,7 +152,7 @@ public class RevisedBaseDrive extends OpMode{
                 telemetry.addData("botL clicks", robot.botL.getCurrentPosition());
                 telemetry.addData("TopL Target Amount", robot.topL.getTargetPosition() - robot.topL.getCurrentPosition());
                 telemetry.addData("BotL Target Amount", robot.botL.getTargetPosition() - robot.botL.getCurrentPosition());
-                telemetry.addData("Rotate Power", kinematics.telLeftRotatePower);
+                telemetry.addData("Rotate Power L", kinematics.telLeftRotatePower);
                 telemetry.addData("Spin clicks target", kinematics.spinClicksL);
                 telemetry.addData("Rotate clicks target",  kinematics.leftRotClicks);
                 break;
@@ -163,19 +165,25 @@ public class RevisedBaseDrive extends OpMode{
                 telemetry.addData("botR clicks", robot.botR.getCurrentPosition());
                 telemetry.addData("TopR Target Amount", robot.topR.getTargetPosition() - robot.topR.getCurrentPosition());
                 telemetry.addData("BotR Target Amount", robot.botR.getTargetPosition() - robot.botR.getCurrentPosition());
-                telemetry.addData("Rotate Power", kinematics.telRightRotatePower);
+                telemetry.addData("Rotate Power R", kinematics.telRightRotatePower);
                 telemetry.addData("Spin clicks target", kinematics.spinClicksR);
                 telemetry.addData("Rotate clicks target",  kinematics.rightRotClicks);
                 break;
         }
         telemetry.addData("Spin Power", kinematics.telSpinPower);
         telemetry.addData("Drive Type", kinematics.getDriveType());
-        telemetry.addData("First movement", kinematics.firstMovement);
+//        telemetry.addData("First movement", kinematics.firstMovement);
 
         telemetry.addData("Current Top Arm Click Position", robot.at.getCurrentPosition());
+<<<<<<< HEAD
         telemetry.addData("Current Bottom Arm Click Position", robot.abl.getCurrentPosition());
         telemetry.addData("Current Arm bottom left Click Position", robot.abl.getCurrentPosition());
         telemetry.addData("Current Arm bottom right Click Position", robot.abr.getCurrentPosition());
+=======
+        telemetry.addData("Current Arm bottom left Click Position", robot.abl.getCurrentPosition());
+        telemetry.addData("Current Arm bottom right Click Position", robot.abr.getCurrentPosition());
+
+>>>>>>> parent of 9dd6207 (Revert "Merge branch 'master' of https://github.com/Blockheads-2/Blockheads2022-23Prog")
         telemetry.update();
     }
 
@@ -184,21 +192,6 @@ public class RevisedBaseDrive extends OpMode{
         y.update(gamepad1.y);
         a.update(gamepad1.a);
         b.update(gamepad1.b);
-
-        testOne.update(gamepad1.a);
-        testZero.update(gamepad1.b);
-        testNegOne.update(gamepad1.y);
-
-        bottomButton.update(gamepad2.dpad_down);
-        lowButton.update(gamepad2.dpad_left);
-        midButton.update(gamepad2.dpad_right);
-        highButton.update(gamepad2.dpad_up);
-        zeroButton.update(gamepad2.left_stick_button);
-
-        clawAngleButton.update(gamepad2.y);
-        clawGrabButton.update(gamepad2.x);
-        a2.update(gamepad2.a);
-        b2.update(gamepad2.b);
     }
 
     void DriveTrainPowerEncoder(){
@@ -225,15 +218,10 @@ public class RevisedBaseDrive extends OpMode{
         robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         double[] motorPower = kinematics.getPower();
-        robot.topL.setPower(motorPower[0] * constants.POWER_LIMITER);
-        robot.botL.setPower(motorPower[1] * constants.POWER_LIMITER);
-        robot.topR.setPower(motorPower[2] * constants.POWER_LIMITER);
-        robot.botR.setPower(motorPower[3] * constants.POWER_LIMITER);
-
-        powerTopL = motorPower[0] * constants.POWER_LIMITER;
-        powerBotL = motorPower[1] * constants.POWER_LIMITER;
-        powerTopR = motorPower[2] * constants.POWER_LIMITER;
-        powerBotR = motorPower[3] * constants.POWER_LIMITER;
+        robot.topL.setPower(motorPower[0]);
+        robot.botL.setPower(motorPower[1]);
+        robot.topR.setPower(motorPower[2]);
+        robot.botR.setPower(motorPower[3]);
     }
 
     public boolean noMovementRequests(){
@@ -402,6 +390,8 @@ public class RevisedBaseDrive extends OpMode{
         robot.armServo.setPosition(0.7*  gamepad2.right_trigger);
     }
 
+=======
+>>>>>>> parent of 4674cc5 (integrated swerve with arm)
     /*
      * Code to run ONCE after the driver hits STOP
      */
