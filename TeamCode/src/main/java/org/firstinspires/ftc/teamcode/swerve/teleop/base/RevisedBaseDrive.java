@@ -215,16 +215,16 @@ public class RevisedBaseDrive extends OpMode{
 
     void ArmPresets(){
 
-        int currentPosBl = robot.armBaseLeft.getCurrentPosition();
-        int currentPosBr = robot.armBaseRight.getCurrentPosition();
-        int currentPosT = robot.armTop.getCurrentPosition();
+        int currentPosBl = robot.abl.getCurrentPosition();
+        int currentPosBr = robot.abr.getCurrentPosition();
+        int currentPosT = robot.at.getCurrentPosition();
 
         if (gamepad2.dpad_up){
-            robot.armBaseLeft.setTargetPosition(currentPosBl + 15);
-            robot.armBaseRight.setTargetPosition(currentPosBr + 15);
+            robot.abl.setTargetPosition(currentPosBl + 15);
+            robot.abr.setTargetPosition(currentPosBr + 15);
 
-            robot.armBaseLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             robot.abl.setPower(1);
             robot.abr.setPower(1);
