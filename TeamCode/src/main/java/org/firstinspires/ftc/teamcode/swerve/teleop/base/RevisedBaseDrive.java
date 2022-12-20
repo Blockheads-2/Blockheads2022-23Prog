@@ -227,11 +227,7 @@ public class RevisedBaseDrive extends OpMode{
         if (gamepad2.dpad_up){
             robot.abl.setTargetPosition(currentPosBl + 15);
 <<<<<<< HEAD
-<<<<<<< HEAD
             robot.abr.setTargetPosition(currentPosBr + 15);
-=======
-            robot.abr.setTargetPosition(currentPosBr + 15   );
->>>>>>> parent of f15f959 (fads)
 =======
             robot.abr.setTargetPosition(currentPosBr + 15   );
 >>>>>>> parent of f15f959 (fads)
