@@ -58,6 +58,7 @@ public class RevisedBaseDrive extends OpMode{
 
     boolean clawClose = false;
     boolean clawUp = false;
+    public double clawAngle = 0;
 
     private int prevPosition = 0;
 
@@ -340,7 +341,15 @@ public class RevisedBaseDrive extends OpMode{
         if (clawAngleButton.is(Button.State.TAP)){
             robot.armServo.setPosition(0);
         }
-        robot.armServo.setPosition(0.7*  gamepad2.right_trigger);
+        clawAngle = clawAngle + (0.1*gamepad2.right_trigger);
+        clawAngle = clawAngle - (0.1*gamepad2.left_trigger);
+        if (clawAngle>=0.7){
+            clawAngle = 0.7;
+        }
+        if (clawAngle<=0){
+            clawAngle = 0;
+        }
+        robot.armServo.setPosition(clawAngle);
     }
 
     /*
