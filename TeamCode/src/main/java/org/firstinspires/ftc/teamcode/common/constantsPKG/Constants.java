@@ -54,6 +54,7 @@ public class Constants {
     public double tableSpinRotPercAllocation = 0.5;
     public double tableSpinSpinPercAllocation = 0.5;
 
+<<<<<<< HEAD
     //Arm Constants!!
     //Bottom
     public int bottomMotorBottom = 1175;
@@ -82,6 +83,8 @@ public class Constants {
     public double closeClaw = 1;
 
 
+=======
+>>>>>>> parent of 4674cc5 (integrated swerve with arm)
     //Distance Between swerve module and Center
     public double MM_INCH = 1/2.56;
     public double DISTANCE_BETWEEN_MODULE_AND_CENTER = 3.406; //3.405512
