@@ -145,25 +145,25 @@ public class AutoPaths extends LinearOpMode{
         switch (aprilTagId) {
             case 0: {
                 //stick code for one dot here
-                dispatch.constantHeading(0.5,0,3,0.001,0,0.0003);
-                //dispatch.turnAbsPID(-90, 2);
-                dispatch.constantHeading(0.5,-24,0,0.001,0,0.0003);
-                //dispatch.turnAbsPID(90,2);
-                dispatch.constantHeading(0.5,0,24,0.001,0,0.0003);
+                dispatch.constantHeading(0.7,0,3,0.001,0,0.0003);
+                dispatch.turnAbsPID(-90, 2);
+                dispatch.constantHeading(0.7,0,24,0.001,0,0.0003);
+                dispatch.turnAbsPID(90,2);
+                dispatch.constantHeading(0.7,0,24,0.001,0,0.0003);
                 break;
             }
             case 1: {
                 //stick code for two dots here
-                dispatch.constantHeading(0.5,0,27,0.001,0,0.0003);
+                dispatch.constantHeading(0.7,0,27,0.001,0,0.0003);
                 break;
             }
             case 2: {
                 //stick code for three dots here
-                dispatch.constantHeading(0.5,0,3,0.001,0,0.0003);
-                //dispatch.turnAbsPID(-90, 2);
-                dispatch.constantHeading(0.5,24,0,0.001,0,0.0003);
-                //dispatch.turnAbsPID(90,2);
-                dispatch.constantHeading(0.5,0,24,0.001,0,0.0003);
+                dispatch.constantHeading(0.7,0,3,0.001,0,0.0003);
+                dispatch.turnAbsPID(90,2);
+                dispatch.constantHeading(0.7,0,24,0.001,0,0.0003);
+                dispatch.turnAbsPID(-90,2);
+                dispatch.constantHeading(0.7,0,24,0.001,0,0.003);
                 break;
             }
         }

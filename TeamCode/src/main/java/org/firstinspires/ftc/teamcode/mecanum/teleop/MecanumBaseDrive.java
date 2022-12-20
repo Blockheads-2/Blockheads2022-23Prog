@@ -22,19 +22,14 @@ public class MecanumBaseDrive extends OpMode{
     private ElapsedTime runtime = new ElapsedTime();
 
     public int abPos = 0, atPos = 0;
-    private double clawAngleCounter = 0;
 
     Button bottomButton = new Button();
     Button lowButton = new Button();
     Button midButton = new Button();
     Button highButton = new Button();
-<<<<<<< HEAD
-
-=======
-    Button testOne = new Button();
-    Button testZero = new Button();
-    Button testNegOne = new Button();
->>>>>>> parent of 4674cc5 (integrated swerve with arm)
+//    Button testOne = new Button();
+//    Button testZero = new Button();
+//    Button testNegOne = new Button();
     Button zeroButton = new Button();
 
     Button clawAngleButton = new Button();
@@ -99,9 +94,9 @@ public class MecanumBaseDrive extends OpMode{
 
     void UpdateButton(){
 
-        testOne.update(gamepad1.a);
-        testZero.update(gamepad1.b);
-        testNegOne.update(gamepad1.y);
+//        testOne.update(gamepad1.a);
+//        testZero.update(gamepad1.b);
+//        testNegOne.update(gamepad1.y);
 
         bottomButton.update(gamepad2.dpad_down);
         lowButton.update(gamepad2.dpad_left);
@@ -128,7 +123,6 @@ public class MecanumBaseDrive extends OpMode{
         //armMovement();
         ArmPresets();
         ClawControl();
-        //armMicroAdjust(0.55);
         //setArmPower();
     }
 
@@ -422,7 +416,7 @@ public class MecanumBaseDrive extends OpMode{
             robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            clawAngleCounter = 0;
+            robot.armServo.setPosition(constants.armServoBottom);
 
             robot.abl.setPower(ablPID.update(robot.abl.getCurrentPosition()));
             robot.abr.setPower(abrPID.update(robot.abr.getCurrentPosition()));
@@ -444,9 +438,6 @@ public class MecanumBaseDrive extends OpMode{
 
             robot.armServo.setPosition(constants.armServoLow);
 
-            robot.abl.setPower(1);
-            robot.abr.setPower(1);
-            robot.at.setPower(constants.topMotorPower);
             robot.abl.setPower(ablPID.update(robot.abl.getCurrentPosition()));
             robot.abr.setPower(abrPID.update(robot.abr.getCurrentPosition()));
             robot.at.setPower(ablPID.update(robot.at.getCurrentPosition()));
@@ -524,20 +515,6 @@ public class MecanumBaseDrive extends OpMode{
         if (clawAngleButton.is(Button.State.TAP)){
             robot.armServo.setPosition(0);
         }
-
-        if (gamepad2.right_trigger == 1){
-            clawAngleCounter += 0.1;
-        }
-        if (gamepad2.left_trigger == 1){
-            clawAngleCounter -= 0.1;
-        }
-        if (clawAngleCounter > 0.7){
-            clawAngleCounter = 0.7;
-        }
-        if (clawAngleCounter < 0){
-            clawAngleCounter = 0;
-        }
-        robot.armServo.setPosition(clawAngleCounter);
         robot.armServo.setPosition(0.7 *  gamepad2.right_trigger);
 
         if (clawGrabButton.is(Button.State.DOUBLE_TAP)){
@@ -547,34 +524,6 @@ public class MecanumBaseDrive extends OpMode{
     /*
      * Code to run ONCE after the driver hits STOP
      */
-
-    void armMicroAdjust(double power){
-        if (gamepad2.dpad_up) {
-            robot.at.setTargetPosition(robot.at.getCurrentPosition() + 20);
-            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.at.setPower(power);
-        } else if (gamepad2.dpad_down) {
-            robot.at.setTargetPosition(robot.at.getCurrentPosition() - 20);
-            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.at.setPower(power);
-        } else if (gamepad2.dpad_right) {
-            robot.abl.setTargetPosition(robot.abl.getCurrentPosition() + 100);
-            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.abl.setPower(power);
-
-            robot.abr.setTargetPosition(robot.abr.getCurrentPosition() + 100);
-            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.abr.setPower(power);
-        } else if (gamepad2.dpad_left) {
-            robot.abl.setTargetPosition(robot.abl.getCurrentPosition() - 100);
-            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.abl.setPower(power);
-
-            robot.abr.setTargetPosition(robot.abr.getCurrentPosition() - 100);
-            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.abr.setPower(power);
-        }
-    }
     @Override
     public void stop() {
     }

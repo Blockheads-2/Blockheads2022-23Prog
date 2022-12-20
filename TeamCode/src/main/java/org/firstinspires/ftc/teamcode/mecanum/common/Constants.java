@@ -41,5 +41,5 @@ public class Constants {
     public double maxVelocityDT = 2700;
     public double clicksPerInch = 45.285;
 
-    public double topMotorPower = 0.5;
+    public double topMotorPower = 0.6;
 }
