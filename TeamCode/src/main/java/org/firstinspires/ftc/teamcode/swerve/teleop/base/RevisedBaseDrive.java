@@ -68,6 +68,11 @@ public class RevisedBaseDrive extends OpMode{
 
     private int prevPosition = 0;
 
+    ArmPID atPID = new ArmPID();
+    ArmPID ablPID = new ArmPID();
+    ArmPID abrPID = new ArmPID();
+
+
 //for resetting the robot's wheels' orientation
     ElapsedTime resetTimer = new ElapsedTime();
     /** The relativeLayout field is used to aid in providing interesting visual feedback
@@ -165,9 +170,9 @@ public class RevisedBaseDrive extends OpMode{
         telemetry.addData("Drive Type", kinematics.getDriveType());
 //        telemetry.addData("First movement", kinematics.firstMovement);
 
-        telemetry.addData("Current Top Arm Click Position", robot.armTop.getCurrentPosition());
-        telemetry.addData("Current Arm bottom left Click Position", robot.armBaseLeft.getCurrentPosition());
-        telemetry.addData("Current Arm bottom right Click Position", robot.armBaseRight.getCurrentPosition());
+        telemetry.addData("Current Top Arm Click Position", robot.at.getCurrentPosition());
+        telemetry.addData("Current Arm bottom left Click Position", robot.abl.getCurrentPosition());
+        telemetry.addData("Current Arm bottom right Click Position", robot.abr.getCurrentPosition());
 
         telemetry.update();
     }
@@ -223,7 +228,6 @@ public class RevisedBaseDrive extends OpMode{
             robot.abl.setTargetPosition(currentPosBl + 15);
 <<<<<<< HEAD
 <<<<<<< HEAD
-<<<<<<< HEAD
             robot.abr.setTargetPosition(currentPosBr + 15);
 =======
             robot.abr.setTargetPosition(currentPosBr + 15   );
@@ -231,9 +235,6 @@ public class RevisedBaseDrive extends OpMode{
 =======
             robot.abr.setTargetPosition(currentPosBr + 15   );
 >>>>>>> parent of f15f959 (fads)
-=======
-            robot.abr.setTargetPosition(currentPosBr + 15);
->>>>>>> parent of b3f0273 (ff)
 
             robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
