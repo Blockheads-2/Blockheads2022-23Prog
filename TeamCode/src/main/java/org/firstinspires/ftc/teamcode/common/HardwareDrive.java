@@ -64,9 +64,9 @@ public class HardwareDrive
     public DcMotorEx  topR;
     public DcMotorEx  botR;
 
-    public DcMotorEx  abr;
-    public DcMotorEx abl;
-    public DcMotor at;
+    public DcMotorEx  armBaseRight;
+    public DcMotorEx armBaseLeft;
+    public DcMotor armTop;
 
     public Servo claw;
 
