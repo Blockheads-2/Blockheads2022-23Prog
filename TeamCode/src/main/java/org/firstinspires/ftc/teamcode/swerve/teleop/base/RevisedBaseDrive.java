@@ -95,6 +95,12 @@ public class RevisedBaseDrive extends OpMode{
     public void init_loop() { //Loop between "init" and "start"
         robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.at.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.at.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.abl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.abl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.abr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.abr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     @Override
@@ -126,7 +132,7 @@ public class RevisedBaseDrive extends OpMode{
     }
 
     void UpdatePlayer2(){
-        //ClawControl();
+        ClawControl();
         MoveArm();
     }
 
@@ -179,7 +185,7 @@ public class RevisedBaseDrive extends OpMode{
     }
 
     void UpdateButton(){
-        x.update(gamepad1.x);
+        x.update(gamepad2.x);
         y.update(gamepad1.y);
         a.update(gamepad1.a);
         b.update(gamepad1.b);
@@ -227,76 +233,40 @@ public class RevisedBaseDrive extends OpMode{
             armTopPos = armTopPos - 20;
         }
         if (gamepad2.dpad_right){
-            armBotPos = armBotPos + 200;
+            armBotPos = armBotPos + 100;
         }
         if (gamepad2.dpad_left){
-            armBotPos = armBotPos - 200;
+            armBotPos = armBotPos - 100;
         }
+        if (gamepad2.right_bumper){
+            armBotPos = armBotPos + 10;
+        }
+        if (gamepad2.right_bumper){
+            armBotPos = armBotPos - 10;
+        }
+        if (armTopPos < 0){
+            armTopPos = 0;
+        }
+        if (armBotPos < 0){
+            armBotPos = 0;
+        }
+
         robot.abl.setTargetPosition(armBotPos);
         robot.abr.setTargetPosition(armBotPos);
         robot.at.setTargetPosition(armTopPos);
-
 
         robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-
         robot.abl.setPower(1);
         robot.abr.setPower(1);
         robot.at.setPower(1);
-
     }
 
     void ArmPresets(){
 
-        int currentPosBl = robot.abl.getCurrentPosition();
-        int currentPosBr = robot.abr.getCurrentPosition();
-        int currentPosT = robot.at.getCurrentPosition();
-
-        if (gamepad2.dpad_up){
-            robot.abl.setTargetPosition(currentPosBl + 15);
-            robot.abr.setTargetPosition(currentPosBr + 15);
-
-            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            robot.abl.setPower(1);
-            robot.abr.setPower(1);
-        }
-
-        if (gamepad2.dpad_down){
-            robot.abl.setTargetPosition(currentPosBl - 15);
-            robot.abr.setTargetPosition(currentPosBr - 15);
-
-            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            robot.abl.setPower(1);
-            robot.abr.setPower(1);
-        }
-
-        if (gamepad2.dpad_right){
-            robot.at.setTargetPosition(currentPosT + 15);
-
-            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            robot.at.setPower(1);
-        }
-
-        if (gamepad2.dpad_left){
-            robot.at.setTargetPosition(currentPosT - 15);
-
-            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            robot.at.setPower(1);
-        }
-
-        telemetry.addData("Bottom Right Arm Position", robot.abr.getCurrentPosition());
-        telemetry.addData("Bottom Left Arm Position", robot.abl.getCurrentPosition());
-        telemetry.addData("Top Arm Position", robot.at.getCurrentPosition());
-
-        /*if (bottomButton.is(Button.State.TAP)){
+        if (bottomButton.is(Button.State.TAP)){
             atPID.setTargets(constants.topMotorBottom, robot.at.getCurrentPosition(), 0.4, 0, 0.2);
             ablPID.setTargets(constants.topMotorBottom, robot.abl.getCurrentPosition(), 0.4, 0, 0.2);
             abrPID.setTargets(constants.topMotorBottom, robot.abr.getCurrentPosition(), 0.4, 0, 0.2);
@@ -393,9 +363,9 @@ public class RevisedBaseDrive extends OpMode{
         }
  */
     }
-/*
+
     void ClawControl(){
-        if (clawGrabButton.is(Button.State.TAP)){
+        if (x.is(Button.State.TAP)){
             if (clawClose){
                 robot.claw.setPosition(0.9);
             }
@@ -415,7 +385,7 @@ public class RevisedBaseDrive extends OpMode{
         }
         robot.armServo.setPosition(clawAngle);
     }
-*/
+
 
     /*
      * Code to run ONCE after the driver hits STOP

@@ -104,25 +104,13 @@ public class HardwareDrive
         botL = hwMap.get(DcMotorEx.class, "bottom_left");
         topR = hwMap.get(DcMotorEx.class, "top_right");
         botR = hwMap.get(DcMotorEx.class, "bottom_right");
-//        armBaseLeft = hwMap.get(DcMotorEx.class, "arm_base_left");
-//        armBaseRight = hwMap.get(DcMotorEx.class, "arm_base_right");
-//        armTop = hwMap.get(DcMotor.class, "arm_top");
 
+        abl = hwMap.get(DcMotorEx.class, "arm_base_left");
+        abr = hwMap.get(DcMotorEx.class, "arm_base_right");
+        at = hwMap.get(DcMotorEx.class, "arm_top");
 
-//        armBaseLeft = hwMap.get(DcMotorEx.class, "arm_base_left");
-//        armBaseRight = hwMap.get(DcMotorEx.class, "arm_base_right");
-//        armTop = hwMap.get(DcMotorEx.class, "arm_top");
-
-//        claw = hwMap.get(Servo.class, "claw");
-
-
-
-
-//        armBase = hwMap.get(DcMotorEx.class, "arm_base");
-//        armTop = hwMap.get(DcMotorEx.class, "arm_top");
-
-//       armServo = hwMap.get(Servo.class, "arm_servo");
-//        claw = hwMap.get(Servo.class, "claw");
+        claw = hwMap.get(Servo.class, "claw");
+        armServo = hwMap.get(Servo.class, "arm_servo");
 
         //IMU initiation
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -142,6 +130,11 @@ public class HardwareDrive
         topL.setDirection(DcMotorEx.Direction.FORWARD);
         botR.setDirection(DcMotorEx.Direction.FORWARD);
         topR.setDirection(DcMotorEx.Direction.FORWARD);
+
+        //Reverse Arm Motors
+        at.setDirection(DcMotorEx.Direction.FORWARD);
+        abl.setDirection(DcMotorEx.Direction.FORWARD);
+        abr.setDirection(DcMotorEx.Direction.REVERSE);
 
 //        armBaseLeft.setDirection(DcMotorEx.Direction.REVERSE);
 //        armBaseRight.setDirection(DcMotorSimple.Direction.FORWARD);
