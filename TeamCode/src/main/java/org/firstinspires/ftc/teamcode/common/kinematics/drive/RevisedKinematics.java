@@ -132,7 +132,7 @@ public class RevisedKinematics {
 
         //determining values from right stick input.
         rightStick();
-        
+
         //unnecessary function but useful for telemetry
         stop();
     }
@@ -317,4 +317,3 @@ public class RevisedKinematics {
         rightThrottle *= -1;
     }
 }
-

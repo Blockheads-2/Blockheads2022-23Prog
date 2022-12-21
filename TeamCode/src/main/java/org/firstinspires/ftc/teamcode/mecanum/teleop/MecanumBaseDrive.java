@@ -28,13 +28,11 @@ public class MecanumBaseDrive extends OpMode{
     Button lowButton = new Button();
     Button midButton = new Button();
     Button highButton = new Button();
-<<<<<<< HEAD
 
-=======
     Button testOne = new Button();
     Button testZero = new Button();
     Button testNegOne = new Button();
->>>>>>> parent of 4674cc5 (integrated swerve with arm)
+
     Button zeroButton = new Button();
 
     Button clawAngleButton = new Button();
