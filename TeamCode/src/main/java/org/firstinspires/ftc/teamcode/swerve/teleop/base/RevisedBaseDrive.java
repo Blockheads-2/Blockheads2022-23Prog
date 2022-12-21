@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.common.Button;
 
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.kinematics.drive.RevisedKinematics;
+import org.firstinspires.ftc.teamcode.common.pid.ArmPID;
 
 @TeleOp(name="Revised BaseDrive", group="Drive")
 //@Disabled
@@ -47,7 +48,6 @@ public class RevisedBaseDrive extends OpMode{
     private int armTopPos = 0;
     private int armBotPos = 0;
 
-
     public int posTopArm = 0;
 
     //ARM ATTRIBUTES
@@ -72,6 +72,10 @@ public class RevisedBaseDrive extends OpMode{
     public double clawAngle = 0;
 
     private int prevPosition = 0;
+
+    ArmPID atPID = new ArmPID();
+    ArmPID abrPID = new ArmPID();
+    ArmPID ablPID = new ArmPID();
 
 //for resetting the robot's wheels' orientation
     ElapsedTime resetTimer = new ElapsedTime();
