@@ -47,7 +47,7 @@ public class RevisedKinematics {
     public int spinClicksR = 0; //make protected later
     public int spinClicksL = 0; //make protected later
     public int rightThrottle = 1;
-    public int leftThrottle = 1;
+    public int leftThrottle = -1;
     public double target = 0;
     public double turnAmountL = 0;
     public double turnAmountR = 0;
@@ -57,6 +57,7 @@ public class RevisedKinematics {
     double leftCurrentW; //current wheel orientation
     double rightCurrentW;
     double currentR; //current robot header orientation
+    boolean initPole = true;
 
     public Accelerator accelerator;
     TrackJoystick joystickTracker;
@@ -131,7 +132,7 @@ public class RevisedKinematics {
 
         //determining values from right stick input.
         rightStick();
-        
+
         //unnecessary function but useful for telemetry
         stop();
     }
@@ -211,18 +212,29 @@ public class RevisedKinematics {
         rightThrottle = 1;
         leftThrottle = -1;
 
-//        if(Math.abs(turnAmount) > 90){
-//            turnAmount %= 180;
-//            turnAmount *= -1;
-//
-//            if(Math.abs(turnAmount) > 180){
-//                turnAmount = 360 - Math.abs(turnAmount);
-//            }
-////            this.translateSwitchMotors *= -1; //needs to be fixed, or else the wheels will oscilate a lot.
-//        }
 
         return turnAmount;
     }
+
+//    public double wheelOptimization(double target, double currentW){ //returns how much the wheels should rotate in which direction
+//        double target2 = (target < 0 ? target + 360 : target);
+//        double current2 = (currentW < 0 ? currentW + 360 : currentW);
+//
+//        double turnAmount1 = target - clamp(currentW + (initPole ? 0 : 180));
+//        double turnAmount2 = target2 - clampConventional(current2 + (initPole ? 0 : 180));
+//
+//        double turnAmount = (Math.abs(turnAmount1) < Math.abs(turnAmount2) ? turnAmount1 : turnAmount2);
+//
+//        if(Math.abs(turnAmount) > 90){
+//            initPole = !initPole;
+//            turnAmount %= 180;
+//            turnAmount *= -1;
+//
+//            this.rightThrottle *= -1;
+//            this.leftThrottle *= -1;
+//        }
+//        return turnAmount;
+//    }
 
     public double clamp(double degrees){
         if (Math.abs(degrees) >= 360) degrees %= 360;
@@ -232,6 +244,17 @@ public class RevisedKinematics {
             degrees = 180 - (Math.abs(degrees) - 180);
         } else if (degrees > 180){
             degrees = -180 + (Math.abs(degrees) - 180);
+        }
+        return degrees;
+    }
+
+    public double clampConventional(double degrees){
+        if (Math.abs(degrees) >= 360) degrees %= 360;
+
+        if (degrees < 0){
+            degrees = 360 - Math.abs(degrees);
+        } else if (degrees >= 360){
+            degrees = Math.abs(degrees) - 360;
         }
         return degrees;
     }
@@ -294,4 +317,3 @@ public class RevisedKinematics {
         rightThrottle *= -1;
     }
 }
-
