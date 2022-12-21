@@ -69,10 +69,6 @@ public class HardwareDrive
     public DcMotor at;
 
     public Servo claw;
-
-
-//    public Servo armServo;
-
     public Servo armServo;
 
 //    public DcMotorEx[] dtMotors;
