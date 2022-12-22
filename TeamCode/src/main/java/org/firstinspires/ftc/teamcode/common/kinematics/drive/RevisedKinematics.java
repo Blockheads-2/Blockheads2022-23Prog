@@ -227,8 +227,9 @@ public class RevisedKinematics {
 //
 //        if(Math.abs(turnAmount) > 90){
 //            initPole = !initPole;
-//            turnAmount %= 180;
-//            turnAmount *= -1;
+//
+//            double temp_target = clamp(target + 180);
+//            turnAmount = temp_target - currentW;
 //
 //            this.rightThrottle *= -1;
 //            this.leftThrottle *= -1;
