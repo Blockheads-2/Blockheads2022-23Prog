@@ -57,7 +57,8 @@ public class RevisedKinematics {
     double leftCurrentW; //current wheel orientation
     double rightCurrentW;
     double currentR; //current robot header orientation
-    boolean initPole = true;
+    boolean initPoleR = true;
+    boolean initPoleL = true;
 
     public Accelerator accelerator;
     TrackJoystick joystickTracker;
@@ -111,8 +112,8 @@ public class RevisedKinematics {
 
         turnAmountL = wheelOptimization(target, leftCurrentW);
         turnAmountR = wheelOptimization(target, rightCurrentW);
-//        turnAmountL = wheelOptimization(target, leftCurrentW, true);
-//        turnAmountR = wheelOptimization(target, rightCurrentW, false);
+//        turnAmountL = wheelOptimizationL(target, leftCurrentW);
+//        turnAmountR = wheelOptimizationR(target, rightCurrentW);
 
         //determining spin power
         spinPower = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
@@ -219,23 +220,42 @@ public class RevisedKinematics {
         return turnAmount;
     }
 
-    public double wheelOptimization(double target, double currentW, boolean left){ //returns how much the wheels should rotate in which direction
+    public double wheelOptimizationL(double target, double currentW){ //returns how much the wheels should rotate in which direction
         double target2 = (target < 0 ? target + 360 : target);
         double current2 = (currentW < 0 ? currentW + 360 : currentW);
 
-        double turnAmount1 = target - clamp(currentW + (initPole ? 0 : 180));
-        double turnAmount2 = target2 - clampConventional(current2 + (initPole ? 0 : 180));
+        double turnAmount1 = target - clamp(currentW + (initPoleL ? 0 : 180));
+        double turnAmount2 = target2 - clampConventional(current2 + (initPoleL ? 0 : 180));
 
         double turnAmount = (Math.abs(turnAmount1) < Math.abs(turnAmount2) ? turnAmount1 : turnAmount2);
 
         if(Math.abs(turnAmount) > 90){
-            initPole = !initPole;
+            initPoleL = !initPoleL;
 
             double temp_target = clamp(target + 180);
             turnAmount = temp_target - currentW;
 
-            if (left) this.leftThrottle *= -1;
-            else this.rightThrottle *= -1;
+            this.leftThrottle *= -1;
+        }
+        return turnAmount;
+    }
+
+    public double wheelOptimizationR(double target, double currentW){
+        double target2 = (target < 0 ? target + 360 : target);
+        double current2 = (currentW < 0 ? currentW + 360 : currentW);
+
+        double turnAmount1 = target - clamp(currentW + (initPoleR ? 0 : 180));
+        double turnAmount2 = target2 - clampConventional(current2 + (initPoleR ? 0 : 180));
+
+        double turnAmount = (Math.abs(turnAmount1) < Math.abs(turnAmount2) ? turnAmount1 : turnAmount2);
+
+        if(Math.abs(turnAmount) > 90){
+            initPoleR = !initPoleR;
+
+            double temp_target = clamp(target + 180);
+            turnAmount = temp_target - currentW;
+
+            this.rightThrottle *= -1;
         }
         return turnAmount;
     }
