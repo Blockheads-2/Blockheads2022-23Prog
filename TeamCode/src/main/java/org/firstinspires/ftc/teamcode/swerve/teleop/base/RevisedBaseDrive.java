@@ -133,6 +133,7 @@ public class RevisedBaseDrive extends OpMode{
         } else if (b.getState() == Button.State.TAP){
             kinematics.switchRightSpinDirection();
         }
+        slowTurning();
     }
 
     void UpdatePlayer2(){
