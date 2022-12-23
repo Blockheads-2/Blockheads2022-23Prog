@@ -390,6 +390,22 @@ public class RevisedBaseDrive extends OpMode{
         robot.armServo.setPosition(clawAngle);
     }
 
+    void slowTurning(){
+        double turnPower = 0.5;
+        if (gamepad1.left_trigger > 0){
+            robot.topL.setPower(-gamepad1.left_trigger * turnPower);
+            robot.botL.setPower(-gamepad1.left_trigger * turnPower);
+            robot.topR.setPower(gamepad1.left_trigger * turnPower);
+            robot.botR.setPower(gamepad1.left_trigger * turnPower);
+        }
+        if (gamepad1.right_trigger > 0){
+            robot.topL.setPower(gamepad1.right_trigger * turnPower);
+            robot.botL.setPower(gamepad1.right_trigger * turnPower);
+            robot.topR.setPower(-gamepad1.right_trigger * turnPower);
+            robot.botR.setPower(-gamepad1.right_trigger * turnPower);
+        }
+    }
+
 
     /*
      * Code to run ONCE after the driver hits STOP
