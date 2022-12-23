@@ -34,7 +34,6 @@ public class RevisedBaseDrive extends OpMode{
     }
     TelemetryData tData = TelemetryData.LEFT;
 
-
     Button x = new Button();
     Button y = new Button();
     Button a = new Button();
@@ -77,7 +76,7 @@ public class RevisedBaseDrive extends OpMode{
     ArmPID abrPID = new ArmPID();
     ArmPID ablPID = new ArmPID();
 
-//for resetting the robot's wheels' orientation
+    //for resetting the robot's wheels' orientation
     ElapsedTime resetTimer = new ElapsedTime();
     /** The relativeLayout field is used to aid in providing interesting visual feedback
      * in this sample application; you probably *don't* need this when you use a color sensor on your
@@ -144,6 +143,7 @@ public class RevisedBaseDrive extends OpMode{
     void UpdateTelemetry(){
         telemetry.addData("Arm top pos", robot.at.getCurrentPosition());
         telemetry.addData("Arm bot pos", robot.abl.getCurrentPosition());
+        telemetry.addData("Arm servo pos", robot.armServo.getPosition());
         telemetry.addData("Left Stick X", gamepad1.left_stick_x);
         telemetry.addData("Left Stick Y", -gamepad1.left_stick_y);
         telemetry.addData("Right Stick X", gamepad1.right_stick_x);
@@ -185,7 +185,6 @@ public class RevisedBaseDrive extends OpMode{
         telemetry.addData("Drive Type", kinematics.getDriveType());
 //        telemetry.addData("First movement", kinematics.firstMovement);
 
-
         telemetry.update();
     }
 
@@ -194,6 +193,12 @@ public class RevisedBaseDrive extends OpMode{
         y.update(gamepad1.y);
         a.update(gamepad1.a);
         b.update(gamepad1.b);
+
+        bottomButton.update(gamepad2.dpad_down);
+        lowButton.update(gamepad2.dpad_right);
+        midButton.update(gamepad2.dpad_left);
+        highButton.update(gamepad2.dpad_up);
+        zeroButton.update(gamepad2.b);
     }
 
     void DriveTrainPowerEncoder(){
@@ -231,16 +236,16 @@ public class RevisedBaseDrive extends OpMode{
     }
 
     void MoveArm(){
-        if (gamepad2.dpad_up){
+        if (gamepad2.y){
             armTopPos = armTopPos + 20;
         }
-        if (gamepad2.dpad_down){
+        if (gamepad2.a){
             armTopPos = armTopPos - 20;
         }
-        if (gamepad2.dpad_right){
+        if (gamepad2.b){
             armBotPos = armBotPos + 100;
         }
-        if (gamepad2.dpad_left){
+        if (gamepad2.x){
             armBotPos = armBotPos - 100;
         }
         if (gamepad2.right_bumper){
@@ -270,7 +275,6 @@ public class RevisedBaseDrive extends OpMode{
     }
 
     void ArmPresets(){
-
         if (bottomButton.is(Button.State.TAP)){
             atPID.setTargets(constants.topMotorBottom, robot.at.getCurrentPosition(), 0.4, 0, 0.2);
             ablPID.setTargets(constants.topMotorBottom, robot.abl.getCurrentPosition(), 0.4, 0, 0.2);
@@ -284,7 +288,8 @@ public class RevisedBaseDrive extends OpMode{
             robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            robot.armServo.setPosition(constants.armServoBottom);
+            clawAngle = constants.armServoBottom;
+            //robot.armServo.setPosition(constants.armServoBottom);
 
             robot.abl.setPower(ablPID.update(robot.abl.getCurrentPosition()));
             robot.abr.setPower(abrPID.update(robot.abr.getCurrentPosition()));
@@ -304,7 +309,8 @@ public class RevisedBaseDrive extends OpMode{
             robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            robot.armServo.setPosition(constants.armServoLow);
+            clawAngle = constants.armServoLow;
+          //  robot.armServo.setPosition(constants.armServoLow);
 
             robot.abl.setPower(ablPID.update(robot.abl.getCurrentPosition()));
             robot.abr.setPower(abrPID.update(robot.abr.getCurrentPosition()));
@@ -324,7 +330,8 @@ public class RevisedBaseDrive extends OpMode{
             robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            robot.armServo.setPosition(constants.armServoMid);
+            clawAngle = constants.armServoMid;
+            //robot.armServo.setPosition(constants.armServoMid);
 
             robot.abl.setPower(ablPID.update(robot.abl.getCurrentPosition()));
             robot.abr.setPower(abrPID.update(robot.abr.getCurrentPosition()));
@@ -344,7 +351,8 @@ public class RevisedBaseDrive extends OpMode{
             robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            robot.armServo.setPosition(constants.armServoHigh);
+            clawAngle = constants.armServoHigh;
+            //robot.armServo.setPosition(constants.armServoHigh);
 
             robot.abl.setPower(ablPID.update(robot.abl.getCurrentPosition()));
             robot.abr.setPower(abrPID.update(robot.abr.getCurrentPosition()));
@@ -370,22 +378,23 @@ public class RevisedBaseDrive extends OpMode{
     }
 
     void ClawControl(){
-        if (x.is(Button.State.TAP)){
+        if (gamepad2.dpad_up){
             if (clawClose){
                 robot.claw.setPosition(0.9);
             }
-            else{
+            else {
                 robot.claw.setPosition(constants.openClaw);
             }
             clawClose = !clawClose;
         }
 
-        clawAngle = clawAngle + (0.1*gamepad2.right_trigger);
-        clawAngle = clawAngle - (0.1*gamepad2.left_trigger);
-        if (clawAngle>=0.7){
+
+        clawAngle = clawAngle + (0.1 * gamepad2.right_trigger);
+        clawAngle = clawAngle - (0.1 * gamepad2.left_trigger);
+        if (clawAngle >= 0.7){
             clawAngle = 0.7;
         }
-        if (clawAngle<=0){
+        if (clawAngle <= 0){
             clawAngle = 0;
         }
         robot.armServo.setPosition(clawAngle);

@@ -71,8 +71,6 @@ public class HardwareDrive
     public Servo claw;
     public Servo armServo;
 
-//    public DcMotorEx[] dtMotors;
-
     /*
     Top Left  0                              Top Right 2
 
@@ -136,28 +134,12 @@ public class HardwareDrive
         abl.setDirection(DcMotorEx.Direction.FORWARD);
         abr.setDirection(DcMotorEx.Direction.REVERSE);
 
-//        armBaseLeft.setDirection(DcMotorEx.Direction.REVERSE);
-//        armBaseRight.setDirection(DcMotorSimple.Direction.FORWARD);
-//        armTop.setDirection(DcMotor.Direction.FORWARD);
-
-//        claw.setPosition(constants.INITIALIZED_CLAW);
-
-        // Set all motors to zero power
         setMotorPower(0);
-//        armBaseLeft.setPower(0);
-//        armBaseRight.setPower(0);
-//        armTop.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         setRunMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         setRunMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-
-
-//        armBaseRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        armBaseLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        armTop.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
 
     }
 
