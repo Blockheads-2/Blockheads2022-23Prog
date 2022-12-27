@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.common.Accelerator;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.Reset;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
@@ -17,9 +16,9 @@ import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.kinematics.drive.RevisedKinematics;
 import org.firstinspires.ftc.teamcode.common.pid.ArmPID;
 
-@TeleOp(name="Revised BaseDrive", group="Drive")
+@TeleOp(name="Final BaseDrive", group="Drive")
 //@Disabled
-public class RevisedBaseDrive extends OpMode{
+public class FinalBaseDrive extends OpMode{
     /* Declare OpMode members. */
     HardwareDrive robot = new HardwareDrive();
     GlobalPosSystem posSystem;
@@ -120,6 +119,7 @@ public class RevisedBaseDrive extends OpMode{
 
     void UpdatePlayer1(){
         DriveTrainPowerEncoder();
+        slowTurning();
 
         if (x.getState() == Button.State.TAP){
             tData = TelemetryData.LEFT;
@@ -137,7 +137,7 @@ public class RevisedBaseDrive extends OpMode{
 
     void UpdatePlayer2(){
         ClawControl();
-        MoveArm();
+        ArmPresets();
     }
 
     void UpdateTelemetry(){
@@ -291,9 +291,18 @@ public class RevisedBaseDrive extends OpMode{
             clawAngle = constants.armServoBottom;
             //robot.armServo.setPosition(constants.armServoBottom);
 
+            robot.at.setPower(0.4);
+            robot.abl.setPower(1);
+            robot.abr.setPower(1);
+
+
+
+           /*
             robot.abl.setPower(ablPID.update(robot.abl.getCurrentPosition()));
             robot.abr.setPower(abrPID.update(robot.abr.getCurrentPosition()));
             robot.at.setPower(ablPID.update(robot.at.getCurrentPosition()));
+
+            */
         }
 
         if (lowButton.is(Button.State.TAP)){
@@ -312,9 +321,15 @@ public class RevisedBaseDrive extends OpMode{
             clawAngle = constants.armServoLow;
           //  robot.armServo.setPosition(constants.armServoLow);
 
-            robot.abl.setPower(ablPID.update(robot.abl.getCurrentPosition()));
+           /* robot.abl.setPower(ablPID.update(robot.abl.getCurrentPosition()));
             robot.abr.setPower(abrPID.update(robot.abr.getCurrentPosition()));
             robot.at.setPower(ablPID.update(robot.at.getCurrentPosition()));
+
+            */
+            robot.at.setPower(0.4);
+            robot.abl.setPower(1);
+            robot.abr.setPower(1);
+
         }
 
         if (midButton.is(Button.State.TAP)){
@@ -333,9 +348,15 @@ public class RevisedBaseDrive extends OpMode{
             clawAngle = constants.armServoMid;
             //robot.armServo.setPosition(constants.armServoMid);
 
-            robot.abl.setPower(ablPID.update(robot.abl.getCurrentPosition()));
+            /*robot.abl.setPower(ablPID.update(robot.abl.getCurrentPosition()));
             robot.abr.setPower(abrPID.update(robot.abr.getCurrentPosition()));
             robot.at.setPower(ablPID.update(robot.at.getCurrentPosition()));
+
+             */
+            robot.at.setPower(0.4);
+            robot.abl.setPower(1);
+            robot.abr.setPower(1);
+
         }
 
         if (highButton.is(Button.State.TAP)){
@@ -354,9 +375,15 @@ public class RevisedBaseDrive extends OpMode{
             clawAngle = constants.armServoHigh;
             //robot.armServo.setPosition(constants.armServoHigh);
 
-            robot.abl.setPower(ablPID.update(robot.abl.getCurrentPosition()));
+            /*robot.abl.setPower(ablPID.update(robot.abl.getCurrentPosition()));
             robot.abr.setPower(abrPID.update(robot.abr.getCurrentPosition()));
             robot.at.setPower(ablPID.update(robot.at.getCurrentPosition()));
+
+             */
+            robot.at.setPower(0.4);
+            robot.abl.setPower(1);
+            robot.abr.setPower(1);
+
         }
 /*
         if (zeroButton.is(Button.State.TAP)){
@@ -378,7 +405,7 @@ public class RevisedBaseDrive extends OpMode{
     }
 
     void ClawControl(){
-        if (gamepad2.dpad_up){
+        if (x.is(Button.State.TAP)){
             if (clawClose){
                 robot.claw.setPosition(0.9);
             }
@@ -397,6 +424,11 @@ public class RevisedBaseDrive extends OpMode{
         if (clawAngle <= 0){
             clawAngle = 0;
         }
+
+        if (robot.claw.getPosition() < 0.9){
+            clawAngle = 0;
+        }
+
         robot.armServo.setPosition(clawAngle);
     }
 
