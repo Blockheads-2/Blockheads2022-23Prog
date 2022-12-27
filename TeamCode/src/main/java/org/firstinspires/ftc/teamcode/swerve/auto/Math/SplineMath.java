@@ -9,11 +9,14 @@ public class SplineMath {
     SpinPID spinPIDL;
     private int RinitClick;
     private int LinitClick;
+
     private double x;
     private double y;
     private double radius;
     private double theta;
     private double turnAmount; //amount robot header should turn (for table-spinning)
+    private double distanceR;
+    private double distanceL;
 
     public SplineMath(){
         spinPIDR = new SpinPID();
@@ -25,25 +28,26 @@ public class SplineMath {
         LinitClick = initialClickL;
     }
 
-    public void setPos(double x, double y, double theta){
+    public void setPos(double x, double y, double theta, double kp, double ki, double kd){
         this.x = x;
         this.y = y;
         turnAmount = theta;
-        spinPIDL.setTargets(returnDistance()[1], 0.1, 0, 0);
-        spinPIDR.setTargets(returnDistance()[2], 0.1, 0, 0);
+
+        calculateDistance();
+
+        spinPIDL.setTargets(distanceL, kp, ki, kd);
+        spinPIDR.setTargets(distanceR, kp, ki, kd);
     }
 
-    public double[] returnDistance(){
-        double[] distanceArr = new double[3];
+    public void calculateDistance(){
         radius = ((x * x) + (y * y)) / (2 * x);
         theta = 0;
 
-        if (x==0){ //linear movement if x=0. No splining
-            distanceArr[0] = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
-            distanceArr[1] = distanceArr[0]; //left distance
-            distanceArr[2] = distanceArr[0]; //right distance
-            return distanceArr;
-        } //this has to be fixed, because robots can move in vertical lines even when x!=0 (for auto specifically)
+        if (x == 0){ //linear movement if x=0. No splining
+            distanceL = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+            distanceR = distanceL;
+            return;
+        }
 
         try{
             radius = ((x * x) + (y * y)) / (2 * x);
@@ -56,16 +60,14 @@ public class SplineMath {
 //            System.out.println("Error: " + e);
         }
 
-        distanceArr[0] = radius * theta; //center distance
-        distanceArr[1] = (radius + constants.DISTANCE_BETWEEN_MODULE_AND_CENTER) * theta; //left distance
-        distanceArr[2] = (radius - constants.DISTANCE_BETWEEN_MODULE_AND_CENTER) * theta; //right distance
-        return distanceArr;
+        distanceL = (radius + constants.DISTANCE_BETWEEN_MODULE_AND_CENTER) * theta; //left distance
+        distanceR = (radius - constants.DISTANCE_BETWEEN_MODULE_AND_CENTER) * theta; //right distance
     }
 
     public int[] getClicks(){
         int[] clicks = new int[4];
-        int spinClicksR = (int)(returnDistance()[2] * constants.CLICKS_PER_INCH);
-        int spinClicksL = (int)(returnDistance()[1] * constants.CLICKS_PER_INCH);
+        int spinClicksR = (int)(distanceR * constants.CLICKS_PER_INCH);
+        int spinClicksL = (int)(distanceL * constants.CLICKS_PER_INCH);
         int rotationClicks = (int)(turnAmount * constants.CLICKS_PER_DEGREE); //table spinning clicks
 
         clicks[0] = spinClicksL + rotationClicks; //left side
@@ -77,19 +79,13 @@ public class SplineMath {
     }
 
     public double returnPowerR(double currentClickR){
-        double distanceR = returnDistance()[2];
-        double distanceL = returnDistance()[1];
-
-        double distance = Math.abs(currentClickR - RinitClick) * constants.CLICKS_PER_INCH;
-        return (distanceR >= distanceL ? 1 * spinPIDR.update(distance): (distanceL / distanceR) * spinPIDR.update(distance));
+        double distanceGap = Math.abs(currentClickR - RinitClick) * constants.CLICKS_PER_INCH;
+        return (distanceR >= distanceL ? 1 * spinPIDR.update(distanceGap): (distanceL / distanceR) * spinPIDR.update(distanceGap));
     }
 
     public double returnPowerL(double currentClickL){
-        double distanceR = returnDistance()[2];
-        double distanceL = returnDistance()[1];
-
-        double distance = Math.abs(currentClickL - LinitClick) * constants.CLICKS_PER_INCH;
-        return (distanceL >= distanceR ? 1 * spinPIDL.update(distance) : (distanceR / distanceL) * spinPIDL.update(distance));
+        double distanceGap = Math.abs(currentClickL - LinitClick) * constants.CLICKS_PER_INCH;
+        return (distanceL >= distanceR ? 1 * spinPIDL.update(distanceGap) : (distanceR / distanceL) * spinPIDL.update(distanceGap));
     }
 
     public double getRunTime(double rate){

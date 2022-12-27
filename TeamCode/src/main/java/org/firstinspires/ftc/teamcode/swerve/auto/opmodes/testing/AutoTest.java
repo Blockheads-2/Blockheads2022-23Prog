@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
+import org.firstinspires.ftc.teamcode.common.kinematics.drive.AutoKinematics;
 import org.firstinspires.ftc.teamcode.swerve.auto.opmodes.AutoHubJR;
 
 @Autonomous (name = "Auto Test", group = "Drive")
@@ -44,6 +45,6 @@ public class AutoTest extends LinearOpMode {
 
         waitForStart();
 
-        dispatch.Move(AutoHubJR.DriveType.LINEAR, 10, 10, 0, 1);
+        dispatch.Move(AutoKinematics.DriveType.LINEAR, 10, 10, 0, 1);
     }
 }

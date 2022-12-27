@@ -11,136 +11,168 @@ import org.firstinspires.ftc.teamcode.common.pid.LinearCorrectionPID;
 import org.firstinspires.ftc.teamcode.common.pid.RotateSwerveModulePID;
 import org.firstinspires.ftc.teamcode.common.pid.SnapSwerveModulePID;
 import org.firstinspires.ftc.teamcode.common.pid.SpinPID;
+import org.firstinspires.ftc.teamcode.swerve.auto.Math.LinearMath;
+import org.firstinspires.ftc.teamcode.swerve.auto.Math.SplineMath;
+import org.firstinspires.ftc.teamcode.swerve.auto.opmodes.AutoHubJR;
 import org.firstinspires.ftc.teamcode.swerve.teleop.TrackJoystick;
+import java.util.*;
+
+
+import java.util.HashMap;
 
 public class AutoKinematics {
-    protected Constants constants = new Constants();
+    Constants constants = new Constants();
+    LinearMath linearMath = new LinearMath();
+    SplineMath splineMath = new SplineMath();
 
-    double x;
-    double y;
-    double finalAngle;
-    double power;
+    public HashMap<String, Double> params = new HashMap<>();
+    public HashMap<String, Double> input = new HashMap<>();
+    public HashMap<String, Double> output = new HashMap<>();
 
     public enum DriveType{
         LINEAR,
         SNAP,
         STOP,
         TURN,
+        CONSTANT_SPLINE,
+        VARIABLE_SPLINE,
         NOT_INITIALIZED
     }
     public DriveType type = DriveType.NOT_INITIALIZED;
 
-    //robot's power
-    public double leftRotatePower = 0.0;
-    public double rightRotatePower = 0.0;
-    public double spinPower = 0.0;
-
-    double translatePerc = 0.6; //placeholder for now
-    double rotatePerc = 0.4;
-
-    //target clicks
-    public int rightRotClicks = 0;
-    public int leftRotClicks = 0;
-    public int spinClicksR = 0; //make protected later
-    public int spinClicksL = 0; //make protected later
-    public int rightThrottle = 1;
-    public int leftThrottle = 1;
-
-    public double target = 0;
-    public double turnAmountL = 0;
-    public double turnAmountR = 0;
-
     //current orientation
     GlobalPosSystem posSystem;
-    double leftCurrentW; //current wheel orientation
-    double rightCurrentW;
-    double currentR; //current robot header orientation
 
     public Accelerator accelerator;
-//    TrackJoystick joystickTracker;
 
     //PIDs
     SnapSwerveModulePID snapLeftWheelPID;
     SnapSwerveModulePID snapRightWheelPID;
-    AutoPID spinPID;
 
-
+    //check
     public boolean firstMovement = true;
+    boolean finishedMovement = true;
 
     public AutoKinematics(GlobalPosSystem posSystem){
         this.posSystem = posSystem;
 
         snapLeftWheelPID = new SnapSwerveModulePID();
         snapRightWheelPID = new SnapSwerveModulePID();
-        spinPID = new AutoPID();
 
         snapLeftWheelPID.setTargets(0.03, 0, 0.01);
         snapRightWheelPID.setTargets(0.03, 0, 0.01);
 
         accelerator = new Accelerator();
-//        joystickTracker = new TrackJoystick();
 
-        rightThrottle = 1;
-        leftThrottle = -1;
+        //gps
+        params.put("X", 0.0);
+        params.put("Y", 0.0);
+        params.put("R", 0.0);
+        params.put("WL", 0.0);
+        params.put("WR", 0.0);
+
+        //throttle
+        params.put("throttleR", 1.0);
+        params.put("throttleL", -1.0);
+        params.put("translatePerc", 0.6);
+        params.put("rotatePerc", 0.4);
+
+        //how much the module needs to rotate
+        params.put("turnAmountL", 0.0);
+        params.put("turnAmountR", 0.0);
+
+        //targets
+        input.put("X", 0.0);
+        input.put("Y", 0.0);
+        input.put("theta", 0.0);
+        input.put("speed", 0.0);
+
+        //output. Values given to the motor.
+        output.put("spinPowerL", 0.0);
+        output.put("spinPowerR", 0.0);
+        output.put("spinClicksL", 0.0);
+        output.put("spinClicksR", 0.0);
+
+        output.put("rotPowerL", 0.0);
+        output.put("rotPowerR", 0.0);
+        output.put("rotClicksR", 0.0);
+        output.put("rotClicksL", 0.0);
     }
 
-    public void setPos(double x, double y, double theta, double speed){
-        this.x = x;
-        this.y = y;
-        this.finalAngle = theta;
-        this.power = speed;
+    public void setDriveType(DriveType dType){
+        this.type = dType;
+        firstMovement = (dType == DriveType.LINEAR || dType == DriveType.STOP);
+    }
 
-        spinPID.setTargets(x, y, 0.03, 0, 0.01);
+    public void setPos(double x, double y, double finalAngle, double speed){
+        input.put("X", x);
+        input.put("Y", y);
+        input.put("theta", 0.0);
+        input.put("speed", speed);
+
+        switch(type){
+            case LINEAR: //firstMovement true
+                firstMovement = true;
+                linearMath.setPos(x, y, finalAngle, 0.3, 0, 0.01);
+
+                break;
+
+            case CONSTANT_SPLINE: //firstMovement true
+                firstMovement = false;
+                linearMath.setPos(x, y, 0, 0.3, 0, 0.01);
+
+            case VARIABLE_SPLINE:
+                splineMath.setPos(x, y, finalAngle, 0.3, 0, 0.01);
+
+                break;
+
+            case TURN:
+                //...
+                break;
+
+            case STOP:
+                stop();
+                break;
+        }
     }
 
     public void logic(){
-        //tracking the joystick's movement
-//        joystickTracker.trackJoystickL(x, y);
+        //1) determining current position
+        params.put("WL", posSystem.getPositionArr()[2]);
+        params.put("WR", posSystem.getPositionArr()[3]);
+        params.put("R", posSystem.getPositionArr()[4]);
 
-        if (noMovementRequests()) type = DriveType.STOP;
-        else type = DriveType.LINEAR;
+        //2) determining targets
+        double target = Math.toDegrees(Math.atan2(input.get("X"), input.get("Y")));
+        if (input.get("X") == 0 && input.get("Y") == 0) target = 0;
+        else if (input.get("X")==0 && input.get("Y") < 0) target=180;
 
-        //determining current position
-        leftCurrentW = posSystem.getPositionArr()[2];
-        rightCurrentW = posSystem.getPositionArr()[3];
-        currentR = posSystem.getPositionArr()[4];
-
-        //determining targets, and how much we want to turn
-        target = Math.toDegrees(Math.atan2(x, y));
-        if (x == 0 && y == 0) target = 0;
-        else if (x==0 && y < 0) target=180;
-        turnAmountL = wheelOptimization(target, leftCurrentW);
-        turnAmountR = wheelOptimization(target, rightCurrentW);
+        //3) determining rotation amount
+        params.put("turnAmountL", wheelOptimization(target, params.get("WL")));
+        params.put("turnAmountR", wheelOptimization(target, params.get("WR")));
 
         //determining spin power
-        spinPower = spinPID.update(posSystem.getPositionArr()[0], posSystem.getPositionArr()[1]);
-        spinClicksL = (int)(spinPower * 100 * leftThrottle);
-        spinClicksR = (int)(spinPower * 100 * rightThrottle);
+//        spinPower = spinPID.update(posSystem.getPositionArr()[0], posSystem.getPositionArr()[1]);
+//        spinClicksL = (int)(spinPower * 100 * leftThrottle);
+//        spinClicksR = (int)(spinPower * 100 * rightThrottle);
 
         //determining rotational power
-        leftRotatePower = snapLeftWheelPID.update(turnAmountL);
-        leftRotClicks = (int)(turnAmountL * constants.CLICKS_PER_DEGREE);
-        rightRotatePower = snapRightWheelPID.update(turnAmountR);
-        rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE);
+        output.put("rotPowerL", snapLeftWheelPID.update(params.get("turnAmountL")));
+        output.put("rotClicksL", (params.get("turnAmountL") * constants.CLICKS_PER_DEGREE));
+        output.put("rotPowerR", snapLeftWheelPID.update(params.get("turnAmountR")));
+        output.put("rotClicksR", (params.get("turnAmountR") * constants.CLICKS_PER_DEGREE));
 
         //determining whether to focus more on spinning or more on rotating
-        rotatePerc = (Math.abs(turnAmountL) + Math.abs(turnAmountR)) / 180.0; //turnAmount / 90 --> percentage
-        if (rotatePerc > 0.5) rotatePerc = 0.5;
-        translatePerc = 1 - rotatePerc;
+        double rotatePerc = (Math.abs(params.get("turnAmountL")) + Math.abs(params.get("turnAmountR"))) / 150.0; //turnAmount / 75 --> percentage
+        if (rotatePerc >= 0.5) rotatePerc = 0.5;
+        params.put("rotatePerc", rotatePerc);
+        params.put("translatePerc", 1.0 - rotatePerc);
 
         //determining "firstMovement" actions, if it is the robot's "firstMovement."
-        firstMovement();
-
-        //determining values from right stick input.
-//        rightStick();
-
-        //unnecessary function but useful for telemetry
-        stop();
+        if (type == DriveType.LINEAR) firstMovement();
     }
 
     public void firstMovement(){
-//        if (joystickTracker.getChange() > 90 || noMovementRequests()) firstMovement = true;
-        if (noMovementRequests()) firstMovement = true;
         if (firstMovement){
             if (Math.abs(turnAmountL) >= constants.degreeTOLERANCE || Math.abs(turnAmountR) >= constants.degreeTOLERANCE){
                 translatePerc = 0;
@@ -149,58 +181,32 @@ public class AutoKinematics {
                 spinClicksL = 0;
                 spinClicksR = 0;
             } else{
-                firstMovement = false;
+                type = DriveType.LINEAR;
                 translatePerc = 0.6;
                 rotatePerc = 0.4;
             }
         }
     }
 
-//    public void rightStick(){
-//        if (Math.abs(leftCurrentW - currentR) < constants.degreeTOLERANCE && Math.abs(rightCurrentW - currentR) < constants.degreeTOLERANCE && lx == 0 && ly == 0 && (rx != 0 || ry != 0)){
-//            leftThrottle = 1;
-//            rightThrottle = 1;
-//            spinClicksL = (int) (rx * 100 * leftThrottle);
-//            spinClicksR = (int) (rx * 100 * rightThrottle);
-//            spinPower = rx;
-//
-//            rotatePerc = (Math.abs(turnAmountL) + Math.abs(turnAmountR)) / 60.0; //turnAmount / 30 --> percentage
-//            if (rotatePerc > 0.5) rotatePerc = 0.5;
-//            translatePerc = 1 - rotatePerc;
-//
-//            turnAmountL = -leftCurrentW;
-//            leftRotClicks = (int)(turnAmountL * constants.CLICKS_PER_DEGREE);
-//            leftRotatePower = snapLeftWheelPID.update(turnAmountL);
-//
-//            turnAmountR = -rightCurrentW;
-//            rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE);
-//            rightRotatePower = snapRightWheelPID.update(turnAmountR);
-//
-//
-//            type = DriveType.TURN;
-//        } else{
-//            //spline
-//        }
-//    }
-
     public void stop(){
-        if (type == DriveType.STOP){
-            target = 0;
-            turnAmountL = 0;
-            turnAmountR = 0;
-
-            spinPower = 0;
-            spinClicksR = 0;
-            spinClicksL = 0;
-
-            rightRotatePower = 0;
-            leftRotatePower = 0;
-            rightRotClicks = 0;
-            leftRotClicks = 0;
-
-            translatePerc = 0;
-            rotatePerc = 0;
-        }
+        output.forEach((k, v) -> {
+            v=0.0;
+        }); //test this later.
+//        target = 0;
+//        turnAmountL = 0;
+//        turnAmountR = 0;
+//
+//        spinPower = 0;
+//        spinClicksR = 0;
+//        spinClicksL = 0;
+//
+//        rightRotatePower = 0;
+//        leftRotatePower = 0;
+//        rightRotClicks = 0;
+//        leftRotClicks = 0;
+//
+//        translatePerc = 0;
+//        rotatePerc = 0;
     }
 
     public double wheelOptimization(double target, double currentW){ //returns how much the wheels should rotate in which direction
@@ -213,16 +219,6 @@ public class AutoKinematics {
 
         rightThrottle = 1;
         leftThrottle = -1;
-
-//        if(Math.abs(turnAmount) > 90){
-//            turnAmount %= 180;
-//            turnAmount *= -1;
-//
-//            if(Math.abs(turnAmount) > 180){
-//                turnAmount = 360 - Math.abs(turnAmount);
-//            }
-////            this.translateSwitchMotors *= -1; //needs to be fixed, or else the wheels will oscilate a lot.
-//        }
 
         return turnAmount;
     }
@@ -266,8 +262,8 @@ public class AutoKinematics {
         return type;
     }
 
-    public boolean noMovementRequests(){
-        return (x==0 && y==0 && finalAngle==0);
+    public boolean isFinishedMovement(){
+        return (finishedMovement);
     }
 
     public double getTarget(){

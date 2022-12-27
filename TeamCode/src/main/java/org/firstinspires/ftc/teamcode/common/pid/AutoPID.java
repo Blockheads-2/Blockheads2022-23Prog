@@ -28,11 +28,7 @@ public class AutoPID {
         //proportion
         double errorX = targetX - x;
         double errorY = targetY - y;
-        double error = (0.5 * errorX) + (0.5 * errorY);//this still doesn't work...?
-
-        /*
-        smaller target - currentClicks = negative error
-         */
+        double error = (0.5 * errorX) + (0.5 * errorY);
 
         //integral
         accumulatedError = Math.abs(accumulatedError) * Math.signum(error); //ensures that accumulatedError and the error have the same sign
@@ -48,7 +44,6 @@ public class AutoPID {
         double motorPower = Math.tanh(kp * error + ki * accumulatedError + kd * slope) * 0.9 + (0.1 * Math.signum(error));
         //multiply by 0.9 because robot is heavy (heavy + friction = wheels slide while turning = inaccurate). The 0.9 somewhat compensates for that
         //0.1 * Math.signum(error) gives the robot a little kick towards the direction of the error
-        //probably not necessary for swerve...
 
         //alternative: motorPower =  Math.tanh(kp * error + ki * accumulatedError + kd * slope);
 
