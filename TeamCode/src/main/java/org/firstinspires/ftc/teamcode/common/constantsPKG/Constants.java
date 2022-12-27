@@ -76,9 +76,9 @@ public class Constants {
     public double armServoMid = 0.44;
 
     //High
-    public int bottomMotorHigh = 400;
-    public int topMotorHigh = 840;
-    public double armServoHigh = 0.57;
+    public int bottomMotorHigh = 300;
+    public int topMotorHigh = 820;
+    public double armServoHigh = 0.3;
 
     //Softstops:
     public int topSoftStop = 840;

@@ -137,7 +137,7 @@ public class RevisedBaseDrive extends OpMode{
 
     void UpdatePlayer2(){
         ClawControl();
-        MoveArm();
+        ArmPresets();
     }
 
     void UpdateTelemetry(){
@@ -378,7 +378,7 @@ public class RevisedBaseDrive extends OpMode{
     }
 
     void ClawControl(){
-        if (gamepad2.dpad_up){
+        if (x.is(Button.State.TAP)){
             if (clawClose){
                 robot.claw.setPosition(0.9);
             }
