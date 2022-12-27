@@ -276,6 +276,7 @@ public class FinalBaseDrive extends OpMode{
 
     void ArmPresets(){
         if (bottomButton.is(Button.State.TAP)){
+            clawAngle = constants.armServoBottom;
             atPID.setTargets(constants.topMotorBottom, robot.at.getCurrentPosition(), 0.4, 0, 0.2);
             ablPID.setTargets(constants.topMotorBottom, robot.abl.getCurrentPosition(), 0.4, 0, 0.2);
             abrPID.setTargets(constants.topMotorBottom, robot.abr.getCurrentPosition(), 0.4, 0, 0.2);
@@ -288,7 +289,6 @@ public class FinalBaseDrive extends OpMode{
             robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            clawAngle = constants.armServoBottom;
             //robot.armServo.setPosition(constants.armServoBottom);
 
             robot.at.setPower(0.4);
@@ -425,9 +425,6 @@ public class FinalBaseDrive extends OpMode{
             clawAngle = 0;
         }
 
-        if (robot.claw.getPosition() < 0.9){
-            clawAngle = 0;
-        }
 
         robot.armServo.setPosition(clawAngle);
     }

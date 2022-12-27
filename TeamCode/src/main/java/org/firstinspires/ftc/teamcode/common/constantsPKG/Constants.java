@@ -18,6 +18,8 @@ public class Constants {
 
     public double MAX_VELOCITY;
 
+    //control hub to arm: 16 cm
+
     //Arm Constants
     public double CLICKS_PER_BASE_REV = 5281.1; //clicks per rev of base arm motor
     public double CLICKS_PER_TOP_REV =  1120.0; //clicks per rev of top arm motor

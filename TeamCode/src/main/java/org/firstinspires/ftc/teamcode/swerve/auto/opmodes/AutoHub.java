@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.kinematics.drive.Kinematics;
+import org.firstinspires.ftc.teamcode.common.kinematics.drive.RevisedKinematics;
 import org.firstinspires.ftc.teamcode.swerve.auto.Math.LinearMath;
 import org.firstinspires.ftc.teamcode.swerve.auto.Math.SplineMath;
 
@@ -59,7 +60,51 @@ public class AutoHub {
 
     //for now, we'll leave it as last year's template, but it might be a good idea to be constantly calculating its position and
     // how much it needs to go to lessen error.
-    void Move(DriveType movementType, double x, double y, boolean linear, double finalAngle, double speed){
+    void Move(double x, double y, boolean linear, double finalAngle, double speed){
+        if (linear){
+            //turn the robot wheel to angle
+
+            int targetRotation = (int) (finalAngle * constants.CLICKS_PER_DEGREE);
+            robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + targetRotation);
+            robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + targetRotation);
+            robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + targetRotation);
+            robot.botR.setTargetPosition(robot.botR.getCurrentPosition() + targetRotation);
+
+            robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            robot.topL.setPower(speed);
+            robot.botL.setPower(speed);
+            robot.topR.setPower(speed);
+            robot.botR.setPower(speed);
+
+
+            //drive gibven distance
+            double distance = Math.sqrt(x*x + y*y);
+
+            int targetDistance = (int) (distance * constants.CLICKS_PER_INCH);
+            robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + targetDistance);
+            robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - targetDistance);
+            robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + targetDistance);
+            robot.botR.setTargetPosition(robot.botR.getCurrentPosition() - targetDistance);
+
+            robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            robot.topL.setPower(speed);
+            robot.botL.setPower(speed);
+            robot.topR.setPower(speed);
+            robot.botR.setPower(speed);
+
+        }
+        else{
+            //execute
+
+        }
 
     }
 }
