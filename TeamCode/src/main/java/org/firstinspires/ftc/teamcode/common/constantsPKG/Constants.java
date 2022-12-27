@@ -18,6 +18,8 @@ public class Constants {
 
     public double MAX_VELOCITY;
 
+    //control hub to arm: 16 cm
+
     //Arm Constants
     public double CLICKS_PER_BASE_REV = 5281.1; //clicks per rev of base arm motor
     public double CLICKS_PER_TOP_REV =  1120.0; //clicks per rev of top arm motor
@@ -76,9 +78,9 @@ public class Constants {
     public double armServoMid = 0.44;
 
     //High
-    public int bottomMotorHigh = 400;
-    public int topMotorHigh = 840;
-    public double armServoHigh = 0.57;
+    public int bottomMotorHigh = 300;
+    public int topMotorHigh = 820;
+    public double armServoHigh = 0.3;
 
     //Softstops:
     public int topSoftStop = 840;
