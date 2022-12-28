@@ -97,20 +97,20 @@ public class AutoHubJR {
         linearOpMode.telemetry.addData("Right W", posSystem.getRightWheelW());
         linearOpMode.telemetry.addData("R", posSystem.getPositionArr()[4]);
 
-        linearOpMode.telemetry.addData("Spin Direction (Left)", kinematics.leftThrottle);
-        linearOpMode.telemetry.addData("Spin Direction (Right)", kinematics.rightThrottle);
+        linearOpMode.telemetry.addData("Spin Direction (Left)", kinematics.params.get("throttleL"));
+        linearOpMode.telemetry.addData("Spin Direction (Right)", kinematics.params.get("throttleR"));
 
         linearOpMode.telemetry.addData("topL clicks", robot.topL.getCurrentPosition());
         linearOpMode.telemetry.addData("botL clicks", robot.botL.getCurrentPosition());
         linearOpMode.telemetry.addData("topR clicks", robot.topR.getCurrentPosition());
         linearOpMode.telemetry.addData("botR clicks", robot.botR.getCurrentPosition());
-        linearOpMode.telemetry.addData("Left Rotate Power", kinematics.leftRotatePower);
-        linearOpMode.telemetry.addData("Right Rotate Power", kinematics.rightRotatePower);
+        linearOpMode.telemetry.addData("Left Rotate Power", kinematics.output.get("rotPowerL"));
+        linearOpMode.telemetry.addData("Right Rotate Power", kinematics.output.get("rotPowerR"));
 
-        linearOpMode.telemetry.addData("Right Clicks target", kinematics.spinClicksR + kinematics.rightRotClicks);
+        linearOpMode.telemetry.addData("Right Clicks target", kinematics.output.get("spinClicksR") + kinematics.output.get("rotClicksR"));
 
-        linearOpMode.telemetry.addData("TopL Spin Power", kinematics.spinPower);
-        linearOpMode.telemetry.addData("TopR Spin Power", kinematics.spinPower);
+        linearOpMode.telemetry.addData("Left Spin Power", kinematics.output.get("spinPowerL"));
+        linearOpMode.telemetry.addData("Right Spin Power", kinematics.output.get("spinPowerL"));
         linearOpMode.telemetry.addData("Drive Type", kinematics.getDriveType());
         linearOpMode.telemetry.addData("First movement", kinematics.firstMovement);
 
