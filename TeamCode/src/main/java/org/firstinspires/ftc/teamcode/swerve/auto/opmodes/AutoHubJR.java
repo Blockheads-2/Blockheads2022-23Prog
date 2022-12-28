@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.kinematics.drive.AutoKinematics;
-import org.firstinspires.ftc.teamcode.common.kinematics.drive.RevisedKinematics;
 
 public class AutoHubJR {
     LinearOpMode linearOpMode;
@@ -23,14 +22,7 @@ public class AutoHubJR {
     AutoKinematics kinematics;
     Reset reset;
 
-
     View relativeLayout;
-
-    public enum DriveType{
-        LINEAR,
-        SPLINE,
-        TURN_ON_CENTER,
-    }
 
     public AutoHubJR(LinearOpMode plinear){
         linearOpMode = plinear;
@@ -58,25 +50,22 @@ public class AutoHubJR {
         linearOpMode.telemetry.update();
     }
 
-    //for now, we'll leave it as last year's template, but it might be a good idea to be constantly calculating its position and
-    // how much it needs to go to lessen error.
-    public void Move(DriveType movementType, double x, double y, double finalAngle, double speed){
-
-//        double powerTopL;
-//        double powerBotL;
-//        double powerTopR;
-//        double powerBotR;
-
+    public void Move(AutoKinematics.DriveType movementType, double x, double y, double finalAngle, double speed){
         posSystem.calculatePos();
+        kinematics.setDriveType(movementType);
+
         kinematics.setPos(x, y, finalAngle, speed);
         reset.reset(false);
 
         while (linearOpMode.opModeIsActive() && robot.wheelsAreBusy()){
+        //1) Calculate our current position
             posSystem.calculatePos();
 
+        //2) Determine the distance from our current pos & the target pos.
             kinematics.setPos(x, y, finalAngle, speed);
             kinematics.logic();
 
+        //3) Tell the robot to travel that distance we just determined.
             int[] targetClicks = kinematics.getClicks();
             robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + targetClicks[0]);
             robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + targetClicks[1]);
@@ -93,14 +82,7 @@ public class AutoHubJR {
             robot.botL.setPower(motorPower[1] * constants.POWER_LIMITER);
             robot.topR.setPower(motorPower[2] * constants.POWER_LIMITER);
             robot.botR.setPower(motorPower[3] * constants.POWER_LIMITER);
-
-//            powerTopL = motorPower[0] * constants.POWER_LIMITER;
-//            powerBotL = motorPower[1] * constants.POWER_LIMITER;
-//            powerTopR = motorPower[2] * constants.POWER_LIMITER;
-//            powerBotR = motorPower[3] * constants.POWER_LIMITER;
         }
-
-//        reset.reset(true);
 
         while(reset.finishedReset()){
             reset.reset(true);

@@ -39,7 +39,7 @@ public class ArmPID {
         prevError = error;
         prevTime = timer.milliseconds();
 
-        double motorPower = Math.tanh(kp * error + ki * accumulatedError + kd * slope) * 0.9 + (0.1 * Math.signum(error));
+        double motorPower = Math.tanh(kp * error + ki * accumulatedError + kd * slope) * 0.4 + (0.1 * Math.signum(error));
         //double motorPower =  Math.tanh(kp * error + ki * accumulatedError + kd * slope);
 
         return motorPower;

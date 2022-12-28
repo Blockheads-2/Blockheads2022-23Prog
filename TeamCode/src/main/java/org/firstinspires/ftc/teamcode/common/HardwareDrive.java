@@ -71,8 +71,6 @@ public class HardwareDrive
     public Servo claw;
     public Servo armServo;
 
-//    public DcMotorEx[] dtMotors;
-
     /*
     Top Left  0                              Top Right 2
 
@@ -104,25 +102,13 @@ public class HardwareDrive
         botL = hwMap.get(DcMotorEx.class, "bottom_left");
         topR = hwMap.get(DcMotorEx.class, "top_right");
         botR = hwMap.get(DcMotorEx.class, "bottom_right");
-//        armBaseLeft = hwMap.get(DcMotorEx.class, "arm_base_left");
-//        armBaseRight = hwMap.get(DcMotorEx.class, "arm_base_right");
-//        armTop = hwMap.get(DcMotor.class, "arm_top");
 
+        abl = hwMap.get(DcMotorEx.class, "arm_base_left");
+        abr = hwMap.get(DcMotorEx.class, "arm_base_right");
+        at = hwMap.get(DcMotorEx.class, "arm_top");
 
-//        armBaseLeft = hwMap.get(DcMotorEx.class, "arm_base_left");
-//        armBaseRight = hwMap.get(DcMotorEx.class, "arm_base_right");
-//        armTop = hwMap.get(DcMotorEx.class, "arm_top");
-
-//        claw = hwMap.get(Servo.class, "claw");
-
-
-
-
-//        armBase = hwMap.get(DcMotorEx.class, "arm_base");
-//        armTop = hwMap.get(DcMotorEx.class, "arm_top");
-
-//       armServo = hwMap.get(Servo.class, "arm_servo");
-//        claw = hwMap.get(Servo.class, "claw");
+        claw = hwMap.get(Servo.class, "claw");
+        armServo = hwMap.get(Servo.class, "arm_servo");
 
         //IMU initiation
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -143,28 +129,17 @@ public class HardwareDrive
         botR.setDirection(DcMotorEx.Direction.FORWARD);
         topR.setDirection(DcMotorEx.Direction.FORWARD);
 
-//        armBaseLeft.setDirection(DcMotorEx.Direction.REVERSE);
-//        armBaseRight.setDirection(DcMotorSimple.Direction.FORWARD);
-//        armTop.setDirection(DcMotor.Direction.FORWARD);
+        //Reverse Arm Motors
+        at.setDirection(DcMotorEx.Direction.FORWARD);
+        abl.setDirection(DcMotorEx.Direction.FORWARD);
+        abr.setDirection(DcMotorEx.Direction.REVERSE);
 
-//        claw.setPosition(constants.INITIALIZED_CLAW);
-
-        // Set all motors to zero power
         setMotorPower(0);
-//        armBaseLeft.setPower(0);
-//        armBaseRight.setPower(0);
-//        armTop.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         setRunMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         setRunMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-
-
-//        armBaseRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        armBaseLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        armTop.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
 
     }
 

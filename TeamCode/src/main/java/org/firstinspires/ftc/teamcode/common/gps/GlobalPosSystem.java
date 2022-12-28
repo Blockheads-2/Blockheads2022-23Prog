@@ -7,7 +7,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.kinematics.drive.Kinematics;
-import org.firstinspires.ftc.teamcode.common.kinematics.drive.RevisedKinematics;
+import org.firstinspires.ftc.teamcode.swerve.teleop.RevisedKinematics;
 
 import java.util.HashMap;
 
@@ -85,7 +85,7 @@ public class GlobalPosSystem {
         }
 
         // Add change in angle to current angle to get current angle
-        currAngle -= deltaAngle; //we subtract instead of add because we subtract the c
+        currAngle -= deltaAngle;
         lastOrientation = currentOrientation;
         positionArr[4] = currAngle;
     }
@@ -128,8 +128,8 @@ public class GlobalPosSystem {
 //            positionArr[3] += positionArr[4];
 //        }
 
-
-        update(hypotenuse * Math.sin(baseAngle), hypotenuse * Math.cos(baseAngle), 0, 0, 0);
+        positionArr[0] += (hypotenuse * Math.sin(baseAngle));
+        positionArr[1] += (hypotenuse * Math.cos(baseAngle));
     }
 
     public void update ( double x, double y, double leftWheelW, double rightWheelW, double robotR){
@@ -154,6 +154,8 @@ public class GlobalPosSystem {
     }
 
     public void hardResetGPS(){
+        positionArr[0] = 0; //reset x, y position as well to account for drift.
+        positionArr[1] = 0;
 //        positionArr[2]=positionArr[4];
 //        positionArr[3]=positionArr[4];
         positionArr[2]=0;
@@ -181,10 +183,6 @@ public class GlobalPosSystem {
         motorClicksPose.put("topL", robot.topL.getCurrentPosition());
         motorClicksPose.put("botL", robot.botL.getCurrentPosition());
     }
-
-//    private boolean goodGap(){
-//        return (Math.abs(robot.topR.getCurrentPosition() - prevMotorClicks.get("topR")) > constants.clickTOLERANCE || Math.abs(robot.botR.getCurrentPosition() - prevMotorClicks.get("botR")) > constants.clickTOLERANCE);
-//    }
 
     public double[] getPositionArr() {
         return positionArr;

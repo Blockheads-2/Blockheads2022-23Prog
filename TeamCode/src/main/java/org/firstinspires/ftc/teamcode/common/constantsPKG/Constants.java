@@ -18,6 +18,8 @@ public class Constants {
 
     public double MAX_VELOCITY;
 
+    //control hub to arm: 16 cm
+
     //Arm Constants
     public double CLICKS_PER_BASE_REV = 5281.1; //clicks per rev of base arm motor
     public double CLICKS_PER_TOP_REV =  1120.0; //clicks per rev of top arm motor
@@ -54,35 +56,40 @@ public class Constants {
     public double tableSpinRotPercAllocation = 0.5;
     public double tableSpinSpinPercAllocation = 0.5;
 
+    /* starting:
+        base: 0
+        top: 0
+     */
 
     //Arm Constants!!
     //Bottom
-    public int bottomMotorBottom = 1175;
-    public int topMotorBottom = 60;
-    public double armServoBottom = 0.05;
+    public int bottomMotorBottom = 800;
+    public int topMotorBottom = 20;
+    public double armServoBottom = 0.04;
 
     //Low
-    public int bottomMotorLow = 140;
-    public int topMotorLow = 120;
-    public double armServoLow = 0.4;
+    public int bottomMotorLow = 0;
+    public int topMotorLow = 260;
+    public double armServoLow = 0.33;
 
     //Mid
-    public int bottomMotorMid = 420;
-    public int topMotorMid = 340;
-    public double armServoMid = 0.4;
+    public int bottomMotorMid = 0;
+    public int topMotorMid = 480;
+    public double armServoMid = 0.44;
 
     //High
-    public int bottomMotorHigh = 450;
-    public int topMotorHigh = 450;
-    public double armServoHigh = 0.7;
+    public int bottomMotorHigh = 300;
+    public int topMotorHigh = 820;
+    public double armServoHigh = 0.3;
+
+    //Softstops:
+    public int topSoftStop = 840;
 
     //Claw Position
     public double clawUp = 0.5;
     public double clawDown = 0.8;
     public double openClaw = 0;
     public double closeClaw = 1;
-
-
 
     //Distance Between swerve module and Center
     public double MM_INCH = 1/2.56;

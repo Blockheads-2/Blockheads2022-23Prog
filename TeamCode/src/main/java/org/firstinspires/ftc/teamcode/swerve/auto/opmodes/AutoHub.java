@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.kinematics.drive.Kinematics;
+import org.firstinspires.ftc.teamcode.common.kinematics.drive.RevisedKinematics;
 import org.firstinspires.ftc.teamcode.swerve.auto.Math.LinearMath;
 import org.firstinspires.ftc.teamcode.swerve.auto.Math.SplineMath;
 
@@ -59,75 +60,51 @@ public class AutoHub {
 
     //for now, we'll leave it as last year's template, but it might be a good idea to be constantly calculating its position and
     // how much it needs to go to lessen error.
-    void Move(DriveType movementType, double x, double y, double finalAngle, double speed){
-        posSystem.calculatePos();
+    void Move(double x, double y, boolean linear, double finalAngle, double speed){
+        if (linear){
+            //turn the robot wheel to angle
 
-        double power;
-        double timeOut;
+            int targetRotation = (int) (finalAngle * constants.CLICKS_PER_DEGREE);
+            robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + targetRotation);
+            robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + targetRotation);
+            robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + targetRotation);
+            robot.botR.setTargetPosition(robot.botR.getCurrentPosition() + targetRotation);
 
-        int topLEncoderTarget = robot.topL.getCurrentPosition();
-        int botLEncoderTarget = robot.botL.getCurrentPosition();
-        int topREncoderTarget = robot.topR.getCurrentPosition();
-        int botREncoderTarget = robot.botR.getCurrentPosition();
+            robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        switch(movementType){
-            case LINEAR:
-                linearMath.setInits(posSystem.getPositionArr()[0], posSystem.getPositionArr()[1]);
-                linearMath.setPos(x, y, finalAngle);
-                int[] linearClicks = linearMath.getClicks();
-                topLEncoderTarget += linearClicks[0];
-                botLEncoderTarget += linearClicks[1];
-                topREncoderTarget += linearClicks[2];
-                botREncoderTarget += linearClicks[3];
+            robot.topL.setPower(speed);
+            robot.botL.setPower(speed);
+            robot.topR.setPower(speed);
+            robot.botR.setPower(speed);
 
-                power = linearMath.getSpinPower(x, y);
 
-                timeOut = linearMath.getRunTime(speed); //make sure to set timeOut AFTER calculating required distance, clicks, etc.
-                break;
+            //drive gibven distance
+            double distance = Math.sqrt(x*x + y*y);
 
-            case SPLINE:
-                splineMath.setInits(robot.topR.getCurrentPosition(), robot.topL.getCurrentPosition());
-                splineMath.setPos(x, y, finalAngle);
+            int targetDistance = (int) (distance * constants.CLICKS_PER_INCH);
+            robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + targetDistance);
+            robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - targetDistance);
+            robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + targetDistance);
+            robot.botR.setTargetPosition(robot.botR.getCurrentPosition() - targetDistance);
 
-                int[] splineClicks = splineMath.getClicks();
-                topLEncoderTarget += splineClicks[0];
-                botLEncoderTarget += splineClicks[1];
-                topREncoderTarget += splineClicks[2];
-                botREncoderTarget += splineClicks[3];
+            robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-//                power = splineMath.power
+            robot.topL.setPower(speed);
+            robot.botL.setPower(speed);
+            robot.topR.setPower(speed);
+            robot.botR.setPower(speed);
 
-                timeOut = splineMath.getRunTime(speed);
-                break;
+        }
+        else{
+            //execute
 
-            case TURN_ON_CENTER:
-
-                break;
         }
 
-        robot.topL.setTargetPosition(topLEncoderTarget);
-        robot.botL.setTargetPosition(botLEncoderTarget);
-        robot.topR.setTargetPosition(topREncoderTarget);
-        robot.botR.setTargetPosition(botREncoderTarget);
-
-        while (linearOpMode.opModeIsActive()){
-            posSystem.calculatePos();
-//            robot.topL.setVelocity();
-//            robot.botL.setVelocity();
-//            robot.topR.setVelocity();
-//            robot.botR.setVelocity();
-        }
-
-        // Stop all motion;
-        robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        // Turn off RUN_TO_POSITION
-        robot.topL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.botL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.topR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.botR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }

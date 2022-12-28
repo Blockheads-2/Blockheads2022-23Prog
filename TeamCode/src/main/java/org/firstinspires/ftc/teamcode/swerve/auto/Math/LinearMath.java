@@ -24,11 +24,11 @@ public class LinearMath { //Note: snap() is used in the auto class separately. T
         initialY = y;
     }
 
-    public void setPos(double x, double y, double theta){
+    public void setPos(double x, double y, double theta, double kp, double ki, double kd){
         this.x = x;
         this.y = y;
         this.theta = theta;
-        spinPID.setTargets(getDistance(), 0.1, 0, 0);
+        spinPID.setTargets(getDistance(), kp, ki, kd);
     }
 
     private double getDistance(){
