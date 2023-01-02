@@ -63,9 +63,9 @@ public class Constants {
 
     //Arm Constants!!
     //Bottom
-    public int bottomMotorBottom = 800;
-    public int topMotorBottom = 20;
-    public double armServoBottom = 0.04;
+    public int bottomMotorBottom = 650;
+    public int topMotorBottom = 35;
+    public double armServoBottom = 0.0;
 
     //Low
     public int bottomMotorLow = 0;
