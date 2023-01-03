@@ -10,8 +10,11 @@ import org.firstinspires.ftc.teamcode.common.pid.AutoPID;
 import org.firstinspires.ftc.teamcode.common.pid.LinearCorrectionPID;
 import org.firstinspires.ftc.teamcode.common.pid.RotateSwerveModulePID;
 import org.firstinspires.ftc.teamcode.common.pid.SnapSwerveModulePID;
+import org.firstinspires.ftc.teamcode.common.pid.SpinPID;
 import org.firstinspires.ftc.teamcode.swerve.auto.Math.LinearMath;
 import org.firstinspires.ftc.teamcode.swerve.auto.Math.SplineMath;
+import org.firstinspires.ftc.teamcode.swerve.auto.Math.TurnMath;
+
 import java.util.*;
 
 
@@ -21,6 +24,7 @@ public class AutoKinematics {
     Constants constants = new Constants();
     LinearMath linearMath = new LinearMath();
     SplineMath splineMath = new SplineMath();
+    TurnMath turnMath = new TurnMath();
 
     public HashMap<String, Double> params = new HashMap<>();
     public HashMap<String, Double> input = new HashMap<>();
@@ -45,6 +49,7 @@ public class AutoKinematics {
     //PIDs
     SnapSwerveModulePID snapLeftWheelPID;
     SnapSwerveModulePID snapRightWheelPID;
+    AutoPID spinPID = new AutoPID();
 
     //check
     public boolean firstMovement = true;
@@ -81,6 +86,9 @@ public class AutoKinematics {
         params.put("turnAmountL", 0.0);
         params.put("turnAmountR", 0.0);
 
+        params.put("distanceR", 0.0);
+        params.put("distanceL", 0.0);
+
         //targets
         input.put("X", 0.0);
         input.put("Y", 0.0);
@@ -110,27 +118,44 @@ public class AutoKinematics {
         input.put("theta", 0.0);
         input.put("speed", speed);
 
+        params.put("X", posSystem.getPositionArr()[0]);
+        params.put("Y", posSystem.getPositionArr()[1]);
+        params.put("WL", posSystem.getPositionArr()[2]);
+        params.put("WR", posSystem.getPositionArr()[3]);
+        params.put("R", posSystem.getPositionArr()[4]);
+
+        spinPID.setTargets(x, y, 0.3, 0, 0.1);
+
         switch(type){
             case LINEAR: //firstMovement true
                 firstMovement = true;
-                linearMath.setPos(x, y, finalAngle, 0.3, 0, 0.01);
+                linearMath.setPos(x, y, finalAngle, 0.3, 0, 0.1);
+                linearMath.setInits(params.get("X"), params.get("Y"));
 
                 break;
 
             case CONSTANT_SPLINE: //firstMovement true
                 firstMovement = false;
-                linearMath.setPos(x, y, 0, 0.3, 0, 0.01);
+                linearMath.setPos(x, y, 0, 0.3, 0, 0.1);
+                linearMath.setInits(params.get("X"), params.get("Y"));
+
+                break;
 
             case VARIABLE_SPLINE:
-                splineMath.setPos(x, y, finalAngle, 0.3, 0, 0.01);
+                firstMovement = false;
+                splineMath.setPos(x, y, finalAngle, 0.3, 0, 0.1);
+                splineMath.setInits(posSystem.getMotorClicks()[0], posSystem.getMotorClicks()[2]);
 
                 break;
 
             case TURN:
-                //...
+                firstMovement = false;
+                turnMath.setPos(finalAngle, 0.3, 0, 0.1, posSystem.getPositionArr()[2]);
+
                 break;
 
             case STOP:
+                firstMovement = false;
 
                 break;
         }
@@ -138,9 +163,17 @@ public class AutoKinematics {
 
     public void logic(){
         //1) determining current position
+        params.put("X", posSystem.getPositionArr()[0]);
+        params.put("Y", posSystem.getPositionArr()[1]);
         params.put("WL", posSystem.getPositionArr()[2]);
         params.put("WR", posSystem.getPositionArr()[3]);
         params.put("R", posSystem.getPositionArr()[4]);
+
+        //sidenote: if we're supposed to stop, we can ignore everything.
+        if (type == DriveType.STOP) {
+            stop();
+            return;
+        }
 
         //2) determining targets
         double target = Math.toDegrees(Math.atan2(input.get("X"), input.get("Y")));
@@ -151,10 +184,38 @@ public class AutoKinematics {
         params.put("turnAmountL", wheelOptimization(target, params.get("WL")));
         params.put("turnAmountR", wheelOptimization(target, params.get("WR")));
 
+        //determining distance left
+        switch(type){
+            case LINEAR: //firstMovement true
+                params.put("distanceR", linearMath.distanceRemaining(params.get("X"), params.get("Y")));
+                params.put("distanceL", linearMath.distanceRemaining(params.get("X"), params.get("Y")));
+                break;
+
+            case CONSTANT_SPLINE: //firstMovement true
+                params.put("distanceR", linearMath.distanceRemaining(params.get("X"), params.get("Y")));
+                params.put("distanceL", linearMath.distanceRemaining(params.get("X"), params.get("Y")));
+                break;
+
+            case VARIABLE_SPLINE:
+                params.put("distanceL", splineMath.distanceRemaining(posSystem.getMotorClicks()[0], posSystem.getMotorClicks()[2])[0]);
+                params.put("distanceR", splineMath.distanceRemaining(posSystem.getMotorClicks()[0], posSystem.getMotorClicks()[2])[1]);
+
+                break;
+
+            case TURN:
+                params.put("distanceL", turnMath.getDistanceLeft(posSystem.getMotorClicks()[2]));
+                params.put("distanceR", -params.get("distanceL"));
+                break;
+
+            default:
+                params.put("distanceR", 0.0);
+                params.put("distanceL", 0.0);
+        }
+
         //determining spin power
-//        spinPower = spinPID.update(posSystem.getPositionArr()[0], posSystem.getPositionArr()[1]);
-//        spinClicksL = (int)(spinPower * 100 * leftThrottle);
-//        spinClicksR = (int)(spinPower * 100 * rightThrottle);
+        output.put("spinPower", spinPID.update(posSystem.getPositionArr()[0], posSystem.getPositionArr()[1]));
+        output.put("spinClicksL", params.get("distanceL") * constants.CLICKS_PER_INCH * Math.signum(params.get("throttleL")));
+        output.put("spinClicksR", params.get("distanceR") * constants.CLICKS_PER_INCH * Math.signum(params.get("throttleR")));
 
         //determining rotational power
         output.put("rotPowerL", snapLeftWheelPID.update(params.get("turnAmountL")));
@@ -163,14 +224,13 @@ public class AutoKinematics {
         output.put("rotClicksR", (params.get("turnAmountR") * constants.CLICKS_PER_DEGREE));
 
         //determining whether to focus more on spinning or more on rotating
-        double rotatePerc = (Math.abs(params.get("turnAmountL")) + Math.abs(params.get("turnAmountR"))) / 150.0; //turnAmount / 75 --> percentage
+        double rotatePerc = (Math.abs(params.get("turnAmountL")) + Math.abs(params.get("turnAmountR"))) / 70; //turnAmount / 35 --> percentage
         if (rotatePerc >= 0.5) rotatePerc = 0.5;
         params.put("rotatePerc", rotatePerc);
         params.put("translatePerc", 1.0 - rotatePerc);
 
         //determining "firstMovement" actions, if it is the robot's "firstMovement."
-        if (type == DriveType.STOP) stop();
-        else if (type == DriveType.LINEAR) firstMovement();
+        firstMovement();
     }
 
     public void firstMovement(){
@@ -184,7 +244,7 @@ public class AutoKinematics {
                 output.put("spinClicksL", 0.0);
                 output.put("spinClicksR", 0.0);
             } else{
-                type = DriveType.LINEAR;
+                firstMovement = false;
                 params.put("translatePerc", 0.6);
                 params.put("rotatePerc", 0.4);
             }
@@ -226,10 +286,10 @@ public class AutoKinematics {
 
     public double[] getPower(){
         double[] motorPower = new double[4];
-        motorPower[0] = output.get("spinPowerL") * params.get("translatePerc") + output.get("rotPowerL") * params.get("rotatePerc"); //top left
-        motorPower[1] = output.get("spinPowerL") * params.get("translatePerc") + output.get("rotPowerL") * params.get("rotatePerc"); //bottom left
-        motorPower[2] = output.get("spinPowerR") * params.get("translatePerc") + output.get("rotPowerR") * params.get("rotatePerc"); //top right
-        motorPower[3] = output.get("spinPowerR") * params.get("translatePerc") + output.get("rotPowerR") * params.get("rotatePerc"); //bottom right
+        motorPower[0] = output.get("spinPowerL") * params.get("translatePerc") * params.get("throttleL") + output.get("rotPowerL") * params.get("rotatePerc"); //top left
+        motorPower[1] = output.get("spinPowerL") * params.get("translatePerc") * params.get("throttleL") + output.get("rotPowerL") * params.get("rotatePerc"); //bottom left
+        motorPower[2] = output.get("spinPowerR") * params.get("translatePerc") * params.get("throttleR") + output.get("rotPowerR") * params.get("rotatePerc"); //top right
+        motorPower[3] = output.get("spinPowerR") * params.get("translatePerc") * params.get("throttleR") + output.get("rotPowerR") * params.get("rotatePerc"); //bottom right
 
         for (int i = 0; i < 4; i++){
             motorPower[i] = accelerator.update(motorPower[i]);

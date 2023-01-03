@@ -58,6 +58,18 @@ public class AutoHub {
 
     }
 
+    public void linear(){
+
+    }
+
+    public void constantSpline(){
+
+    }
+
+    public void variableSpline(){
+
+    }
+
     //for now, we'll leave it as last year's template, but it might be a good idea to be constantly calculating its position and
     // how much it needs to go to lessen error.
     void Move(double x, double y, boolean linear, double finalAngle, double speed){
@@ -105,6 +117,5 @@ public class AutoHub {
             //execute
 
         }
-
     }
 }

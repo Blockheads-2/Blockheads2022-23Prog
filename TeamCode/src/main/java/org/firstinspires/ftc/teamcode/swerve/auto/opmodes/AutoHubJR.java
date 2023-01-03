@@ -62,7 +62,7 @@ public class AutoHubJR {
             posSystem.calculatePos();
 
         //2) Determine the distance from our current pos & the target pos.
-            kinematics.setPos(x, y, finalAngle, speed);
+//            kinematics.setPos(x, y, finalAngle, speed);
             kinematics.logic();
 
         //3) Tell the robot to travel that distance we just determined.
