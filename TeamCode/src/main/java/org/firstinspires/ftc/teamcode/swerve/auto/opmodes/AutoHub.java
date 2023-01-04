@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.kinematics.drive.Kinematics;
-import org.firstinspires.ftc.teamcode.common.kinematics.drive.RevisedKinematics;
+//import org.firstinspires.ftc.teamcode.common.kinematics.drive.RevisedKinematics;
 import org.firstinspires.ftc.teamcode.swerve.auto.Math.LinearMath;
 import org.firstinspires.ftc.teamcode.swerve.auto.Math.SplineMath;
 
@@ -55,6 +55,18 @@ public class AutoHub {
 
         linearOpMode.telemetry.addData("Status", "Waiting on Camera");
         linearOpMode.telemetry.update();
+
+    }
+
+    public void linear(){
+
+    }
+
+    public void constantSpline(){
+
+    }
+
+    public void variableSpline(){
 
     }
 
@@ -105,6 +117,5 @@ public class AutoHub {
             //execute
 
         }
-
     }
 }

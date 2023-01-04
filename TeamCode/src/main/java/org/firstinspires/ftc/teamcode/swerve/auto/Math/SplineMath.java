@@ -17,13 +17,14 @@ public class SplineMath {
     private double turnAmount; //amount robot header should turn (for table-spinning)
     private double distanceR;
     private double distanceL;
+    private double distance;
 
     public SplineMath(){
         spinPIDR = new SpinPID();
         spinPIDL = new SpinPID();
     }
 
-    public void setInits(int initialClickR, int initialClickL){
+    public void setInits(int initialClickL, int initialClickR){
         RinitClick = initialClickR;
         LinitClick = initialClickL;
     }
@@ -62,6 +63,18 @@ public class SplineMath {
 
         distanceL = (radius + constants.DISTANCE_BETWEEN_MODULE_AND_CENTER) * theta; //left distance
         distanceR = (radius - constants.DISTANCE_BETWEEN_MODULE_AND_CENTER) * theta; //right distance
+        distance = radius * theta; //center distance
+    }
+
+    public double[] distanceRemaining(int currClickL, int currClickR){
+        double deltaR = ((currClickR - RinitClick) * constants.INCHES_PER_CLICK);
+        double deltaL = ((currClickL - LinitClick) * constants.INCHES_PER_CLICK);
+        double[] delta = new double[2];
+
+        delta[0] = (distanceL - deltaL);
+        delta[1] = (distanceR - deltaR);
+
+        return delta;
     }
 
     public int[] getClicks(){

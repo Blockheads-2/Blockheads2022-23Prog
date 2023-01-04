@@ -31,7 +31,7 @@ public class LinearMath { //Note: snap() is used in the auto class separately. T
         spinPID.setTargets(getDistance(), kp, ki, kd);
     }
 
-    private double getDistance(){
+    public double getDistance(){
         return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
     }
 
@@ -45,6 +45,10 @@ public class LinearMath { //Note: snap() is used in the auto class separately. T
         clicks[2] = (int)(translationClicks + rotationClicks);
         clicks[3] = (int)(-translationClicks + rotationClicks);
         return clicks;
+    }
+
+    public double distanceRemaining(double x, double y){
+        return (Math.sqrt(Math.pow(x - initialX, 2) + Math.pow(y - initialY, 2)));
     }
 
     public double getSpinPower(double x, double y){

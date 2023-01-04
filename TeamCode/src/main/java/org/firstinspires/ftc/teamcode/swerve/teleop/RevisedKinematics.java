@@ -57,8 +57,6 @@ public class RevisedKinematics {
     double leftCurrentW; //current wheel orientation
     double rightCurrentW;
     double currentR; //current robot header orientation
-    boolean initPoleR = true;
-    boolean initPoleL = true;
 
     public Accelerator accelerator;
     TrackJoystick joystickTracker;
@@ -110,10 +108,10 @@ public class RevisedKinematics {
         if (lx == 0 && ly == 0) target = 0;
         else if (lx==0 && ly < 0) target=180;
 
-        turnAmountL = wheelOptimization(target, leftCurrentW);
-        turnAmountR = wheelOptimization(target, rightCurrentW);
-//        turnAmountL = wheelOptimizationL(target, leftCurrentW);
-//        turnAmountR = wheelOptimizationR(target, rightCurrentW);
+//        turnAmountL = wheelOptimization(target, leftCurrentW);
+//        turnAmountR = wheelOptimization(target, rightCurrentW);
+        turnAmountL = wheelOptimizationL(target, leftCurrentW);
+        turnAmountR = wheelOptimizationR(target, rightCurrentW);
 
         //determining spin power
         spinPower = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
@@ -127,7 +125,7 @@ public class RevisedKinematics {
         rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE);
 
         //determining whether to focus more on spinning or more on rotating
-        rotatePerc = (Math.abs(turnAmountL) + Math.abs(turnAmountR)) / 70; //turnAmount / 35 --> percentage
+        rotatePerc = (Math.abs(turnAmountL) + Math.abs(turnAmountR)) / 70.0; //turnAmount / 35 --> percentage
         if (rotatePerc > 0.5) rotatePerc = 0.5;
         translatePerc = 1 - rotatePerc;
 
@@ -162,6 +160,7 @@ public class RevisedKinematics {
         if (Math.abs(leftCurrentW) < constants.degreeTOLERANCE && Math.abs(rightCurrentW) < constants.degreeTOLERANCE && lx == 0 && ly == 0 && (rx != 0 || ry != 0)){
 //            leftThrottle = leftThrottle;
             rightThrottle *= -1;
+
             spinClicksL = (int) (rx * 100 * leftThrottle);
             spinClicksR = (int) (rx * 100 * rightThrottle);
             spinPower = rx;
@@ -177,7 +176,6 @@ public class RevisedKinematics {
             turnAmountR = -rightCurrentW;
             rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE);
             rightRotatePower = snapRightWheelPID.update(turnAmountR);
-
 
             type = DriveType.TURN;
         } else{
@@ -224,14 +222,14 @@ public class RevisedKinematics {
         double target2 = (target < 0 ? target + 360 : target);
         double current2 = (currentW < 0 ? currentW + 360 : currentW);
 
-        double turnAmount1 = target - clamp(currentW + (initPoleL ? 0 : 180));
-        double turnAmount2 = target2 - clampConventional(current2 + (initPoleL ? 0 : 180));
-
+        double turnAmount1 = target - currentW;
+        double turnAmount2 = target2 - current2;
         double turnAmount = (Math.abs(turnAmount1) < Math.abs(turnAmount2) ? turnAmount1 : turnAmount2);
 
-        if(Math.abs(turnAmount) > 90){
-            initPoleL = !initPoleL;
+        rightThrottle = 1;
+        leftThrottle = -1;
 
+        if(Math.abs(turnAmount) > 90){
             double temp_target = clamp(target + 180);
             turnAmount = temp_target - currentW;
 
@@ -244,16 +242,18 @@ public class RevisedKinematics {
         double target2 = (target < 0 ? target + 360 : target);
         double current2 = (currentW < 0 ? currentW + 360 : currentW);
 
-        double turnAmount1 = target - clamp(currentW + (initPoleR ? 0 : 180));
-        double turnAmount2 = target2 - clampConventional(current2 + (initPoleR ? 0 : 180));
-
+        double turnAmount1 = target - currentW;
+        double turnAmount2 = target2 - current2;
         double turnAmount = (Math.abs(turnAmount1) < Math.abs(turnAmount2) ? turnAmount1 : turnAmount2);
 
         if(Math.abs(turnAmount) > 90){
-            initPoleR = !initPoleR;
-
             double temp_target = clamp(target + 180);
-            turnAmount = temp_target - currentW;
+            target2 = (temp_target < 0 ? temp_target + 360 : temp_target);
+
+            turnAmount1 = temp_target - currentW;
+            turnAmount2 = target2 - current2;
+
+            turnAmount = (Math.abs(turnAmount1) < Math.abs(turnAmount2) ? turnAmount1 : turnAmount2);
 
             this.rightThrottle *= -1;
         }
