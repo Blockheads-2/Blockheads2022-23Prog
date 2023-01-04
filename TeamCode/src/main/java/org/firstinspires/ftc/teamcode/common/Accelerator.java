@@ -24,7 +24,7 @@ public class Accelerator {
             return 0.0;
         }
 
-        double accelerationFactor = (Math.pow(accelerationTimer.seconds(), 0.5)/ Constants.accelTime ) + 0.4;
+        double accelerationFactor = (Math.pow(accelerationTimer.seconds(), 0.5)/ Constants.accelTime ) + 0.5;
         power *= accelerationFactor;
 
         if (power > 1) power = 1;

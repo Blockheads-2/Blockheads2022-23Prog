@@ -87,7 +87,7 @@ public class GlobalPosSystem {
         // Add change in angle to current angle to get current angle
         currAngle -= deltaAngle;
         lastOrientation = currentOrientation;
-        positionArr[4] = currAngle;
+        positionArr[4] = clamp(currAngle);
     }
 
     public void calculateRobot(){
@@ -170,6 +170,13 @@ public class GlobalPosSystem {
         prevMotorClicks.put("botR", motorClicksPose.get("botR"));
         prevMotorClicks.put("topL", motorClicksPose.get("topL"));
         prevMotorClicks.put("botL", motorClicksPose.get("botL"));
+    }
+
+    public void resetOrientationIfOneEighty(){
+        if ((Math.abs(positionArr[2]) <= 2 || Math.abs(positionArr[2]) <= 182) && (Math.abs(positionArr[3]) <= 2 || Math.abs(positionArr[3]) <= 182)){
+            positionArr[2] = 0;
+            positionArr[3] = 0;
+        }
     }
 
     public void updateHash(){

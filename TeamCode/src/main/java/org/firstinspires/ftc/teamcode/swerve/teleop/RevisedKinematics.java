@@ -297,9 +297,10 @@ public class RevisedKinematics {
 //            else if (motorPower[i] < -constants.POWER_LIMITER) motorPower[i] = -constants.POWER_LIMITER;
         }
 
-        telLeftRotatePower = leftRotatePower * rotatePerc * constants.POWER_LIMITER;
-        telRightRotatePower = rightRotatePower * rotatePerc * constants.POWER_LIMITER;
-        telSpinPower = spinPower * translatePerc * constants.POWER_LIMITER;
+        telLeftRotatePower = accelerator.update(leftRotatePower * rotatePerc * constants.POWER_LIMITER);
+        telRightRotatePower = accelerator.update(rightRotatePower * rotatePerc * constants.POWER_LIMITER);
+
+        telSpinPower = accelerator.update(spinPower * translatePerc * constants.POWER_LIMITER);
 
         return motorPower;
     }
