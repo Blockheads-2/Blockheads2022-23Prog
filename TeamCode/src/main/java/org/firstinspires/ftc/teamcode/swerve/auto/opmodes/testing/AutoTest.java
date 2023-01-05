@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.swerve.auto.opmodes.testing;
 
+import android.app.Activity;
 import android.view.View;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -17,35 +18,24 @@ import org.firstinspires.ftc.teamcode.swerve.auto.opmodes.AutoHubJR;
 @Autonomous (name = "Auto Test", group = "Drive")
 public class AutoTest extends LinearOpMode {
 
-    HardwareDrive robot = new HardwareDrive();
-    HardwareMap hardwareMap;
     Constants constants = new Constants();
-    GlobalPosSystem posSystem;
     AutoHubJR dispatch;
 
     View relativeLayout;
 
 
+
     @Override
     public void runOpMode() throws InterruptedException {
 
-        robot.init(hardwareMap);
-        posSystem = new GlobalPosSystem(robot);
         dispatch = new AutoHubJR(this);
 
-        robot.topL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.botL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.topR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.botR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        robot.topL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.botL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.topR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.botR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        telemetry.addData("Status", "Waiting on Camera");
+        telemetry.update();
 
         waitForStart();
 
-        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 45, 1);
-        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 10, 10, 0, 1);
+        dispatch.Move(RevisedKinematics.DriveType.SNAP, 10, 10, 0, 0.7);
+        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 10, 10, 0, 0.7);
     }
 }

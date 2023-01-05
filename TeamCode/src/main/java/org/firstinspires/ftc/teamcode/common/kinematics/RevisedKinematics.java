@@ -25,10 +25,12 @@ public class RevisedKinematics {
     private double rx;
     private double ry;
 
+    double targetX;
+    double targetY;
     private double finalAngle; //auto
     private double speed;
-    double distanceL;
-    double distanceR;
+    public double distanceL;
+    public double distanceR;
     LinearMath linearMath = new LinearMath();
     SplineMath splineMath = new SplineMath();
     TurnMath turnMath = new TurnMath();
@@ -157,6 +159,8 @@ public class RevisedKinematics {
         this.type = driveType;
 
         //target position
+        this.targetX = x;
+        this.targetY = y;
         this.finalAngle = finalAngle;
         this.speed = speed;
 
@@ -194,31 +198,52 @@ public class RevisedKinematics {
         }
 
         //2) determining targets
-        double target = Math.toDegrees(Math.atan2(currentX, currentY));
-        if (currentX == 0 && currentY == 0) target = 0;
-        else if (currentX == 0 && currentY < 0) target = 180;
+        target = Math.toDegrees(Math.atan2(targetX, targetY));
+        if (targetX == 0 && targetY == 0) target = 0;
+        else if (targetX == 0 && targetY < 0) target = 180;
 
         //3) determining rotation amount
         turnAmountL = wheelOptimization(target, leftCurrentW, false);
         turnAmountR = wheelOptimization(target, rightCurrentW, true);
 
         //4) determining distance travel amount
-        if (type == DriveType.LINEAR || type == DriveType.CONSTANT_SPLINE){
-            distanceR = linearMath.distanceRemaining(currentX, currentY);
-            distanceL = distanceR;
-        } else if (type == DriveType.VARIABLE_SPLINE){
-            distanceL = splineMath.distanceRemaining(posSystem.getMotorClicks()[0], posSystem.getMotorClicks()[2])[0];
-            distanceR = splineMath.distanceRemaining(posSystem.getMotorClicks()[0], posSystem.getMotorClicks()[2])[1];
-        } else if (type == DriveType.TURN){
-            distanceL = turnMath.getDistanceLeft(posSystem.getMotorClicks()[2]);
-            distanceR = -distanceL;
-        } else {
-            distanceL = 0;
-            distanceR = 0;
+        switch(type){
+            case LINEAR:
+                distanceR = linearMath.distanceRemaining(currentX, currentY);
+                distanceL = distanceR;
+                turnAmountL = 0;
+                turnAmountR = 0;
+                break;
+            case CONSTANT_SPLINE:
+                distanceR = linearMath.distanceRemaining(currentX, currentY);
+                distanceL = distanceR;
+                break;
+            case VARIABLE_SPLINE:
+                distanceL = splineMath.distanceRemaining(posSystem.getMotorClicks()[0], posSystem.getMotorClicks()[2])[0];
+                distanceR = splineMath.distanceRemaining(posSystem.getMotorClicks()[0], posSystem.getMotorClicks()[2])[1];
+                turnAmountL = 0;
+                turnAmountR = 0;
+                break;
+            case TURN:
+                distanceL = turnMath.getDistanceLeft(posSystem.getMotorClicks()[2]);
+                distanceR = -distanceL;
+                turnAmountL = 0;
+                turnAmountR = 0;
+                break;
+            case SNAP:
+                distanceL = 0;
+                distanceR = 0;
+                break;
+            case STOP:
+                distanceL = 0;
+                distanceR = 0;
+                turnAmountL = 0;
+                turnAmountR = 0;
+                break;
         }
 
         //determining spin power
-        power = autoPID.update(posSystem.getPositionArr()[0], posSystem.getPositionArr()[1]);
+        power = speed;
         spinClicksL = (int)(distanceL * constants.CLICKS_PER_INCH * Math.signum(leftThrottle));
         spinClicksR = (int)(distanceR * constants.CLICKS_PER_INCH * Math.signum(rightThrottle));
 

@@ -55,8 +55,6 @@ public class TestMotors extends OpMode{
         rotClicks = (int)(rot * constants.CLICKS_PER_DEGREE);
 
         drive(distanceClicks, rotClicks);
-//        drive(rotClicks)]\
-//        drive(rotClicks, distanceClicks, true);
     }
 
     @Override
@@ -124,7 +122,7 @@ public class TestMotors extends OpMode{
         robot.topR.setPower(1);
     }
 
-    public void drive(int distanceClicks, int rotClicks){
+    public void drive(int distanceClicks, int rotClicks) {
         robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - distanceClicks + rotClicks);
         robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + distanceClicks + rotClicks);
         robot.botR.setTargetPosition(robot.botR.getCurrentPosition() - distanceClicks + rotClicks);
@@ -133,32 +131,6 @@ public class TestMotors extends OpMode{
         robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-
-    public void drive(int rotClicks){
-//        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + rotClicks);
-        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + rotClicks);
-//        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() + rotClicks);
-        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + rotClicks);
-
-        robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-
-    public void drive(int rotClicks, int distanceClicks, boolean onlyTop){
-        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - distanceClicks);
-        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + distanceClicks + rotClicks);
-        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() - distanceClicks);
-        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + distanceClicks + rotClicks);
-
-        robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 

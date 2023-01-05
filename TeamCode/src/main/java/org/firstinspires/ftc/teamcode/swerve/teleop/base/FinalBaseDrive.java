@@ -164,13 +164,14 @@ public class FinalBaseDrive extends OpMode{
         telemetry.addData("Turn Amount (Left)", kinematics.turnAmountL);
         telemetry.addData("Turn Amount (Right)", kinematics.turnAmountR);
 
+
         telemetry.addData("topL clicks", robot.topL.getCurrentPosition());
         telemetry.addData("botL clicks", robot.botL.getCurrentPosition());
         telemetry.addData("topR clicks", robot.topR.getCurrentPosition());
         telemetry.addData("botR clicks", robot.botR.getCurrentPosition());
 
-        telemetry.addData("Left Wheel Clicks Target (neg)", -kinematics.spinClicksL + kinematics.leftRotClicks);
-        telemetry.addData("Left Rotate clicks target (pos)",  kinematics.spinClicksL + kinematics.leftRotClicks);
+        telemetry.addData("Left Spin Clicks Target", kinematics.spinClicksL);
+        telemetry.addData("Left Rotate Clicks target",  kinematics.leftRotClicks);
         telemetry.addData("Right Spin clicks target", kinematics.spinClicksR);
         telemetry.addData("Right Rotate clicks target",  kinematics.rightRotClicks);
         telemetry.addData("topL velocity", robot.topL.getVelocity()); //ticks per second
