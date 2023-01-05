@@ -38,7 +38,7 @@ public class LinearCorrectionPID {
         prevError = error;
         prevTime = timer.milliseconds();
 
-        double motorPower = Math.tanh(kp * error + ki * accumulatedError + kd * slope);
+        double motorPower = Math.tanh(kp * error + ki * accumulatedError - kd * slope);
 
         if (Math.abs(motorPower) <= 0.1) motorPower = 0;
 

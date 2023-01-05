@@ -158,7 +158,7 @@ public class TestPID extends OpMode{
                 telemetry.addData("Rotate clicks target",  kinematics.rightRotClicks);
                 break;
         }
-        telemetry.addData("Spin Power", kinematics.telSpinPower);
+//        telemetry.addData("Spin Power", kinematics.telSpinPower);
         telemetry.addData("Drive Type", kinematics.getDriveType());
         telemetry.addData("First movement", kinematics.firstMovement);
 

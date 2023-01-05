@@ -14,7 +14,7 @@ public class Reset {
     ElapsedTime gapTime = new ElapsedTime();
     Accelerator accelerator = new Accelerator();
     double power = 0;
-    int waitForMS = 400;
+    int waitForMS = 350;
     double prevTime=0;
     double currentTime=0;
 
@@ -76,7 +76,7 @@ public class Reset {
             robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            power = accelerator.update(0.7);
+            power = accelerator.update(1.0);
             robot.botL.setPower(power);
             robot.topL.setPower(power);
             robot.botR.setPower(power);
@@ -94,7 +94,7 @@ public class Reset {
 
                 STOP_RESET_L = true;
             } else if (!STOP_RESET_L){
-                power = accelerator.update(0.7);
+                power = accelerator.update(1.0);
                 robot.botL.setPower(power);
                 robot.topL.setPower(power);
             }
@@ -109,7 +109,7 @@ public class Reset {
 
                 STOP_RESET_R = true;
             } else if (!STOP_RESET_R){
-                power = accelerator.update(0.7);
+                power = accelerator.update(1.0);
                 robot.botR.setPower(power);
                 robot.topR.setPower(power);
             }

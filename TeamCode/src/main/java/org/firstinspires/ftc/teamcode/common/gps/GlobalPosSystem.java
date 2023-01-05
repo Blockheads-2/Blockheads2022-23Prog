@@ -172,6 +172,11 @@ public class GlobalPosSystem {
         prevMotorClicks.put("botL", motorClicksPose.get("botL"));
     }
 
+    public void resetXY(){
+        positionArr[0] = 0;
+        positionArr[1] = 0;
+    }
+
     public void resetOrientationIfOneEighty(){
         if ((Math.abs(positionArr[2]) <= 2 || Math.abs(positionArr[2]) <= 182) && (Math.abs(positionArr[3]) <= 2 || Math.abs(positionArr[3]) <= 182)){
             positionArr[2] = 0;

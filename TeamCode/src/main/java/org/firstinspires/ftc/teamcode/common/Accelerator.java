@@ -18,20 +18,28 @@ public class Accelerator {
     }
 
 
-    public double update(double power){
-        if (power == 0) {
-            accelerationTimer.reset();
-            return 0.0;
-        }
+//    public double update(double power){
+//        if (power == 0) {
+//            accelerationTimer.reset();
+//            return 0.0;
+//        }
+//
+//        double accelerationFactor = (Math.pow(accelerationTimer.seconds(), 0.5)/ Constants.accelTime ) + 0.6;
+//        power *= accelerationFactor;
+//
+//        if (power > 1) power = 1;
+//        else if (power < -1) power = -1;
+//
+//        return power;
+//    }
 
-        double accelerationFactor = (Math.pow(accelerationTimer.seconds(), 0.5)/ Constants.accelTime ) + 0.6;
-        power *= accelerationFactor;
-
+    public double update(double power){ //this gets rid of the accelerator.
         if (power > 1) power = 1;
         else if (power < -1) power = -1;
 
         return power;
     }
+
 
 
     public double update(double power, SimplifiedKinematics.DriveType dType){

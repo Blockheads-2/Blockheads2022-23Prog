@@ -38,7 +38,7 @@ public class SnapSwerveModulePID {
         prevError = error;
         prevTime = timer.milliseconds();
 
-        double motorPower = Math.tanh(kp * error + ki * accumulatedError + kd * slope);
+        double motorPower = Math.tanh(kp * error + ki * accumulatedError - kd * slope);
 //        if (Math.abs(motorPower) <= 0.05) motorPower = 0;
 
         return motorPower;

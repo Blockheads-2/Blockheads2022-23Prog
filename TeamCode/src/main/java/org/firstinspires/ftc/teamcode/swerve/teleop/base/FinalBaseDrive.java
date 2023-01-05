@@ -38,10 +38,8 @@ public class FinalBaseDrive extends OpMode{
     Button a = new Button();
     Button b = new Button();
 
-    private double powerTopL = 0;
-    private double powerBotL = 0;
-    private double powerTopR = 0;
-    private double powerBotR = 0;
+    int[] targetClicks = new int[4];
+    double[] motorPower = new double[4];
 
     private int armTopPos = 0;
     private int armBotPos = 0;
@@ -68,6 +66,8 @@ public class FinalBaseDrive extends OpMode{
     boolean clawClose = false;
     boolean clawUp = false;
     public double clawAngle = 0;
+    boolean lowerArmCycle = false;
+    boolean lowerAllTheWay = false;
 
     private int prevPosition = 0;
 
@@ -166,17 +166,29 @@ public class FinalBaseDrive extends OpMode{
         telemetry.addData("topR clicks", robot.topR.getCurrentPosition());
         telemetry.addData("botR clicks", robot.botR.getCurrentPosition());
 
-        telemetry.addData("Spin clicks target", kinematics.spinClicksL);
-        telemetry.addData("Rotate clicks target",  kinematics.leftRotClicks);
-        telemetry.addData("Spin clicks target", kinematics.spinClicksR);
-        telemetry.addData("Rotate clicks target",  kinematics.rightRotClicks);
+        telemetry.addData("Left Wheel Clicks Target (neg)", -kinematics.spinClicksL + kinematics.leftRotClicks);
+        telemetry.addData("Left Rotate clicks target (pos)",  kinematics.spinClicksL + kinematics.leftRotClicks);
+        telemetry.addData("Right Spin clicks target", kinematics.spinClicksR);
+        telemetry.addData("Right Rotate clicks target",  kinematics.rightRotClicks);
         telemetry.addData("topL velocity", robot.topL.getVelocity()); //ticks per second
         telemetry.addData("topR velocity", robot.topR.getVelocity());
 
 
-        telemetry.addData("Spin Power", kinematics.telSpinPower); //no throttle
-        telemetry.addData("Rotate Power L", kinematics.telLeftRotatePower);
-        telemetry.addData("Rotate Power R", kinematics.telRightRotatePower);
+        telemetry.addData("Power TopL", motorPower[0]);
+        telemetry.addData("Power BotL", motorPower[1]);
+        telemetry.addData("Power TopR", motorPower[2]);
+        telemetry.addData("Power BotR", motorPower[3]);
+        telemetry.addData("Clicks Target TopL", targetClicks[0]);
+        telemetry.addData("Clicks Target BotL", targetClicks[1]);
+        telemetry.addData("Clicks Target TopR", targetClicks[2]);
+        telemetry.addData("Clicks Target BotR", targetClicks[3]);
+
+
+//        telemetry.addData("Spin Power R", kinematics.telSpinPowerR);
+//        telemetry.addData("Spin Power L", kinematics.telSpinPowerL);
+//
+//        telemetry.addData("Rotate Power L", kinematics.telLeftRotatePower);
+//        telemetry.addData("Rotate Power R", kinematics.telRightRotatePower);
 
         telemetry.addData("Drive Type", kinematics.getDriveType());
 
@@ -208,7 +220,7 @@ public class FinalBaseDrive extends OpMode{
             reset.reset(false);
         }
 
-        int[] targetClicks = kinematics.getClicks();
+        targetClicks = kinematics.getClicks();
         robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + targetClicks[0]);
         robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + targetClicks[1]);
         robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + targetClicks[2]);
@@ -219,7 +231,7 @@ public class FinalBaseDrive extends OpMode{
         robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        double[] motorPower = kinematics.getPower();
+        motorPower = kinematics.getPower();
         robot.topL.setPower(motorPower[0]);
         robot.botL.setPower(motorPower[1]);
         robot.topR.setPower(motorPower[2]);
@@ -271,61 +283,16 @@ public class FinalBaseDrive extends OpMode{
 
     void ArmPresets(){
         if (bottomButton.is(Button.State.TAP)){
-            clawAngle = constants.armServoBottom;
-            atPID.setTargets(constants.topMotorBottom, robot.at.getCurrentPosition(), 0.4, 0, 0.2);
-            ablPID.setTargets(constants.topMotorBottom, robot.abl.getCurrentPosition(), 0.4, 0, 0.2);
-            abrPID.setTargets(constants.topMotorBottom, robot.abr.getCurrentPosition(), 0.4, 0, 0.2);
-
-            robot.at.setTargetPosition(constants.topMotorBottom);
-            robot.abl.setTargetPosition(constants.bottomMotorBottom);
-            robot.abr.setTargetPosition(constants.bottomMotorBottom);
-
-            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            //robot.armServo.setPosition(constants.armServoBottom);
-
-            robot.at.setPower(0.4);
-            robot.abl.setPower(1);
-            robot.abr.setPower(1);
-
-
-
-           /*
-            robot.abl.setPower(ablPID.update(robot.abl.getCurrentPosition()));
-            robot.abr.setPower(abrPID.update(robot.abr.getCurrentPosition()));
-            robot.at.setPower(ablPID.update(robot.at.getCurrentPosition()));
-
-            */
+            lowerArmCycle = true;
+            lowerAllTheWay = true;
         }
 
         if (lowButton.is(Button.State.TAP)){
-            atPID.setTargets(constants.topMotorLow, robot.at.getCurrentPosition(), 0.4, 0, 0.2);
-            ablPID.setTargets(constants.bottomMotorLow, robot.abl.getCurrentPosition(), 0.4, 0, 0.2);
-            abrPID.setTargets(constants.bottomMotorLow, robot.abr.getCurrentPosition(), 0.4, 0, 0.2);
-
-            robot.abl.setTargetPosition(constants.bottomMotorLow);
-            robot.abr.setTargetPosition(constants.bottomMotorLow);
-            robot.at.setTargetPosition(constants.topMotorLow);
-
-            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            clawAngle = constants.armServoLow;
-          //  robot.armServo.setPosition(constants.armServoLow);
-
-           /* robot.abl.setPower(ablPID.update(robot.abl.getCurrentPosition()));
-            robot.abr.setPower(abrPID.update(robot.abr.getCurrentPosition()));
-            robot.at.setPower(ablPID.update(robot.at.getCurrentPosition()));
-
-            */
-            robot.at.setPower(0.4);
-            robot.abl.setPower(1);
-            robot.abr.setPower(1);
-
+            lowerArmCycle = true;
         }
+
+        lowerArm();
+        lowerAllTheWay();
 
         if (midButton.is(Button.State.TAP)){
             atPID.setTargets(constants.topMotorMid, robot.at.getCurrentPosition(), 0.4, 0, 0.2);
@@ -397,6 +364,100 @@ public class FinalBaseDrive extends OpMode{
             robot.at.setPower(1);
         }
  */
+    }
+
+    void lowerArm(){
+        if (lowerArmCycle){
+            atPID.setTargets(constants.topMotorLow, robot.at.getCurrentPosition(), 0.4, 0, 0.2);
+            ablPID.setTargets(constants.bottomMotorLow, robot.abl.getCurrentPosition(), 0.4, 0, 0.2);
+            abrPID.setTargets(constants.bottomMotorLow, robot.abr.getCurrentPosition(), 0.4, 0, 0.2);
+
+            robot.at.setTargetPosition(constants.topMotorLow);
+
+            int somePos = 0;
+            if (robot.abl.getCurrentPosition() >= somePos && robot.abl.getCurrentPosition() >= somePos) {
+                robot.abl.setTargetPosition(somePos);
+                robot.abr.setTargetPosition(somePos);
+            } else{
+                robot.abl.setTargetPosition(constants.bottomMotorLow);
+                robot.abr.setTargetPosition(constants.bottomMotorLow);
+            }
+
+            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            clawAngle = constants.armServoLow;
+            //  robot.armServo.setPosition(constants.armServoLow);
+
+           /*
+            robot.abl.setPower(ablPID.update(robot.abl.getCurrentPosition()));
+            robot.abr.setPower(abrPID.update(robot.abr.getCurrentPosition()));
+            robot.at.setPower(ablPID.update(robot.at.getCurrentPosition()));
+            */
+
+            robot.at.setPower(0.4);
+            robot.abl.setPower(1);
+            robot.abr.setPower(1);
+
+            if (robot.at.getCurrentPosition() <= constants.topMotorLow + constants.degreeTOLERANCE && robot.abl.getCurrentPosition() <= constants.bottomMotorLow + constants.degreeTOLERANCE && robot.abr.getCurrentPosition() <= constants.bottomMotorLow + constants.degreeTOLERANCE) lowerArmCycle = false;
+        }
+    }
+
+    void lowerAllTheWay(){
+        if (!lowerArmCycle && lowerAllTheWay){
+            clawAngle = constants.armServoBottom;
+            atPID.setTargets(constants.topMotorBottom, robot.at.getCurrentPosition(), 0.4, 0, 0.2);
+            ablPID.setTargets(constants.bottomMotorBottom, robot.abl.getCurrentPosition(), 0.4, 0, 0.2);
+            abrPID.setTargets(constants.bottomMotorBottom, robot.abr.getCurrentPosition(), 0.4, 0, 0.2);
+
+            robot.at.setTargetPosition(constants.topMotorBottom);
+            robot.abl.setTargetPosition(constants.bottomMotorBottom);
+            robot.abr.setTargetPosition(constants.bottomMotorBottom);
+
+            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            //robot.armServo.setPosition(constants.armServoBottom);
+
+            robot.at.setPower(0.4);
+            robot.abl.setPower(1);
+            robot.abr.setPower(1);
+
+           /*
+            robot.abl.setPower(ablPID.update(robot.abl.getCurrentPosition()));
+            robot.abr.setPower(abrPID.update(robot.abr.getCurrentPosition()));
+            robot.at.setPower(ablPID.update(robot.at.getCurrentPosition()));
+
+            */
+
+            if (robot.at.getCurrentPosition() <= constants.topMotorBottom + constants.degreeTOLERANCE && robot.abl.getCurrentPosition() <= constants.bottomMotorBottom + constants.degreeTOLERANCE && robot.abr.getCurrentPosition() <= constants.bottomMotorBottom + constants.degreeTOLERANCE) lowerAllTheWay = false;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        }
     }
 
     void ClawControl(){

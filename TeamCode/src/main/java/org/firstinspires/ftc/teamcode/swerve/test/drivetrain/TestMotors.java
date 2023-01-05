@@ -19,8 +19,8 @@ import org.firstinspires.ftc.teamcode.common.kinematics.RevisedKinematics;
 public class TestMotors extends OpMode{
     /* Declare OpMode members. */
     HardwareDrive robot = new HardwareDrive();
-    GlobalPosSystem posSystem;
     RevisedKinematics kinematics;
+    GlobalPosSystem posSystem;
     Constants constants = new Constants();
     private double[] posData = new double[4];
 
@@ -46,17 +46,17 @@ public class TestMotors extends OpMode{
         posSystem = new GlobalPosSystem(robot);
         kinematics = new RevisedKinematics(posSystem);
         posSystem.grabKinematics(kinematics);
-        kinematics.leftThrottle = -1;
-        kinematics.rightThrottle = 1;
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();
 
         double distance = constants.WHEEL_CIRCUMFERENCE;
-        double rot = 0;
+        double rot = 90;
         distanceClicks = (int)(distance * constants.CLICKS_PER_INCH); //rotation clicks
         rotClicks = (int)(rot * constants.CLICKS_PER_DEGREE);
 
         drive(distanceClicks, rotClicks);
+//        drive(rotClicks)]\
+//        drive(rotClicks, distanceClicks, true);
     }
 
     @Override
@@ -118,21 +118,47 @@ public class TestMotors extends OpMode{
     void DriveTrainPowerEncoder(){
         posSystem.calculatePos();
 
-        robot.botL.setPower(0.5);
-        robot.topL.setPower(0.5);
-        robot.botR.setPower(0.5);
-        robot.topR.setPower(0.5);
+        robot.botL.setPower(1);
+        robot.topL.setPower(1);
+        robot.botR.setPower(1);
+        robot.topR.setPower(1);
     }
 
     public void drive(int distanceClicks, int rotClicks){
-        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - (distanceClicks * kinematics.leftThrottle) + rotClicks);
-        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + (distanceClicks * kinematics.leftThrottle) + rotClicks);
-        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() - (distanceClicks * kinematics.rightThrottle) + rotClicks);
-        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + (distanceClicks * kinematics.rightThrottle) + rotClicks);
+        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - distanceClicks + rotClicks);
+        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + distanceClicks + rotClicks);
+        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() - distanceClicks + rotClicks);
+        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + distanceClicks + rotClicks);
 
         robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public void drive(int rotClicks){
+//        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + rotClicks);
+        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + rotClicks);
+//        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() + rotClicks);
+        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + rotClicks);
+
+        robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public void drive(int rotClicks, int distanceClicks, boolean onlyTop){
+        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - distanceClicks);
+        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + distanceClicks + rotClicks);
+        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() - distanceClicks);
+        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + distanceClicks + rotClicks);
+
+        robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 

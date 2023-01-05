@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.kinematics.AutoKinematics;
+import org.firstinspires.ftc.teamcode.common.kinematics.RevisedKinematics;
 
 public class AutoHubJR {
     LinearOpMode linearOpMode;
@@ -19,7 +20,7 @@ public class AutoHubJR {
     HardwareMap hardwareMap;
     Constants constants = new Constants();
     GlobalPosSystem posSystem;
-    AutoKinematics kinematics;
+    RevisedKinematics kinematics;
     Reset reset;
 
     View relativeLayout;
@@ -35,7 +36,7 @@ public class AutoHubJR {
         linearOpMode.telemetry.update();
 
         posSystem = new GlobalPosSystem(robot);
-        kinematics = new AutoKinematics(posSystem);
+        kinematics = new RevisedKinematics(posSystem);
         reset = new Reset(robot, posSystem);
 
         // Get a reference to the RelativeLayout so we can later change the background
@@ -50,27 +51,32 @@ public class AutoHubJR {
         linearOpMode.telemetry.update();
     }
 
-    public void Move(AutoKinematics.DriveType movementType, double x, double y, double finalAngle, double speed){
-        posSystem.calculatePos();
-        kinematics.setDriveType(movementType);
-
-        kinematics.setPos(x, y, finalAngle, speed);
-        reset.reset(false);
-
-        while (linearOpMode.opModeIsActive() && robot.wheelsAreBusy()){
+    public void Move(RevisedKinematics.DriveType movementType, double x, double y, double finalAngle, double speed){
         //1) Calculate our current position
-            posSystem.calculatePos();
+        posSystem.calculatePos();
 
         //2) Determine the distance from our current pos & the target pos.
-//            kinematics.setPos(x, y, finalAngle, speed);
-            kinematics.logic();
+        kinematics.setPosAuto(x, y, finalAngle, speed, movementType);
+        kinematics.logicAuto();
+
+        reset.reset(false);
+
+        boolean targetNotMet = true;
+        int[] targetClicks = kinematics.getClicks();
+        int targetTopL = robot.topL.getCurrentPosition() + targetClicks[0];
+        int targetBotL = robot.botL.getCurrentPosition() + targetClicks[1];
+        int targetTopR = robot.topR.getCurrentPosition() + targetClicks[2];
+        int targetBotR = robot.botR.getCurrentPosition() + targetClicks[3];
+
 
         //3) Tell the robot to travel that distance we just determined.
-            int[] targetClicks = kinematics.getClicks();
-            robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + targetClicks[0]);
-            robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + targetClicks[1]);
-            robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + targetClicks[2]);
-            robot.botR.setTargetPosition(robot.botR.getCurrentPosition() + targetClicks[3]);
+        while (linearOpMode.opModeIsActive() && targetNotMet){
+            posSystem.calculatePos();
+
+            robot.topL.setTargetPosition(targetTopL);
+            robot.botL.setTargetPosition(targetBotL);
+            robot.topR.setTargetPosition(targetTopR);
+            robot.botR.setTargetPosition(targetBotR);
 
             robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -82,10 +88,14 @@ public class AutoHubJR {
             robot.botL.setPower(motorPower[1] * constants.POWER_LIMITER);
             robot.topR.setPower(motorPower[2] * constants.POWER_LIMITER);
             robot.botR.setPower(motorPower[3] * constants.POWER_LIMITER);
+
+            targetNotMet = (Math.abs(robot.topL.getCurrentPosition() - targetTopL) > constants.clickTOLERANCE && Math.abs(robot.botL.getCurrentPosition() - targetBotL) > constants.clickTOLERANCE && Math.abs(robot.topR.getCurrentPosition() - targetTopR) > constants.clickTOLERANCE && Math.abs(robot.botL.getCurrentPosition() - targetBotL) > constants.clickTOLERANCE);
         }
 
-        while(reset.finishedReset()){
-            reset.reset(true);
+        if (kinematics.getDriveType() != RevisedKinematics.DriveType.SNAP){
+            while(reset.finishedReset()){
+                reset.reset(true);
+            }
         }
     }
 
@@ -97,22 +107,22 @@ public class AutoHubJR {
         linearOpMode.telemetry.addData("Right W", posSystem.getRightWheelW());
         linearOpMode.telemetry.addData("R", posSystem.getPositionArr()[4]);
 
-        linearOpMode.telemetry.addData("Spin Direction (Left)", kinematics.params.get("throttleL"));
-        linearOpMode.telemetry.addData("Spin Direction (Right)", kinematics.params.get("throttleR"));
+//        linearOpMode.telemetry.addData("Spin Direction (Left)", kinematics.params.get("throttleL"));
+//        linearOpMode.telemetry.addData("Spin Direction (Right)", kinematics.params.get("throttleR"));
 
         linearOpMode.telemetry.addData("topL clicks", robot.topL.getCurrentPosition());
         linearOpMode.telemetry.addData("botL clicks", robot.botL.getCurrentPosition());
         linearOpMode.telemetry.addData("topR clicks", robot.topR.getCurrentPosition());
         linearOpMode.telemetry.addData("botR clicks", robot.botR.getCurrentPosition());
-        linearOpMode.telemetry.addData("Left Rotate Power", kinematics.output.get("rotPowerL"));
-        linearOpMode.telemetry.addData("Right Rotate Power", kinematics.output.get("rotPowerR"));
+//        linearOpMode.telemetry.addData("Left Rotate Power", kinematics.output.get("rotPowerL"));
+//        linearOpMode.telemetry.addData("Right Rotate Power", kinematics.output.get("rotPowerR"));
 
-        linearOpMode.telemetry.addData("Right Clicks target", kinematics.output.get("spinClicksR") + kinematics.output.get("rotClicksR"));
+//        linearOpMode.telemetry.addData("Right Clicks target", kinematics.output.get("spinClicksR") + kinematics.output.get("rotClicksR"));
 
-        linearOpMode.telemetry.addData("Left Spin Power", kinematics.output.get("spinPowerL"));
-        linearOpMode.telemetry.addData("Right Spin Power", kinematics.output.get("spinPowerL"));
+//        linearOpMode.telemetry.addData("Left Spin Power", kinematics.output.get("spinPowerL"));
+//        linearOpMode.telemetry.addData("Right Spin Power", kinematics.output.get("spinPowerL"));
         linearOpMode.telemetry.addData("Drive Type", kinematics.getDriveType());
-        linearOpMode.telemetry.addData("First movement", kinematics.firstMovement);
+//        linearOpMode.telemetry.addData("First movement", kinematics.firstMovement);
 
         linearOpMode.telemetry.update();
     }
