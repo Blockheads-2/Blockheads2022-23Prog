@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.Button;
 
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
-import org.firstinspires.ftc.teamcode.swerve.teleop.RevisedKinematics;
+import org.firstinspires.ftc.teamcode.common.kinematics.RevisedKinematics;
 import org.firstinspires.ftc.teamcode.common.pid.ArmPID;
 
 @TeleOp(name="Final BaseDrive", group="Drive")
@@ -170,8 +170,11 @@ public class FinalBaseDrive extends OpMode{
         telemetry.addData("Rotate clicks target",  kinematics.leftRotClicks);
         telemetry.addData("Spin clicks target", kinematics.spinClicksR);
         telemetry.addData("Rotate clicks target",  kinematics.rightRotClicks);
+        telemetry.addData("topL velocity", robot.topL.getVelocity()); //ticks per second
+        telemetry.addData("topR velocity", robot.topR.getVelocity());
 
-        telemetry.addData("Spin Power", kinematics.telSpinPower);
+
+        telemetry.addData("Spin Power", kinematics.telSpinPower); //no throttle
         telemetry.addData("Rotate Power L", kinematics.telLeftRotatePower);
         telemetry.addData("Rotate Power R", kinematics.telRightRotatePower);
 

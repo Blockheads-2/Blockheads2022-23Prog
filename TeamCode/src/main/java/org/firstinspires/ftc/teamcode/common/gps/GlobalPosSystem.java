@@ -6,8 +6,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
-import org.firstinspires.ftc.teamcode.common.kinematics.drive.Kinematics;
-import org.firstinspires.ftc.teamcode.swerve.teleop.RevisedKinematics;
+import org.firstinspires.ftc.teamcode.common.kinematics.testKinematics.Kinematics;
+import org.firstinspires.ftc.teamcode.common.kinematics.RevisedKinematics;
 
 import java.util.HashMap;
 

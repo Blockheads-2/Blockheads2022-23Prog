@@ -1,11 +1,8 @@
-package org.firstinspires.ftc.teamcode.common.kinematics.drive;
+package org.firstinspires.ftc.teamcode.common.kinematics.testKinematics;
 
 import org.firstinspires.ftc.teamcode.common.Accelerator;
-import org.firstinspires.ftc.teamcode.common.Reset;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
-import org.firstinspires.ftc.teamcode.common.pid.LinearCorrectionPID;
-import org.firstinspires.ftc.teamcode.common.pid.RotateSwerveModulePID;
 import org.firstinspires.ftc.teamcode.common.pid.SnapSwerveModulePID;
 
 public class SimplifiedKinematics {

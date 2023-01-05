@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.Button;
 
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
-import org.firstinspires.ftc.teamcode.swerve.teleop.RevisedKinematics;
+import org.firstinspires.ftc.teamcode.common.kinematics.RevisedKinematics;
 
 @TeleOp(name="TestPID", group="Drive")
 //@Disabled

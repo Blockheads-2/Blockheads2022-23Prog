@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
-import org.firstinspires.ftc.teamcode.common.kinematics.drive.Kinematics;
 //import org.firstinspires.ftc.teamcode.common.kinematics.drive.RevisedKinematics;
 import org.firstinspires.ftc.teamcode.swerve.auto.Math.LinearMath;
 import org.firstinspires.ftc.teamcode.swerve.auto.Math.SplineMath;

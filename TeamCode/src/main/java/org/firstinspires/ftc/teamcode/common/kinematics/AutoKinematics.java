@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.common.kinematics.drive;
+package org.firstinspires.ftc.teamcode.common.kinematics;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 

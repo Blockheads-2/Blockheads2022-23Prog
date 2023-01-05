@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.common.Button;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
-import org.firstinspires.ftc.teamcode.swerve.teleop.RevisedKinematics;
+import org.firstinspires.ftc.teamcode.common.kinematics.RevisedKinematics;
 
 @TeleOp(name="Test Max Velocity", group="Drive")
 //@Disabled
@@ -128,7 +128,7 @@ public class TestMaxVelocity extends OpMode{
 
     public void drive(int distanceClicks, int rotClicks){
         timer.reset();
-        
+
         robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - (distanceClicks * kinematics.leftThrottle) + rotClicks);
         robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + (distanceClicks * kinematics.leftThrottle) + rotClicks);
         robot.botR.setTargetPosition(robot.botR.getCurrentPosition() - (distanceClicks * kinematics.rightThrottle) + rotClicks);

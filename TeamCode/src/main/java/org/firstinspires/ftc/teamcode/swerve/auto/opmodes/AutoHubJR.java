@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.common.Reset;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
-import org.firstinspires.ftc.teamcode.common.kinematics.drive.AutoKinematics;
+import org.firstinspires.ftc.teamcode.common.kinematics.AutoKinematics;
 
 public class AutoHubJR {
     LinearOpMode linearOpMode;

@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.common;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
-import org.firstinspires.ftc.teamcode.common.kinematics.drive.SimplifiedKinematics;
+import org.firstinspires.ftc.teamcode.common.kinematics.testKinematics.SimplifiedKinematics;
 
 
 public class Accelerator {
@@ -24,7 +24,7 @@ public class Accelerator {
             return 0.0;
         }
 
-        double accelerationFactor = (Math.pow(accelerationTimer.seconds(), 0.5)/ Constants.accelTime ) + 0.5;
+        double accelerationFactor = (Math.pow(accelerationTimer.seconds(), 0.5)/ Constants.accelTime ) + 0.6;
         power *= accelerationFactor;
 
         if (power > 1) power = 1;

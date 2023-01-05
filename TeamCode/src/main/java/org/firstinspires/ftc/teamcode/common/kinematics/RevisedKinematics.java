@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.swerve.teleop;
+package org.firstinspires.ftc.teamcode.common.kinematics;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
@@ -6,9 +6,13 @@ import org.firstinspires.ftc.teamcode.common.Accelerator;
 import org.firstinspires.ftc.teamcode.common.Reset;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
+import org.firstinspires.ftc.teamcode.common.pid.AutoPID;
 import org.firstinspires.ftc.teamcode.common.pid.LinearCorrectionPID;
 import org.firstinspires.ftc.teamcode.common.pid.RotateSwerveModulePID;
 import org.firstinspires.ftc.teamcode.common.pid.SnapSwerveModulePID;
+import org.firstinspires.ftc.teamcode.swerve.auto.Math.LinearMath;
+import org.firstinspires.ftc.teamcode.swerve.auto.Math.SplineMath;
+import org.firstinspires.ftc.teamcode.swerve.auto.Math.TurnMath;
 import org.firstinspires.ftc.teamcode.swerve.teleop.TrackJoystick;
 
 public class RevisedKinematics {
@@ -19,12 +23,23 @@ public class RevisedKinematics {
     private double rx;
     private double ry;
 
+    private double x;     //for auto
+    private double y;
+    private double finalAngle;
+    private double speed;
+    double distanceL;
+    double distanceR;
+    LinearMath linearMath = new LinearMath();
+    SplineMath splineMath = new SplineMath();
+    TurnMath turnMath = new TurnMath();
+
     public enum DriveType{
         LINEAR,
         SNAP,
         STOP,
         TURN,
-        SPLINE,
+        CONSTANT_SPLINE,
+        VARIABLE_SPLINE,
         NOT_INITIALIZED
     }
     public DriveType type = DriveType.NOT_INITIALIZED;
@@ -62,8 +77,10 @@ public class RevisedKinematics {
     TrackJoystick joystickTracker;
 
     //PIDs
-    protected SnapSwerveModulePID snapLeftWheelPID;
-    protected SnapSwerveModulePID snapRightWheelPID;
+    SnapSwerveModulePID snapLeftWheelPID;
+    SnapSwerveModulePID snapRightWheelPID;
+    AutoPID autoPID;
+
     public double kp = 0.03;
     public double ki = 0;
     public double kd = 0.01;
@@ -75,6 +92,7 @@ public class RevisedKinematics {
 
         snapLeftWheelPID = new SnapSwerveModulePID();
         snapRightWheelPID = new SnapSwerveModulePID();
+        autoPID = new AutoPID();
 
         snapLeftWheelPID.setTargets(kp, ki, kd);
         snapRightWheelPID.setTargets(kp, ki, kd);
@@ -98,6 +116,12 @@ public class RevisedKinematics {
         if (noMovementRequests()) type = DriveType.STOP;
         else type = DriveType.LINEAR;
 
+        //unnecessary function but useful for telemetry
+        if (type == DriveType.STOP){
+            stop();
+            return;
+        }
+
         //determining current position
         leftCurrentW = posSystem.getPositionArr()[2];
         rightCurrentW = posSystem.getPositionArr()[3];
@@ -115,8 +139,8 @@ public class RevisedKinematics {
 
         //determining spin power
         spinPower = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
-        spinClicksL = (int)(spinPower * 100 * leftThrottle);
-        spinClicksR = (int)(spinPower * 100 * rightThrottle);
+        spinClicksL = (int)(spinPower * 100 * Math.signum(leftThrottle));
+        spinClicksR = (int)(spinPower * 100 * Math.signum(rightThrottle));
 
         //determining rotational power
         leftRotatePower = snapLeftWheelPID.update(turnAmountL);
@@ -134,9 +158,32 @@ public class RevisedKinematics {
 
         //determining values from right stick input.
         rightStick();
+    }
 
-        //unnecessary function but useful for telemetry
-        stop();
+    public void setPosAuto(double x, double y, double finalAngle, double speed){ //ran once
+        //target position
+        this.x = x;
+        this.y = y;
+        this.finalAngle = finalAngle;
+        this.speed = speed;
+
+        //setting up PID
+        autoPID.setTargets(x, y, 0.3, 0, 0.1);
+
+        //determining current position
+        leftCurrentW = posSystem.getPositionArr()[2];
+        rightCurrentW = posSystem.getPositionArr()[3];
+        currentR = posSystem.getPositionArr()[4];
+
+        linearMath.setInits(this.x, this.y);
+        splineMath.setInits(posSystem.getMotorClicks()[0], posSystem.getMotorClicks()[2]);
+        //turnMath.setInits
+
+        firstMovement = (type == DriveType.LINEAR);
+    }
+
+    public void logicAuto(){ //looped
+
     }
 
     public void firstMovement(){
@@ -184,23 +231,22 @@ public class RevisedKinematics {
     }
 
     public void stop(){
-        if (type == DriveType.STOP){
-            target = 0;
-            turnAmountL = 0;
-            turnAmountR = 0;
+        target = 0;
+        turnAmountL = 0;
+        turnAmountR = 0;
 
-            spinPower = 0;
-            spinClicksR = 0;
-            spinClicksL = 0;
+        spinPower = 0;
+        spinClicksR = 0;
+        spinClicksL = 0;
 
-            rightRotatePower = 0;
-            leftRotatePower = 0;
-            rightRotClicks = 0;
-            leftRotClicks = 0;
+        rightRotatePower = 0;
+        leftRotatePower = 0;
+        rightRotClicks = 0;
+        leftRotClicks = 0;
 
-            translatePerc = 0;
-            rotatePerc = 0;
-        }
+        translatePerc = 0;
+        rotatePerc = 0;
+
     }
 
     public double wheelOptimization(double target, double currentW){ //returns how much the wheels should rotate in which direction
@@ -285,16 +331,16 @@ public class RevisedKinematics {
 
     public double[] getPower(){
         double[] motorPower = new double[4];
-        motorPower[0] = (spinPower * translatePerc + leftRotatePower * rotatePerc); //top left
-        motorPower[1] = (spinPower * translatePerc + leftRotatePower * rotatePerc); //bottom left
-        motorPower[2] = (spinPower * translatePerc + rightRotatePower * rotatePerc); //top right
-        motorPower[3] = (spinPower * translatePerc + rightRotatePower * rotatePerc); //bottom right
+        motorPower[0] = (spinPower * translatePerc * leftThrottle + leftRotatePower * rotatePerc); //top left
+        motorPower[1] = (spinPower * translatePerc * leftThrottle + leftRotatePower * rotatePerc); //bottom left
+        motorPower[2] = (spinPower * translatePerc * rightThrottle+ rightRotatePower * rotatePerc); //top right
+        motorPower[3] = (spinPower * translatePerc * rightThrottle + rightRotatePower * rotatePerc); //bottom right
 
         for (int i = 0; i < 4; i++){
             motorPower[i] = accelerator.update(motorPower[i]);
             motorPower[i] *= constants.POWER_LIMITER;
-//            if (motorPower[i] > constants.POWER_LIMITER) motorPower[i] = constants.POWER_LIMITER;
-//            else if (motorPower[i] < -constants.POWER_LIMITER) motorPower[i] = -constants.POWER_LIMITER;
+            if (motorPower[i] > constants.POWER_LIMITER) motorPower[i] = constants.POWER_LIMITER;
+            else if (motorPower[i] < -constants.POWER_LIMITER) motorPower[i] = -constants.POWER_LIMITER;
         }
 
         telLeftRotatePower = accelerator.update(leftRotatePower * rotatePerc * constants.POWER_LIMITER);
