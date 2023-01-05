@@ -145,6 +145,9 @@ public class FinalBaseDrive extends OpMode{
     }
 
     void UpdateTelemetry(){
+        telemetry.addData("Leftstick X", gamepad1.left_stick_x);
+        telemetry.addData("Leftstick Y", gamepad1.left_stick_y);
+
         telemetry.addData("Arm top pos", robot.at.getCurrentPosition());
         telemetry.addData("Arm bot pos", robot.abl.getCurrentPosition());
         telemetry.addData("Arm servo pos", robot.armServo.getPosition());

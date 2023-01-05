@@ -140,7 +140,6 @@ public class TestPID extends OpMode{
                 telemetry.addData("botL clicks", robot.botL.getCurrentPosition());
                 telemetry.addData("TopL Target Amount", robot.topL.getTargetPosition() - robot.topL.getCurrentPosition());
                 telemetry.addData("BotL Target Amount", robot.botL.getTargetPosition() - robot.botL.getCurrentPosition());
-                telemetry.addData("Rotate Power", kinematics.telLeftRotatePower);
                 telemetry.addData("Spin clicks target", kinematics.spinClicksL);
                 telemetry.addData("Rotate clicks target",  kinematics.leftRotClicks);
                 break;
@@ -153,7 +152,6 @@ public class TestPID extends OpMode{
                 telemetry.addData("botR clicks", robot.botR.getCurrentPosition());
                 telemetry.addData("TopR Target Amount", robot.topR.getTargetPosition() - robot.topR.getCurrentPosition());
                 telemetry.addData("BotR Target Amount", robot.botR.getTargetPosition() - robot.botR.getCurrentPosition());
-                telemetry.addData("Rotate Power", kinematics.telRightRotatePower);
                 telemetry.addData("Spin clicks target", kinematics.spinClicksR);
                 telemetry.addData("Rotate clicks target",  kinematics.rightRotClicks);
                 break;
