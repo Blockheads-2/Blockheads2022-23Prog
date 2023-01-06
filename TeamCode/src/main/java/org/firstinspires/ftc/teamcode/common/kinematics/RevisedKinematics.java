@@ -1,14 +1,9 @@
 package org.firstinspires.ftc.teamcode.common.kinematics;
 
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-
 import org.firstinspires.ftc.teamcode.common.Accelerator;
-import org.firstinspires.ftc.teamcode.common.Reset;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.pid.AutoPID;
-import org.firstinspires.ftc.teamcode.common.pid.LinearCorrectionPID;
-import org.firstinspires.ftc.teamcode.common.pid.RotateSwerveModulePID;
 import org.firstinspires.ftc.teamcode.common.pid.SnapSwerveModulePID;
 import org.firstinspires.ftc.teamcode.swerve.auto.Math.LinearMath;
 import org.firstinspires.ftc.teamcode.swerve.auto.Math.SplineMath;
@@ -180,8 +175,6 @@ public class RevisedKinematics {
         splineMath.setInits(posSystem.getMotorClicks()[0], posSystem.getMotorClicks()[2]);
         splineMath.setPos(x, y, finalAngle, 0.3, 0, 0.01);
 
-        //turnMath.setInits
-
         firstMovement = (type == DriveType.LINEAR);
     }
 
@@ -214,26 +207,31 @@ public class RevisedKinematics {
                 turnAmountL = 0;
                 turnAmountR = 0;
                 break;
+
             case CONSTANT_SPLINE:
                 distanceR = linearMath.distanceRemaining(currentX, currentY);
                 distanceL = distanceR;
                 break;
+
             case VARIABLE_SPLINE:
                 distanceL = splineMath.distanceRemaining(posSystem.getMotorClicks()[0], posSystem.getMotorClicks()[2])[0];
                 distanceR = splineMath.distanceRemaining(posSystem.getMotorClicks()[0], posSystem.getMotorClicks()[2])[1];
                 turnAmountL = 0;
                 turnAmountR = 0;
                 break;
+
             case TURN:
                 distanceL = turnMath.getDistanceLeft(posSystem.getMotorClicks()[2]);
                 distanceR = -distanceL;
                 turnAmountL = 0;
                 turnAmountR = 0;
                 break;
+
             case SNAP:
                 distanceL = 0;
                 distanceR = 0;
                 break;
+
             case STOP:
                 distanceL = 0;
                 distanceR = 0;
@@ -265,23 +263,29 @@ public class RevisedKinematics {
     }
 
     public void rightStick(){
-        if (Math.abs(leftCurrentW) < constants.degreeTOLERANCE && Math.abs(rightCurrentW) < constants.degreeTOLERANCE && lx == 0 && ly == 0 && (rx != 0 || ry != 0)){
-//            leftThrottle = leftThrottle;
-            rightThrottle *= -1;
+        if (Math.abs(leftCurrentW) < constants.degreeTOLERANCE && Math.abs(rightCurrentW) < constants.degreeTOLERANCE){
+            if ((lx == 0 && ly == 0) && (rx != 0 || ry != 0)){
+                //            leftThrottle = leftThrottle;
+                rightThrottle *= -1;
 
-            spinClicksL = (int) (rx * 100 * leftThrottle);
-            spinClicksR = (int) (rx * 100 * rightThrottle);
-            power = rx;
+                spinClicksL = (int) (rx * 100 * leftThrottle);
+                spinClicksR = (int) (rx * 100 * rightThrottle);
+                power = rx;
 
-            turnAmountL = -leftCurrentW;
-            leftRotClicks = (int)(turnAmountL * constants.CLICKS_PER_DEGREE);
+                turnAmountL = -leftCurrentW;
+                leftRotClicks = (int)(turnAmountL * constants.CLICKS_PER_DEGREE);
 
-            turnAmountR = -rightCurrentW;
-            rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE);
+                turnAmountR = -rightCurrentW;
+                rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE);
 
-            type = DriveType.TURN;
-        } else{
-            //spline
+                type = DriveType.TURN;
+            } else if ((lx != 0 || ly != 0) && (rx != 0 && ry == 0)){
+                double throttle = (ry <= lx ? ry / (1.5*rx) : rx / (1.5 * ry));
+                throttle = Math.abs(throttle);
+                if (rx < 0) leftThrottle *= throttle;
+                else rightThrottle *= throttle;
+                type = DriveType.VARIABLE_SPLINE;
+            }
         }
     }
 

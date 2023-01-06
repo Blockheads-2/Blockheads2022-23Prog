@@ -6,7 +6,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
-import org.firstinspires.ftc.teamcode.common.kinematics.testKinematics.Kinematics;
 import org.firstinspires.ftc.teamcode.common.kinematics.RevisedKinematics;
 
 import java.util.HashMap;
@@ -14,7 +13,6 @@ import java.util.HashMap;
 public class GlobalPosSystem {
 
     Constants constants = new Constants();
-    Kinematics kinematics;
     RevisedKinematics revisedKinematics;
 
     private double[] positionArr = new double[5];
@@ -42,10 +40,6 @@ public class GlobalPosSystem {
 
         currentOrientation = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         lastOrientation = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-    }
-
-    public void grabKinematics(Kinematics k){
-        kinematics = k;
     }
 
     public void grabKinematics(RevisedKinematics k){
@@ -222,8 +216,8 @@ public class GlobalPosSystem {
         return degrees;
     }
 
-    public Kinematics.DriveType getDriveType() {
-        return kinematics.getDriveType();
+    public RevisedKinematics.DriveType getDriveType() {
+        return revisedKinematics.getDriveType();
     }
 
     public HashMap<String, Integer> getMotorClicksPose () {

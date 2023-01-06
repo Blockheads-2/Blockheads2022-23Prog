@@ -74,7 +74,7 @@ public class AutoHubJR {
 
 
         //3) Tell the robot to travel that distance we just determined.
-        while (linearOpMode.opModeIsActive() && targetNotMet){
+        while (linearOpMode.opModeIsActive() && targetNotMet){ //have a time based something in case our target is never met.
             posSystem.calculatePos();
 
             robot.topL.setTargetPosition(targetTopL);

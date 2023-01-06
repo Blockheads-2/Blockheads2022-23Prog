@@ -1,16 +1,10 @@
 package org.firstinspires.ftc.teamcode.common.kinematics;
 
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-
 import org.firstinspires.ftc.teamcode.common.Accelerator;
-import org.firstinspires.ftc.teamcode.common.Reset;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.pid.AutoPID;
-import org.firstinspires.ftc.teamcode.common.pid.LinearCorrectionPID;
-import org.firstinspires.ftc.teamcode.common.pid.RotateSwerveModulePID;
 import org.firstinspires.ftc.teamcode.common.pid.SnapSwerveModulePID;
-import org.firstinspires.ftc.teamcode.common.pid.SpinPID;
 import org.firstinspires.ftc.teamcode.swerve.auto.Math.LinearMath;
 import org.firstinspires.ftc.teamcode.swerve.auto.Math.SplineMath;
 import org.firstinspires.ftc.teamcode.swerve.auto.Math.TurnMath;

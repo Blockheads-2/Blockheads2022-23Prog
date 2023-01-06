@@ -52,9 +52,7 @@ public class LinearMath { //Note: snap() is used in the auto class separately. T
     }
 
     public double getSpinPower(double x, double y){
-        double distanceTravelled = Math.sqrt(Math.pow(x - initialX, 2) + Math.pow(y - initialY, 2));
-
-        return spinPID.update(distanceTravelled);
+        return spinPID.update(distanceRemaining(x, y));
     }
 
     public double getRunTime(double rate){
