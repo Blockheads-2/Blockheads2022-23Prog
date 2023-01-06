@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.common.kinematics;
 
+import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.teamcode.common.Accelerator;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.pid.SnapSwerveModulePID;
+import org.firstinspires.ftc.teamcode.swerve.auto.ArmAuto;
 import org.firstinspires.ftc.teamcode.swerve.auto.Math.LinearMath;
 import org.firstinspires.ftc.teamcode.swerve.auto.Math.SplineMath;
 import org.firstinspires.ftc.teamcode.swerve.auto.Math.TurnMath;
@@ -42,18 +44,6 @@ public class RevisedKinematics {
         NOT_INITIALIZED
     }
     public DriveType type = DriveType.NOT_INITIALIZED;
-
-
-    public enum ArmType{
-        TOP,
-        MID,
-        LOW,
-        GROUND,
-        GRAB,
-        DROP,
-        NOT_INTIALIZED
-    }
-    public ArmType armType = ArmType.NOT_INTIALIZED;
 
     //robot's power
     private double power = 0.0;
@@ -164,7 +154,7 @@ public class RevisedKinematics {
         rightStick();
     }
 
-    public void setPosAuto(double x, double y, double finalAngle, double speed, DriveType driveType){ //runs once
+    public void setPosAuto(double x, double y, double finalAngle, double speed, DriveType driveType, ArmAuto.ArmType armType){ //runs once
         posSystem.resetXY();
         this.type = driveType;
 

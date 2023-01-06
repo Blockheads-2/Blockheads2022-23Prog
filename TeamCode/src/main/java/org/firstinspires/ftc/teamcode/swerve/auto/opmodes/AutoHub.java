@@ -7,12 +7,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.common.Reset;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
-//import org.firstinspires.ftc.teamcode.common.kinematics.drive.RevisedKinematics;
-import org.firstinspires.ftc.teamcode.swerve.auto.Math.LinearMath;
-import org.firstinspires.ftc.teamcode.swerve.auto.Math.SplineMath;
+import org.firstinspires.ftc.teamcode.common.kinematics.AutoKinematics;
+import org.firstinspires.ftc.teamcode.common.kinematics.RevisedKinematics;
+import org.firstinspires.ftc.teamcode.swerve.auto.ArmAuto;
 
 public class AutoHub {
     LinearOpMode linearOpMode;
@@ -20,17 +21,14 @@ public class AutoHub {
     HardwareMap hardwareMap;
     Constants constants = new Constants();
     GlobalPosSystem posSystem;
+    RevisedKinematics kinematics;
+    Reset reset;
 
-    LinearMath linearMath = new LinearMath();
-    SplineMath splineMath = new SplineMath();
+    double[] motorPower = new double[4];
+    int[] targetClicks = new int[4];
+    boolean targetNotMet = true;
 
     View relativeLayout;
-
-    public enum DriveType{
-        LINEAR,
-        SPLINE,
-        TURN_ON_CENTER,
-    }
 
     public AutoHub(LinearOpMode plinear){
         linearOpMode = plinear;
@@ -38,83 +36,118 @@ public class AutoHub {
         robot = new HardwareDrive();
         robot.init(hardwareMap);
 
-        // Send telemetry message to signify robot waiting;
-        linearOpMode.telemetry.addData("Status", "Resetting Encoders and Camera");
-        linearOpMode.telemetry.update();
-
         posSystem = new GlobalPosSystem(robot);
+        kinematics = new RevisedKinematics(posSystem);
+        posSystem.grabKinematics(kinematics);
+        reset = new Reset(robot, posSystem);
 
         // Get a reference to the RelativeLayout so we can later change the background
         // color of the Robot Controller app to match the hue detected by the RGB sensor.
         int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
         relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
 
-        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        linearOpMode.telemetry.addData("Status", "Waiting on Camera");
+        // Send telemetry message to signify robot waiting;
+        linearOpMode.telemetry.addData("Status", "Resetting Encoders and Camera");
         linearOpMode.telemetry.update();
 
+        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void linear(){
+    public void Move(RevisedKinematics.DriveType movementType, double x, double y, double finalAngle, double speed, ArmAuto.ArmType armMovementType){
+        UpdateTelemetry();
 
-    }
+        //1) Calculate our current position
+        posSystem.calculatePos();
 
-    public void constantSpline(){
+        //2) Determine the distance from our current pos & the target pos.
+        kinematics.setPosAuto(x, y, finalAngle, speed, movementType, armMovementType);
+        kinematics.logicAuto();
 
-    }
+        reset.reset(false);
 
-    public void variableSpline(){
+        targetNotMet = true;
+        targetClicks = kinematics.getClicks();
+        int targetTopL = robot.topL.getCurrentPosition() + targetClicks[0];
+        int targetBotL = robot.botL.getCurrentPosition() + targetClicks[1];
+        int targetTopR = robot.topR.getCurrentPosition() + targetClicks[2];
+        int targetBotR = robot.botR.getCurrentPosition() + targetClicks[3];
 
-    }
 
-    //for now, we'll leave it as last year's template, but it might be a good idea to be constantly calculating its position and
-    // how much it needs to go to lessen error.
-    void Move(double x, double y, boolean linear, double finalAngle, double speed){
-        if (linear){
-            //turn the robot wheel to angle
+        //3) Tell the robot to travel that distance we just determined.
+        while (linearOpMode.opModeIsActive() && targetNotMet){ //have a time based something in case our target is never met.
+            posSystem.calculatePos();
 
-            int targetRotation = (int) (finalAngle * constants.CLICKS_PER_DEGREE);
-            robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + targetRotation);
-            robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + targetRotation);
-            robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + targetRotation);
-            robot.botR.setTargetPosition(robot.botR.getCurrentPosition() + targetRotation);
+            robot.topL.setTargetPosition(targetTopL);
+            robot.botL.setTargetPosition(targetBotL);
+            robot.topR.setTargetPosition(targetTopR);
+            robot.botR.setTargetPosition(targetBotR);
 
             robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            robot.topL.setPower(speed);
-            robot.botL.setPower(speed);
-            robot.topR.setPower(speed);
-            robot.botR.setPower(speed);
+            motorPower = kinematics.getPower();
+            robot.topL.setPower(motorPower[0]);
+            robot.botL.setPower(motorPower[1]);
+            robot.topR.setPower(motorPower[2]);
+            robot.botR.setPower(motorPower[3]);
 
-
-            //drive gibven distance
-            double distance = Math.sqrt(x*x + y*y);
-
-            int targetDistance = (int) (distance * constants.CLICKS_PER_INCH);
-            robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + targetDistance);
-            robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - targetDistance);
-            robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + targetDistance);
-            robot.botR.setTargetPosition(robot.botR.getCurrentPosition() - targetDistance);
-
-            robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            robot.topL.setPower(speed);
-            robot.botL.setPower(speed);
-            robot.topR.setPower(speed);
-            robot.botR.setPower(speed);
-
+            targetNotMet = (Math.abs(robot.topL.getCurrentPosition() - targetTopL) > constants.degreeTOLERANCE || Math.abs(robot.botL.getCurrentPosition() - targetBotL) > constants.degreeTOLERANCE || Math.abs(robot.topR.getCurrentPosition() - targetTopR) > constants.degreeTOLERANCE || Math.abs(robot.botR.getCurrentPosition() - targetBotR) > constants.degreeTOLERANCE);
+            UpdateTelemetry();
         }
-        else{
-            //execute
 
+        if (kinematics.getDriveType() != RevisedKinematics.DriveType.SNAP){
+            while(!reset.finishedReset() && linearOpMode.opModeIsActive()){
+                reset.reset(true);
+            }
+//            while(linearOpMode.opModeIsActive()){
+//                reset.reset(true);
+//            }
         }
+        reset.reset(false);
+
+    }
+
+    public void Turn(double finalAngle, double speed){
+        posSystem.calculatePos();
+
+        double currentAngle = posSystem.getPositionArr()[4];
+    }
+
+    public void UpdateTelemetry(){
+        linearOpMode.telemetry.addData("Target not met", targetNotMet);
+        linearOpMode.telemetry.addData("X pos", posSystem.getPositionArr()[0]);
+        linearOpMode.telemetry.addData("Y pos", posSystem.getPositionArr()[1]);
+        linearOpMode.telemetry.addData("Left W",  posSystem.getLeftWheelW());
+        linearOpMode.telemetry.addData("Right W", posSystem.getRightWheelW());
+        linearOpMode.telemetry.addData("R", posSystem.getPositionArr()[4]);
+
+        linearOpMode.telemetry.addData("Turn Amount (Left)", kinematics.turnAmountL);
+        linearOpMode.telemetry.addData("Turn Amount (Right)", kinematics.turnAmountR);
+        linearOpMode.telemetry.addData("DistanceL", kinematics.distanceL);
+        linearOpMode.telemetry.addData("DistanceR", kinematics.distanceR);
+        linearOpMode.telemetry.addData("TurnAmountL", kinematics.turnAmountL);
+        linearOpMode.telemetry.addData("TurnAmountR", kinematics.turnAmountR);
+        linearOpMode.telemetry.addData("Target", kinematics.target);
+
+        linearOpMode.telemetry.addData("topL clicks", robot.topL.getCurrentPosition());
+        linearOpMode.telemetry.addData("botL clicks", robot.botL.getCurrentPosition());
+        linearOpMode.telemetry.addData("topR clicks", robot.topR.getCurrentPosition());
+        linearOpMode.telemetry.addData("botR clicks", robot.botR.getCurrentPosition());
+
+        linearOpMode.telemetry.addData("Power TopL", motorPower[0]);
+        linearOpMode.telemetry.addData("Power BotL", motorPower[1]);
+        linearOpMode.telemetry.addData("Power TopR", motorPower[2]);
+        linearOpMode.telemetry.addData("Power BotR", motorPower[3]);
+        linearOpMode.telemetry.addData("Clicks Target TopL", targetClicks[0]);
+        linearOpMode.telemetry.addData("Clicks Target BotL", targetClicks[1]);
+        linearOpMode.telemetry.addData("Clicks Target TopR", targetClicks[2]);
+        linearOpMode.telemetry.addData("Clicks Target BotR", targetClicks[3]);
+
+        linearOpMode.telemetry.addData("Drive Type", kinematics.getDriveType());
+
+        linearOpMode.telemetry.update();
     }
 }

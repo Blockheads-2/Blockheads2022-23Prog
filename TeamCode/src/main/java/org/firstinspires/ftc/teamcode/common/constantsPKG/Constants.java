@@ -93,7 +93,7 @@ public class Constants {
     public double clawUp = 0.5;
     public double clawDown = 0.8;
     public double openClaw = 0;
-    public double closeClaw = 1;
+    public double closeClaw = 0.9;
 
     //Distance Between swerve module and Center
     public double MM_INCH = 1/2.56;
