@@ -97,11 +97,22 @@ public class AutoHubJR {
             UpdateTelemetry();
         }
 
-//        if (kinematics.getDriveType() != RevisedKinematics.DriveType.SNAP){
-//            while(reset.finishedReset()){
+        if (kinematics.getDriveType() != RevisedKinematics.DriveType.SNAP){
+            while(!reset.finishedReset() && linearOpMode.opModeIsActive()){
+                reset.reset(true);
+            }
+//            while(linearOpMode.opModeIsActive()){
 //                reset.reset(true);
 //            }
-//        }
+        }
+        reset.reset(false);
+
+    }
+
+    public void Turn(double finalAngle, double speed){
+        posSystem.calculatePos();
+
+        double currentAngle = posSystem.getPositionArr()[4];
     }
 
     public void UpdateTelemetry(){

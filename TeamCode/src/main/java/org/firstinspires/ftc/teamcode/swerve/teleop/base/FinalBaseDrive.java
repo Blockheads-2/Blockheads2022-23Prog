@@ -119,7 +119,6 @@ public class FinalBaseDrive extends OpMode{
 
     void UpdatePlayer1(){
         DriveTrainPowerEncoder();
-        slowTurning();
 
         if (x.getState() == Button.State.TAP){
             tData = TelemetryData.LEFT;
@@ -136,7 +135,6 @@ public class FinalBaseDrive extends OpMode{
         if (a.getState() == Button.State.TAP){
             posSystem.resetOrientationIfOneEighty();
         }
-        slowTurning();
     }
 
     void UpdatePlayer2(){
@@ -147,6 +145,9 @@ public class FinalBaseDrive extends OpMode{
     void UpdateTelemetry(){
         telemetry.addData("Leftstick X", gamepad1.left_stick_x);
         telemetry.addData("Leftstick Y", gamepad1.left_stick_y);
+        telemetry.addData("right trigger", gamepad1.right_trigger);
+        telemetry.addData("left trigger", gamepad1.left_trigger);
+
 
         telemetry.addData("Arm top pos", robot.at.getCurrentPosition());
         telemetry.addData("Arm bot pos", robot.abl.getCurrentPosition());
@@ -215,7 +216,7 @@ public class FinalBaseDrive extends OpMode{
     void DriveTrainPowerEncoder(){
         posSystem.calculatePos();
 
-        kinematics.logic(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, -gamepad1.right_stick_y); //wheelAllignment is one loop late.
+        kinematics.logic(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, -gamepad1.right_stick_y, gamepad1.right_trigger, -gamepad1.left_stick_x); //wheelAllignment is one loop late.
 
         if (kinematics.getDriveType() == RevisedKinematics.DriveType.STOP){
             reset.reset(true);
@@ -437,30 +438,6 @@ public class FinalBaseDrive extends OpMode{
             */
 
             if (robot.at.getCurrentPosition() <= constants.topMotorBottom + constants.degreeTOLERANCE && robot.abl.getCurrentPosition() <= constants.bottomMotorBottom + constants.degreeTOLERANCE && robot.abr.getCurrentPosition() <= constants.bottomMotorBottom + constants.degreeTOLERANCE) lowerAllTheWay = false;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         }
     }
 
@@ -489,21 +466,6 @@ public class FinalBaseDrive extends OpMode{
         robot.armServo.setPosition(clawAngle);
     }
 
-    void slowTurning(){
-        double turnPower = 0.5;
-        if (gamepad1.left_trigger > 0){
-            robot.topL.setPower(-gamepad1.left_trigger * turnPower);
-            robot.botL.setPower(-gamepad1.left_trigger * turnPower);
-            robot.topR.setPower(gamepad1.left_trigger * turnPower);
-            robot.botR.setPower(gamepad1.left_trigger * turnPower);
-        }
-        if (gamepad1.right_trigger > 0){
-            robot.topL.setPower(gamepad1.right_trigger * turnPower);
-            robot.botL.setPower(gamepad1.right_trigger * turnPower);
-            robot.topR.setPower(-gamepad1.right_trigger * turnPower);
-            robot.botR.setPower(-gamepad1.right_trigger * turnPower);
-        }
-    }
 
 
     /*

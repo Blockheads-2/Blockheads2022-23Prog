@@ -51,9 +51,10 @@ public class TestMotors extends OpMode{
 
         double distance = constants.WHEEL_CIRCUMFERENCE;
         double rot = 90;
-        distanceClicks = (int)(distance * constants.CLICKS_PER_INCH); //rotation clicks
-        rotClicks = (int)(rot * constants.CLICKS_PER_DEGREE);
-
+//        distanceClicks = (int)(distance * constants.CLICKS_PER_INCH); //rotation clicks
+//        rotClicks = (int)(rot * constants.CLICKS_PER_DEGREE);
+        distanceClicks=  0;
+        rotClicks = 7;
         drive(distanceClicks, rotClicks);
     }
 

@@ -47,8 +47,8 @@ public class LinearMath { //Note: snap() is used in the auto class separately. T
         return clicks;
     }
 
-    public double distanceRemaining(double x, double y){
-        return (Math.sqrt(Math.pow(x - initialX, 2) + Math.pow(y - initialY, 2)));
+    public double distanceRemaining(double currentX, double currentY){
+        return (Math.sqrt(Math.pow(this.x - currentX, 2) + Math.pow(this.y - currentY, 2)));
     }
 
     public double getSpinPower(double x, double y){

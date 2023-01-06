@@ -129,10 +129,10 @@ public class TestMaxVelocity extends OpMode{
     public void drive(int distanceClicks, int rotClicks){
         timer.reset();
 
-        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - (distanceClicks * kinematics.leftThrottle) + rotClicks);
-        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + (distanceClicks * kinematics.leftThrottle) + rotClicks);
-        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() - (distanceClicks * kinematics.rightThrottle) + rotClicks);
-        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + (distanceClicks * kinematics.rightThrottle) + rotClicks);
+        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - (int)(distanceClicks * kinematics.leftThrottle) + rotClicks);
+        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + (int)(distanceClicks * kinematics.leftThrottle) + rotClicks);
+        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() - (int)(distanceClicks * kinematics.rightThrottle) + rotClicks);
+        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + (int)(distanceClicks * kinematics.rightThrottle) + rotClicks);
 
         robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);

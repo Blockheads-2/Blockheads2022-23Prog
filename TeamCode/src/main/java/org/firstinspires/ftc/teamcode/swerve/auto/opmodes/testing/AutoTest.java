@@ -36,6 +36,6 @@ public class AutoTest extends LinearOpMode {
         waitForStart();
 
         dispatch.Move(RevisedKinematics.DriveType.SNAP, 10, 10, 0, 0.7);
-        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 10, 10, 0, 0.7);
+        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, constants.WHEEL_CIRCUMFERENCE, 0, 0.7);
     }
 }

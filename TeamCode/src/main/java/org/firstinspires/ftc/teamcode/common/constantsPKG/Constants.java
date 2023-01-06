@@ -15,7 +15,7 @@ public class Constants {
     public double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER; //11.378 inches
     public double MAX_VELOCITY_DT = 2700; // unit is clicks/sec
     public double clickTOLERANCE = 10; //number of clicks or degrees the robot can be off by
-    public double degreeTOLERANCE = 7;
+    public double degreeTOLERANCE = 5;
 
     public double MAX_VELOCITY;
 
@@ -45,7 +45,7 @@ public class Constants {
     public double CLICKS_PER_INCH = (BLUE_REV_PER_GREEN * CLICKS_PER_BLUE_REV * (1.0 / WHEEL_CIRCUMFERENCE)) * (2.0/3.0); //~13.549 clicks per inch
     public double INCHES_PER_CLICK = 1.0 / CLICKS_PER_INCH; //~0.029 inches per click
 
-    //module rotation
+        //module rotation
     public double BLUE_REVS_PER_PURPLE = 85.0 / 24.0; //~3.54 Blue revs per 1 Purple rev
     public double CLICKS_PER_PURPLE_REV = BLUE_REVS_PER_PURPLE * CLICKS_PER_BLUE_REV;
     public double CLICKS_PER_DEGREE = BLUE_REVS_PER_PURPLE * CLICKS_PER_BLUE_REV * (1/360.0); //1.427 clicks per degree
@@ -54,9 +54,12 @@ public class Constants {
     public double DEGREES_PER_INCH = CLICKS_PER_INCH * DEGREES_PER_CLICK;
     public double INCHES_PER_DEGREE = 1.0 / DEGREES_PER_INCH;
 
-    public double tableSpinRotPercAllocation = 0.5;
-    public double tableSpinSpinPercAllocation = 0.5;
+    public double initDirectionRight = 1.0;
+    public double initDirectionLeft = -1.0;
 
+    public double kp = 0.03;
+    public double ki = 0;
+    public double kd = 0.01;
     /* starting:
         base: 0
         top: 0
@@ -71,17 +74,17 @@ public class Constants {
     //Low
     public int bottomMotorLow = 0;
     public int topMotorLow = 260;
-    public double armServoLow = 0.33;
+    public double armServoLow = 0.206;
 
     //Mid
     public int bottomMotorMid = 0;
     public int topMotorMid = 480;
-    public double armServoMid = 0.44;
+    public double armServoMid = 0.356;
 
     //High
     public int bottomMotorHigh = 300;
     public int topMotorHigh = 820;
-    public double armServoHigh = 0.5;
+    public double armServoHigh = 0.408;
 
     //Softstops:
     public int topSoftStop = 840;
