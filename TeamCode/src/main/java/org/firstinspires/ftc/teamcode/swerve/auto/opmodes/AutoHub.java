@@ -59,28 +59,28 @@ public class AutoHub implements Runnable{
 
         robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.at.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.at.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.abl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.abl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.abr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.abr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void moveToInit(boolean power){
-        if (!power){
-            robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.at.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.at.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.abl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.abl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.abr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.abr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    public void moveToInit(){
 
-            robot.abl.setTargetPosition(constants.INIT_ARMBASE_POS);
-            robot.abr.setTargetPosition(constants.INIT_ARMBASE_POS);
+        robot.abl.setTargetPosition(constants.INIT_ARMBASE_POS);
+        robot.abr.setTargetPosition(constants.INIT_ARMBASE_POS);
 
-            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        } else {
-            robot.abl.setPower(0.6);
-            robot.abr.setPower(0.6);
-        }
+        robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        robot.abl.setPower(0.6);
+        robot.abr.setPower(0.6);
+
     }
 
     public void Move(RevisedKinematics.DriveType movementType, double x, double y, double finalAngle, double speed, RevisedKinematics.ArmType armMovementType){

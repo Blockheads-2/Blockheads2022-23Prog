@@ -25,10 +25,8 @@ public class AutoTest extends LinearOpMode {
         telemetry.addData("Status", "Waiting on Camera");
         telemetry.update();
 
-        dispatch.moveToInit(false);
 
         while (!opModeIsActive()) { //checks if play hasn't been pressed (in init stage)
-            dispatch.moveToInit(true);
         }
 
         waitForStart();
