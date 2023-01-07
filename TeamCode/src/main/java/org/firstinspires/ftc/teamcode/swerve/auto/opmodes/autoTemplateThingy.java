@@ -146,7 +146,7 @@ public class autoTemplateThingy extends LinearOpMode{
         switch (aprilTagId) {
             case 0: {
                 dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.4, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, -30, 0, 0.4, RevisedKinematics.ArmType.HOLD);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, -28, 0, 0.4, RevisedKinematics.ArmType.HOLD);
                 dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 0, 0.4, RevisedKinematics.ArmType.HOLD);
                 dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 27, 0, 0.4, RevisedKinematics.ArmType.HOLD);
 
