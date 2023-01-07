@@ -113,6 +113,9 @@ public class SwerveCode extends OpMode{
 
         double[] posData = posSystem.getPositionArr();
 
+        telemetry.addData("abrArm Clicks", robot.abr.getCurrentPosition());
+        telemetry.addData("ablArm Clicks", robot.abl.getCurrentPosition());
+
         telemetry.addData("Xpos", posData[0]);
         telemetry.addData("Ypos", posData[1]);
         telemetry.addData("Left W", posData[2]);

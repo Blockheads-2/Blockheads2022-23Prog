@@ -5,7 +5,6 @@ import org.firstinspires.ftc.teamcode.common.pid.SpinPID;
 
 public class LinearMath { //Note: snap() is used in the auto class separately. This class is used assuming that the wheels are already pointing the way we want it to.
     Constants constants = new Constants();
-    SpinPID spinPID;
 
     private double initialX;
     private double initialY;
@@ -16,7 +15,6 @@ public class LinearMath { //Note: snap() is used in the auto class separately. T
 
 
     public LinearMath(){
-        spinPID = new SpinPID();
     }
 
     public void setInits(double x, double y){
@@ -28,7 +26,6 @@ public class LinearMath { //Note: snap() is used in the auto class separately. T
         this.x = x;
         this.y = y;
         this.theta = theta;
-        spinPID.setTargets(getDistance(), kp, ki, kd);
     }
 
     public double getDistance(){
@@ -49,10 +46,6 @@ public class LinearMath { //Note: snap() is used in the auto class separately. T
 
     public double distanceRemaining(double currentX, double currentY){
         return (Math.sqrt(Math.pow(this.x - currentX, 2) + Math.pow(this.y - currentY, 2)));
-    }
-
-    public double getSpinPower(double x, double y){
-        return spinPID.update(distanceRemaining(x, y));
     }
 
     public double getRunTime(double rate){

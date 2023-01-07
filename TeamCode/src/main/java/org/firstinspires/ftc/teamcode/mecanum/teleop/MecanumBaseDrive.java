@@ -408,9 +408,9 @@ public class MecanumBaseDrive extends OpMode{
 
     void ArmPresets(){
         if (bottomButton.is(Button.State.TAP)){
-            atPID.setTargets(constants.topMotorBottom, robot.at.getCurrentPosition(), 0.4, 0, 0.2);
-            ablPID.setTargets(constants.topMotorBottom, robot.abl.getCurrentPosition(), 0.4, 0, 0.2);
-            abrPID.setTargets(constants.topMotorBottom, robot.abr.getCurrentPosition(), 0.4, 0, 0.2);
+            atPID.setTargets(constants.topMotorBottom,  0.4, 0, 0.2);
+            ablPID.setTargets(constants.topMotorBottom, 0.4, 0, 0.2);
+            abrPID.setTargets(constants.topMotorBottom,  0.4, 0, 0.2);
 
             robot.at.setTargetPosition(constants.topMotorBottom);
             robot.abl.setTargetPosition(constants.bottomMotorBottom);
@@ -428,9 +428,9 @@ public class MecanumBaseDrive extends OpMode{
         }
 
         if (lowButton.is(Button.State.TAP)){
-            atPID.setTargets(constants.topMotorLow, robot.at.getCurrentPosition(), 0.4, 0, 0.2);
-            ablPID.setTargets(constants.bottomMotorLow, robot.abl.getCurrentPosition(), 0.4, 0, 0.2);
-            abrPID.setTargets(constants.bottomMotorLow, robot.abr.getCurrentPosition(), 0.4, 0, 0.2);
+            atPID.setTargets(constants.topMotorLow,  0.4, 0, 0.2);
+            ablPID.setTargets(constants.bottomMotorLow,  0.4, 0, 0.2);
+            abrPID.setTargets(constants.bottomMotorLow,  0.4, 0, 0.2);
 
             robot.abl.setTargetPosition(constants.bottomMotorLow);
             robot.abr.setTargetPosition(constants.bottomMotorLow);
@@ -451,9 +451,9 @@ public class MecanumBaseDrive extends OpMode{
         }
 
         if (midButton.is(Button.State.TAP)){
-            atPID.setTargets(constants.topMotorMid, robot.at.getCurrentPosition(), 0.4, 0, 0.2);
-            ablPID.setTargets(constants.bottomMotorMid, robot.abl.getCurrentPosition(), 0.4, 0, 0.2);
-            abrPID.setTargets(constants.bottomMotorMid, robot.abr.getCurrentPosition(), 0.4, 0, 0.2);
+            atPID.setTargets(constants.topMotorMid,  0.4, 0, 0.2);
+            ablPID.setTargets(constants.bottomMotorMid,  0.4, 0, 0.2);
+            abrPID.setTargets(constants.bottomMotorMid,0.4, 0, 0.2);
 
             robot.abl.setTargetPosition(constants.bottomMotorMid);
             robot.abr.setTargetPosition(constants.bottomMotorMid);
@@ -471,9 +471,9 @@ public class MecanumBaseDrive extends OpMode{
         }
 
         if (highButton.is(Button.State.TAP)){
-            atPID.setTargets(constants.topMotorHigh, robot.at.getCurrentPosition(), 0.4, 0, 0.2);
-            ablPID.setTargets(constants.bottomMotorHigh, robot.abl.getCurrentPosition(), 0.4, 0, 0.2);
-            abrPID.setTargets(constants.bottomMotorHigh, robot.abr.getCurrentPosition(), 0.4, 0, 0.2);
+            atPID.setTargets(constants.topMotorHigh, 0.4, 0, 0.2);
+            ablPID.setTargets(constants.bottomMotorHigh,  0.4, 0, 0.2);
+            abrPID.setTargets(constants.bottomMotorHigh,  0.4, 0, 0.2);
 
             robot.abl.setTargetPosition(constants.bottomMotorHigh);
             robot.abr.setTargetPosition(constants.bottomMotorHigh);

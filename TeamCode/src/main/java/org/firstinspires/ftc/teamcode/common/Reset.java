@@ -138,7 +138,10 @@ public class Reset {
             robot.topL.setPower(powerL);
             robot.botR.setPower(powerR);
             robot.topR.setPower(powerR);
-            resetDone = (Math.abs(robot.topL.getCurrentPosition() - topLTarget) > constants.degreeTOLERANCE && Math.abs(robot.botL.getCurrentPosition() - botLTarget) > constants.degreeTOLERANCE && Math.abs(robot.topR.getCurrentPosition() - topRTarget) > constants.degreeTOLERANCE && Math.abs(robot.botR.getCurrentPosition() - botRTarget) > constants.degreeTOLERANCE);
+            resetDone = (Math.abs(robot.topL.getCurrentPosition() - topLTarget) < constants.degreeTOLERANCE &&
+                    Math.abs(robot.botL.getCurrentPosition() - botLTarget) < constants.degreeTOLERANCE &&
+                    Math.abs(robot.topR.getCurrentPosition() - topRTarget) < constants.degreeTOLERANCE &&
+                    Math.abs(robot.botR.getCurrentPosition() - botRTarget) < constants.degreeTOLERANCE);
         }
     }
 

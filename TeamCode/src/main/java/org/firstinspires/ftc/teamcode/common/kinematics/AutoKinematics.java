@@ -142,11 +142,11 @@ public class AutoKinematics {
 
                 break;
 
-            case TURN:
-                firstMovement = false;
-                turnMath.setPos(finalAngle, 0.3, 0, 0.1, posSystem.getPositionArr()[2]);
-
-                break;
+//            case TURN:
+//                firstMovement = false;
+//                turnMath.setPos(finalAngle, 0.3, 0, 0.1, posSystem.getPositionArr()[2]);
+//
+//                break;
 
             case STOP:
                 firstMovement = false;
@@ -197,7 +197,7 @@ public class AutoKinematics {
                 break;
 
             case TURN:
-                params.put("distanceL", turnMath.getDistanceLeft(posSystem.getMotorClicks()[2]));
+                params.put("distanceL", turnMath.getDistanceRemaining(posSystem.getMotorClicks()[2]));
                 params.put("distanceR", -params.get("distanceL"));
                 break;
 

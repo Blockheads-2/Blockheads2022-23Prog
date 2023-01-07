@@ -91,22 +91,38 @@ public class FinalBaseDrive extends OpMode{
         reset = new Reset(robot, posSystem);
 
         telemetry.addData("Say", "Hello Driver");
+
+        robot.abl.setTargetPosition(constants.INIT_ARMBASE_POS);
+        robot.abr.setTargetPosition(constants.INIT_ARMBASE_POS);
+
+        robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     @Override
     public void init_loop() { //Loop between "init" and "start"
-        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.abl.setPower(0.7);
+        robot.abr.setPower(0.7);
+    }
+
+    @Override
+    public void start() { //When "start" is pressed
         robot.at.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.at.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.abl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.abl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.abr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.abr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
 
-    @Override
-    public void start() { //When "start" is pressed
+        robot.abl.setTargetPosition(robot.abl.getCurrentPosition());
+        robot.abr.setTargetPosition(robot.abr.getCurrentPosition());
+        robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        constants.INIT_ARMBASE_POS = 0;
+        
+        robot.abl.setPower(0.7);
+        robot.abr.setPower(0.7);
     }
 
     @Override
@@ -243,49 +259,6 @@ public class FinalBaseDrive extends OpMode{
         robot.botR.setPower(motorPower[3]);
     }
 
-    public boolean noMovementRequests(){
-        return (gamepad1.left_stick_x == 0 && gamepad1.left_stick_y == 0 && gamepad1.right_stick_x == 0 && gamepad1.right_stick_y == 0);
-    }
-
-    void MoveArm(){
-        if (gamepad2.y){
-            armTopPos = armTopPos + 20;
-        }
-        if (gamepad2.a){
-            armTopPos = armTopPos - 20;
-        }
-        if (gamepad2.b){
-            armBotPos = armBotPos + 100;
-        }
-        if (gamepad2.x){
-            armBotPos = armBotPos - 100;
-        }
-        if (gamepad2.right_bumper){
-            armBotPos = armBotPos + 10;
-        }
-        if (gamepad2.right_bumper){
-            armBotPos = armBotPos - 10;
-        }
-        if (armTopPos < 0){
-            armTopPos = 0;
-        }
-        if (armBotPos < 0){
-            armBotPos = 0;
-        }
-
-        robot.abl.setTargetPosition(armBotPos);
-        robot.abr.setTargetPosition(armBotPos);
-        robot.at.setTargetPosition(armTopPos);
-
-        robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        robot.abl.setPower(1);
-        robot.abr.setPower(1);
-        robot.at.setPower(1);
-    }
-
     void ArmPresets(){
         if (bottomButton.is(Button.State.TAP)){
             lowerArmCycle = true;
@@ -300,9 +273,9 @@ public class FinalBaseDrive extends OpMode{
         lowerAllTheWay();
 
         if (midButton.is(Button.State.TAP)){
-            atPID.setTargets(constants.topMotorMid, robot.at.getCurrentPosition(), 0.4, 0, 0.2);
-            ablPID.setTargets(constants.bottomMotorMid, robot.abl.getCurrentPosition(), 0.4, 0, 0.2);
-            abrPID.setTargets(constants.bottomMotorMid, robot.abr.getCurrentPosition(), 0.4, 0, 0.2);
+            atPID.setTargets(constants.topMotorMid, 0.4, 0, 0.2);
+            ablPID.setTargets(constants.bottomMotorMid, 0.4, 0, 0.2);
+            abrPID.setTargets(constants.bottomMotorMid, 0.4, 0, 0.2);
 
             robot.abl.setTargetPosition(constants.bottomMotorMid);
             robot.abr.setTargetPosition(constants.bottomMotorMid);
@@ -327,9 +300,9 @@ public class FinalBaseDrive extends OpMode{
         }
 
         if (highButton.is(Button.State.TAP)){
-            atPID.setTargets(constants.topMotorHigh, robot.at.getCurrentPosition(), 0.4, 0, 0.2);
-            ablPID.setTargets(constants.bottomMotorHigh, robot.abl.getCurrentPosition(), 0.4, 0, 0.2);
-            abrPID.setTargets(constants.bottomMotorHigh, robot.abr.getCurrentPosition(), 0.4, 0, 0.2);
+            atPID.setTargets(constants.topMotorHigh, 0.4, 0, 0.2);
+            ablPID.setTargets(constants.bottomMotorHigh, 0.4, 0, 0.2);
+            abrPID.setTargets(constants.bottomMotorHigh, 0.4, 0, 0.2);
 
             robot.abl.setTargetPosition(constants.bottomMotorHigh);
             robot.abr.setTargetPosition(constants.bottomMotorHigh);
@@ -352,30 +325,13 @@ public class FinalBaseDrive extends OpMode{
             robot.abr.setPower(1);
 
         }
-/*
-        if (zeroButton.is(Button.State.TAP)){
-            robot.abl.setTargetPosition(0);
-            robot.abr.setTargetPosition(0);
-            robot.at.setTargetPosition(0);
-
-            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            robot.armServo.setPosition(0);
-
-            robot.abl.setPower(1);
-            robot.abr.setPower(1);
-            robot.at.setPower(1);
-        }
- */
     }
 
     void lowerArm(){
         if (lowerArmCycle){
-            atPID.setTargets(constants.topMotorLow, robot.at.getCurrentPosition(), 0.4, 0, 0.2);
-            ablPID.setTargets(constants.bottomMotorLow, robot.abl.getCurrentPosition(), 0.4, 0, 0.2);
-            abrPID.setTargets(constants.bottomMotorLow, robot.abr.getCurrentPosition(), 0.4, 0, 0.2);
+            atPID.setTargets(constants.topMotorLow, 0.4, 0, 0.2);
+            ablPID.setTargets(constants.bottomMotorLow, 0.4, 0, 0.2);
+            abrPID.setTargets(constants.bottomMotorLow, 0.4, 0, 0.2);
 
             robot.at.setTargetPosition(constants.topMotorLow);
 
@@ -412,9 +368,9 @@ public class FinalBaseDrive extends OpMode{
     void lowerAllTheWay(){
         if (!lowerArmCycle && lowerAllTheWay){
             clawAngle = constants.armServoBottom;
-            atPID.setTargets(constants.topMotorBottom, robot.at.getCurrentPosition(), 0.4, 0, 0.2);
-            ablPID.setTargets(constants.bottomMotorBottom, robot.abl.getCurrentPosition(), 0.4, 0, 0.2);
-            abrPID.setTargets(constants.bottomMotorBottom, robot.abr.getCurrentPosition(), 0.4, 0, 0.2);
+            atPID.setTargets(constants.topMotorBottom,  0.4, 0, 0.2);
+            ablPID.setTargets(constants.bottomMotorBottom,  0.4, 0, 0.2);
+            abrPID.setTargets(constants.bottomMotorBottom,  0.4, 0, 0.2);
 
             robot.at.setTargetPosition(constants.topMotorBottom);
             robot.abl.setTargetPosition(constants.bottomMotorBottom);
