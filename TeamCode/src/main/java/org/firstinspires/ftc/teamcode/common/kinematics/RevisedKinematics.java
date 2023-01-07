@@ -142,8 +142,8 @@ public class RevisedKinematics {
 
         //determining spin power
         power = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
-        spinClicksL = (int)(power * 100 * Math.signum(leftThrottle)); //increase the 100 to increase power (but note that increasing this will decrease the rotation power slightly)
-        spinClicksR = (int)(power * 100 * Math.signum(rightThrottle));
+        spinClicksL = (int)(power * (100 * (1.0 + rt)) * Math.signum(leftThrottle)); //increase the 100 to increase power (but note that increasing this will decrease the rotation power slightly)
+        spinClicksR = (int)(power * (100 * (1.0 + rt)) * Math.signum(rightThrottle));
 
         //determining rotational power
         leftRotClicks = (int)(turnAmountL * constants.CLICKS_PER_DEGREE);

@@ -21,7 +21,7 @@ public class Reset {
     double power = 0;
     double powerL = 0; //for auto
     double powerR = 0;
-    int waitForMS = 350;
+    int waitForMS = 200;
     double prevTime=0;
     boolean isResetCycle = false;
     boolean resetDone = false;

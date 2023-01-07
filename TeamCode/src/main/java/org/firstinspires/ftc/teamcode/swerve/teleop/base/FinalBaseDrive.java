@@ -94,6 +94,7 @@ public class FinalBaseDrive extends OpMode{
 
         robot.abl.setTargetPosition(constants.INIT_ARMBASE_POS);
         robot.abr.setTargetPosition(constants.INIT_ARMBASE_POS);
+        robot.at.setTargetPosition(0);
 
         robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -233,7 +234,7 @@ public class FinalBaseDrive extends OpMode{
     void DriveTrainPowerEncoder(){
         posSystem.calculatePos();
 
-        kinematics.logic(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, -gamepad1.right_stick_y, gamepad1.right_trigger, -gamepad1.left_stick_x); //wheelAllignment is one loop late.
+        kinematics.logic(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, -gamepad1.right_stick_y, gamepad1.right_trigger, -gamepad1.left_trigger); //wheelAllignment is one loop late.
 
         if (kinematics.getDriveType() == RevisedKinematics.DriveType.STOP){
             reset.reset(true);

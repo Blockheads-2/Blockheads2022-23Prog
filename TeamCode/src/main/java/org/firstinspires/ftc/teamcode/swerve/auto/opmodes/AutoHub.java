@@ -152,6 +152,11 @@ public class AutoHub implements Runnable{
             while(!reset.finishedReset() && linearOpMode.opModeIsActive()){
                 reset.resetAuto(true);
             }
+        } else {
+            robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
         reset.resetAuto(false);
     }
@@ -162,6 +167,10 @@ public class AutoHub implements Runnable{
                 robot.at.setTargetPosition(robot.at.getCurrentPosition());
                 robot.abl.setTargetPosition(robot.abl.getCurrentPosition());
                 robot.abr.setTargetPosition(robot.abr.getCurrentPosition());
+
+                robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                 robot.at.setPower(0.4);
                 robot.abl.setPower(1);
@@ -223,11 +232,22 @@ public class AutoHub implements Runnable{
 
     }
 
+    public void resetToZero(){
+        robot.at.setTargetPosition(0);
+        robot.abl.setTargetPosition(0);
+        robot.abr.setTargetPosition(0);
+
+        robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.at.setPower(0.4);
+        robot.abl.setPower(1);
+        robot.abr.setPower(1);
+    }
+
     public void UpdateTelemetry(){
         linearOpMode.telemetry.addData("Wheel target met?", !targetNotMet);
         linearOpMode.telemetry.addData("Arm target met?", kinematics.isArmTargetMet());
-        linearOpMode.telemetry.addData("Lower to mid?", kinematics.lowerArmCycle);
-        linearOpMode.telemetry.addData("Lower to Bottom?", kinematics.lowerAllTheWay);
 
         linearOpMode.telemetry.addData("X pos", posSystem.getPositionArr()[0]);
         linearOpMode.telemetry.addData("Y pos", posSystem.getPositionArr()[1]);
