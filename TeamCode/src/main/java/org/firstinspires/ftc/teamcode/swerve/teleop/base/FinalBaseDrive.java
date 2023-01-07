@@ -97,6 +97,7 @@ public class FinalBaseDrive extends OpMode{
 
         robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     @Override
@@ -118,9 +119,9 @@ public class FinalBaseDrive extends OpMode{
         robot.abr.setTargetPosition(robot.abr.getCurrentPosition());
         robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        constants.INIT_ARMBASE_POS = 0;
-        
+
         robot.abl.setPower(0.7);
         robot.abr.setPower(0.7);
     }

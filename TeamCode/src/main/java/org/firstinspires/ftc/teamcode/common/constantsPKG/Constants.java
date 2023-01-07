@@ -69,23 +69,23 @@ public class Constants {
     public int INIT_ARMBASE_POS = 400;
 
     //Bottom
-    public int bottomMotorBottom = 700 + INIT_ARMBASE_POS;
-    public int topMotorBottom = 35 + INIT_ARMBASE_POS;
+    public int bottomMotorBottom = 700;
+    public int topMotorBottom = 35;
     public double armServoBottom = 0.0;
 
     //Low
-    public int bottomMotorLow = 0 + INIT_ARMBASE_POS;
-    public int topMotorLow = 260 + INIT_ARMBASE_POS;
+    public int bottomMotorLow = 0;
+    public int topMotorLow = 260;
     public double armServoLow = 0.206;
 
     //Mid
-    public int bottomMotorMid = 0 + INIT_ARMBASE_POS;
-    public int topMotorMid = 480 + INIT_ARMBASE_POS;
+    public int bottomMotorMid = 0;
+    public int topMotorMid = 480;
     public double armServoMid = 0.356;
 
     //High
-    public int bottomMotorHigh = 300 + INIT_ARMBASE_POS;
-    public int topMotorHigh = 820 + INIT_ARMBASE_POS;
+    public int bottomMotorHigh = 300;
+    public int topMotorHigh = 820;
     public double armServoHigh = 0.408;
 
     //Softstops:
