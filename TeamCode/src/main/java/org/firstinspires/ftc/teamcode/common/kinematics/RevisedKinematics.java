@@ -70,10 +70,8 @@ public class RevisedKinematics {
     TrackJoystick joystickTracker;
 
     //PIDs
-    SnapSwerveModulePID snapLeftWheelPID;
-    SnapSwerveModulePID snapRightWheelPID;
-    SpinPID pidR;
-    SpinPID pidL;
+    SnapSwerveModulePID pidR;
+    SnapSwerveModulePID pidL;
 
     public boolean firstMovement = true;
 
@@ -99,13 +97,8 @@ public class RevisedKinematics {
     public RevisedKinematics(GlobalPosSystem posSystem){
         this.posSystem = posSystem;
 
-        snapLeftWheelPID = new SnapSwerveModulePID();
-        snapRightWheelPID = new SnapSwerveModulePID();
-        pidR = new SpinPID();
-        pidL = new SpinPID();
-
-        snapLeftWheelPID.setTargets(constants.kp, constants.ki, constants.kd);
-        snapRightWheelPID.setTargets(constants.kp, constants.ki, constants.kd);
+        pidR = new SnapSwerveModulePID();
+        pidL = new SnapSwerveModulePID();
 
         accelerator = new Accelerator();
         joystickTracker = new TrackJoystick();
@@ -146,8 +139,6 @@ public class RevisedKinematics {
 //        turnAmountR = wheelOptimization(target, rightCurrentW);
         turnAmountL = wheelOptimization(target, leftCurrentW, false);
         turnAmountR = wheelOptimization(target, rightCurrentW, true);
-//        turnAmountL = fieldCentricWheelOptimization(target, leftCurrentW, false);
-//        turnAmountR = fieldCentricWheelOptimization(target, rightCurrentW, true);
 
         //determining spin power
         power = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
@@ -184,7 +175,15 @@ public class RevisedKinematics {
         splineMath.setInits(posSystem.getMotorClicks()[0], posSystem.getMotorClicks()[2]);
         splineMath.setPos(x, y, finalAngle, constants.kp, constants.ki, constants.kd);
 
-        firstMovement = (type == DriveType.LINEAR);
+        logicAuto();
+
+        if (type == DriveType.SNAP) {
+            pidR.setTargets(constants.kp, constants.ki, constants.kd);
+            pidL.setTargets(constants.kp, constants.ki, constants.kd);
+        } else{
+            pidR.setTargets(constants.kp, constants.ki, constants.kd);
+            pidL.setTargets(constants.kp, constants.ki, constants.kd);
+        }
     }
 
     public void logicAuto(){ //runs once
@@ -245,17 +244,12 @@ public class RevisedKinematics {
         rightThrottle = constants.initDirectionRight;
         leftThrottle = constants.initDirectionLeft;
 
-        if (type == DriveType.SNAP) {
-            pidR.setTargets(turnAmountR, constants.kp, constants.ki, constants.kd);
-            pidL.setTargets(turnAmountL, constants.kp, constants.ki, constants.kd);
-        } else{
-            pidR.setTargets(distanceR, constants.kp, constants.ki, constants.kd);
-            pidL.setTargets(distanceL, constants.kp, constants.ki, constants.kd);
-        }
-
-
         //determining spin power
-        power = (pidR.update(posSystem.getMotorClicks()[2]) + pidL.update(posSystem.getMotorClicks()[0]) / 2.0) * speed;
+        if (type == DriveType.SNAP){
+            power = (pidR.update(turnAmountR) + pidL.update(turnAmountL) / 2.0) * speed;
+        } else {
+            power = (pidR.update(distanceR) + pidL.update(distanceL) / 2.0) * speed;
+        }
         spinClicksL = (int)(distanceL * constants.CLICKS_PER_INCH * Math.signum(leftThrottle));
         spinClicksR = (int)(distanceR * constants.CLICKS_PER_INCH * Math.signum(rightThrottle));
 
@@ -264,9 +258,9 @@ public class RevisedKinematics {
         rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE);
     }
 
-    public boolean lowerArmCycle = false;
-    public boolean lowerAllTheWay = false;
     public void armLogicAuto(ArmType aType){
+        boolean lowerArmCycle = false;
+        boolean lowerAllTheWay = false;
         double atTargetPos = 0;
         double ablTargetPos = 0;
         double abrTargetPos = 0;
@@ -514,26 +508,6 @@ public class RevisedKinematics {
         return (Math.abs(turnAmount1) < Math.abs(turnAmount2) ? turnAmount1 : turnAmount2);
     }
 
-    public double fieldCentricWheelOptimization(double target, double currentW, boolean right){ //returns how much the wheels should rotate in which direction
-        double target2 = (target < 0 ? target + 360 : target);
-        double current2 = (currentW < 0 ? currentW + 360 : currentW);
-
-        double turnAmount1 = target - currentW - currentR;
-        double turnAmount2 = target2 - current2 - currentR;
-        double turnAmount = (Math.abs(turnAmount1) < Math.abs(turnAmount2) ? turnAmount1 : turnAmount2);
-
-        if (right) rightThrottle = constants.initDirectionRight;
-        else leftThrottle = constants.initDirectionLeft;
-
-        if(Math.abs(turnAmount) > 90){
-            double temp_target = clamp(target + 180);
-            turnAmount = temp_target - currentW;
-
-            if (right) this.rightThrottle *= -1;
-            else this.leftThrottle *= -1;
-        }
-        return turnAmount;
-    }
 
     void setCurrentPos(){
         currentX = posSystem.getPositionArr()[0];
@@ -551,17 +525,6 @@ public class RevisedKinematics {
             degrees = 180 - (Math.abs(degrees) - 180);
         } else if (degrees > 180){
             degrees = -180 + (Math.abs(degrees) - 180);
-        }
-        return degrees;
-    }
-
-    public double clampConventional(double degrees){
-        if (Math.abs(degrees) >= 360) degrees %= 360;
-
-        if (degrees < 0){
-            degrees = 360 - Math.abs(degrees);
-        } else if (degrees >= 360){
-            degrees = Math.abs(degrees) - 360;
         }
         return degrees;
     }
@@ -603,23 +566,5 @@ public class RevisedKinematics {
 
     public double getTarget(){
         return target;
-    }
-    public double getLTurnAmount(){
-        return turnAmountL;
-    }
-    public double getRTurnAmount(){
-        return turnAmountR;
-    }
-
-    public int[] getMotorClicks(){
-        return posSystem.getMotorClicks();
-    }
-
-    public void switchLeftSpinDirection(){
-        leftThrottle *= -1;
-    }
-
-    public void switchRightSpinDirection(){
-        rightThrottle *= -1;
     }
 }
