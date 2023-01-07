@@ -38,10 +38,19 @@ public class AutoTest extends LinearOpMode {
 
         dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 45, 0.4, RevisedKinematics.ArmType.HOLD);
         dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, constants.WHEEL_CIRCUMFERENCE, 0, 0.4, RevisedKinematics.ArmType.HIGH);
-        dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0, RevisedKinematics.ArmType.LOW);
         dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, -90, 0.4, RevisedKinematics.ArmType.HOLD);
-//        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, -27, 0, 0.4, RevisedKinematics.ArmType.HOLD);
+        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 27, 0, 0.4, RevisedKinematics.ArmType.HOLD);
 
+        /*
+        working movement types:
+        - SNAP
+        - LINEAR
+        - STOP
+        - Arm movements
+         */
+
+//        dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0, RevisedKinematics.ArmType.LOW);
+//        dispatch.Turn(90, 0.7);
 
     }
 }
