@@ -10,12 +10,15 @@ import org.firstinspires.ftc.teamcode.common.kinematics.RevisedKinematics;
 
 import java.util.HashMap;
 
-public class GlobalPosSystem {
+public class GlobalPosSystem implements Runnable{
 
     Constants constants = new Constants();
     RevisedKinematics revisedKinematics;
 
     private double[] positionArr = new double[5];
+    private double optimizedCurrentWL = 0;
+    private double optimizedCurrentWR = 0;
+
     public HashMap<String, Integer> motorClicksPose = new HashMap<>();
     public HashMap<String, Integer> prevMotorClicks = new HashMap<>();
 
@@ -25,7 +28,9 @@ public class GlobalPosSystem {
     Orientation currentOrientation;
     double currAngle = 0;
 
-    public GlobalPosSystem(HardwareDrive robot){
+    private boolean updateGPS = true;
+
+    public GlobalPosSystem(HardwareDrive robot) {
         this.robot = robot;
 
         motorClicksPose.put("topR", robot.topR.getCurrentPosition());
@@ -147,6 +152,32 @@ public class GlobalPosSystem {
         return positionArr[3];
     }
 
+    public boolean isAlligned(){
+        return (Math.abs(positionArr[2] - positionArr[3]) < 15);
+    }
+
+    public void setOptimizedCurrentWR(double WR){
+        optimizedCurrentWR = WR;
+    }
+
+    public void setOptimizedCurrentWL(double WL){
+        optimizedCurrentWL = WL;
+    }
+
+    public double getOptimizedCurrentWR(){
+        return (optimizedCurrentWR);
+    }
+    public double getOptimizedCurrentWL(){
+        return (optimizedCurrentWL);
+    }
+
+
+    public boolean eligibleForTurning(){
+        return (isAlligned() &&
+                Math.abs(Math.abs(positionArr[2]) - 90) >= 40 &&
+                Math.abs(Math.abs(positionArr[3]) - 90) >= 40); //wheels must be
+    }
+
     public void hardResetGPS(){
         positionArr[0] = 0; //reset x, y position as well to account for drift.
         positionArr[1] = 0;
@@ -169,13 +200,6 @@ public class GlobalPosSystem {
     public void resetXY(){
         positionArr[0] = 0;
         positionArr[1] = 0;
-    }
-
-    public void resetOrientationIfOneEighty(){
-        if ((Math.abs(positionArr[2]) <= 2 || Math.abs(positionArr[2]) <= 182) && (Math.abs(positionArr[3]) <= 2 || Math.abs(positionArr[3]) <= 182)){
-            positionArr[2] = 0;
-            positionArr[3] = 0;
-        }
     }
 
     public void updateHash(){
@@ -226,6 +250,13 @@ public class GlobalPosSystem {
         }
         return degrees;
     }
+
+    public void run(){
+        while (updateGPS){
+            calculatePos();
+        }
+    }
+
 
     public RevisedKinematics.DriveType getDriveType() {
         return revisedKinematics.getDriveType();

@@ -11,7 +11,6 @@ public class Reset {
     HardwareDrive robot;
     GlobalPosSystem globalPosSystem;
     Constants constants = new Constants();
-    ElapsedTime gapTime = new ElapsedTime();
     Accelerator accelerator = new Accelerator();
 
     //PIDs
@@ -21,15 +20,13 @@ public class Reset {
     double power = 0;
     double powerL = 0; //for auto
     double powerR = 0;
-    int waitForMS = 200;
-    double prevTime=0;
+
     boolean isResetCycle = false;
     boolean resetDone = false;
 
     public Reset(HardwareDrive r, GlobalPosSystem gps){
         robot = r;
         globalPosSystem=gps;
-        gapTime.reset();
 
         snapLeftWheelPID = new SnapSwerveModulePID();
         snapRightWheelPID = new SnapSwerveModulePID();
@@ -39,24 +36,10 @@ public class Reset {
 
     public void reset(boolean shouldReset){
         if (shouldReset){
-            if(gapTime.milliseconds()-prevTime>waitForMS){
-                updateReset();
-            }else{
-                power = accelerator.update(0);
-                powerL = accelerator.update(0);
-                powerR = accelerator.update(0);
-
-                robot.botL.setPower(power);
-                robot.topL.setPower(power);
-                robot.botR.setPower(power);
-                robot.topR.setPower(power);
-            }
-
+            updateReset();
         } else{
             isResetCycle = false;
             resetDone = false;
-            gapTime.reset();
-            prevTime=gapTime.milliseconds();
         }
     }
 

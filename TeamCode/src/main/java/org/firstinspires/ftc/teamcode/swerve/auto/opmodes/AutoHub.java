@@ -43,7 +43,6 @@ public class AutoHub implements Runnable{
         robot = new HardwareDrive();
         robot.init(hardwareMap);
 
-        posSystem = new GlobalPosSystem(robot);
         kinematics = new RevisedKinematics(posSystem);
         posSystem.grabKinematics(kinematics);
         reset = new Reset(robot, posSystem);
@@ -80,7 +79,15 @@ public class AutoHub implements Runnable{
 
         robot.abl.setPower(0.6);
         robot.abr.setPower(0.6);
+    }
 
+    public void resetArmEncoderPos(){
+        robot.at.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.at.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.abl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.abl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.abr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.abr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void Move(RevisedKinematics.DriveType movementType, double x, double y, double finalAngle, double speed, RevisedKinematics.ArmType armMovementType){
@@ -261,7 +268,6 @@ public class AutoHub implements Runnable{
         linearOpMode.telemetry.addData("DistanceR", kinematics.distanceR);
         linearOpMode.telemetry.addData("TurnAmountL", kinematics.turnAmountL);
         linearOpMode.telemetry.addData("TurnAmountR", kinematics.turnAmountR);
-        linearOpMode.telemetry.addData("Target", kinematics.target);
 
         linearOpMode.telemetry.addData("topL clicks", robot.topL.getCurrentPosition());
         linearOpMode.telemetry.addData("botL clicks", robot.botL.getCurrentPosition());

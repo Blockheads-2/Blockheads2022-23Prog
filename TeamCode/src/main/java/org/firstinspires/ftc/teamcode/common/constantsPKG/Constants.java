@@ -13,11 +13,9 @@ public class Constants {
     public double CLICKS_PER_BLUE_REV = 537.7; //clicks per rev of motors
     public double WHEEL_DIAMETER = 92 / 25.4; //3.622 inches
     public double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER; //11.378 inches
-    public double MAX_VELOCITY_DT = 2700; // unit is clicks/sec
-    public double clickTOLERANCE = 10; //number of clicks or degrees the robot can be off by
+    public double MAX_VELOCITY_DT = 2400.0; // unit is clicks/sec
+    public double clickTOLERANCE = 15; //number of clicks or degrees the robot can be off by
     public double degreeTOLERANCE = 5;
-
-    public double MAX_VELOCITY;
 
     //control hub to arm: 16 cm
 
@@ -60,6 +58,8 @@ public class Constants {
     public double kp = 0.03;
     public double ki = 0;
     public double kd = 0.01;
+
+    public int RESET_WAIT_PERIOD_MS = 30000; //30 second wait period.
     /* starting:
         base: 0
         top: 0

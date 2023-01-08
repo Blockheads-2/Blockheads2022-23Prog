@@ -16,13 +16,6 @@ import java.util.HashMap;
 public class RevisedKinematics {
     protected Constants constants = new Constants();
 
-    private double lx;
-    private double ly;
-    private double rx;
-    private double ry;
-    double rt;
-    double lt;
-
     double targetX;
     double targetY;
     private double finalAngle; //auto
@@ -44,19 +37,26 @@ public class RevisedKinematics {
     }
     public DriveType type = DriveType.NOT_INITIALIZED;
 
-    //robot's power
-    private double power = 0.0;
+    //input
+    private double lx;
+    private double ly;
+    private double rx;
+    private double ry;
+    double rt;
+    double lt;
 
-    //target clicks
+    //parameters
+    public double turnAmountL = 0;
+    public double turnAmountR = 0;
+
+    //output
     public int rightRotClicks = 0;
     public int leftRotClicks = 0;
     public int spinClicksR = 0; //make protected later
     public int spinClicksL = 0; //make protected later
+    private double power = 0.0;
     public double rightThrottle = 1;
     public double leftThrottle = -1;
-    public double target = 0;
-    public double turnAmountL = 0;
-    public double turnAmountR = 0;
 
     //current orientation
     GlobalPosSystem posSystem;
@@ -131,12 +131,10 @@ public class RevisedKinematics {
         setCurrentPos();
 
         //determining targets, and how much we want to turn
-        target = Math.toDegrees(Math.atan2(lx, ly));
+        double target = Math.toDegrees(Math.atan2(lx, ly));
         if (lx == 0 && ly == 0) target = 0;
         else if (lx==0 && ly < 0) target=180;
 
-//        turnAmountL = wheelOptimization(target, leftCurrentW);
-//        turnAmountR = wheelOptimization(target, rightCurrentW);
         turnAmountL = wheelOptimization(target, leftCurrentW, false);
         turnAmountR = wheelOptimization(target, rightCurrentW, true);
 
@@ -190,7 +188,7 @@ public class RevisedKinematics {
         setCurrentPos();
 
         //2) determining targets
-        target = Math.toDegrees(Math.atan2(targetX, targetY));
+        double target = Math.toDegrees(Math.atan2(targetX, targetY));
         if (targetX == 0 && targetY == 0) target = 0;
         else if (targetX == 0 && targetY < 0) target = 180;
 
@@ -434,7 +432,7 @@ public class RevisedKinematics {
     }
 
     public void rightStick(){
-        if (Math.abs(leftCurrentW) < constants.degreeTOLERANCE && Math.abs(rightCurrentW) < constants.degreeTOLERANCE){
+        if (posSystem.eligibleForTurning()){
             if ((lx == 0 && ly == 0) && (rx != 0 || ry != 0)){
                 //            leftThrottle = leftThrottle;
                 rightThrottle *= -1;
@@ -457,22 +455,6 @@ public class RevisedKinematics {
                 else rightThrottle *= throttle;
                 type = DriveType.VARIABLE_SPLINE;
 
-            } else if ((lx == 0 && ly == 0 && rx == 0 && ry == 0) && (rt != 0 || lt != 0)){
-                leftThrottle *= 0.3;
-                rightThrottle *= -0.3;
-
-                double trigger = (Math.abs(rt) > Math.abs(lt) ? rt : lt);
-                spinClicksL = (int) (trigger * 100 * leftThrottle);
-                spinClicksR = (int) (trigger * 100 * rightThrottle);
-                power = trigger;
-
-                turnAmountL = -leftCurrentW;
-                leftRotClicks = (int)(turnAmountL * constants.CLICKS_PER_DEGREE);
-
-                turnAmountR = -rightCurrentW;
-                rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE);
-
-                type = DriveType.TURN;
             }
         }
     }
@@ -485,15 +467,28 @@ public class RevisedKinematics {
         double turnAmount2 = target2 - current2;
         double turnAmount = (Math.abs(turnAmount1) < Math.abs(turnAmount2) ? turnAmount1 : turnAmount2);
 
-        if (right) rightThrottle = constants.initDirectionRight;
-        else leftThrottle = constants.initDirectionLeft;
+        if (right) {
+            rightThrottle = constants.initDirectionRight;
+            posSystem.setOptimizedCurrentWR(rightCurrentW);
+        } else {
+            leftThrottle = constants.initDirectionLeft;
+            posSystem.setOptimizedCurrentWL(leftCurrentW);
+        }
+
 
         if(Math.abs(turnAmount) > 90){
             double temp_target = clamp(target + 180);
             turnAmount = temp_target - currentW;
 
-            if (right) this.rightThrottle *= -1;
-            else this.leftThrottle *= -1;
+            if (right) {
+                this.rightThrottle *= -1;
+                posSystem.setOptimizedCurrentWR(clamp(rightCurrentW + 180));
+
+            }
+            else {
+                this.leftThrottle *= -1;
+                posSystem.setOptimizedCurrentWL(clamp(leftCurrentW + 180));
+            }
         }
         return turnAmount;
     }
@@ -562,9 +557,5 @@ public class RevisedKinematics {
 
     public boolean noMovementRequests(){
         return (lx==0 && ly==0 && rx==0 && ry==0);
-    }
-
-    public double getTarget(){
-        return target;
     }
 }

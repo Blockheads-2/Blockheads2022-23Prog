@@ -73,6 +73,7 @@ public class autoTemplateThingy extends LinearOpMode{
             }
         });
         //telemetry.setMsTransmissionInterval(50);
+
         while (!opModeIsActive())
         {
             dispatch.moveToInit();
@@ -81,9 +82,6 @@ public class autoTemplateThingy extends LinearOpMode{
             // enables us to only run logic when there has been a new frame, as opposed to the
             // getLatestDetections() method which will always return an object.
             ArrayList<AprilTagDetection> detections = aprilTagDetectionPipeline.getDetectionsUpdate();
-
-            Thread rigidArmThread = new Thread(dispatch);   // Using the constructor Thread(Runnable r)
-            rigidArmThread.start();
 
             // If there's been a new frame...
             if(detections != null)
@@ -140,6 +138,10 @@ public class autoTemplateThingy extends LinearOpMode{
 
             sleep(20);
         }
+        Thread rigidArmThread = new Thread(dispatch);   // Using the constructor Thread(Runnable r)
+        rigidArmThread.start();
+
+        dispatch.resetArmEncoderPos();
 
         waitForStart();
 
@@ -168,6 +170,7 @@ public class autoTemplateThingy extends LinearOpMode{
         }
 
         dispatch.resetToZero();
+        rigidArmThread.interrupt();
     }
 
 }
