@@ -6,8 +6,8 @@ import org.firstinspires.ftc.teamcode.common.pid.SpinPID;
 public class LinearMath { //Note: snap() is used in the auto class separately. This class is used assuming that the wheels are already pointing the way we want it to.
     Constants constants = new Constants();
 
-    private double initialX;
-    private double initialY;
+    private int targetClicksR;
+    private int targetClicksL;
 
     private double x;
     private double y;
@@ -17,15 +17,13 @@ public class LinearMath { //Note: snap() is used in the auto class separately. T
     public LinearMath(){
     }
 
-    public void setInits(double x, double y){
-        initialX = x;
-        initialY = y;
-    }
-
-    public void setPos(double x, double y, double theta, double kp, double ki, double kd){
+    public void setPos(double x, double y, double theta, double kp, double ki, double kd, int initClickL, int initClickR){
         this.x = x;
         this.y = y;
         this.theta = theta;
+
+        targetClicksR = (int)(getDistance() * constants.CLICKS_PER_INCH) + initClickR;
+        targetClicksL = (int)(getDistance() * constants.CLICKS_PER_INCH) + initClickL;
     }
 
     public double getDistance(){
@@ -44,9 +42,18 @@ public class LinearMath { //Note: snap() is used in the auto class separately. T
         return clicks;
     }
 
-    public double distanceRemaining(double currentX, double currentY){
-        return (Math.sqrt(Math.pow(this.x - currentX, 2) + Math.pow(this.y - currentY, 2)));
+    public double distanceRemainingR(int currClickR){
+        double deltaR = (targetClicksR - currClickR) * constants.INCHES_PER_CLICK;
+
+        return deltaR;
     }
+
+    public double distanceRemainingL(int currClickL){
+        double deltaL = (targetClicksL - currClickL) * constants.INCHES_PER_CLICK;
+
+        return deltaL;
+    }
+
 
     public double getRunTime(double rate){
         return (getDistance() * constants.CLICKS_PER_INCH) / rate;

@@ -8,7 +8,7 @@ public class Constants {
     public double RPM = 1150 * LOAD_ON; //690.  Not very accurate so don't rely on this number.
     public double RPS = RPM / 60.0; //11.5 ish motor revolutions per second, with load
     public double POWER_LIMITER = 1.0;
-    public static double  accelTime = 1.5;
+    public double accelTime = 1.2;
 
     public double CLICKS_PER_BLUE_REV = 537.7; //clicks per rev of motors
     public double WHEEL_DIAMETER = 92 / 25.4; //3.622 inches
@@ -16,6 +16,8 @@ public class Constants {
     public double MAX_VELOCITY_DT = 2400.0; // unit is clicks/sec
     public double clickTOLERANCE = 15; //number of clicks or degrees the robot can be off by
     public double degreeTOLERANCE = 5;
+    public double allignmentTolerance = 12;
+
 
     //control hub to arm: 16 cm
 

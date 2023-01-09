@@ -9,20 +9,58 @@ public class TurnMath {
     private double theta;
     private double arcLength;
 
-    SpinPID spinPID = new SpinPID();
+    private int targetLClicks;
+    private int targetRClicks;
 
-    public void setPos(double theta, double kp, double ki, double kd){
+    private int direction;
+
+    public void setPos(double theta, int initClicksL, int initClicksR, int turnDirection){
         this.theta = theta;
-        this.arcLength = getDistance();
 
-        spinPID.setTargets(this.arcLength, kp, ki, kd);
+        targetLClicks = (int)(getDistance() * constants.CLICKS_PER_INCH * turnDirection) + initClicksL;
+        targetRClicks = -targetLClicks * turnDirection + initClicksR;
+
+        direction = (targetLClicks > targetRClicks ? -1 : 1);
+
+        this.arcLength = Math.abs(getDistance());
     }
 
     public double getDistance(){
-        return theta * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER;
+        double arcLength = theta * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER;
+
+        return arcLength;
     }
 
-    public double getDistanceRemaining(double currR){
+    public int getTargetLClicks(){
+        return targetLClicks;
+    }
+
+    public int getTargetRClicks(){
+        return targetRClicks;
+    }
+
+    public double getDistanceRemaining(int currClickL, int currClickR){
+        int clicksRemainingL = (targetLClicks - currClickL);
+        int clicksRemainingR = (targetRClicks - currClickR);
+        int clicksRemaining = (direction == 1 ? clicksRemainingR : clicksRemainingL);
+
+        return clicksRemaining;
+    }
+
+    public double distanceRemainingR(int currClickR){
+        double deltaR = (targetRClicks - currClickR) * constants.INCHES_PER_CLICK;
+
+        return deltaR;
+    }
+
+    public double distanceRemainingL(int currClickL){
+        double deltaL = (targetLClicks - currClickL) * constants.INCHES_PER_CLICK;
+
+        return deltaL;
+    }
+
+
+    public double getAngleRemaining(double currR){
         double target2 = (theta < 0 ? theta + 360 : theta);
         double current2 = (currR < 0 ? currR + 360 : currR);
 
@@ -32,5 +70,4 @@ public class TurnMath {
 
         return turnAmount;
     }
-
 }

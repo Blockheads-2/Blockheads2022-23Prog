@@ -94,6 +94,7 @@ public class AutoHub implements Runnable{
         UpdateTelemetry();
 
         //1) Calculate our current position
+        posSystem.resetXY();
         posSystem.calculatePos();
 
         //2) Determine the distance from our current pos & the target pos.
@@ -193,30 +194,35 @@ public class AutoHub implements Runnable{
 
     public void Turn(double turnAmount, double speed){
         posSystem.calculatePos();
-        reset.resetAuto(false);
+        double initCurrentL = posSystem.getLeftWheelW();
+        double initCurrentR = posSystem.getRightWheelW();
 
+        reset.resetAuto(false);
 
         double initAngle = kinematics.clamp(posSystem.getPositionArr()[4]);
 
-        turnMath.setPos(turnAmount, constants.kp, constants.ki, constants.kd);
+        turnMath.setPos(turnAmount, posSystem.getMotorClicks()[0], posSystem.getMotorClicks()[2], (turnAmount < 0 ? -1 : 1));
 
         turnPID.setTargets(0.03, 0, 0.03);
 
         int direction = (turnAmount <= 0 ? -1 : 1);
 
         double target = kinematics.clamp(initAngle + turnAmount);
+        int distanceR = turnMath.getTargetRClicks();
+        int distanceL = turnMath.getTargetLClicks();
 
-        int distance = (int)(turnMath.getDistance() * constants.CLICKS_PER_INCH);
+        //keep wheels parallel:
+        //...
 
-        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + distance * direction * (int)constants.initDirectionLeft);
-        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - distance * direction * (int)constants.initDirectionLeft);
-        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() - distance * direction * (int)constants.initDirectionRight);
-        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() + distance * direction * (int)constants.initDirectionRight);
+        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + (distanceL * direction * (int)constants.initDirectionLeft));
+        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - (distanceL * direction * (int)constants.initDirectionLeft));
+        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + (distanceR * direction * (int)constants.initDirectionRight));
+        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() - (distanceR * direction * (int)constants.initDirectionRight));
 
         while (Math.abs(target - posSystem.getPositionArr()[4]) >= constants.degreeTOLERANCE && linearOpMode.opModeIsActive()){
             posSystem.calculatePos();
 
-            double power = turnPID.update(turnMath.getDistanceRemaining(posSystem.getPositionArr()[4]));
+            double power = turnPID.update(turnMath.getAngleRemaining(posSystem.getPositionArr()[4]));
 
             robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -262,12 +268,12 @@ public class AutoHub implements Runnable{
         linearOpMode.telemetry.addData("Right W", posSystem.getRightWheelW());
         linearOpMode.telemetry.addData("R", posSystem.getPositionArr()[4]);
 
-        linearOpMode.telemetry.addData("Turn Amount (Left)", kinematics.turnAmountL);
-        linearOpMode.telemetry.addData("Turn Amount (Right)", kinematics.turnAmountR);
-        linearOpMode.telemetry.addData("DistanceL", kinematics.distanceL);
-        linearOpMode.telemetry.addData("DistanceR", kinematics.distanceR);
-        linearOpMode.telemetry.addData("TurnAmountL", kinematics.turnAmountL);
-        linearOpMode.telemetry.addData("TurnAmountR", kinematics.turnAmountR);
+//        linearOpMode.telemetry.addData("Turn Amount (Left)", kinematics.turnAmountL);
+//        linearOpMode.telemetry.addData("Turn Amount (Right)", kinematics.turnAmountR);
+//        linearOpMode.telemetry.addData("DistanceL", kinematics.distanceL);
+//        linearOpMode.telemetry.addData("DistanceR", kinematics.distanceR);
+//        linearOpMode.telemetry.addData("TurnAmountL", kinematics.turnAmountL);
+//        linearOpMode.telemetry.addData("TurnAmountR", kinematics.turnAmountR);
 
         linearOpMode.telemetry.addData("topL clicks", robot.topL.getCurrentPosition());
         linearOpMode.telemetry.addData("botL clicks", robot.botL.getCurrentPosition());

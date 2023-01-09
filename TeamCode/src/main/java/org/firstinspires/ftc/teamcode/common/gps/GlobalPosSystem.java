@@ -16,8 +16,6 @@ public class GlobalPosSystem implements Runnable{
     RevisedKinematics revisedKinematics;
 
     private double[] positionArr = new double[5];
-    private double optimizedCurrentWL = 0;
-    private double optimizedCurrentWR = 0;
 
     public HashMap<String, Integer> motorClicksPose = new HashMap<>();
     public HashMap<String, Integer> prevMotorClicks = new HashMap<>();
@@ -127,8 +125,8 @@ public class GlobalPosSystem implements Runnable{
 //            positionArr[3] += positionArr[4];
 //        }
 
-        positionArr[0] += (hypotenuse * Math.sin(baseAngle));
-        positionArr[1] += (hypotenuse * Math.cos(baseAngle));
+        positionArr[0] += (hypotenuse * Math.sin(baseAngle + positionArr[4]));
+        positionArr[1] += (hypotenuse * Math.cos(baseAngle + positionArr[4]));
     }
 
     public void update ( double x, double y, double leftWheelW, double rightWheelW, double robotR){
@@ -152,28 +150,22 @@ public class GlobalPosSystem implements Runnable{
         return positionArr[3];
     }
 
-    public boolean isAlligned(){
-        return (Math.abs(positionArr[2] - positionArr[3]) < 15);
+    public boolean isAlligned(int directionR, int directionL){
+        double optimizedCurrentWL = (directionL == constants.initDirectionLeft ? positionArr[2] : clamp(positionArr[2] + 180.0));
+        double optimizedCurrentWR = (directionR == constants.initDirectionRight ? positionArr[3] : clamp(positionArr[3] + 180.0));
+
+        double currentL = (positionArr[2] < 0 ? positionArr[2] + 360 : positionArr[2]);
+        double currentR = (positionArr[3] < 0 ? positionArr[3] + 360 : positionArr[3]);
+
+        double turnAmount1 = positionArr[2] - positionArr[3];
+        double turnAmount2 = currentL - currentR;
+        double turnAmount = (Math.abs(turnAmount1) < Math.abs(turnAmount2) ? turnAmount1 : turnAmount2);
+
+        return (Math.abs(turnAmount) < constants.allignmentTolerance);
     }
 
-    public void setOptimizedCurrentWR(double WR){
-        optimizedCurrentWR = WR;
-    }
-
-    public void setOptimizedCurrentWL(double WL){
-        optimizedCurrentWL = WL;
-    }
-
-    public double getOptimizedCurrentWR(){
-        return (optimizedCurrentWR);
-    }
-    public double getOptimizedCurrentWL(){
-        return (optimizedCurrentWL);
-    }
-
-
-    public boolean eligibleForTurning(){
-        return (isAlligned() &&
+    public boolean eligibleForTurning(int directionR, int directionL){
+        return (isAlligned(directionR, directionL) &&
                 Math.abs(Math.abs(positionArr[2]) - 90) >= 40 &&
                 Math.abs(Math.abs(positionArr[3]) - 90) >= 40); //wheels must be
     }

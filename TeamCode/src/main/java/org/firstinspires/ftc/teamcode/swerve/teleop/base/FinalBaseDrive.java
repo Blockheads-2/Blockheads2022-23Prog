@@ -139,8 +139,8 @@ public class FinalBaseDrive extends OpMode{
     }
 
     void UpdateTelemetry(){
-        telemetry.addData("IsAlligned", posSystem.isAlligned());
-        telemetry.addData("Eligible for turning", posSystem.eligibleForTurning());
+//        telemetry.addData("IsAlligned", posSystem.isAlligned());
+//        telemetry.addData("Eligible for turning", posSystem.eligibleForTurning());
 
         telemetry.addData("Leftstick X", gamepad1.left_stick_x);
         telemetry.addData("Leftstick Y", gamepad1.left_stick_y);
@@ -156,15 +156,13 @@ public class FinalBaseDrive extends OpMode{
         telemetry.addData("Y pos", posSystem.getPositionArr()[1]);
         telemetry.addData("Left W",  posSystem.getLeftWheelW());
         telemetry.addData("Right W", posSystem.getRightWheelW());
-        telemetry.addData("Right W optimized", posSystem.getOptimizedCurrentWR());
-        telemetry.addData("Left W optimized", posSystem.getOptimizedCurrentWL());
         telemetry.addData("R", posSystem.getPositionArr()[4]);
 
-        telemetry.addData("Spin Direction (Left)", kinematics.leftThrottle);
-        telemetry.addData("Spin Direction (Right)", kinematics.rightThrottle);
-
-        telemetry.addData("Turn Amount (Left)", kinematics.turnAmountL);
-        telemetry.addData("Turn Amount (Right)", kinematics.turnAmountR);
+//        telemetry.addData("Spin Direction (Left)", kinematics.leftThrottle);
+//        telemetry.addData("Spin Direction (Right)", kinematics.rightThrottle);
+//
+//        telemetry.addData("Turn Amount (Left)", kinematics.turnAmountL);
+//        telemetry.addData("Turn Amount (Right)", kinematics.turnAmountR);
 
 
         telemetry.addData("topL clicks", robot.topL.getCurrentPosition());
@@ -172,10 +170,10 @@ public class FinalBaseDrive extends OpMode{
         telemetry.addData("topR clicks", robot.topR.getCurrentPosition());
         telemetry.addData("botR clicks", robot.botR.getCurrentPosition());
 
-        telemetry.addData("Left Spin Clicks Target", kinematics.spinClicksL);
-        telemetry.addData("Left Rotate Clicks target",  kinematics.leftRotClicks);
-        telemetry.addData("Right Spin clicks target", kinematics.spinClicksR);
-        telemetry.addData("Right Rotate clicks target",  kinematics.rightRotClicks);
+//        telemetry.addData("Left Spin Clicks Target", kinematics.spinClicksL);
+//        telemetry.addData("Left Rotate Clicks target",  kinematics.leftRotClicks);
+//        telemetry.addData("Right Spin clicks target", kinematics.spinClicksR);
+//        telemetry.addData("Right Rotate clicks target",  kinematics.rightRotClicks);
         telemetry.addData("topL velocity", robot.topL.getVelocity()); //ticks per second
         telemetry.addData("botL velocity", robot.botL.getVelocity()); //ticks per second
         telemetry.addData("topR velocity", robot.topR.getVelocity());
@@ -213,7 +211,7 @@ public class FinalBaseDrive extends OpMode{
         kinematics.logic(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, -gamepad1.right_stick_y, gamepad1.right_trigger, -gamepad1.left_trigger); //wheelAllignment is one loop late.
 
         if (kinematics.getDriveType() == RevisedKinematics.DriveType.STOP){
-            if (!posSystem.isAlligned() || x.getState() == Button.State.TAP){
+            if (!posSystem.isAlligned(kinematics.PodR.getSpinDirection(), kinematics.PodL.getSpinDirection()) || x.getState() == Button.State.TAP){
                 reset.reset(true);
             }
             return;

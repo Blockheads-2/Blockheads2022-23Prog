@@ -16,15 +16,12 @@ import java.util.HashMap;
 public class RevisedKinematics {
     protected Constants constants = new Constants();
 
+    public SwervePod PodL;
+    public SwervePod PodR;
+
     double targetX;
     double targetY;
     private double finalAngle; //auto
-    private double speed;
-    public double distanceL;
-    public double distanceR;
-    LinearMath linearMath = new LinearMath();
-    SplineMath splineMath = new SplineMath();
-    TurnMath turnMath = new TurnMath();
 
     public enum DriveType{
         LINEAR,
@@ -45,18 +42,9 @@ public class RevisedKinematics {
     double rt;
     double lt;
 
-    //parameters
-    public double turnAmountL = 0;
-    public double turnAmountR = 0;
-
     //output
-    public int rightRotClicks = 0;
-    public int leftRotClicks = 0;
-    public int spinClicksR = 0; //make protected later
-    public int spinClicksL = 0; //make protected later
-    private double power = 0.0;
-    public double rightThrottle = 1;
-    public double leftThrottle = -1;
+    HashMap<String, Double> swerveOutputR = new HashMap<String, Double>();
+    HashMap<String, Double> swerveOutputL = new HashMap<String, Double>();
 
     //current orientation
     GlobalPosSystem posSystem;
@@ -68,10 +56,6 @@ public class RevisedKinematics {
 
     public Accelerator accelerator;
     TrackJoystick joystickTracker;
-
-    //PIDs
-    SnapSwerveModulePID pidR;
-    SnapSwerveModulePID pidL;
 
     public boolean firstMovement = true;
 
@@ -97,14 +81,11 @@ public class RevisedKinematics {
     public RevisedKinematics(GlobalPosSystem posSystem){
         this.posSystem = posSystem;
 
-        pidR = new SnapSwerveModulePID();
-        pidL = new SnapSwerveModulePID();
-
         accelerator = new Accelerator();
         joystickTracker = new TrackJoystick();
 
-        rightThrottle = constants.initDirectionRight;
-        leftThrottle = constants.initDirectionLeft;
+        PodL = new SwervePod(constants.initDirectionLeft, posSystem);
+        PodR = new SwervePod(constants.initDirectionRight, posSystem);
     }
 
     public void logic(double lx, double ly, double rx, double ry, double rt, double lt){
@@ -121,12 +102,6 @@ public class RevisedKinematics {
         if (noMovementRequests()) type = DriveType.STOP;
         else type = DriveType.LINEAR;
 
-        //unnecessary function but useful for telemetry
-        if (type == DriveType.STOP){
-            power = 0;
-            return;
-        }
-
         //determining current position
         setCurrentPos();
 
@@ -135,125 +110,52 @@ public class RevisedKinematics {
         if (lx == 0 && ly == 0) target = 0;
         else if (lx==0 && ly < 0) target=180;
 
-        turnAmountL = wheelOptimization(target, leftCurrentW, false);
-        turnAmountR = wheelOptimization(target, rightCurrentW, true);
+        //determining rotational clicks
+        PodL.setRotClicks(target);
+        PodR.setRotClicks(target);
 
-        //determining spin power
-        power = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
-        spinClicksL = (int)(power * (100 * (1.0 + rt)) * Math.signum(leftThrottle)); //increase the 100 to increase power (but note that increasing this will decrease the rotation power slightly)
-        spinClicksR = (int)(power * (100 * (1.0 + rt)) * Math.signum(rightThrottle));
+        boolean shouldTurn = (lx == 0 && ly == 0) && (rx != 0 || ry != 0) && posSystem.eligibleForTurning(PodR.getSpinDirection(), PodL.getSpinDirection());
+        boolean shouldSpline = !shouldTurn && (lx != 0 || ly != 0) && (rx != 0 && ry == 0);
 
-        //determining rotational power
-        leftRotClicks = (int)(turnAmountL * constants.CLICKS_PER_DEGREE);
-        rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE);
+        //determining power
+        double power = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
+
+        //determining spin clicks
+        type = PodL.setSpinClicks(power, rt, shouldTurn, shouldSpline, rx, ry, false);
+        type = PodR.setSpinClicks(power, rt, shouldTurn, shouldSpline, rx, ry, true);
+
+        PodL.setCurrents(posSystem.getLeftWheelW(), (shouldTurn || shouldSpline));
+        PodR.setCurrents(posSystem.getRightWheelW(), (shouldTurn || shouldSpline));
 
         //determining "firstMovement" actions, if it is the robot's "firstMovement."
         firstMovement();
-
-        //determining values from right stick input.
-        rightStick();
     }
 
-    public void setPosAuto(double x, double y, double finalAngle, double speed, DriveType driveType){ //runs once
-        posSystem.resetXY();
-        this.type = driveType;
-
+    public void setPosAuto(double x, double y, double finalAngle, double speed, DriveType driveType){ //runs onc
         //target position
         this.targetX = x;
         this.targetY = y;
         this.finalAngle = finalAngle;
-        this.speed = speed;
 
         //determining current position
         setCurrentPos();
+        PodL.setCurrents(leftCurrentW, (driveType == DriveType.TURN || driveType == DriveType.VARIABLE_SPLINE));
+        PodR.setCurrents(rightCurrentW, (driveType == DriveType.TURN || driveType == DriveType.VARIABLE_SPLINE));
 
-        linearMath.setInits(this.currentX, this.currentY);
-        linearMath.setPos(x, y, finalAngle, constants.kp, constants.ki, constants.kd);
-
-        splineMath.setInits(posSystem.getMotorClicks()[0], posSystem.getMotorClicks()[2]);
-        splineMath.setPos(x, y, finalAngle, constants.kp, constants.ki, constants.kd);
-
-        logicAuto();
-
-        if (type == DriveType.SNAP) {
-            pidR.setTargets(constants.kp, constants.ki, constants.kd);
-            pidL.setTargets(constants.kp, constants.ki, constants.kd);
-        } else{
-            pidR.setTargets(constants.kp, constants.ki, constants.kd);
-            pidL.setTargets(constants.kp, constants.ki, constants.kd);
-        }
+        PodR.setPosAuto(x, y, finalAngle, speed, driveType);
+        PodL.setPosAuto(x, y, finalAngle, speed, driveType);
     }
 
-    public void logicAuto(){ //runs once
+    public void logicAuto(){ //should run everytime, but currently only runs once.
         setCurrentPos();
 
-        //2) determining targets
-        double target = Math.toDegrees(Math.atan2(targetX, targetY));
-        if (targetX == 0 && targetY == 0) target = 0;
-        else if (targetX == 0 && targetY < 0) target = 180;
-
-        //3) determining rotation amount
-        turnAmountL = wheelOptimization(target, leftCurrentW, false);
-        turnAmountR = wheelOptimization(target, rightCurrentW, true);
-
         //4) determining distance travel amount
-        switch(type){
-            case LINEAR:
-                distanceR = linearMath.distanceRemaining(0, 0);
-                distanceL = distanceR;
-                turnAmountL = 0;
-                turnAmountR = 0;
-                break;
-
-            case CONSTANT_SPLINE:
-                distanceR = linearMath.distanceRemaining(0, 0);
-                distanceL = distanceR;
-                break;
-
-            case VARIABLE_SPLINE:
-                distanceL = splineMath.distanceRemaining(posSystem.getMotorClicks()[0], posSystem.getMotorClicks()[2])[0];
-                distanceR = splineMath.distanceRemaining(posSystem.getMotorClicks()[0], posSystem.getMotorClicks()[2])[1];
-                turnAmountL = 0;
-                turnAmountR = 0;
-                break;
-
-//            case TURN:
-//                distanceL = turnMath.getDistanceRemaining(posSystem.getMotorClicks()[2]);
-//                distanceR = -distanceL;
-//                turnAmountL = 0;
-//                turnAmountR = 0;
-//                break;
-
-            case SNAP:
-                distanceL = 0;
-                distanceR = 0;
-                turnAmountL = finalAngle;
-                turnAmountR = finalAngle;
-                break;
-
-            case STOP:
-                distanceL = 0;
-                distanceR = 0;
-                turnAmountL = 0;
-                turnAmountR = 0;
-                break;
-        }
-
-        rightThrottle = constants.initDirectionRight;
-        leftThrottle = constants.initDirectionLeft;
+        PodL.autoLogic(leftCurrentW, (PodL.getDriveType() == DriveType.TURN || PodL.getDriveType() == DriveType.VARIABLE_SPLINE), false);
+        PodR.autoLogic(rightCurrentW, (PodR.getDriveType() == DriveType.TURN || PodR.getDriveType() == DriveType.VARIABLE_SPLINE), true);
 
         //determining spin power
-        if (type == DriveType.SNAP){
-            power = (pidR.update(turnAmountR) + pidL.update(turnAmountL) / 2.0) * speed;
-        } else {
-            power = (pidR.update(distanceR) + pidL.update(distanceL) / 2.0) * speed;
-        }
-        spinClicksL = (int)(distanceL * constants.CLICKS_PER_INCH * Math.signum(leftThrottle));
-        spinClicksR = (int)(distanceR * constants.CLICKS_PER_INCH * Math.signum(rightThrottle));
+        PodL.setPowerUsingLeft(PodR); //determines for both PodL and PodR.
 
-        //determining rotational power
-        leftRotClicks = (int)(turnAmountL * constants.CLICKS_PER_DEGREE);
-        rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE);
     }
 
     public void armLogicAuto(ArmType aType){
@@ -421,76 +323,13 @@ public class RevisedKinematics {
 
     public void firstMovement(){
         if (joystickTracker.getChange() > 90 || noMovementRequests()) firstMovement = true;
+
+        if (!(PodL.onlyRotate(firstMovement) && PodR.onlyRotate(firstMovement))) firstMovement = false;
+
         if (firstMovement){
-            if (Math.abs(turnAmountL) >= constants.degreeTOLERANCE || Math.abs(turnAmountR) >= constants.degreeTOLERANCE){
-                spinClicksL = 0;
-                spinClicksR = 0;
-            } else{
-                firstMovement = false;
-            }
+            PodL.setSpinClicks(0);
+            PodR.setSpinClicks(0);
         }
-    }
-
-    public void rightStick(){
-        if (posSystem.eligibleForTurning()){
-            if ((lx == 0 && ly == 0) && (rx != 0 || ry != 0)){
-                //            leftThrottle = leftThrottle;
-                rightThrottle *= -1;
-
-                spinClicksL = (int) (rx * 100 * leftThrottle);
-                spinClicksR = (int) (rx * 100 * rightThrottle);
-                power = rx;
-
-                turnAmountL = -leftCurrentW;
-                leftRotClicks = (int)(turnAmountL * constants.CLICKS_PER_DEGREE);
-
-                turnAmountR = -rightCurrentW;
-                rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE);
-
-                type = DriveType.TURN;
-            } else if ((lx != 0 || ly != 0) && (rx != 0 && ry == 0)){
-                double throttle = (ry <= lx ? ry / (1.5*rx) : rx / (1.5 * ry));
-                throttle = Math.abs(throttle);
-                if (rx < 0) leftThrottle *= throttle;
-                else rightThrottle *= throttle;
-                type = DriveType.VARIABLE_SPLINE;
-
-            }
-        }
-    }
-
-    public double wheelOptimization(double target, double currentW, boolean right){ //returns how much the wheels should rotate in which direction
-        double target2 = (target < 0 ? target + 360 : target);
-        double current2 = (currentW < 0 ? currentW + 360 : currentW);
-
-        double turnAmount1 = target - currentW;
-        double turnAmount2 = target2 - current2;
-        double turnAmount = (Math.abs(turnAmount1) < Math.abs(turnAmount2) ? turnAmount1 : turnAmount2);
-
-        if (right) {
-            rightThrottle = constants.initDirectionRight;
-            posSystem.setOptimizedCurrentWR(rightCurrentW);
-        } else {
-            leftThrottle = constants.initDirectionLeft;
-            posSystem.setOptimizedCurrentWL(leftCurrentW);
-        }
-
-
-        if(Math.abs(turnAmount) > 90){
-            double temp_target = clamp(target + 180);
-            turnAmount = temp_target - currentW;
-
-            if (right) {
-                this.rightThrottle *= -1;
-                posSystem.setOptimizedCurrentWR(clamp(rightCurrentW + 180));
-
-            }
-            else {
-                this.leftThrottle *= -1;
-                posSystem.setOptimizedCurrentWL(clamp(leftCurrentW + 180));
-            }
-        }
-        return turnAmount;
     }
 
     public double robotOptimization(double target, double currentR){ //returns how much the wheels should rotate in which direction
@@ -525,29 +364,32 @@ public class RevisedKinematics {
     }
 
     public double[] getPower(){
+        PodL.getOutput();
+        PodR.getOutput();
+
         double[] motorPower = new double[4];
-        motorPower[0] = (power * leftThrottle); //top left
-        motorPower[1] = (power * leftThrottle); //bottom left
-        motorPower[2] = (power * rightThrottle); //top right
-        motorPower[3] = (power * rightThrottle); //bottom right
+        motorPower[0] = (PodL.output.get("power") * PodL.output.get("throttle") * PodL.output.get("direction")); //top left
+        motorPower[1] = (PodL.output.get("power") * PodL.output.get("throttle") * PodL.output.get("direction")); //bottom left
+        motorPower[2] = (PodR.output.get("power") * PodR.output.get("throttle") * PodR.output.get("direction")); //top right
+        motorPower[3] = (PodR.output.get("power") * PodR.output.get("throttle") * PodR.output.get("direction")); //bottom right
 
         for (int i = 0; i < 4; i++){
-            motorPower[i] = accelerator.update(motorPower[i]);
+            motorPower[i] = accelerator.update(motorPower[i], true);
             motorPower[i] *= constants.POWER_LIMITER;
-
-            if (motorPower[i] > constants.POWER_LIMITER) motorPower[i] = constants.POWER_LIMITER;
-            else if (motorPower[i] < -constants.POWER_LIMITER) motorPower[i] = -constants.POWER_LIMITER;
         }
 
         return motorPower;
     }
 
     public int[] getClicks(){
+        PodL.getOutput();
+        PodR.getOutput();
+
         int[] clicks = new int[4];
-        clicks[0] = spinClicksL + leftRotClicks; //left
-        clicks[1] = -spinClicksL + leftRotClicks; //left
-        clicks[2] = spinClicksR + rightRotClicks; //right
-        clicks[3] = -spinClicksR  + rightRotClicks; //right
+        clicks[0] = (int)(PodL.output.get("spinClicksTarget") * PodL.output.get("direction") + PodL.output.get("rotClicksTarget")); //left
+        clicks[1] = (int)(-PodL.output.get("spinClicksTarget") * PodL.output.get("direction") + PodL.output.get("rotClicksTarget")); //left
+        clicks[2] = (int)(PodR.output.get("spinClicksTarget") * PodR.output.get("direction") + PodR.output.get("rotClicksTarget")); //right
+        clicks[3] = (int)(-PodR.output.get("spinClicksTarget") * PodR.output.get("direction") + PodR.output.get("rotClicksTarget")); //right
         return clicks;
     }
 
