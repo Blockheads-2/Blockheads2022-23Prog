@@ -16,23 +16,21 @@ public class SplineMath {
     private double distanceR;
     private double distanceL;
 
-    private int targetClicksR;
-    private int targetClicksL;
+    private int targetClicks;
 
     public SplineMath(){
         spinPIDR = new SpinPID();
         spinPIDL = new SpinPID();
     }
 
-    public void setPos(double x, double y, double theta, double kp, double ki, double kd, int initClickL, int initClickR){
+    public void setPos(double x, double y, double theta, double kp, double ki, double kd, int initClick, boolean right){
         this.x = x;
         this.y = y;
         turnAmount = theta;
 
         calculateDistance();
 
-        targetClicksL = initClickL + (int)(distanceL * constants.CLICKS_PER_INCH);
-        targetClicksR = initClickR + (int)(distanceR * constants.CLICKS_PER_INCH);
+        if (right) targetClicks = initClick + (int)(distanceL * constants.CLICKS_PER_INCH);
 
         spinPIDL.setTargets(distanceL, kp, ki, kd);
         spinPIDR.setTargets(distanceR, kp, ki, kd);
@@ -63,16 +61,10 @@ public class SplineMath {
         distanceR = (radius - constants.DISTANCE_BETWEEN_MODULE_AND_CENTER) * theta; //right distance
     }
 
-    public double distanceRemainingR(int currClickR){
-        double deltaR = (targetClicksR - currClickR) * constants.INCHES_PER_CLICK;
+    public double distanceRemaining(int currClick){
+        double delta = (targetClicks - currClick) * constants.INCHES_PER_CLICK;
 
-        return deltaR;
-    }
-
-    public double distanceRemainingL(int currClickL){
-        double deltaL = (targetClicksL - currClickL) * constants.INCHES_PER_CLICK;
-
-        return deltaL;
+        return delta;
     }
 
     public double[] getDistance(){

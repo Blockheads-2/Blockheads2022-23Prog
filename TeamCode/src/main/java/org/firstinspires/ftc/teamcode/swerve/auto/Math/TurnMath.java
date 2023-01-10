@@ -9,18 +9,14 @@ public class TurnMath {
     private double theta;
     private double arcLength;
 
-    private int targetLClicks;
-    private int targetRClicks;
+    private int targetClicks;
 
-    private int direction;
-
-    public void setPos(double theta, int initClicksL, int initClicksR, int turnDirection){
+    public void setPos(double theta, int initClicks, int direction, boolean rightPod){
         this.theta = theta;
 
-        targetLClicks = (int)(getDistance() * constants.CLICKS_PER_INCH * turnDirection) + initClicksL;
-        targetRClicks = -targetLClicks * turnDirection + initClicksR;
+        targetClicks = (int)(getDistance() * constants.CLICKS_PER_INCH * direction) + initClicks;
 
-        direction = (targetLClicks > targetRClicks ? -1 : 1);
+        if (rightPod) targetClicks *= -1;
 
         this.arcLength = Math.abs(getDistance());
     }
@@ -31,32 +27,14 @@ public class TurnMath {
         return arcLength;
     }
 
-    public int getTargetLClicks(){
-        return targetLClicks;
+    public int getTargetClicks(){
+        return targetClicks;
     }
 
-    public int getTargetRClicks(){
-        return targetRClicks;
-    }
+    public double distanceRemaining(int currClick){
+        double delta=  (targetClicks - currClick) * constants.INCHES_PER_CLICK;
 
-    public double getDistanceRemaining(int currClickL, int currClickR){
-        int clicksRemainingL = (targetLClicks - currClickL);
-        int clicksRemainingR = (targetRClicks - currClickR);
-        int clicksRemaining = (direction == 1 ? clicksRemainingR : clicksRemainingL);
-
-        return clicksRemaining;
-    }
-
-    public double distanceRemainingR(int currClickR){
-        double deltaR = (targetRClicks - currClickR) * constants.INCHES_PER_CLICK;
-
-        return deltaR;
-    }
-
-    public double distanceRemainingL(int currClickL){
-        double deltaL = (targetLClicks - currClickL) * constants.INCHES_PER_CLICK;
-
-        return deltaL;
+        return delta;
     }
 
 

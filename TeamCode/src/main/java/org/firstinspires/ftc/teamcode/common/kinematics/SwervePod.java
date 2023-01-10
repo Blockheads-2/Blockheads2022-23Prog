@@ -15,13 +15,12 @@ public class SwervePod {
     LinearMath linearMath = new LinearMath();
     SplineMath splineMath = new SplineMath();
     TurnMath turnMath = new TurnMath();
-    GlobalPosSystem posSystem;
 
-//    public enum Side{
-//        RIGHT,
-//        LEFT
-//    }
-//    Side side;
+    public enum Side{
+        RIGHT,
+        LEFT
+    }
+    Side side;
 
 
     //teleop
@@ -48,11 +47,11 @@ public class SwervePod {
 
     public HashMap<String, Double> output = new HashMap<String, Double>();
 
-    public SwervePod(double spinDirection, GlobalPosSystem gps){
+    public SwervePod(double spinDirection, Side side){
         pid = new SnapSwerveModulePID();
         this.direction = (int)spinDirection;
         this.initDirection = this.direction;
-        this.posSystem = gps;
+        this.side = side;
     }
 
     public void setPID(double kp, double ki, double kd){
@@ -81,12 +80,12 @@ public class SwervePod {
         rotClicksTarget = turnAmount * constants.CLICKS_PER_DEGREE;
     }
 
-    public RevisedKinematics.DriveType setSpinClicks(double powerFactor, double trigger, boolean turn, boolean spline, double rightStickX, double rightStickY, boolean right){
+    public RevisedKinematics.DriveType setSpinClicks(double powerFactor, double trigger, boolean turn, boolean spline, double rightStickX, double rightStickY){
         spinClicksTarget = (int)(power * (100 * (1.0 + trigger)) * direction);
         throttle = 1.0;
 
         if (turn){
-            if (right) direction *= -1;
+            if (side == Side.RIGHT) direction *= -1;
 
             spinClicksTarget = rightStickX * 100 * direction;
             power = rightStickX;
@@ -97,12 +96,9 @@ public class SwervePod {
         } else if (spline){
             double throttle = (rightStickY <= rightStickX ? rightStickY / (1.5*rightStickX) : rightStickX / (1.5 * rightStickY));
             throttle = Math.abs(throttle);
-            if (rightStickX < 0) {
-                if (!right) this.throttle *= throttle;
-            }
-            else {
-                if (right) this.throttle *= throttle;
-            }
+            if (rightStickX < 0 && side != Side.RIGHT) this.throttle *= throttle;
+            else if (rightStickX >= 0 && side == Side.RIGHT) this.throttle *= throttle;
+
             return RevisedKinematics.DriveType.VARIABLE_SPLINE;
         }
 
@@ -113,25 +109,25 @@ public class SwervePod {
         spinClicksTarget = (double) (clicks);
     }
 
-    public void setPosAuto(double x, double y, double finalAngle, double speed, RevisedKinematics.DriveType driveType){
+    public void setPosAuto(double x, double y, double finalAngle, double speed, RevisedKinematics.DriveType driveType, int initClicks, boolean right){
         this.driveType = driveType;
 
         //target position
         this.speed = speed;
         this.finalAngle = finalAngle;
 
-        linearMath.setPos(x, y, finalAngle, constants.kp, constants.ki, constants.kd, posSystem.getMotorClicks()[0], posSystem.getMotorClicks()[2]);
+        linearMath.setPos(x, y, finalAngle, constants.kp, constants.ki, constants.kd, initClicks);
 
-        splineMath.setPos(x, y, finalAngle, constants.kp, constants.ki, constants.kd, posSystem.getMotorClicks()[0], posSystem.getMotorClicks()[2]);
+        splineMath.setPos(x, y, finalAngle, constants.kp, constants.ki, constants.kd, initClicks, right);
 
-        turnMath.setPos(finalAngle, posSystem.getMotorClicks()[0], posSystem.getMotorClicks()[2], (finalAngle < 0 ? -1 : 1));
+        turnMath.setPos(finalAngle, initClicks, (finalAngle < 0 ? -1 : 1), right);
 
         setPID(constants.kp, constants.ki, constants.kd);
 
         power = (driveType == RevisedKinematics.DriveType.SNAP ? speed * pid.update(turnAmount) : speed * pid.update(distance));
     }
 
-    public void autoLogic(double currentW, boolean rightStick, boolean right){
+    public void autoLogic(double currentW, boolean rightStick, int currClick){
         setCurrents(currentW, rightStick);
 
         //determining distance left for rotating and spinning the module
@@ -139,18 +135,14 @@ public class SwervePod {
             case CONSTANT_SPLINE:
 
             case LINEAR:
-                if (!right) distance = linearMath.distanceRemainingL(posSystem.getMotorClicks()[0]);
-                else distance = linearMath.distanceRemainingR(posSystem.getMotorClicks()[2]);
-//                distance = (linearMath.distanceRemainingL(posSystem.getMotorClicks()[0]) + linearMath.distanceRemainingR(posSystem.getMotorClicks()[2])) / 2.0;
-
+                distance = linearMath.distanceRemaining(currClick);
                 throttle = 1.0;
 
                 setRotClicks(finalAngle);
                 break;
 
             case VARIABLE_SPLINE: //using gps for variable_spline may be incredibly unreliable.  Though the nature of clicks (they are integers) gives us an inaccurate account (but this fear depends on the fact that the code loops really really quickly).
-                if (!right) distance = splineMath.distanceRemainingL(posSystem.getMotorClicks()[0]);
-                else distance = splineMath.distanceRemainingR(posSystem.getMotorClicks()[2]);
+                distance = splineMath.distanceRemaining(currClick);
                 setRotClicks(nonRightStickCurrentW);
                 break;
 
@@ -162,8 +154,7 @@ public class SwervePod {
                 break;
 
             case TURN:
-                if (!right) distance = turnMath.distanceRemainingL(posSystem.getMotorClicks()[0]);
-                else distance = turnMath.distanceRemainingR(posSystem.getMotorClicks()[2]);
+                distance = turnMath.distanceRemaining(currClick);
                 setRotClicks(nonRightStickCurrentW);
                 break;
 
