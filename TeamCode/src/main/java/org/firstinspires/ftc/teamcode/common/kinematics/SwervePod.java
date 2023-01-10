@@ -58,11 +58,7 @@ public class SwervePod {
         pid.setTargets(kp, ki, kd);
     }
 
-    public void setPower(double power){
-        this.power = power;
-    }
-
-    public void setPowerUsingLeft(SwervePod PodR){
+    public void setPowerUsingLeft(SwervePod PodR){ //auto
         power = (driveType == RevisedKinematics.DriveType.SNAP ?
                 ((Math.abs(pid.update(turnAmount)) + Math.abs(PodR.getPID().update(PodR.getTurnAmount()))) / 2.0) * speed :
                 ((Math.abs(pid.update(distance)) + Math.abs(PodR.getPID().update(PodR.getDistance()))) / 2.0) * speed);
@@ -80,7 +76,8 @@ public class SwervePod {
         rotClicksTarget = turnAmount * constants.CLICKS_PER_DEGREE;
     }
 
-    public RevisedKinematics.DriveType setSpinClicks(double powerFactor, double trigger, boolean turn, boolean spline, double rightStickX, double rightStickY){
+    public RevisedKinematics.DriveType setSpinClicks(double powerFactor, double trigger, boolean turn, boolean spline, double rightStickX){ //teleop
+        this.power = powerFactor;
         spinClicksTarget = (int)(power * (100 * (1.0 + trigger)) * direction);
         throttle = 1.0;
 
@@ -94,7 +91,8 @@ public class SwervePod {
 
             return RevisedKinematics.DriveType.TURN;
         } else if (spline){
-            double throttle = (rightStickY <= rightStickX ? rightStickY / (1.5*rightStickX) : rightStickX / (1.5 * rightStickY));
+//            double throttle = (rightStickY <= rightStickX ? rightStickY / (1.5*rightStickX) : rightStickX / (1.5 * rightStickY));
+            double throttle = Math.sin(rightStickX);
             throttle = Math.abs(throttle);
             if (rightStickX < 0 && side != Side.RIGHT) this.throttle *= throttle;
             else if (rightStickX >= 0 && side == Side.RIGHT) this.throttle *= throttle;
@@ -102,11 +100,27 @@ public class SwervePod {
             return RevisedKinematics.DriveType.VARIABLE_SPLINE;
         }
 
+        if (throttle > 1.0) throttle = 1;
+        else if (throttle < 0) throttle = 0;
+
         return RevisedKinematics.DriveType.LINEAR;
+    }
+
+    public void setThrottleUsingPodLReference(SwervePod PodR, boolean turn, boolean spline){
+        double minThrottle = Math.min(PodR.getThrottle(), getThrottle());
+        minThrottle += 0.1; //play with the 0.1 factor
+        if (!turn && !spline){
+            PodR.setThrottle(minThrottle);
+            setThrottle(minThrottle);
+        }
     }
 
     public void setSpinClicks(int clicks) {
         spinClicksTarget = (double) (clicks);
+    }
+
+    public void setThrottle(double throttle){
+        this.throttle = throttle;
     }
 
     public void setPosAuto(double x, double y, double finalAngle, double speed, RevisedKinematics.DriveType driveType, int initClicks, boolean right){
@@ -233,5 +247,9 @@ public class SwervePod {
 
     public double getDistance(){
         return distance;
+    }
+
+    public double getThrottle(){
+        return throttle;
     }
 }

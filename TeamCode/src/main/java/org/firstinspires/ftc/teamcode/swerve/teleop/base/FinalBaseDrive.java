@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.common.Button;
 
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.kinematics.RevisedKinematics;
+import org.firstinspires.ftc.teamcode.common.kinematics.SwervePod;
 import org.firstinspires.ftc.teamcode.common.pid.ArmPID;
 
 @TeleOp(name="Final BaseDrive", group="Drive")
@@ -27,6 +28,9 @@ public class FinalBaseDrive extends OpMode{
 
     Constants constants = new Constants();
     Reset reset;
+
+    SwervePod PodR = new SwervePod(constants.initDirectionRight, SwervePod.Side.RIGHT);
+    SwervePod PodL = new SwervePod(constants.initDirectionLeft, SwervePod.Side.LEFT);
 
     private enum TelemetryData{
         LEFT,
@@ -77,7 +81,7 @@ public class FinalBaseDrive extends OpMode{
     public void init() { //When "init" is clicked
         robot.init(hardwareMap);
         posSystem = new GlobalPosSystem(robot);
-        kinematics = new RevisedKinematics(posSystem);
+        kinematics = new RevisedKinematics(posSystem, PodL, PodR);
         posSystem.grabKinematics(kinematics);
         reset = new Reset(robot, posSystem);
 
@@ -139,8 +143,8 @@ public class FinalBaseDrive extends OpMode{
     }
 
     void UpdateTelemetry(){
-//        telemetry.addData("IsAlligned", posSystem.isAlligned());
-//        telemetry.addData("Eligible for turning", posSystem.eligibleForTurning());
+        telemetry.addData("IsAlligned", posSystem.isAlligned(PodR.getSpinDirection(), PodL.getSpinDirection()));
+        telemetry.addData("Eligible for turning", posSystem.eligibleForTurning(PodR.getSpinDirection(), PodL.getSpinDirection()));
 
         telemetry.addData("Leftstick X", gamepad1.left_stick_x);
         telemetry.addData("Leftstick Y", gamepad1.left_stick_y);
@@ -161,8 +165,8 @@ public class FinalBaseDrive extends OpMode{
 //        telemetry.addData("Spin Direction (Left)", kinematics.leftThrottle);
 //        telemetry.addData("Spin Direction (Right)", kinematics.rightThrottle);
 //
-//        telemetry.addData("Turn Amount (Left)", kinematics.turnAmountL);
-//        telemetry.addData("Turn Amount (Right)", kinematics.turnAmountR);
+        telemetry.addData("Turn Amount (Left)", PodL.getTurnAmount());
+        telemetry.addData("Turn Amount (Right)", PodR.getTurnAmount());
 
 
         telemetry.addData("topL clicks", robot.topL.getCurrentPosition());
@@ -184,10 +188,10 @@ public class FinalBaseDrive extends OpMode{
         telemetry.addData("Power BotL", motorPower[1]);
         telemetry.addData("Power TopR", motorPower[2]);
         telemetry.addData("Power BotR", motorPower[3]);
-        telemetry.addData("Clicks Target TopL", targetClicks[0]);
-        telemetry.addData("Clicks Target BotL", targetClicks[1]);
-        telemetry.addData("Clicks Target TopR", targetClicks[2]);
-        telemetry.addData("Clicks Target BotR", targetClicks[3]);
+        telemetry.addData("Clicks Target TopL", robot.topL.getTargetPosition() - robot.topL.getCurrentPosition());
+        telemetry.addData("Clicks Target BotL",robot.botL.getTargetPosition() - robot.botL.getCurrentPosition());
+        telemetry.addData("Clicks Target TopR", robot.topR.getTargetPosition() - robot.topR.getCurrentPosition());
+        telemetry.addData("Clicks Target BotR",robot.botR.getTargetPosition() - robot.botR.getCurrentPosition());
 
         telemetry.addData("Drive Type", kinematics.getDriveType());
 

@@ -48,11 +48,6 @@ public class RevisedKinematics {
 
     //current orientation
     GlobalPosSystem posSystem;
-    double currentX;
-    double currentY;
-    double leftCurrentW; //current wheel orientation
-    double rightCurrentW;
-    double currentR; //current robot header orientation
 
     public Accelerator accelerator;
     TrackJoystick joystickTracker;
@@ -78,14 +73,14 @@ public class RevisedKinematics {
     ArmPID ablPID = new ArmPID();
     HashMap<String, Double> armOutput = new HashMap<String, Double>();
 
-    public RevisedKinematics(GlobalPosSystem posSystem){
+    public RevisedKinematics(GlobalPosSystem posSystem, SwervePod podlL, SwervePod podR){
         this.posSystem = posSystem;
 
         accelerator = new Accelerator();
         joystickTracker = new TrackJoystick();
 
-        PodL = new SwervePod(constants.initDirectionLeft, SwervePod.Side.LEFT);
-        PodR = new SwervePod(constants.initDirectionRight, SwervePod.Side.RIGHT);
+        this.PodL = podlL;
+        this.PodR = podR;
     }
 
     public void logic(double lx, double ly, double rx, double ry, double rt, double lt){
@@ -102,9 +97,6 @@ public class RevisedKinematics {
         if (noMovementRequests()) type = DriveType.STOP;
         else type = DriveType.LINEAR;
 
-        //determining current position
-        setCurrentPos();
-
         //determining targets, and how much we want to turn
         double target = Math.toDegrees(Math.atan2(lx, ly));
         if (lx == 0 && ly == 0) target = 0;
@@ -120,10 +112,12 @@ public class RevisedKinematics {
         //determining power
         double power = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
 
-        //determining spin clicks
-        type = PodL.setSpinClicks(power, rt, shouldTurn, shouldSpline, rx, ry);
-        type = PodR.setSpinClicks(power, rt, shouldTurn, shouldSpline, rx, ry);
+        //determining spin clicks and spin power
+        type = PodL.setSpinClicks(power, rt, shouldTurn, shouldSpline, rx);
+        type = PodR.setSpinClicks(power, rt, shouldTurn, shouldSpline, rx);
+        PodL.setThrottleUsingPodLReference(PodR, shouldTurn, shouldSpline);
 
+        //telling the pods where we are (note that the RevisedKinematics class knows it's current position before the Pods know about it because of the new thread running in AutoHub / FinalBaseDrive).
         PodL.setCurrents(posSystem.getLeftWheelW(), (shouldTurn || shouldSpline));
         PodR.setCurrents(posSystem.getRightWheelW(), (shouldTurn || shouldSpline));
 
@@ -138,20 +132,21 @@ public class RevisedKinematics {
         this.finalAngle = finalAngle;
 
         //determining current position
-        setCurrentPos();
-        PodL.setCurrents(leftCurrentW, (driveType == DriveType.TURN || driveType == DriveType.VARIABLE_SPLINE));
-        PodR.setCurrents(rightCurrentW, (driveType == DriveType.TURN || driveType == DriveType.VARIABLE_SPLINE));
+        this.type = driveType;
+        PodL.setCurrents(posSystem.getLeftWheelW(), (driveType == DriveType.TURN || driveType == DriveType.VARIABLE_SPLINE));
+        PodR.setCurrents(posSystem.getRightWheelW(), (driveType == DriveType.TURN || driveType == DriveType.VARIABLE_SPLINE));
 
         PodL.setPosAuto(x, y, finalAngle, speed, driveType, posSystem.getMotorClicks()[0], false);
         PodR.setPosAuto(x, y, finalAngle, speed, driveType, posSystem.getMotorClicks()[2], true);
     }
 
     public void logicAuto(){ //should run everytime, but currently only runs once.
-        setCurrentPos();
+        PodL.setCurrents(posSystem.getLeftWheelW(), (type == DriveType.TURN || type == DriveType.VARIABLE_SPLINE));
+        PodR.setCurrents(posSystem.getRightWheelW(), (type == DriveType.TURN || type == DriveType.VARIABLE_SPLINE));
 
         //4) determining distance travel amount
-        PodL.autoLogic(leftCurrentW, (PodL.getDriveType() == DriveType.TURN || PodL.getDriveType() == DriveType.VARIABLE_SPLINE),  posSystem.getMotorClicks()[0]);
-        PodR.autoLogic(rightCurrentW, (PodR.getDriveType() == DriveType.TURN || PodR.getDriveType() == DriveType.VARIABLE_SPLINE), posSystem.getMotorClicks()[2]);
+        PodL.autoLogic(posSystem.getLeftWheelW(), (PodL.getDriveType() == DriveType.TURN || PodL.getDriveType() == DriveType.VARIABLE_SPLINE),  posSystem.getMotorClicks()[0]);
+        PodR.autoLogic(posSystem.getRightWheelW(), (PodR.getDriveType() == DriveType.TURN || PodR.getDriveType() == DriveType.VARIABLE_SPLINE), posSystem.getMotorClicks()[2]);
 
         //determining spin power
         PodL.setPowerUsingLeft(PodR); //determines for both PodL and PodR.
@@ -343,14 +338,6 @@ public class RevisedKinematics {
     }
 
 
-    void setCurrentPos(){
-        currentX = posSystem.getPositionArr()[0];
-        currentY = posSystem.getPositionArr()[1];
-        leftCurrentW = posSystem.getPositionArr()[2];
-        rightCurrentW = posSystem.getPositionArr()[3];
-        currentR = posSystem.getPositionArr()[4];
-    }
-
     public double clamp(double degrees){
         if (Math.abs(degrees) >= 360) degrees %= 360;
         if (degrees == -180) degrees = 180;
@@ -366,8 +353,6 @@ public class RevisedKinematics {
     public double[] getPower(){
         PodL.getOutput();
         PodR.getOutput();
-
-
 
         double[] motorPower = new double[4];
         motorPower[0] = (PodL.output.get("power") * PodL.output.get("throttle") * PodL.output.get("direction")); //top left

@@ -93,7 +93,7 @@ public class GlobalPosSystem implements Runnable{
         int botR = motorClicksPose.get("botR") - prevMotorClicks.get("botR"); //change in bottom right
         double translationalInchesR = (topR - botR) / 2.0;
         translationalInchesR *= constants.INCHES_PER_CLICK;
-        translationalInchesR *= Math.signum(revisedKinematics.rightThrottle);
+        translationalInchesR *= constants.initDirectionRight;
         double currentAngleR = positionArr[3];
 
         //left
@@ -101,7 +101,7 @@ public class GlobalPosSystem implements Runnable{
         int botL = motorClicksPose.get("botL") - prevMotorClicks.get("botL"); //change in bottom left
         double translationalInchesL = (topL - botL) / 2.0;
         translationalInchesL *= constants.INCHES_PER_CLICK;
-        translationalInchesL *= Math.signum(revisedKinematics.leftThrottle);
+        translationalInchesL *= constants.initDirectionLeft;
         double currentAngleL = positionArr[2];
 
         double splineOrientation = 0.0;
