@@ -9,20 +9,36 @@ public class TurnMath {
     private double theta;
     private double arcLength;
 
-    SpinPID spinPID = new SpinPID();
+    private int targetClicks;
 
-    public void setPos(double theta, double kp, double ki, double kd){
+    public void setPos(double theta, int initClicks, int direction, boolean rightPod){
         this.theta = theta;
-        this.arcLength = getDistance();
 
-        spinPID.setTargets(this.arcLength, kp, ki, kd);
+        targetClicks = (int)(getDistance() * constants.CLICKS_PER_INCH * direction) + initClicks;
+
+        if (rightPod) targetClicks *= -1;
+
+        this.arcLength = Math.abs(getDistance());
     }
 
     public double getDistance(){
-        return theta * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER;
+        double arcLength = theta * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER;
+
+        return arcLength;
     }
 
-    public double getDistanceRemaining(double currR){
+    public int getTargetClicks(){
+        return targetClicks;
+    }
+
+    public double distanceRemaining(int currClick){
+        double delta=  (targetClicks - currClick) * constants.INCHES_PER_CLICK;
+
+        return delta;
+    }
+
+
+    public double getAngleRemaining(double currR){
         double target2 = (theta < 0 ? theta + 360 : theta);
         double current2 = (currR < 0 ? currR + 360 : currR);
 
@@ -32,5 +48,4 @@ public class TurnMath {
 
         return turnAmount;
     }
-
 }

@@ -10,12 +10,13 @@ import org.firstinspires.ftc.teamcode.common.kinematics.RevisedKinematics;
 
 import java.util.HashMap;
 
-public class GlobalPosSystem {
+public class GlobalPosSystem implements Runnable{
 
     Constants constants = new Constants();
     RevisedKinematics revisedKinematics;
 
     private double[] positionArr = new double[5];
+
     public HashMap<String, Integer> motorClicksPose = new HashMap<>();
     public HashMap<String, Integer> prevMotorClicks = new HashMap<>();
 
@@ -25,7 +26,9 @@ public class GlobalPosSystem {
     Orientation currentOrientation;
     double currAngle = 0;
 
-    public GlobalPosSystem(HardwareDrive robot){
+    private boolean updateGPS = true;
+
+    public GlobalPosSystem(HardwareDrive robot) {
         this.robot = robot;
 
         motorClicksPose.put("topR", robot.topR.getCurrentPosition());
@@ -90,7 +93,7 @@ public class GlobalPosSystem {
         int botR = motorClicksPose.get("botR") - prevMotorClicks.get("botR"); //change in bottom right
         double translationalInchesR = (topR - botR) / 2.0;
         translationalInchesR *= constants.INCHES_PER_CLICK;
-        translationalInchesR *= Math.signum(revisedKinematics.rightThrottle);
+        translationalInchesR *= constants.initDirectionRight;
         double currentAngleR = positionArr[3];
 
         //left
@@ -98,7 +101,7 @@ public class GlobalPosSystem {
         int botL = motorClicksPose.get("botL") - prevMotorClicks.get("botL"); //change in bottom left
         double translationalInchesL = (topL - botL) / 2.0;
         translationalInchesL *= constants.INCHES_PER_CLICK;
-        translationalInchesL *= Math.signum(revisedKinematics.leftThrottle);
+        translationalInchesL *= constants.initDirectionLeft;
         double currentAngleL = positionArr[2];
 
         double splineOrientation = 0.0;
@@ -122,8 +125,8 @@ public class GlobalPosSystem {
 //            positionArr[3] += positionArr[4];
 //        }
 
-        positionArr[0] += (hypotenuse * Math.sin(baseAngle));
-        positionArr[1] += (hypotenuse * Math.cos(baseAngle));
+        positionArr[0] += (hypotenuse * Math.sin(baseAngle + positionArr[4]));
+        positionArr[1] += (hypotenuse * Math.cos(baseAngle + positionArr[4]));
     }
 
     public void update ( double x, double y, double leftWheelW, double rightWheelW, double robotR){
@@ -145,6 +148,26 @@ public class GlobalPosSystem {
 
     public double getRightWheelW(){
         return positionArr[3];
+    }
+
+    public boolean isAlligned(int directionR, int directionL){
+        double optimizedCurrentWL = (directionL == constants.initDirectionLeft ? positionArr[2] : clamp(positionArr[2] + 180.0));
+        double optimizedCurrentWR = (directionR == constants.initDirectionRight ? positionArr[3] : clamp(positionArr[3] + 180.0));
+
+        double currentL = (positionArr[2] < 0 ? positionArr[2] + 360 : positionArr[2]);
+        double currentR = (positionArr[3] < 0 ? positionArr[3] + 360 : positionArr[3]);
+
+        double turnAmount1 = positionArr[2] - positionArr[3];
+        double turnAmount2 = currentL - currentR;
+        double turnAmount = (Math.abs(turnAmount1) < Math.abs(turnAmount2) ? turnAmount1 : turnAmount2);
+
+        return (Math.abs(turnAmount) < constants.allignmentTolerance);
+    }
+
+    public boolean eligibleForTurning(int directionR, int directionL){
+        return (isAlligned(directionR, directionL) &&
+                Math.abs(Math.abs(positionArr[2]) - 90) >= 40 &&
+                Math.abs(Math.abs(positionArr[3]) - 90) >= 40); //wheels must be
     }
 
     public void hardResetGPS(){
@@ -169,13 +192,6 @@ public class GlobalPosSystem {
     public void resetXY(){
         positionArr[0] = 0;
         positionArr[1] = 0;
-    }
-
-    public void resetOrientationIfOneEighty(){
-        if ((Math.abs(positionArr[2]) <= 2 || Math.abs(positionArr[2]) <= 182) && (Math.abs(positionArr[3]) <= 2 || Math.abs(positionArr[3]) <= 182)){
-            positionArr[2] = 0;
-            positionArr[3] = 0;
-        }
     }
 
     public void updateHash(){
@@ -226,6 +242,13 @@ public class GlobalPosSystem {
         }
         return degrees;
     }
+
+    public void run(){
+        while (updateGPS){
+            calculatePos();
+        }
+    }
+
 
     public RevisedKinematics.DriveType getDriveType() {
         return revisedKinematics.getDriveType();

@@ -20,11 +20,11 @@ public class Accelerator {
             return 0.0;
         }
 
-        double accelerationFactor = (Math.pow(accelerationTimer.seconds(), 0.5)/ constants.accelTime ) + 0.6;
+        double accelerationFactor = (Math.pow(accelerationTimer.seconds(), 0.5)/ constants.accelTime ) + 0.3;
         power *= accelerationFactor;
 
-        if (power > 1) power = 1;
-        else if (power < -1) power = -1;
+        if (power > constants.POWER_LIMITER) power = constants.POWER_LIMITER;
+        else if (power < -constants.POWER_LIMITER) power = -constants.POWER_LIMITER;
 
         return power;
     }
@@ -35,51 +35,4 @@ public class Accelerator {
 
         return power;
     }
-
-
-
-//    public double update(double power, SimplifiedKinematics.DriveType dType){
-//        prevDriveType = currentDriveType;
-//        currentDriveType = dType;
-//
-//        if (power == 0) {
-//            isAccelerateCycle = false;
-//            accelerationTimer.reset();
-//            return 0.0;
-//        }
-//
-//        if (prevDriveType != currentDriveType){
-//            accelerationTimer.reset();
-//            isAccelerateCycle = true;
-//        }
-//
-//        double accelerationFactor = (Math.pow(accelerationTimer.seconds(), 3)/3.0) + 0.1;
-//        power *= accelerationFactor;
-//
-//        if (power > 1) power = 1;
-//        else if (power < -1) power = -1;
-//
-//        return power;
-//    }
-
-//    public double update(double power){
-//        if (power == 0) {
-//            isAccelerateCycle = false;
-//            accelerationTimer.reset();
-//            return 0.0;
-//        }
-//
-//        if (!isAccelerateCycle){
-//            accelerationTimer.reset();
-//            isAccelerateCycle = true;
-//        }
-//
-//        accelerationFactor = (Math.pow(accelerationTimer.seconds(), 3)/3.0) + 0.1;
-//        power *= accelerationFactor;
-//
-//        if (power > 1) power = 1;
-//        else if (power < -1) power = -1;
-//
-//        return power;
-//    }
 }
