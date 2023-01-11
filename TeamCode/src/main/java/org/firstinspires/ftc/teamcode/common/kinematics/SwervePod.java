@@ -106,7 +106,7 @@ public class SwervePod {
             return RevisedKinematics.DriveType.VARIABLE_SPLINE;
         } else {
             nonRightStickCurrentW = currentW;
-//            direction = (initPole ? initDirection : -initDirection);
+            direction = (initPole ? initDirection : -initDirection);
         }
 
         if (rightStickX == 0 && power == 0) return RevisedKinematics.DriveType.STOP;
@@ -139,17 +139,17 @@ public class SwervePod {
 
         if(Math.abs(turnAmount) > 90){
             initPole = !initPole;
-            direction *= -1;
+//            direction *= -1;
             double temp_target = clamp(target + 180);
             turnAmount = changeAngle(temp_target, currentW);
 
         }
 
         if (initPole){
-//            direction = initDirection;
+            direction = initDirection;
             optimizedCurrentW = currentW;
         } else{
-//            direction = -initDirection;
+            direction = -initDirection;
             optimizedCurrentW = clamp(currentW + 180);
         }
 
@@ -300,12 +300,14 @@ public class SwervePod {
         return driveType;
     }
 
-    public void getOutput(){
+    public HashMap<String, Double> getOutput(){
         output.put("power", power);
         output.put("spinClicksTarget", spinClicksTarget);
         output.put("rotClicksTarget", rotClicksTarget);
         output.put("direction", (double)direction);
         output.put("throttle", Math.abs(throttle));
+
+        return output;
     }
 
     public int getSpinDirection(){
