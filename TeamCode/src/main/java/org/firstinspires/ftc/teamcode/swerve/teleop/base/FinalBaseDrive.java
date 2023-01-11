@@ -424,6 +424,7 @@ public class FinalBaseDrive extends OpMode{
      */
     @Override
     public void stop() {
+        posSystem.setUpdateGPS(false);
         gpsUpdateThread.interrupt();
     }
 }
