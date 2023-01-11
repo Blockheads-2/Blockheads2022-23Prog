@@ -124,6 +124,10 @@ public class RevisedKinematics {
         //unnecessary function but useful for telemetry
         if (type == DriveType.STOP){
             power = 0;
+            spinClicksR = 0;
+            spinClicksL = 0;
+            turnAmountL = 0;
+            turnAmountR = 0;
             return;
         }
 
@@ -152,6 +156,80 @@ public class RevisedKinematics {
 
         //determining values from right stick input.
         rightStick();
+    }
+
+    public void firstMovement(){
+        if (joystickTracker.getChange() > 90 || noMovementRequests()) firstMovement = true;
+        if (firstMovement){
+            if (Math.abs(turnAmountL) >= constants.degreeTOLERANCE || Math.abs(turnAmountR) >= constants.degreeTOLERANCE){
+                spinClicksL = 0;
+                spinClicksR = 0;
+            } else{
+                firstMovement = false;
+            }
+        }
+    }
+
+    public void rightStick(){
+        if (posSystem.eligibleForTurning()){
+            if ((lx == 0 && ly == 0) && (rx != 0 || ry != 0)){
+                //            leftThrottle = leftThrottle;
+                rightThrottle *= -1;
+
+                spinClicksL = (int) (rx * 100 * leftThrottle);
+                spinClicksR = (int) (rx * 100 * rightThrottle);
+                power = rx;
+
+                turnAmountL = -leftCurrentW;
+                leftRotClicks = (int)(turnAmountL * constants.CLICKS_PER_DEGREE);
+
+                turnAmountR = -rightCurrentW;
+                rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE);
+
+                type = DriveType.TURN;
+            } else if ((lx != 0 || ly != 0) && (rx != 0 && ry == 0)){
+                double throttle = (ry <= lx ? ry / (1.5*rx) : rx / (1.5 * ry));
+                throttle = Math.abs(throttle);
+                if (rx < 0) leftThrottle *= throttle;
+                else rightThrottle *= throttle;
+                type = DriveType.VARIABLE_SPLINE;
+
+            }
+        }
+    }
+
+    public double wheelOptimization(double target, double currentW, boolean right){ //returns how much the wheels should rotate in which direction
+        double target2 = (target < 0 ? target + 360 : target);
+        double current2 = (currentW < 0 ? currentW + 360 : currentW);
+
+        double turnAmount1 = target - currentW;
+        double turnAmount2 = target2 - current2;
+        double turnAmount = (Math.abs(turnAmount1) < Math.abs(turnAmount2) ? turnAmount1 : turnAmount2);
+
+        if (right) {
+            rightThrottle = constants.initDirectionRight;
+            posSystem.setOptimizedCurrentWR(rightCurrentW);
+        } else {
+            leftThrottle = constants.initDirectionLeft;
+            posSystem.setOptimizedCurrentWL(leftCurrentW);
+        }
+
+
+        if(Math.abs(turnAmount) > 90){
+            double temp_target = clamp(target + 180);
+            turnAmount = temp_target - currentW;
+
+            if (right) {
+                this.rightThrottle *= -1;
+                posSystem.setOptimizedCurrentWR(clamp(rightCurrentW + 180));
+
+            }
+            else {
+                this.leftThrottle *= -1;
+                posSystem.setOptimizedCurrentWL(clamp(leftCurrentW + 180));
+            }
+        }
+        return turnAmount;
     }
 
     public void setPosAuto(double x, double y, double finalAngle, double speed, DriveType driveType){ //runs once
@@ -417,80 +495,6 @@ public class RevisedKinematics {
 
     public ArmType getArmType(){
         return armType;
-    }
-
-    public void firstMovement(){
-        if (joystickTracker.getChange() > 90 || noMovementRequests()) firstMovement = true;
-        if (firstMovement){
-            if (Math.abs(turnAmountL) >= constants.degreeTOLERANCE || Math.abs(turnAmountR) >= constants.degreeTOLERANCE){
-                spinClicksL = 0;
-                spinClicksR = 0;
-            } else{
-                firstMovement = false;
-            }
-        }
-    }
-
-    public void rightStick(){
-        if (posSystem.eligibleForTurning()){
-            if ((lx == 0 && ly == 0) && (rx != 0 || ry != 0)){
-                //            leftThrottle = leftThrottle;
-                rightThrottle *= -1;
-
-                spinClicksL = (int) (rx * 100 * leftThrottle);
-                spinClicksR = (int) (rx * 100 * rightThrottle);
-                power = rx;
-
-                turnAmountL = -leftCurrentW;
-                leftRotClicks = (int)(turnAmountL * constants.CLICKS_PER_DEGREE);
-
-                turnAmountR = -rightCurrentW;
-                rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE);
-
-                type = DriveType.TURN;
-            } else if ((lx != 0 || ly != 0) && (rx != 0 && ry == 0)){
-                double throttle = (ry <= lx ? ry / (1.5*rx) : rx / (1.5 * ry));
-                throttle = Math.abs(throttle);
-                if (rx < 0) leftThrottle *= throttle;
-                else rightThrottle *= throttle;
-                type = DriveType.VARIABLE_SPLINE;
-
-            }
-        }
-    }
-
-    public double wheelOptimization(double target, double currentW, boolean right){ //returns how much the wheels should rotate in which direction
-        double target2 = (target < 0 ? target + 360 : target);
-        double current2 = (currentW < 0 ? currentW + 360 : currentW);
-
-        double turnAmount1 = target - currentW;
-        double turnAmount2 = target2 - current2;
-        double turnAmount = (Math.abs(turnAmount1) < Math.abs(turnAmount2) ? turnAmount1 : turnAmount2);
-
-        if (right) {
-            rightThrottle = constants.initDirectionRight;
-            posSystem.setOptimizedCurrentWR(rightCurrentW);
-        } else {
-            leftThrottle = constants.initDirectionLeft;
-            posSystem.setOptimizedCurrentWL(leftCurrentW);
-        }
-
-
-        if(Math.abs(turnAmount) > 90){
-            double temp_target = clamp(target + 180);
-            turnAmount = temp_target - currentW;
-
-            if (right) {
-                this.rightThrottle *= -1;
-                posSystem.setOptimizedCurrentWR(clamp(rightCurrentW + 180));
-
-            }
-            else {
-                this.leftThrottle *= -1;
-                posSystem.setOptimizedCurrentWL(clamp(leftCurrentW + 180));
-            }
-        }
-        return turnAmount;
     }
 
     public double robotOptimization(double target, double currentR){ //returns how much the wheels should rotate in which direction

@@ -257,6 +257,10 @@ public class GlobalPosSystem implements Runnable{
         }
     }
 
+    public void setUpdateGPS(boolean threadActive){
+        updateGPS = threadActive;
+    }
+
 
     public RevisedKinematics.DriveType getDriveType() {
         return revisedKinematics.getDriveType();
