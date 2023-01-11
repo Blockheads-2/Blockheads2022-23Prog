@@ -16,7 +16,7 @@ public class Constants {
     public double MAX_VELOCITY_DT = 2400.0; // unit is clicks/sec
     public double clickTOLERANCE = 15; //number of clicks or degrees the robot can be off by
     public double degreeTOLERANCE = 5;
-    public double allignmentTolerance = 12;
+    public double allignmentTolerance = 9;
 
 
     //control hub to arm: 16 cm
@@ -54,14 +54,13 @@ public class Constants {
     public double DEGREES_PER_INCH = CLICKS_PER_INCH * DEGREES_PER_CLICK;
     public double INCHES_PER_DEGREE = 1.0 / DEGREES_PER_INCH;
 
-    public double initDirectionRight = 1.0;
-    public double initDirectionLeft = -1.0;
+    public int initDirectionRight = 1;
+    public int initDirectionLeft = -1;
 
     public double kp = 0.03;
     public double ki = 0;
     public double kd = 0.01;
 
-    public int RESET_WAIT_PERIOD_MS = 30000; //30 second wait period.
     /* starting:
         base: 0
         top: 0

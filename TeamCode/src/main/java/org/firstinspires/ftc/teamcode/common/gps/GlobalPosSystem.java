@@ -7,6 +7,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.kinematics.RevisedKinematics;
+import org.firstinspires.ftc.teamcode.common.kinematics.SwervePod;
 
 import java.util.HashMap;
 
@@ -21,6 +22,9 @@ public class GlobalPosSystem implements Runnable{
     public HashMap<String, Integer> prevMotorClicks = new HashMap<>();
 
     HardwareDrive robot;
+
+    public double optimizedCurrentWR = 0;
+    public double optimizedCurrentWL = 0;
 
     Orientation lastOrientation;
     Orientation currentOrientation;
@@ -150,24 +154,21 @@ public class GlobalPosSystem implements Runnable{
         return positionArr[3];
     }
 
-    public boolean isAlligned(int directionR, int directionL){
-        double optimizedCurrentWL = (directionL == constants.initDirectionLeft ? positionArr[2] : clamp(positionArr[2] + 180.0));
-        double optimizedCurrentWR = (directionR == constants.initDirectionRight ? positionArr[3] : clamp(positionArr[3] + 180.0));
+    public boolean isAlligned(){
+        double error = SwervePod.changeAngle(optimizedCurrentWL, optimizedCurrentWR);
 
-        double currentL = (optimizedCurrentWL < 0 ? optimizedCurrentWL + 360 : optimizedCurrentWL);
-        double currentR = (optimizedCurrentWR < 0 ? optimizedCurrentWR + 360 : optimizedCurrentWR);
-
-        double turnAmount1 = optimizedCurrentWL - optimizedCurrentWR;
-        double turnAmount2 = currentL - currentR;
-        double turnAmount = (Math.abs(turnAmount1) < Math.abs(turnAmount2) ? turnAmount1 : turnAmount2);
-
-        return (Math.abs(turnAmount) < constants.allignmentTolerance);
+        return (Math.abs(error) < constants.allignmentTolerance);
     }
 
-    public boolean eligibleForTurning(int directionR, int directionL){
-        return (isAlligned(directionR, directionL) &&
-                Math.abs(Math.abs(positionArr[2]) - 90) >= 40 &&
-                Math.abs(Math.abs(positionArr[3]) - 90) >= 40); //wheels must be
+    public void setOptimizedCurrentW(double angleR, double angleL){
+        optimizedCurrentWR = angleR;
+        optimizedCurrentWL = angleL;
+    }
+
+    public boolean eligibleForTurning(){
+        return (isAlligned() &&
+                Math.abs(Math.abs(optimizedCurrentWL) - 90) >= 40 &&
+                Math.abs(Math.abs(optimizedCurrentWR) - 90) >= 40); //wheels must be
     }
 
     public void hardResetGPS(){

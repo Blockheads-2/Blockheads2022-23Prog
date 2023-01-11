@@ -25,8 +25,9 @@ public class SwervePod {
 
     //teleop
     private double currentW = 0;
+    public double optimizedCurrentW = 0;
     private double nonRightStickCurrentW = 0;
-    private boolean initPole = true;
+    public boolean initPole = true;
 
     private double throttle = 0;
     private int direction;
@@ -34,8 +35,8 @@ public class SwervePod {
     private double turnAmount = 0;
 
     private double power = 0;
-    private double spinClicksTarget = 0;
-    private double rotClicksTarget = 0;
+    public double spinClicksTarget = 0;
+    public double rotClicksTarget = 0;
 
     //auto
     private double distance = 0;
@@ -59,10 +60,10 @@ public class SwervePod {
         pid.setTargets(kp, ki, kd);
     }
 
-    public void setPowerUsingLeft(SwervePod PodR){ //auto
-        power = (driveType == RevisedKinematics.DriveType.SNAP ?
-                ((Math.abs(pid.update(turnAmount)) + Math.abs(PodR.getPID().update(PodR.getTurnAmount()))) / 2.0) * speed :
-                ((Math.abs(pid.update(distance)) + Math.abs(PodR.getPID().update(PodR.getDistance()))) / 2.0) * speed);
+    public void setPowerAuto(){ //auto
+        double powerSpin = Math.abs(pid.update(turnAmount)) * speed;
+        double powerRotate = Math.abs(pid.update(distance)) * speed;
+        power = (driveType == RevisedKinematics.DriveType.SNAP ? powerRotate : powerSpin);
     }
 
     public void setCurrents(double currentW){
@@ -71,40 +72,47 @@ public class SwervePod {
 
     public void setRotClicks(double target){
         turnAmount = wheelOptimization(target, currentW);
-
         rotClicksTarget = turnAmount * constants.CLICKS_PER_DEGREE;
     }
 
-    public RevisedKinematics.DriveType setSpinClicks(double powerFactor, double trigger, boolean turn, boolean spline, double rightStickX){ //teleop
+    public void forceSetRotClicks(int clicks){
+        rotClicksTarget = clicks;
+    }
+
+
+    //for spin power and spin clicks
+    public RevisedKinematics.DriveType setSpinClicksAndPower(double powerFactor, double trigger, boolean turn, boolean spline, double rightStickX){ //teleop
         this.power = powerFactor;
-        spinClicksTarget = (int)(power * (100 * (1.0 + trigger)) * direction);
+        spinClicksTarget = (int)(power * (100 * (1.0 + trigger)));
         throttle = 1.0;
 
         if (turn){
-            if (side == Side.RIGHT) direction *= -1;
+            if (side == Side.RIGHT) direction = (initDirection* -1 * (initPole ? -1 : 1));
 
             spinClicksTarget = rightStickX * 100 * direction;
-            power = rightStickX;
+            power = rightStickX + 0.3;
+            if (power > constants.POWER_LIMITER) power = constants.POWER_LIMITER;
+            else if (power < -constants.POWER_LIMITER) power = -constants.POWER_LIMITER;
 
             setRotClicks(nonRightStickCurrentW);
 
             return RevisedKinematics.DriveType.TURN;
         } else if (spline){
 //            double throttle = (rightStickY <= rightStickX ? rightStickY / (1.5*rightStickX) : rightStickX / (1.5 * rightStickY));
-            double throttle = Math.sin(rightStickX);
-            throttle = Math.abs(throttle);
+            double throttle = Math.abs(1.0 - Math.abs(Math.sin(rightStickX))); //1 - sinx
             if (rightStickX < 0 && side != Side.RIGHT) this.throttle *= throttle;
             else if (rightStickX >= 0 && side == Side.RIGHT) this.throttle *= throttle;
 
             return RevisedKinematics.DriveType.VARIABLE_SPLINE;
+        } else {
+            nonRightStickCurrentW = currentW;
+//            direction = (initPole ? initDirection : -initDirection);
         }
 
-        if (!turn && !spline) nonRightStickCurrentW = currentW;
+        if (rightStickX == 0 && power == 0) return RevisedKinematics.DriveType.STOP;
 
-        if (powerFactor == 0) return RevisedKinematics.DriveType.STOP;
-
-        if (throttle > 1.0) throttle = 1;
-        else if (throttle < 0) throttle = 0;
+//        if (throttle > 1.0) throttle = 1;
+//        else if (throttle < 0) throttle = 0;
 
         return RevisedKinematics.DriveType.LINEAR;
     }
@@ -120,6 +128,35 @@ public class SwervePod {
             setThrottle(minThrottle);
         }
     }
+    public double wheelOptimization(double target, double currentW){
+        double target2 = (target < 0 ? target + 360 : target);
+        double current2 = (currentW < 0 ? currentW + 360 : currentW);
+
+        double turnAmount1 = target - clamp(currentW + (initPole ? 0 : 180));
+        double turnAmount2 = target2 - clampConventional(current2 + (initPole ? 0 : 180));
+
+        double turnAmount = (Math.abs(turnAmount1) < Math.abs(turnAmount2) ? turnAmount1 : turnAmount2);
+
+        if(Math.abs(turnAmount) > 90){
+            initPole = !initPole;
+            direction *= -1;
+            double temp_target = clamp(target + 180);
+            turnAmount = changeAngle(temp_target, currentW);
+
+        }
+
+        if (initPole){
+//            direction = initDirection;
+            optimizedCurrentW = currentW;
+        } else{
+//            direction = -initDirection;
+            optimizedCurrentW = clamp(currentW + 180);
+        }
+
+
+        return turnAmount;
+    }
+
 
     public void setSpinClicks(int clicks) {
         spinClicksTarget = (double) (clicks);
@@ -144,7 +181,11 @@ public class SwervePod {
 
         setPID(constants.kp, constants.ki, constants.kd);
 
-        power = (driveType == RevisedKinematics.DriveType.SNAP ? speed * pid.update(turnAmount) : speed * pid.update(distance));
+        setPowerAuto();
+    }
+
+    public void setPower(double power){
+        this.power = power;
     }
 
     public void autoLogic(double currentW, int currClick){
@@ -189,6 +230,8 @@ public class SwervePod {
 
         spinClicksTarget = distance * constants.CLICKS_PER_INCH;
         rotClicksTarget = turnAmount * constants.CLICKS_PER_DEGREE;
+
+        setPowerAuto();
     }
 
 //    public double wheelOptimization(double target, double currentW){ //returns how much the wheels should rotate in which direction
@@ -201,33 +244,25 @@ public class SwervePod {
 //
 //        direction = initDirection;
 //
+//        optimizedCurrentW = currentW;
+//
 //        if(Math.abs(turnAmount) > 90){
 //            double temp_target = clamp(target + 180);
 //            turnAmount = temp_target - currentW;
 //
 //            direction *= -1;
+//            optimizedCurrentW = clamp(currentW + 180);
 //        }
 //        return turnAmount;
 //    }
 
-    public double wheelOptimization(double target, double currentW){
+
+    public static double changeAngle(double target, double current){
         double target2 = (target < 0 ? target + 360 : target);
-        double current2 = (currentW < 0 ? currentW + 360 : currentW);
-
-        double turnAmount1 = target - clamp(currentW + (initPole ? 0 : 180));
-        double turnAmount2 = target2 - clampConventional(current2 + (initPole ? 0 : 180));
-
-        double turnAmount = (Math.abs(turnAmount1) < Math.abs(turnAmount2) ? turnAmount1 : turnAmount2);
-
-        if(Math.abs(turnAmount) > 90){
-            initPole = !initPole;
-
-            double temp_target = clamp(target + 180);
-            turnAmount = temp_target - currentW;
-
-            direction *= -1;
-        }
-        return turnAmount;
+        double current2 = (current < 0 ? current + 360 : current);
+        double turnAmount1 = target - current;
+        double turnAmount2 = target2 - current2;
+        return (Math.abs(turnAmount1) < Math.abs(turnAmount2) ? turnAmount1 : turnAmount2);
     }
 
 
@@ -270,7 +305,7 @@ public class SwervePod {
         output.put("spinClicksTarget", spinClicksTarget);
         output.put("rotClicksTarget", rotClicksTarget);
         output.put("direction", (double)direction);
-        output.put("throttle", throttle);
+        output.put("throttle", Math.abs(throttle));
     }
 
     public int getSpinDirection(){

@@ -63,6 +63,14 @@ public class TrackJoystick {
         }
     }
 
+    public double getAngle(double x, double y){
+        double target = Math.toDegrees(Math.atan2(x, y));
+        if (x == 0 && y == 0) target = 0;
+        else if (x==0 && y < 0) target=180;
+
+        return target;
+    }
+
     public void changeGapTime(int ms){
         gap -= ms;
         if (gap > 500) gap = 500;
