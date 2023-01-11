@@ -100,7 +100,7 @@ public class RevisedKinematics {
         pidR = new SnapSwerveModulePID();
         pidL = new SnapSwerveModulePID();
 
-        accelerator = new Accelerator();
+        //accelerator = new Accelerator();
         joystickTracker = new TrackJoystick();
 
         rightThrottle = constants.initDirectionRight;
@@ -532,7 +532,7 @@ public class RevisedKinematics {
         motorPower[3] = (power * rightThrottle); //bottom right
 
         for (int i = 0; i < 4; i++){
-            motorPower[i] = accelerator.update(motorPower[i]);
+            //motorPower[i] = accelerator.update(motorPower[i]);
             motorPower[i] *= constants.POWER_LIMITER;
 
             if (motorPower[i] > constants.POWER_LIMITER) motorPower[i] = constants.POWER_LIMITER;

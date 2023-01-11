@@ -83,6 +83,21 @@ public class FinalBaseDrive extends OpMode{
 
         telemetry.addData("Say", "Hello Driver");
 
+        robot.at.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.at.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.abl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.abl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.abr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.abr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.botL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.botL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.botR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.botR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.topL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.topL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.topR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.topR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         robot.abl.setTargetPosition(constants.INIT_ARMBASE_POS);
         robot.abr.setTargetPosition(constants.INIT_ARMBASE_POS);
         robot.at.setTargetPosition(0);
@@ -94,8 +109,8 @@ public class FinalBaseDrive extends OpMode{
 
     @Override
     public void init_loop() { //Loop between "init" and "start"
-//        robot.abl.setPower(0.7);
-//        robot.abr.setPower(0.7);
+        robot.abl.setPower(0.7);
+        robot.abr.setPower(0.7);
     }
 
     @Override
@@ -114,8 +129,8 @@ public class FinalBaseDrive extends OpMode{
         robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
-//        robot.abl.setPower(0.7); //commented out the arm pos while testing the drivetrain
-//        robot.abr.setPower(0.7);
+        robot.abl.setPower(0.7); //commented out the arm pos while testing the drivetrain
+        robot.abr.setPower(0.7);
 
         gpsUpdateThread = new Thread(posSystem);
         gpsUpdateThread.start();
@@ -124,7 +139,7 @@ public class FinalBaseDrive extends OpMode{
     @Override
     public void loop() { //Loop between "start" and "stop"
         UpdatePlayer1();
-//        UpdatePlayer2();
+        UpdatePlayer2();
         UpdateButton();
         UpdateTelemetry();
     }
@@ -197,7 +212,7 @@ public class FinalBaseDrive extends OpMode{
     }
 
     void UpdateButton(){
-        x.update(gamepad1.x);
+        x.update(gamepad2.x);
         y.update(gamepad1.y);
         a.update(gamepad1.a);
         b.update(gamepad1.b);
@@ -293,13 +308,13 @@ public class FinalBaseDrive extends OpMode{
             robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             clawAngle = constants.armServoHigh;
-            //robot.armServo.setPosition(constants.armServoHigh);
+            robot.armServo.setPosition(constants.armServoHigh);
 
-            /*robot.abl.setPower(ablPID.update(robot.abl.getCurrentPosition()));
+            robot.abl.setPower(ablPID.update(robot.abl.getCurrentPosition()));
             robot.abr.setPower(abrPID.update(robot.abr.getCurrentPosition()));
             robot.at.setPower(ablPID.update(robot.at.getCurrentPosition()));
 
-             */
+
             robot.at.setPower(0.4);
             robot.abl.setPower(1);
             robot.abr.setPower(1);
@@ -329,13 +344,13 @@ public class FinalBaseDrive extends OpMode{
             robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             clawAngle = constants.armServoLow;
-            //  robot.armServo.setPosition(constants.armServoLow);
+            robot.armServo.setPosition(constants.armServoLow);
 
-           /*
+
             robot.abl.setPower(ablPID.update(robot.abl.getCurrentPosition()));
             robot.abr.setPower(abrPID.update(robot.abr.getCurrentPosition()));
             robot.at.setPower(ablPID.update(robot.at.getCurrentPosition()));
-            */
+
 
             robot.at.setPower(0.4);
             robot.abl.setPower(1);
@@ -360,18 +375,18 @@ public class FinalBaseDrive extends OpMode{
             robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            //robot.armServo.setPosition(constants.armServoBottom);
+            robot.armServo.setPosition(constants.armServoBottom);
 
             robot.at.setPower(0.4);
             robot.abl.setPower(1);
             robot.abr.setPower(1);
 
-           /*
+
             robot.abl.setPower(ablPID.update(robot.abl.getCurrentPosition()));
             robot.abr.setPower(abrPID.update(robot.abr.getCurrentPosition()));
             robot.at.setPower(ablPID.update(robot.at.getCurrentPosition()));
 
-            */
+
 
             if (robot.at.getCurrentPosition() <= constants.topMotorBottom + constants.degreeTOLERANCE && robot.abl.getCurrentPosition() <= constants.bottomMotorBottom + constants.degreeTOLERANCE && robot.abr.getCurrentPosition() <= constants.bottomMotorBottom + constants.degreeTOLERANCE) lowerAllTheWay = false;
         }
