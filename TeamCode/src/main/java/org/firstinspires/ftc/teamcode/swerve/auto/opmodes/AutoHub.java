@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.kinematics.RevisedKinematics;
+import org.firstinspires.ftc.teamcode.common.kinematics.SwervePod;
 import org.firstinspires.ftc.teamcode.common.pid.SnapSwerveModulePID;
 import org.firstinspires.ftc.teamcode.swerve.auto.Math.TurnMath;
 
@@ -26,6 +27,10 @@ public class AutoHub implements Runnable{
     GlobalPosSystem posSystem;
     RevisedKinematics kinematics;
     Reset reset;
+
+    SwervePod podR = new SwervePod(constants.initDirectionRight, SwervePod.Side.RIGHT);
+    SwervePod podL = new SwervePod(constants.initDirectionLeft, SwervePod.Side.LEFT);
+
 
     TurnMath turnMath = new TurnMath();
     SnapSwerveModulePID turnPID = new SnapSwerveModulePID(); //although it says Snap, it works for turning as well.
@@ -43,7 +48,7 @@ public class AutoHub implements Runnable{
         robot = new HardwareDrive();
         robot.init(hardwareMap);
 
-        kinematics = new RevisedKinematics(posSystem);
+        kinematics = new RevisedKinematics(posSystem, podL, podR);
         posSystem.grabKinematics(kinematics);
         reset = new Reset(robot, posSystem);
 

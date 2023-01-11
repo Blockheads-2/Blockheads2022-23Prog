@@ -154,10 +154,10 @@ public class GlobalPosSystem implements Runnable{
         double optimizedCurrentWL = (directionL == constants.initDirectionLeft ? positionArr[2] : clamp(positionArr[2] + 180.0));
         double optimizedCurrentWR = (directionR == constants.initDirectionRight ? positionArr[3] : clamp(positionArr[3] + 180.0));
 
-        double currentL = (positionArr[2] < 0 ? positionArr[2] + 360 : positionArr[2]);
-        double currentR = (positionArr[3] < 0 ? positionArr[3] + 360 : positionArr[3]);
+        double currentL = (optimizedCurrentWL < 0 ? optimizedCurrentWL + 360 : optimizedCurrentWL);
+        double currentR = (optimizedCurrentWR < 0 ? optimizedCurrentWR + 360 : optimizedCurrentWR);
 
-        double turnAmount1 = positionArr[2] - positionArr[3];
+        double turnAmount1 = optimizedCurrentWL - optimizedCurrentWR;
         double turnAmount2 = currentL - currentR;
         double turnAmount = (Math.abs(turnAmount1) < Math.abs(turnAmount2) ? turnAmount1 : turnAmount2);
 
@@ -247,6 +247,10 @@ public class GlobalPosSystem implements Runnable{
         while (updateGPS){
             calculatePos();
         }
+    }
+
+    public void setUpdateGPS(boolean gpsthread){
+        updateGPS = gpsthread;
     }
 
 

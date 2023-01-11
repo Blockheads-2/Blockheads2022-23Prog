@@ -27,8 +27,8 @@ public class gSwerveZoom extends OpMode {
     @Override
     public void init() { //When "init" is clicked
         robot.init(hardwareMap);
-        posSystem = new GlobalPosSystem(robot);
-        kinematics = new RevisedKinematics(posSystem);
+//        posSystem = new GlobalPosSystem(robot);
+//        kinematics = new RevisedKinematics(posSystem);
         reset = new Reset(robot, posSystem);
 
         telemetry.addData("Say", "Hello Driver");

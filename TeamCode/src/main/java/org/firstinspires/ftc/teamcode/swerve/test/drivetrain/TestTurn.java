@@ -39,7 +39,7 @@ public class TestTurn extends OpMode{
     @Override
     public void init() { //When "init" is clicked
         robot.init(hardwareMap);
-        posSystem = new GlobalPosSystem(robot);
+//        posSystem = new GlobalPosSystem(robot);
 
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();

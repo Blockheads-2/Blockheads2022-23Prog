@@ -63,7 +63,7 @@ public class TestMaxVelocity extends OpMode{
     public void init() { //When "init" is clicked
         robot.init(hardwareMap);
         posSystem = new GlobalPosSystem(robot);
-        kinematics = new RevisedKinematics(posSystem);
+//        kinematics = new RevisedKinematics(posSystem);
         posSystem.grabKinematics(kinematics);
         reset = new Reset(robot,posSystem);
 

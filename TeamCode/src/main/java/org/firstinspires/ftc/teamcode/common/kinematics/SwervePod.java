@@ -26,6 +26,7 @@ public class SwervePod {
     //teleop
     private double currentW = 0;
     private double nonRightStickCurrentW = 0;
+    private boolean initPole = true;
 
     private double throttle = 0;
     private int direction;
@@ -64,10 +65,8 @@ public class SwervePod {
                 ((Math.abs(pid.update(distance)) + Math.abs(PodR.getPID().update(PodR.getDistance()))) / 2.0) * speed);
     }
 
-    public void setCurrents(double currentW, boolean rightStick){
+    public void setCurrents(double currentW){
         this.currentW = currentW;
-
-        if (!rightStick) nonRightStickCurrentW = currentW;
     }
 
     public void setRotClicks(double target){
@@ -100,6 +99,10 @@ public class SwervePod {
             return RevisedKinematics.DriveType.VARIABLE_SPLINE;
         }
 
+        if (!turn && !spline) nonRightStickCurrentW = currentW;
+
+        if (powerFactor == 0) return RevisedKinematics.DriveType.STOP;
+
         if (throttle > 1.0) throttle = 1;
         else if (throttle < 0) throttle = 0;
 
@@ -110,6 +113,9 @@ public class SwervePod {
         double minThrottle = Math.min(PodR.getThrottle(), getThrottle());
         minThrottle += 0.1; //play with the 0.1 factor
         if (!turn && !spline){
+            if (minThrottle > 1.0) minThrottle = 1;
+            else if (minThrottle < 0) minThrottle = 0;
+
             PodR.setThrottle(minThrottle);
             setThrottle(minThrottle);
         }
@@ -141,8 +147,10 @@ public class SwervePod {
         power = (driveType == RevisedKinematics.DriveType.SNAP ? speed * pid.update(turnAmount) : speed * pid.update(distance));
     }
 
-    public void autoLogic(double currentW, boolean rightStick, int currClick){
-        setCurrents(currentW, rightStick);
+    public void autoLogic(double currentW, int currClick){
+        setCurrents(currentW);
+
+        if (driveType != RevisedKinematics.DriveType.TURN && driveType != RevisedKinematics.DriveType.VARIABLE_SPLINE) nonRightStickCurrentW = currentW;
 
         //determining distance left for rotating and spinning the module
         switch(driveType){
@@ -183,17 +191,37 @@ public class SwervePod {
         rotClicksTarget = turnAmount * constants.CLICKS_PER_DEGREE;
     }
 
-    public double wheelOptimization(double target, double currentW){ //returns how much the wheels should rotate in which direction
+//    public double wheelOptimization(double target, double currentW){ //returns how much the wheels should rotate in which direction
+//        double target2 = (target < 0 ? target + 360 : target);
+//        double current2 = (currentW < 0 ? currentW + 360 : currentW);
+//
+//        double turnAmount1 = target - currentW;
+//        double turnAmount2 = target2 - current2;
+//        double turnAmount = (Math.abs(turnAmount1) < Math.abs(turnAmount2) ? turnAmount1 : turnAmount2);
+//
+//        direction = initDirection;
+//
+//        if(Math.abs(turnAmount) > 90){
+//            double temp_target = clamp(target + 180);
+//            turnAmount = temp_target - currentW;
+//
+//            direction *= -1;
+//        }
+//        return turnAmount;
+//    }
+
+    public double wheelOptimization(double target, double currentW){
         double target2 = (target < 0 ? target + 360 : target);
         double current2 = (currentW < 0 ? currentW + 360 : currentW);
 
-        double turnAmount1 = target - currentW;
-        double turnAmount2 = target2 - current2;
+        double turnAmount1 = target - clamp(currentW + (initPole ? 0 : 180));
+        double turnAmount2 = target2 - clampConventional(current2 + (initPole ? 0 : 180));
+
         double turnAmount = (Math.abs(turnAmount1) < Math.abs(turnAmount2) ? turnAmount1 : turnAmount2);
 
-        direction = initDirection;
-
         if(Math.abs(turnAmount) > 90){
+            initPole = !initPole;
+
             double temp_target = clamp(target + 180);
             turnAmount = temp_target - currentW;
 
@@ -201,6 +229,7 @@ public class SwervePod {
         }
         return turnAmount;
     }
+
 
     public double clamp(double degrees){
         if (Math.abs(degrees) >= 360) degrees %= 360;
@@ -210,6 +239,17 @@ public class SwervePod {
             degrees = 180 - (Math.abs(degrees) - 180);
         } else if (degrees > 180){
             degrees = -180 + (Math.abs(degrees) - 180);
+        }
+        return degrees;
+    }
+
+    public double clampConventional(double degrees){
+        if (Math.abs(degrees) >= 360) degrees %= 360;
+
+        if (degrees < 0){
+            degrees = 360 - Math.abs(degrees);
+        } else if (degrees >= 360){
+            degrees = Math.abs(degrees) - 360;
         }
         return degrees;
     }

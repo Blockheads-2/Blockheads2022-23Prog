@@ -53,6 +53,7 @@ public class RevisedKinematics {
     TrackJoystick joystickTracker;
 
     public boolean firstMovement = true;
+    public boolean tryingToTurnOrSpline = false;
 
     //arm stuff!
     public enum ArmType{
@@ -108,6 +109,7 @@ public class RevisedKinematics {
 
         boolean shouldTurn = (lx == 0 && ly == 0) && (rx != 0 || ry != 0) && posSystem.eligibleForTurning(PodR.getSpinDirection(), PodL.getSpinDirection());
         boolean shouldSpline = !shouldTurn && (lx != 0 || ly != 0) && (rx != 0 && ry == 0);
+        tryingToTurnOrSpline = (shouldTurn || shouldSpline);
 
         //determining power
         double power = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
@@ -118,11 +120,22 @@ public class RevisedKinematics {
         PodL.setThrottleUsingPodLReference(PodR, shouldTurn, shouldSpline);
 
         //telling the pods where we are (note that the RevisedKinematics class knows it's current position before the Pods know about it because of the new thread running in AutoHub / FinalBaseDrive).
-        PodL.setCurrents(posSystem.getLeftWheelW(), (shouldTurn || shouldSpline));
-        PodR.setCurrents(posSystem.getRightWheelW(), (shouldTurn || shouldSpline));
+        PodL.setCurrents(posSystem.getLeftWheelW());
+        PodR.setCurrents(posSystem.getRightWheelW());
 
         //determining "firstMovement" actions, if it is the robot's "firstMovement."
         firstMovement();
+    }
+
+    public void firstMovement(){
+        if (joystickTracker.getChange() > 90 || noMovementRequests()) firstMovement = true;
+
+        if (!(PodL.onlyRotate(firstMovement) && PodR.onlyRotate(firstMovement))) firstMovement = false;
+
+        if (firstMovement){
+            PodL.setSpinClicks(0);
+            PodR.setSpinClicks(0);
+        }
     }
 
     public void setPosAuto(double x, double y, double finalAngle, double speed, DriveType driveType){ //runs onc
@@ -133,20 +146,20 @@ public class RevisedKinematics {
 
         //determining current position
         this.type = driveType;
-        PodL.setCurrents(posSystem.getLeftWheelW(), (driveType == DriveType.TURN || driveType == DriveType.VARIABLE_SPLINE));
-        PodR.setCurrents(posSystem.getRightWheelW(), (driveType == DriveType.TURN || driveType == DriveType.VARIABLE_SPLINE));
+        PodL.setCurrents(posSystem.getLeftWheelW());
+        PodR.setCurrents(posSystem.getRightWheelW());
 
         PodL.setPosAuto(x, y, finalAngle, speed, driveType, posSystem.getMotorClicks()[0], false);
         PodR.setPosAuto(x, y, finalAngle, speed, driveType, posSystem.getMotorClicks()[2], true);
     }
 
     public void logicAuto(){ //should run everytime, but currently only runs once.
-        PodL.setCurrents(posSystem.getLeftWheelW(), (type == DriveType.TURN || type == DriveType.VARIABLE_SPLINE));
-        PodR.setCurrents(posSystem.getRightWheelW(), (type == DriveType.TURN || type == DriveType.VARIABLE_SPLINE));
+        PodL.setCurrents(posSystem.getLeftWheelW());
+        PodR.setCurrents(posSystem.getRightWheelW());
 
         //4) determining distance travel amount
-        PodL.autoLogic(posSystem.getLeftWheelW(), (PodL.getDriveType() == DriveType.TURN || PodL.getDriveType() == DriveType.VARIABLE_SPLINE),  posSystem.getMotorClicks()[0]);
-        PodR.autoLogic(posSystem.getRightWheelW(), (PodR.getDriveType() == DriveType.TURN || PodR.getDriveType() == DriveType.VARIABLE_SPLINE), posSystem.getMotorClicks()[2]);
+        PodL.autoLogic(posSystem.getLeftWheelW(),  posSystem.getMotorClicks()[0]);
+        PodR.autoLogic(posSystem.getRightWheelW(), posSystem.getMotorClicks()[2]);
 
         //determining spin power
         PodL.setPowerUsingLeft(PodR); //determines for both PodL and PodR.
@@ -314,17 +327,6 @@ public class RevisedKinematics {
 
     public ArmType getArmType(){
         return armType;
-    }
-
-    public void firstMovement(){
-        if (joystickTracker.getChange() > 90 || noMovementRequests()) firstMovement = true;
-
-        if (!(PodL.onlyRotate(firstMovement) && PodR.onlyRotate(firstMovement))) firstMovement = false;
-
-        if (firstMovement){
-            PodL.setSpinClicks(0);
-            PodR.setSpinClicks(0);
-        }
     }
 
     public double robotOptimization(double target, double currentR){ //returns how much the wheels should rotate in which direction

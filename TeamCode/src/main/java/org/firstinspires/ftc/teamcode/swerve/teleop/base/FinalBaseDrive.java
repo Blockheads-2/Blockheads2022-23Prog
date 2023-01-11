@@ -171,11 +171,13 @@ public class FinalBaseDrive extends OpMode{
         telemetry.addData("Right W", posSystem.getRightWheelW());
         telemetry.addData("R", posSystem.getPositionArr()[4]);
 
-//        telemetry.addData("Spin Direction (Left)", kinematics.leftThrottle);
-//        telemetry.addData("Spin Direction (Right)", kinematics.rightThrottle);
+        telemetry.addData("Spin Direction (Left)", PodL.getSpinDirection());
+        telemetry.addData("Spin Direction (Right)", PodR.getSpinDirection());
 //
         telemetry.addData("Turn Amount (Left)", PodL.getTurnAmount());
         telemetry.addData("Turn Amount (Right)", PodR.getTurnAmount());
+        telemetry.addData("Throttle (Left)", PodL.getThrottle());
+        telemetry.addData("Throttle (Right)", PodR.getThrottle());
 
 
         telemetry.addData("topL clicks", robot.topL.getCurrentPosition());
@@ -224,12 +226,16 @@ public class FinalBaseDrive extends OpMode{
         kinematics.logic(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, -gamepad1.right_stick_y, gamepad1.right_trigger, -gamepad1.left_trigger); //wheelAllignment is one loop late.
 
         if (kinematics.getDriveType() == RevisedKinematics.DriveType.STOP){
-            if (!posSystem.isAlligned(kinematics.PodR.getSpinDirection(), kinematics.PodL.getSpinDirection()) || x.getState() == Button.State.TAP){
+            boolean wheelsAreAlligned = posSystem.isAlligned(kinematics.PodR.getSpinDirection(), kinematics.PodL.getSpinDirection());
+            boolean eligibleForTurning = posSystem.eligibleForTurning(PodR.getSpinDirection(), PodL.getSpinDirection());
+            if (!wheelsAreAlligned || (!eligibleForTurning && kinematics.tryingToTurnOrSpline)){
                 reset.reset(true);
+                telemetry.addData("Reset", true);
             }
             return;
         } else {
             reset.reset(false);
+            telemetry.addData("Reset", false);
         }
 
         targetClicks = kinematics.getClicks();
@@ -420,6 +426,7 @@ public class FinalBaseDrive extends OpMode{
      */
     @Override
     public void stop() {
+        posSystem.setUpdateGPS(false);
         gpsUpdateThread.interrupt();
     }
 }
