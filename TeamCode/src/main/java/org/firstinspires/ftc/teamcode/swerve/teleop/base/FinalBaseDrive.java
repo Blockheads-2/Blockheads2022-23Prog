@@ -2,12 +2,15 @@ package org.firstinspires.ftc.teamcode.swerve.teleop.base;
 
 import android.view.View;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.Reset;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
@@ -26,6 +29,9 @@ public class FinalBaseDrive extends OpMode{
     GlobalPosSystem posSystem;
     Thread gpsUpdateThread;
     RevisedKinematics kinematics;
+    FtcDashboard dashboard = FtcDashboard.getInstance();
+    Telemetry dashboardTelemetry = dashboard.getTelemetry();
+
 
     Constants constants = new Constants();
     Reset reset;
@@ -152,6 +158,7 @@ public class FinalBaseDrive extends OpMode{
     }
 
     void UpdateTelemetry(){
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addData("IsAlligned", posSystem.isAlligned());
         telemetry.addData("Eligible for turning", posSystem.eligibleForTurning());
 
@@ -207,7 +214,7 @@ public class FinalBaseDrive extends OpMode{
         telemetry.addData("Clicks Target BotR",robot.botR.getTargetPosition() - robot.botR.getCurrentPosition());
 
         telemetry.addData("Drive Type", kinematics.getDriveType());
-
+        
         telemetry.update();
     }
 
