@@ -60,12 +60,6 @@ public class SwervePod {
         pid.setTargets(kp, ki, kd);
     }
 
-    public void setPowerAuto(){ //auto
-        double powerSpin = Math.abs(pid.update(turnAmount)) * speed;
-        double powerRotate = Math.abs(pid.update(distance)) * speed;
-        power = (driveType == RevisedKinematics.DriveType.SNAP ? powerRotate : powerSpin);
-    }
-
     public void setCurrents(double currentW){
         this.currentW = currentW;
     }
@@ -83,6 +77,8 @@ public class SwervePod {
     //for spin power and spin clicks
     public RevisedKinematics.DriveType setSpinClicksAndPower(double powerFactor, double trigger, boolean turn, boolean spline, double rightStickX){ //teleop
         this.power = powerFactor;
+//        spinClicksTarget = (int)(power * (1000 * (1.0 + trigger)));
+//        spinClicksTarget = (int)(power * (500 * (1.0 + trigger)));
         spinClicksTarget = (int)(power * (100 * (1.0 + trigger)));
         throttle = 1.0;
 
@@ -183,6 +179,13 @@ public class SwervePod {
 
         setPowerAuto();
     }
+
+    public void setPowerAuto(){ //auto
+        double powerSpin = Math.abs(pid.update(turnAmount)) * speed;
+        double powerRotate = Math.abs(pid.update(distance)) * speed;
+        power = (driveType == RevisedKinematics.DriveType.SNAP ? powerRotate : powerSpin);
+    }
+
 
     public void setPower(double power){
         this.power = power;

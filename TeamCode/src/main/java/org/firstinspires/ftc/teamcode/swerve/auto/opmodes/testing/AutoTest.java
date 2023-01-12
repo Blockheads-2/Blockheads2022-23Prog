@@ -36,8 +36,8 @@ public class AutoTest extends LinearOpMode {
         Thread rigidArmThread = new Thread(dispatch);   // Using the constructor Thread(Runnable r)
         rigidArmThread.start();
 
-        Thread gpsUpdateThread = new Thread(posSystem);
-        gpsUpdateThread.start();
+//        Thread gpsUpdateThread = new Thread(posSystem);
+//        gpsUpdateThread.start();
 
         dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 45, 0.4, RevisedKinematics.ArmType.HOLD);
         dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, constants.WHEEL_CIRCUMFERENCE, 0, 0.4, RevisedKinematics.ArmType.HIGH);
@@ -56,7 +56,7 @@ public class AutoTest extends LinearOpMode {
 //        dispatch.Turn(90, 0.7);
 
         rigidArmThread.interrupt();
-        gpsUpdateThread.interrupt();
+//        gpsUpdateThread.interrupt();
 
     }
 }

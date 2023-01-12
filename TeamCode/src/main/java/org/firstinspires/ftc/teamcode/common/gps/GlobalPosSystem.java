@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.common.kinematics.SwervePod;
 
 import java.util.HashMap;
 
-public class GlobalPosSystem implements Runnable{
+public class GlobalPosSystem {
 
     Constants constants = new Constants();
     RevisedKinematics revisedKinematics;
@@ -244,11 +244,11 @@ public class GlobalPosSystem implements Runnable{
         return degrees;
     }
 
-    public void run(){
-        while (updateGPS){
-            calculatePos();
-        }
-    }
+//    public void run(){
+//        while (updateGPS){
+//            calculatePos();
+//        }
+//    }
 
     public void setUpdateGPS(boolean gpsthread){
         updateGPS = gpsthread;

@@ -5,6 +5,7 @@ import android.view.View;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
@@ -95,8 +96,8 @@ public class FinalBaseDrive extends OpMode{
 //        robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 //        robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        gpsUpdateThread = new Thread(posSystem);
-        gpsUpdateThread.start();
+//        gpsUpdateThread = new Thread(posSystem);
+//        gpsUpdateThread.start();
     }
 
     @Override
@@ -116,6 +117,9 @@ public class FinalBaseDrive extends OpMode{
         robot.abl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.abr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.abr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 //        robot.abl.setTargetPosition(robot.abl.getCurrentPosition());
 //        robot.abr.setTargetPosition(robot.abr.getCurrentPosition());
@@ -221,6 +225,7 @@ public class FinalBaseDrive extends OpMode{
     }
 
     void DriveTrainPowerEncoder(){
+        posSystem.calculatePos();
         kinematics.logic(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, -gamepad1.right_stick_y, gamepad1.right_trigger, -gamepad1.left_trigger); //wheelAllignment is one loop late.
 
 //        if (kinematics.getDriveType() == RevisedKinematics.DriveType.STOP){
@@ -242,20 +247,20 @@ public class FinalBaseDrive extends OpMode{
         robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + targetClicks[2]);
         robot.botR.setTargetPosition(robot.botR.getCurrentPosition() + targetClicks[3]);
 
-        robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.topL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        robot.botL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        robot.topR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        robot.botR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
         motorPower = kinematics.getPower();
-//        robot.topL.setPower(motorPower[0]);
-//        robot.botL.setPower(motorPower[1]);
-//        robot.topR.setPower(motorPower[2]);
-//        robot.botR.setPower(motorPower[3]);
-        robot.topL.setVelocity(motorPower[0] * constants.MAX_VELOCITY_DT);
-        robot.botL.setVelocity(motorPower[1] * constants.MAX_VELOCITY_DT);
-        robot.topR.setVelocity(motorPower[2] * constants.MAX_VELOCITY_DT);
-        robot.botR.setVelocity(motorPower[3] * constants.MAX_VELOCITY_DT);
+        robot.topL.setPower(motorPower[0]);
+        robot.botL.setPower(motorPower[1]);
+        robot.topR.setPower(motorPower[2]);
+        robot.botR.setPower(motorPower[3]);
+//        robot.topL.setVelocity(motorPower[0] * constants.MAX_VELOCITY_DT);
+//        robot.botL.setVelocity(motorPower[1] * constants.MAX_VELOCITY_DT);
+//        robot.topR.setVelocity(motorPower[2] * constants.MAX_VELOCITY_DT);
+//        robot.botR.setVelocity(motorPower[3] * constants.MAX_VELOCITY_DT);
     }
 
     void ArmPresets(){
@@ -428,7 +433,7 @@ public class FinalBaseDrive extends OpMode{
      */
     @Override
     public void stop() {
-        posSystem.setUpdateGPS(false);
-        gpsUpdateThread.interrupt();
+//        posSystem.setUpdateGPS(false);
+//        gpsUpdateThread.interrupt();
     }
 }
