@@ -68,16 +68,16 @@ public class TrackJoystick {
     public double getAngle(double x, double y){
         double target = Math.toDegrees(Math.atan2(x, y));
         if (target < 0) {
-            for (int i = 0; i < 9; i++) {
-                if (target >= ((i * 20) - 10) && target >= ((i * 20) + 10)) {
-                    target = i * 20;
+            for (int i = 0; i < 2; i++) {
+                if (target >= ((i * 90) - 10) && target <= ((i * 90) + 10)) {
+                    target = i * 90;
                 }
             }
         }
         else if (target >= 0){
-            for (int i = 0; i > -9; i--) {
-                if (target >= ((i * 20) - 10) && target >= ((i * 20) + 10)) {
-                    target = i * 20;
+            for (int i = 0; i > -2; i--) {
+                if (target >= ((i * 90) - 10) && target <= ((i * 90) + 10)) {
+                    target = i * 90;
                 }
             }
         }
