@@ -226,7 +226,7 @@ public class FinalBaseDrive extends OpMode{
 
         telemetry.addData("Drive Type", kinematics.getDriveType());
         telemetry.addData("resetCycle?", kinematics.resestCycle);
-
+        telemetry.addData("Current Stack", stackClawPos);
 
         telemetry.update();
     }
