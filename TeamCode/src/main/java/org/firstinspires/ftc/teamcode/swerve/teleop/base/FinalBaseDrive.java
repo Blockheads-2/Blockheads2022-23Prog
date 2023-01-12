@@ -159,6 +159,7 @@ public class FinalBaseDrive extends OpMode{
     void UpdatePlayer2(){
         ClawControl();
         ArmPresets();
+        UltraMegaArmPresets();
     }
 
     void UpdateTelemetry(){
