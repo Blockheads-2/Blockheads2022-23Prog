@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.swerve.teleop;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import java.util.stream.IntStream;
+
 public class TrackJoystick {
     ElapsedTime timer = new ElapsedTime();
     double prevTime = 0;
@@ -65,6 +67,20 @@ public class TrackJoystick {
 
     public double getAngle(double x, double y){
         double target = Math.toDegrees(Math.atan2(x, y));
+        if (target < 0) {
+            for (int i = 0; i < 9; i++) {
+                if (target >= ((i * 20) - 10) && target >= ((i * 20) + 10)) {
+                    target = i * 20;
+                }
+            }
+        }
+        else if (target >= 0){
+            for (int i = 0; i > -9; i--) {
+                if (target >= ((i * 20) - 10) && target >= ((i * 20) + 10)) {
+                    target = i * 20;
+                }
+            }
+        }
         if (x == 0 && y == 0) target = 0;
         else if (x==0 && y < 0) target=180;
 
