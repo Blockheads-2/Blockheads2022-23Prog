@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.common.constantsPKG;
 
+import com.acmerobotics.dashboard.config.Config;
+
+@Config
 public class Constants {
     public double LOOP_ITERATION_TIME = 0.025; //must test later on
 
@@ -88,6 +91,18 @@ public class Constants {
     public int bottomMotorHigh = 300;
     public int topMotorHigh = 820;
     public double armServoHigh = 0.408;
+
+    //Stack Positions(1=top;2=2nd from top;3=middle;4=2nd from bottom;5=bottom)
+    public static int bottomMotor1 = 700;
+    public static int topMotor1 = 35;
+    public static int bottomMotor2 = 700;
+    public static int topMotor2 = 35;
+    public static int bottomMotor3 = 700;
+    public static int topMotor3 = 35;
+    public static int bottomMotor4 = 700;
+    public static int topMotor4 = 35;
+    public static int bottomMotor5 = 700;
+    public static int topMotor5 = 35;
 
     //Softstops:
     public int topSoftStop = 840;

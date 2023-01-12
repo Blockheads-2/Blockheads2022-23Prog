@@ -66,12 +66,16 @@ public class FinalBaseDrive extends OpMode{
     Button clawGrabButton = new Button();
     Button a2 = new Button();
     Button b2 = new Button();
+    Button leftBumpy = new Button();
+    Button rightBumpy = new Button();
 
     boolean clawClose = false;
     boolean clawUp = false;
     public double clawAngle = 0;
     boolean lowerArmCycle = false;
     boolean lowerAllTheWay = false;
+
+    int stackClawPos = 1;
 
     ArmPID atPID = new ArmPID();
     ArmPID abrPID = new ArmPID();
@@ -237,6 +241,8 @@ public class FinalBaseDrive extends OpMode{
         midButton.update(gamepad2.dpad_left);
         highButton.update(gamepad2.dpad_up);
         zeroButton.update(gamepad2.b);
+        leftBumpy.update(gamepad2.left_bumper);
+        rightBumpy.update(gamepad2.right_bumper);
     }
 
     void DriveTrainPowerEncoder(){
@@ -344,6 +350,54 @@ public class FinalBaseDrive extends OpMode{
             robot.abr.setPower(1);
 
         }
+    }
+
+    void UltraMegaArmPresets(){
+        if (leftBumpy.is(Button.State.TAP)){
+             stackClawPos--;
+        }
+        if (rightBumpy.is(Button.State.TAP)){
+            stackClawPos++;
+        }
+        if (stackClawPos<1){
+            stackClawPos = 1;
+        }
+        switch (stackClawPos) {
+            case 1: {
+                setArmPos(Constants.topMotor1, Constants.bottomMotor1);
+            }
+            case 2: {
+                setArmPos(Constants.topMotor2, Constants.bottomMotor2);
+            }
+            case 3: {
+                setArmPos(Constants.topMotor3, Constants.bottomMotor3);
+            }
+            case 4: {
+                setArmPos(Constants.topMotor4, Constants.bottomMotor4);
+            }
+            case 5: {
+                setArmPos(Constants.topMotor5, Constants.bottomMotor5);
+            }
+        }
+
+    }
+
+    void setArmPos(int topMotorPos, int bottomMotorPos){
+        atPID.setTargets(topMotorPos, 0.4, 0, 0.2);
+        ablPID.setTargets(bottomMotorPos, 0.4, 0, 0.2);
+        abrPID.setTargets(bottomMotorPos, 0.4, 0, 0.2);
+
+        robot.abl.setTargetPosition(bottomMotorPos);
+        robot.abr.setTargetPosition(bottomMotorPos);
+        robot.at.setTargetPosition(topMotorPos);
+
+        robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        robot.at.setPower(0.4);
+        robot.abl.setPower(1);
+        robot.abr.setPower(1);
     }
 
     void lowerArm(){
