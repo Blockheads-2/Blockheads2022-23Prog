@@ -355,29 +355,49 @@ public class FinalBaseDrive extends OpMode{
 
     void UltraMegaArmPresets(){
         if (leftBumpy.is(Button.State.TAP)){
-             stackClawPos--;
+            stackClawPos--;
+            if (stackClawPos<1){
+                stackClawPos = 1;
+            }
+            switch (stackClawPos) {
+                case 1: {
+                    setArmPos(Constants.topMotor1, Constants.bottomMotor1);
+                }
+                case 2: {
+                    setArmPos(Constants.topMotor2, Constants.bottomMotor2);
+                }
+                case 3: {
+                    setArmPos(Constants.topMotor3, Constants.bottomMotor3);
+                }
+                case 4: {
+                    setArmPos(Constants.topMotor4, Constants.bottomMotor4);
+                }
+                case 5: {
+                    setArmPos(Constants.topMotor5, Constants.bottomMotor5);
+                }
+            }
         }
         if (rightBumpy.is(Button.State.TAP)){
             stackClawPos++;
-        }
-        if (stackClawPos<1){
-            stackClawPos = 1;
-        }
-        switch (stackClawPos) {
-            case 1: {
-                setArmPos(Constants.topMotor1, Constants.bottomMotor1);
+            if (stackClawPos<1){
+                stackClawPos = 1;
             }
-            case 2: {
-                setArmPos(Constants.topMotor2, Constants.bottomMotor2);
-            }
-            case 3: {
-                setArmPos(Constants.topMotor3, Constants.bottomMotor3);
-            }
-            case 4: {
-                setArmPos(Constants.topMotor4, Constants.bottomMotor4);
-            }
-            case 5: {
-                setArmPos(Constants.topMotor5, Constants.bottomMotor5);
+            switch (stackClawPos) {
+                case 1: {
+                    setArmPos(Constants.topMotor1, Constants.bottomMotor1);
+                }
+                case 2: {
+                    setArmPos(Constants.topMotor2, Constants.bottomMotor2);
+                }
+                case 3: {
+                    setArmPos(Constants.topMotor3, Constants.bottomMotor3);
+                }
+                case 4: {
+                    setArmPos(Constants.topMotor4, Constants.bottomMotor4);
+                }
+                case 5: {
+                    setArmPos(Constants.topMotor5, Constants.bottomMotor5);
+                }
             }
         }
 
