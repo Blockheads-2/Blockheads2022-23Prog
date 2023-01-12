@@ -137,8 +137,8 @@ public class RevisedKinematics {
                 PodR.forceSetRotClicks(0);
                 PodL.setSpinClicks(0);
                 PodR.setSpinClicks(0);
-                PodL.setPower(0.4);
-                PodR.setPower(0.4);
+                PodL.setPower(0.3);
+                PodR.setPower(0.3);
             }
         }
 
@@ -383,10 +383,10 @@ public class RevisedKinematics {
         double power = Math.abs(PodL.getOutput().get("power") + PodR.getOutput().get("power")) / 2.0;
 
         double[] motorPower = new double[4];
-        motorPower[0] = (power * PodL.getOutput().get("throttle") * PodL.getOutput().get("direction")); //top left
-        motorPower[1] = (power * PodL.getOutput().get("throttle") * PodL.getOutput().get("direction")); //bottom left
-        motorPower[2] = (power * PodR.getOutput().get("throttle") * PodR.getOutput().get("direction")); //top right
-        motorPower[3] = (power * PodR.getOutput().get("throttle") * PodR.getOutput().get("direction")); //bottom right
+        motorPower[0] = (power * PodL.getOutput().get("throttle")); //top left
+        motorPower[1] = (power * PodL.getOutput().get("throttle")); //bottom left
+        motorPower[2] = (power * PodR.getOutput().get("throttle")); //top right
+        motorPower[3] = (power * PodR.getOutput().get("throttle")); //bottom right
 
         for (int i = 0; i < 4; i++){
             motorPower[i] = accelerator.update(motorPower[i], true);
