@@ -53,6 +53,7 @@ public class RevisedKinematics {
     TrackJoystick joystickTracker;
 
     public boolean firstMovement = true;
+    public boolean resestCycle = false;
 
     //arm stuff!
     public enum ArmType{
@@ -83,6 +84,8 @@ public class RevisedKinematics {
         this.PodR = podR;
     }
 
+    public double target = 0;
+    public boolean tryingToTurnButCant = false;
     public void logic(double lx, double ly, double rx, double ry, double rt, double lt){
         this.lx = lx;
         this.ly = ly;
@@ -102,7 +105,7 @@ public class RevisedKinematics {
         else type = DriveType.LINEAR;
 
         //determining targets, and how much we want to turn
-        double target = joystickTracker.getAngle(lx, ly);
+        target = joystickTracker.getAngle(lx, ly);
 
         //determining rotational clicks
         PodL.setRotClicks(target);
@@ -122,26 +125,18 @@ public class RevisedKinematics {
         PodL.setThrottleUsingPodLReference(PodR, shouldTurn, shouldSpline);
 
         //resetting modules
-        boolean tryingToTurn = (lx == 0 && ly == 0) && (rx != 0 || ry != 0);
-        if (type == DriveType.STOP){
-            if ((!wheelsAreAlligned || (!eligibleForTurning && tryingToTurn))){
-                target = 0;
-                PodL.setRotClicks(target);
-                PodR.setRotClicks(target);
-                PodL.setSpinClicks(0);
-                PodR.setSpinClicks(0);
-                PodL.setPower(1);
-                PodR.setPower(1);
-            } else {
-                PodL.forceSetRotClicks(0);
-                PodR.forceSetRotClicks(0);
-                PodL.setSpinClicks(0);
-                PodR.setSpinClicks(0);
-                PodL.setPower(0.3);
-                PodR.setPower(0.3);
-            }
-        }
-
+//        tryingToTurnButCant = (lx == 0 && ly == 0) && (rx != 0 || ry != 0) && !eligibleForTurning && type != DriveType.TURN;
+//        if ((type == DriveType.STOP && !wheelsAreAlligned) || resestCycle || tryingToTurnButCant){
+//            resestCycle = !eligibleForTurning;
+//
+//            target = 0;
+//            PodL.setRotClicks(target);
+//            PodR.setRotClicks(target);
+//            PodL.setSpinClicks(0);
+//            PodR.setSpinClicks(0);
+//            PodL.setPower(1);
+//            PodR.setPower(1);
+//        }
 
         //determining "firstMovement" actions, if it is the robot's "firstMovement."
         firstMovement();

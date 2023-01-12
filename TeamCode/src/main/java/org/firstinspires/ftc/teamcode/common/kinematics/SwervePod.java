@@ -79,14 +79,14 @@ public class SwervePod {
         this.power = powerFactor;
 //        spinClicksTarget = (int)(power * (1000 * (1.0 + trigger)));
 //        spinClicksTarget = (int)(power * (500 * (1.0 + trigger)));
-        spinClicksTarget = (int)(power * (100 * (1.0 + trigger)));
+        spinClicksTarget = (int)(power * (100 * (1.0 + (1.5 * trigger))));
         throttle = 1.0;
 
         if (turn){
-            if (side == Side.RIGHT) direction = (initDirection* -1 * (initPole ? -1 : 1));
+            if (side == Side.RIGHT) direction = (initDirection * -1 * (initPole ? -1 : 1));
 
-            spinClicksTarget = rightStickX * 100 * direction;
-            power = rightStickX + 0.3;
+            this.spinClicksTarget = rightStickX * 100 * (1.0 + (1.5 * trigger)) * direction;
+            this.power = rightStickX + 0.3;
             if (power > constants.POWER_LIMITER) power = constants.POWER_LIMITER;
             else if (power < -constants.POWER_LIMITER) power = -constants.POWER_LIMITER;
 
@@ -116,10 +116,9 @@ public class SwervePod {
     public void setThrottleUsingPodLReference(SwervePod PodR, boolean turn, boolean spline){
         double minThrottle = Math.min(PodR.getThrottle(), getThrottle());
         minThrottle += 0.1; //play with the 0.1 factor
+        if (minThrottle > 1.0) minThrottle = 1;
+        else if (minThrottle < 0) minThrottle = 0;
         if (!turn && !spline){
-            if (minThrottle > 1.0) minThrottle = 1;
-            else if (minThrottle < 0) minThrottle = 0;
-
             PodR.setThrottle(minThrottle);
             setThrottle(minThrottle);
         }

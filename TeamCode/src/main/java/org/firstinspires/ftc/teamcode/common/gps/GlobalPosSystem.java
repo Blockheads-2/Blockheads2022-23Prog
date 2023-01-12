@@ -166,9 +166,8 @@ public class GlobalPosSystem {
     }
 
     public boolean eligibleForTurning(){
-        return (isAlligned() &&
-                Math.abs(Math.abs(optimizedCurrentWL) - 90) >= 40 &&
-                Math.abs(Math.abs(optimizedCurrentWR) - 90) >= 40); //wheels must be
+        return (Math.abs(optimizedCurrentWL) <= constants.degreeTOLERANCE &&
+                Math.abs(optimizedCurrentWR) <= constants.degreeTOLERANCE);
     }
 
     public void hardResetGPS(){

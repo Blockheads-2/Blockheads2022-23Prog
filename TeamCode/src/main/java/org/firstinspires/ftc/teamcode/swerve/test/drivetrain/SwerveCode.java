@@ -128,10 +128,10 @@ public class SwerveCode extends OpMode{
         telemetry.addData("botR clicks", robot.botR.getCurrentPosition());
         telemetry.addData("Power", power);
 
-        telemetry.addData("target topL", targetTopL);
-        telemetry.addData("target botL", targetBotL);
-        telemetry.addData("target topR", targetTopR);
-        telemetry.addData("target botR", targetBotR);
+        telemetry.addData("target topL", robot.topL.getTargetPosition() - robot.topL.getCurrentPosition());
+        telemetry.addData("target botL", robot.botL.getTargetPosition() - robot.botL.getCurrentPosition());
+        telemetry.addData("target topR", robot.topR.getTargetPosition() - robot.topR.getCurrentPosition());
+        telemetry.addData("target botR", robot.botR.getTargetPosition() - robot.botR.getCurrentPosition());
 
         telemetry.addData("isBusy", robot.wheelsAreBusy());
 
