@@ -109,7 +109,7 @@ public class AutoHub implements Runnable{
         reset.resetAuto(false);
 
         targetNotMet = true;
-        targetClicks = kinematics.getClicks();
+//        targetClicks = kinematics.getClicks();
         int targetTopL = robot.topL.getCurrentPosition() + targetClicks[0];
         int targetBotL = robot.botL.getCurrentPosition() + targetClicks[1];
         int targetTopR = robot.topR.getCurrentPosition() + targetClicks[2];

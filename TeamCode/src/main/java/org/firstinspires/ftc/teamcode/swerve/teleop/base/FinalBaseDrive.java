@@ -66,14 +66,8 @@ public class FinalBaseDrive extends OpMode{
     Button lowButton = new Button();
     Button midButton = new Button();
     Button highButton = new Button();
-    Button testOne = new Button();
-    Button testZero = new Button();
-    Button testNegOne = new Button();
+
     Button zeroButton = new Button();
-    Button clawAngleButton = new Button();
-    Button clawGrabButton = new Button();
-    Button a2 = new Button();
-    Button b2 = new Button();
     Button leftBumpy = new Button();
     Button rightBumpy = new Button();
 
@@ -294,29 +288,27 @@ public class FinalBaseDrive extends OpMode{
             telemetry.addData("Reset", false);
         }
 
-        double[] outputL = PodL.getOutput();
-        double[] outputR = PodR.getOutput();
-
-//        targetClicks = kinematics.getClicks();
-        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + (int)(outputL[0] + outputL[1]));
-        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + (int)(-outputL[0] + outputL[1]));
-        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + (int)(outputR[0] + outputR[1]));
-        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() + (int)(-outputR[0] + outputR[1]));
+        targetClicks = kinematics.getClicks();
+        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + targetClicks[0]);
+        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + targetClicks[1]);
+        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + targetClicks[2]);
+        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() + targetClicks[3]);
 
         robot.topL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.botL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.topR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.botR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-//        motorPower = kinematics.getPower();
-        robot.topL.setPower(outputL[2] * outputL[3]);
-        robot.botL.setPower(outputL[2] * outputL[3]);
-        robot.topR.setPower(outputR[2] * outputR[3]);
-        robot.botR.setPower(outputR[2] * outputR[3]);
-//        robot.topL.setVelocity(motorPower[0] * constants.MAX_VELOCITY_DT);
-//        robot.botL.setVelocity(motorPower[1] * constants.MAX_VELOCITY_DT);
-//        robot.topR.setVelocity(motorPower[2] * constants.MAX_VELOCITY_DT);
-//        robot.botR.setVelocity(motorPower[3] * constants.MAX_VELOCITY_DT);
+        motorPower = kinematics.getPower();
+//        robot.topL.setPower(outputL[2] * outputL[3]);
+//        robot.botL.setPower(outputL[2] * outputL[3]);
+//        robot.topR.setPower(outputR[2] * outputR[3]);
+//        robot.botR.setPower(outputR[2] * outputR[3]);
+
+        robot.topL.setVelocity(motorPower[0] * constants.MAX_VELOCITY_DT);
+        robot.botL.setVelocity(motorPower[1] * constants.MAX_VELOCITY_DT);
+        robot.topR.setVelocity(motorPower[2] * constants.MAX_VELOCITY_DT);
+        robot.botR.setVelocity(motorPower[3] * constants.MAX_VELOCITY_DT);
 
         deltaMS = loopTime.milliseconds() - prevMS;
         prevMS = loopTime.milliseconds();

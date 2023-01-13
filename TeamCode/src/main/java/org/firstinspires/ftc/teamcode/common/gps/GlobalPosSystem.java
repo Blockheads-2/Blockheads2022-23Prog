@@ -254,13 +254,7 @@ public class GlobalPosSystem {
         updateGPS = gpsthread;
     }
 
-
     public RevisedKinematics.DriveType getDriveType() {
         return revisedKinematics.getDriveType();
     }
-
-    public HashMap<String, Integer> getMotorClicksPose () {
-        return motorClicksPose;
-    }
-
 }
