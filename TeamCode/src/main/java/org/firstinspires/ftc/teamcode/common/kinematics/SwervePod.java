@@ -79,25 +79,25 @@ public class SwervePod {
         this.power = powerFactor;
 //        spinClicksTarget = (int)(power * (1000 * (1.0 + trigger)));
 //        spinClicksTarget = (int)(power * (500 * (1.0 + trigger)));
-        this.spinClicksTarget = (int)(power * (120 * (1.0 + (1.5 * trigger))));
+        this.spinClicksTarget = (power * (120 * (1.0 + (1.5 * trigger))));
         this.throttle = 1.0;
 
         if (turn) {
             if (eligibleForTurning) {
+                setRotClicks(0);
+
                 //            leftThrottle = leftThrottle;
                 if (side == Side.RIGHT) direction *= -1;
 
-                spinClicksTarget = (int) (rightStickX * 100 * direction);
+                this.spinClicksTarget = (rightStickX * 120 * direction);
                 power = rightStickX;
-
-                setRotClicks(0);
 
                 driveType = RevisedKinematics.DriveType.TURN;
                 return driveType;
             } else {
+                setRotClicks(0);
                 spinClicksTarget = 0;
                 power = 1.0;
-                setRotClicks(0);
             }
         } else if (spline){
 //            double throttle = (rightStickY <= rightStickX ? rightStickY / (1.5*rightStickX) : rightStickX / (1.5 * rightStickY));

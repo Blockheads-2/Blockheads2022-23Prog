@@ -21,6 +21,8 @@ import org.firstinspires.ftc.teamcode.common.kinematics.RevisedKinematics;
 import org.firstinspires.ftc.teamcode.common.kinematics.SwervePod;
 import org.firstinspires.ftc.teamcode.common.pid.ArmPID;
 
+import java.util.HashMap;
+
 @TeleOp(name="Final BaseDrive", group="Drive")
 //@Disabled
 public class FinalBaseDrive extends OpMode{
@@ -32,6 +34,12 @@ public class FinalBaseDrive extends OpMode{
     FtcDashboard dashboard = FtcDashboard.getInstance();
     Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
+    HashMap<String, Double> outputR = new HashMap<>();
+    HashMap<String, Double> outputL = new HashMap<>();
+
+    ElapsedTime loopTime = new ElapsedTime();
+    double prevMS = 0;
+    double deltaMS = 0;
 
     Constants constants = new Constants();
     Reset reset;
@@ -98,13 +106,13 @@ public class FinalBaseDrive extends OpMode{
 
         telemetry.addData("Say", "Hello Driver");
 
-//        robot.abl.setTargetPosition(constants.INIT_ARMBASE_POS);
-//        robot.abr.setTargetPosition(constants.INIT_ARMBASE_POS);
-//        robot.at.setTargetPosition(0);
-//
-//        robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.abl.setTargetPosition(constants.INIT_ARMBASE_POS);
+        robot.abr.setTargetPosition(constants.INIT_ARMBASE_POS);
+        robot.at.setTargetPosition(0);
+
+        robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 //        gpsUpdateThread = new Thread(posSystem);
 //        gpsUpdateThread.start();
@@ -113,9 +121,9 @@ public class FinalBaseDrive extends OpMode{
     @Override
     public void init_loop() { //Loop between "init" and "start"
 
-//        robot.abl.setPower(0.7);
-//        robot.abr.setPower(0.7);
-//        robot.at.setPower(0.7);
+        robot.abl.setPower(0.7);
+        robot.abr.setPower(0.7);
+        robot.at.setPower(0.7);
 
     }
 
@@ -131,17 +139,19 @@ public class FinalBaseDrive extends OpMode{
         robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-//        robot.abl.setTargetPosition(robot.abl.getCurrentPosition());
-//        robot.abr.setTargetPosition(robot.abr.getCurrentPosition());
-//        robot.abr.setTargetPosition(robot.at.getCurrentPosition());
-//        robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//
-//
-//        robot.abl.setPower(0.7);
-//        robot.abr.setPower(0.7);
-//        robot.at.setPower(0.7);
+        robot.abl.setTargetPosition(robot.abl.getCurrentPosition());
+        robot.abr.setTargetPosition(robot.abr.getCurrentPosition());
+        robot.abr.setTargetPosition(robot.at.getCurrentPosition());
+        robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+        robot.abl.setPower(0.7);
+        robot.abr.setPower(0.7);
+        robot.at.setPower(0.7);
+
+        loopTime.reset();
     }
 
     @Override
@@ -205,9 +215,14 @@ public class FinalBaseDrive extends OpMode{
         telemetry.addData("Throttle (Right)", PodR.getOutput().get("throttle"));
 
         telemetry.addData("topL clicks", robot.topL.getCurrentPosition());
+        telemetry.addData("topL Target clicks", robot.topL.getTargetPosition());
         telemetry.addData("botL clicks", robot.botL.getCurrentPosition());
+        telemetry.addData("botL Target clicks", robot.botL.getTargetPosition());
         telemetry.addData("topR clicks", robot.topR.getCurrentPosition());
+        telemetry.addData("topR Target clicks", robot.topR.getTargetPosition());
         telemetry.addData("botR clicks", robot.botR.getCurrentPosition());
+        telemetry.addData("botR Target clicks", robot.botR.getTargetPosition());
+
 
         telemetry.addData("Left Spin Clicks Target", PodL.getOutput().get("spinClicksTarget"));
         telemetry.addData("Left Rotate Clicks target",  PodL.getOutput().get("rotClicksTarget"));
@@ -233,6 +248,8 @@ public class FinalBaseDrive extends OpMode{
         telemetry.addData("Current Stack", stackClawPos);
 
         telemetry.addData("Arm bottom position", robot.abl.getTargetPosition());
+
+        telemetry.addData("Delta time loop (sec)", deltaMS / 1000.0);
 
         telemetry.update();
     }
@@ -270,26 +287,33 @@ public class FinalBaseDrive extends OpMode{
             telemetry.addData("Reset", false);
         }
 
-        targetClicks = kinematics.getClicks();
-        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + targetClicks[0]);
-        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + targetClicks[1]);
-        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + targetClicks[2]);
-        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() + targetClicks[3]);
+//        targetClicks = kinematics.getClicks();
+        outputR = PodR.getOutput();
+        outputL = PodL.getOutput();
+
+
+        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + (int)(outputL.get("spinClicksTarget") + outputL.get("rotClicksTarget")));
+        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + (int)(-outputL.get("spinClicksTarget") + outputL.get("rotClicksTarget")));
+        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + (int)(outputR.get("spinClicksTarget") + outputR.get("rotClicksTarget")));
+        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() + (int)(-outputR.get("spinClicksTarget") + outputR.get("rotClicksTarget")));
 
         robot.topL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.botL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.topR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.botR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-        motorPower = kinematics.getPower();
-        robot.topL.setPower(motorPower[0]);
-        robot.botL.setPower(motorPower[1]);
-        robot.topR.setPower(motorPower[2]);
-        robot.botR.setPower(motorPower[3]);
+//        motorPower = kinematics.getPower();
+        robot.topL.setPower((outputL.get("power") * outputL.get("throttle")));
+        robot.botL.setPower((outputL.get("power") * outputL.get("throttle")));
+        robot.topR.setPower((outputR.get("power") * outputR.get("throttle")));
+        robot.botR.setPower((outputR.get("power") * outputR.get("throttle")));
 //        robot.topL.setVelocity(motorPower[0] * constants.MAX_VELOCITY_DT);
 //        robot.botL.setVelocity(motorPower[1] * constants.MAX_VELOCITY_DT);
 //        robot.topR.setVelocity(motorPower[2] * constants.MAX_VELOCITY_DT);
 //        robot.botR.setVelocity(motorPower[3] * constants.MAX_VELOCITY_DT);
+
+        deltaMS = loopTime.milliseconds() - prevMS;
+        prevMS = loopTime.milliseconds();
     }
 
     void ArmPresets(){

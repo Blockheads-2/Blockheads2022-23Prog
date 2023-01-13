@@ -414,8 +414,8 @@ public class RevisedKinematics {
     }
 
     public int[] getClicks(){
-        swerveOutputL = PodL.getOutput();
-        swerveOutputR = PodR.getOutput();
+//        swerveOutputL = PodL.getOutput();
+//        swerveOutputR = PodR.getOutput();
 
         double leftClicks = swerveOutputL.get("spinClicksTarget");
         double rightClicks = swerveOutputR.get("spinClicksTarget");
@@ -430,8 +430,8 @@ public class RevisedKinematics {
     }
 
     public int[] getClicksAuto(){
-        swerveOutputL = PodL.getOutput();
-        swerveOutputR = PodR.getOutput();
+//        swerveOutputL = PodL.getOutput();
+//        swerveOutputR = PodR.getOutput();
 
         int[] clicks = new int[4];
         clicks[0] = (int)(swerveOutputL.get("spinClicksTarget") + swerveOutputL.get("rotClicksTarget")); //left
