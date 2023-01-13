@@ -404,9 +404,11 @@ public class FinalBaseDrive extends OpMode{
             }
             else if (stackClawPos == 3) {
                 setArmPos(Constants.topMotor3, Constants.bottomMotor3);
+                robot.armServo.setPosition(0.1514);
             }
             else if (stackClawPos == 4) {
                 setArmPos(Constants.topMotor4, Constants.bottomMotor4);
+                robot.armServo.setPosition(0.1514);
             }
             else if (stackClawPos == 5) {
                 setArmPos(Constants.topMotor5, Constants.bottomMotor5);
