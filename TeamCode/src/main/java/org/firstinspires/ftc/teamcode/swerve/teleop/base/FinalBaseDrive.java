@@ -31,8 +31,8 @@ public class FinalBaseDrive extends OpMode{
     GlobalPosSystem posSystem;
     Thread gpsUpdateThread;
     RevisedKinematics kinematics;
-    FtcDashboard dashboard = FtcDashboard.getInstance();
-    Telemetry dashboardTelemetry = dashboard.getTelemetry();
+//    FtcDashboard dashboard = FtcDashboard.getInstance();
+//    Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
     HashMap<String, Double> outputR = new HashMap<>();
     HashMap<String, Double> outputL = new HashMap<>();
@@ -180,7 +180,7 @@ public class FinalBaseDrive extends OpMode{
     }
 
     void UpdateTelemetry(){
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+//        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addData("IsAlligned", posSystem.isAlligned());
         telemetry.addData("Eligible for turning", posSystem.eligibleForTurning());
         telemetry.addData("Trying to turn but can't", kinematics.tryingToTurn);
@@ -218,8 +218,8 @@ public class FinalBaseDrive extends OpMode{
         telemetry.addData("target", kinematics.target);
         telemetry.addData("Turn Amount (Left)", PodL.getTurnAmount());
         telemetry.addData("Turn Amount (Right)", PodR.getTurnAmount());
-        telemetry.addData("Throttle (Left)", PodL.getOutput().get("throttle"));
-        telemetry.addData("Throttle (Right)", PodR.getOutput().get("throttle"));
+//        telemetry.addData("Throttle (Left)", PodL.getOutput().get("throttle"));
+//        telemetry.addData("Throttle (Right)", PodR.getOutput().get("throttle"));
 
         telemetry.addData("topL clicks", robot.topL.getCurrentPosition());
         telemetry.addData("topL Target clicks", robot.topL.getTargetPosition());
@@ -231,20 +231,20 @@ public class FinalBaseDrive extends OpMode{
         telemetry.addData("botR Target clicks", robot.botR.getTargetPosition());
 
 
-        telemetry.addData("Left Spin Clicks Target", PodL.getOutput().get("spinClicksTarget"));
-        telemetry.addData("Left Rotate Clicks target",  PodL.getOutput().get("rotClicksTarget"));
-        telemetry.addData("Right Spin clicks target", PodR.getOutput().get("spinClicksTarget"));
-        telemetry.addData("Right Rotate clicks target",  PodR.getOutput().get("rotClicksTarget"));
+//        telemetry.addData("Left Spin Clicks Target", PodL.getOutput().get("spinClicksTarget"));
+//        telemetry.addData("Left Rotate Clicks target",  PodL.getOutput().get("rotClicksTarget"));
+//        telemetry.addData("Right Spin clicks target", PodR.getOutput().get("spinClicksTarget"));
+//        telemetry.addData("Right Rotate clicks target",  PodR.getOutput().get("rotClicksTarget"));
         telemetry.addData("topL velocity", robot.topL.getVelocity()); //ticks per second
         telemetry.addData("botL velocity", robot.botL.getVelocity()); //ticks per second
         telemetry.addData("topR velocity", robot.topR.getVelocity());
         telemetry.addData("botR velocity", robot.botR.getVelocity());
 
 
-        telemetry.addData("Power TopL", PodL.getOutput().get("power"));
-        telemetry.addData("Power BotL", PodL.getOutput().get("power"));
-        telemetry.addData("Power TopR", PodR.getOutput().get("power"));
-        telemetry.addData("Power BotR", PodR.getOutput().get("power"));
+//        telemetry.addData("Power TopL", PodL.getOutput().get("power"));
+//        telemetry.addData("Power BotL", PodL.getOutput().get("power"));
+//        telemetry.addData("Power TopR", PodR.getOutput().get("power"));
+//        telemetry.addData("Power BotR", PodR.getOutput().get("power"));
         telemetry.addData("Clicks Target TopL", robot.topL.getTargetPosition() - robot.topL.getCurrentPosition());
         telemetry.addData("Clicks Target BotL",robot.botL.getTargetPosition() - robot.botL.getCurrentPosition());
         telemetry.addData("Clicks Target TopR", robot.topR.getTargetPosition() - robot.topR.getCurrentPosition());
@@ -294,15 +294,14 @@ public class FinalBaseDrive extends OpMode{
             telemetry.addData("Reset", false);
         }
 
+        double[] outputL = PodL.getOutput();
+        double[] outputR = PodR.getOutput();
+
 //        targetClicks = kinematics.getClicks();
-        outputR = PodR.getOutput();
-        outputL = PodL.getOutput();
-
-
-        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + (int)(outputL.get("spinClicksTarget") + outputL.get("rotClicksTarget")));
-        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + (int)(-outputL.get("spinClicksTarget") + outputL.get("rotClicksTarget")));
-        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + (int)(outputR.get("spinClicksTarget") + outputR.get("rotClicksTarget")));
-        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() + (int)(-outputR.get("spinClicksTarget") + outputR.get("rotClicksTarget")));
+        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + (int)(outputL[0] + outputL[1]));
+        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + (int)(-outputL[0] + outputL[1]));
+        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + (int)(outputR[0] + outputR[1]));
+        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() + (int)(-outputR[0] + outputR[1]));
 
         robot.topL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.botL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -310,10 +309,10 @@ public class FinalBaseDrive extends OpMode{
         robot.botR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
 //        motorPower = kinematics.getPower();
-        robot.topL.setPower((outputL.get("power") * outputL.get("throttle")));
-        robot.botL.setPower((outputL.get("power") * outputL.get("throttle")));
-        robot.topR.setPower((outputR.get("power") * outputR.get("throttle")));
-        robot.botR.setPower((outputR.get("power") * outputR.get("throttle")));
+        robot.topL.setPower(outputL[2] * outputL[3]);
+        robot.botL.setPower(outputL[2] * outputL[3]);
+        robot.topR.setPower(outputR[2] * outputR[3]);
+        robot.botR.setPower(outputR[2] * outputR[3]);
 //        robot.topL.setVelocity(motorPower[0] * constants.MAX_VELOCITY_DT);
 //        robot.botL.setVelocity(motorPower[1] * constants.MAX_VELOCITY_DT);
 //        robot.topR.setVelocity(motorPower[2] * constants.MAX_VELOCITY_DT);

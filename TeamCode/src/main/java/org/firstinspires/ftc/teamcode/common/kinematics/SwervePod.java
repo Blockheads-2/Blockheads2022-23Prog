@@ -48,7 +48,7 @@ public class SwervePod {
     //both teleop & auto
     SnapSwerveModulePID pid;
 
-    private HashMap<String, Double> output = new HashMap<String, Double>();
+    private double[] output = new double[4];
 
     public SwervePod(double spinDirection, Side side){
         pid = new SnapSwerveModulePID();
@@ -138,6 +138,8 @@ public class SwervePod {
             setThrottle(minThrottle);
         }
     }
+
+
     public double wheelOptimization(double target, double currentW){
         double target2 = (target < 0 ? target + 360 : target);
         double current2 = (currentW < 0 ? currentW + 360 : currentW);
@@ -316,15 +318,15 @@ public class SwervePod {
         return driveType;
     }
 
-    public HashMap<String, Double> getOutput(){
+    public double[] getOutput(){
         power = Math.abs(power);
         throttle = Math.abs(throttle);
         spinClicksTarget *= direction;
 
-        output.put("power", power);
-        output.put("spinClicksTarget", spinClicksTarget);
-        output.put("rotClicksTarget", rotClicksTarget);
-        output.put("throttle", Math.abs(throttle));
+        output[0] = spinClicksTarget;
+        output[1] = rotClicksTarget;
+        output[2] = power;
+        output[3] = throttle;
 
         return output;
     }

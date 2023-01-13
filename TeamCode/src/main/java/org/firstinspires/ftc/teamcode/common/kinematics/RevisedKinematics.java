@@ -143,8 +143,6 @@ public class RevisedKinematics {
         //determining "firstMovement" actions, if it is the robot's "firstMovement."
         firstMovement();
 
-        swerveOutputR = PodR.getOutput();
-        swerveOutputL = PodL.getOutput();
     }
 
     public void firstMovement(){
@@ -183,8 +181,6 @@ public class RevisedKinematics {
         PodL.autoLogic(posSystem.getLeftWheelW(),  posSystem.getMotorClicks()[0]);
         PodR.autoLogic(posSystem.getRightWheelW(), posSystem.getMotorClicks()[2]);
 
-        swerveOutputR = PodR.getOutput();
-        swerveOutputL = PodL.getOutput();
     }
 
     public void armLogicAuto(ArmType aType){
@@ -374,8 +370,8 @@ public class RevisedKinematics {
     }
 
     public double[] getPower(){
-        swerveOutputL = PodL.getOutput();
-        swerveOutputR = PodR.getOutput();
+//        swerveOutputL = PodL.getOutput();
+//        swerveOutputR = PodR.getOutput();
 
 //        double avgPower = (swerveOutputL.get("power") + swerveOutputL.get("power")) / 2.0;
 
@@ -394,8 +390,8 @@ public class RevisedKinematics {
     }
 
     public double[] getPowerAuto(){
-        swerveOutputL = PodL.getOutput();
-        swerveOutputR = PodR.getOutput();
+//        swerveOutputL = PodL.getOutput();
+//        swerveOutputR = PodR.getOutput();
 
         double[] motorPower = new double[4];
         double powerR = swerveOutputR.get("power");
