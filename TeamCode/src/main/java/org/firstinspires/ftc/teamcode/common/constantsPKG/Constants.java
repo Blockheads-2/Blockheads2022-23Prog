@@ -84,7 +84,7 @@ public class Constants {
     public double armServoMid = 0.356;
 
     //High
-    public int bottomMotorHigh = 300;
+    public int bottomMotorHigh = 370;
     public int topMotorHigh = 820;
     public double armServoHigh = 0.408;
 
