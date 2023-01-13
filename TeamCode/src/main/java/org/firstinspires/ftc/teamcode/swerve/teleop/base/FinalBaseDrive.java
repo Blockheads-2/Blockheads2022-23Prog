@@ -29,7 +29,8 @@ public class FinalBaseDrive extends OpMode{
     Reset reset;
 
     ElapsedTime loopTime = new ElapsedTime();
-    int prevMS = 0;
+    double prevMS = 0;
+    double deltaMS = 0;
 
     private enum TelemetryData{
         LEFT,
@@ -138,6 +139,8 @@ public class FinalBaseDrive extends OpMode{
 
         gpsUpdateThread = new Thread(posSystem);
         gpsUpdateThread.start();
+
+        loopTime.reset();
     }
 
     @Override
@@ -212,6 +215,7 @@ public class FinalBaseDrive extends OpMode{
         telemetry.addData("Clicks Target BotR", targetClicks[3]);
 
         telemetry.addData("Drive Type", kinematics.getDriveType());
+        telemetry.addData("delta time (sec)", deltaMS / 1000.0);
 
         telemetry.update();
     }
@@ -230,6 +234,7 @@ public class FinalBaseDrive extends OpMode{
     }
 
     void DriveTrainPowerEncoder(){
+
         kinematics.logic(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, -gamepad1.right_stick_y, gamepad1.right_trigger, -gamepad1.left_trigger); //wheelAllignment is one loop late.
 
         if (kinematics.getDriveType() == RevisedKinematics.DriveType.STOP){
@@ -257,6 +262,9 @@ public class FinalBaseDrive extends OpMode{
         robot.botL.setVelocity(motorPower[1] * constants.MAX_VELOCITY_DT);
         robot.topR.setVelocity(motorPower[2] * constants.MAX_VELOCITY_DT);
         robot.botR.setVelocity(motorPower[3] * constants.MAX_VELOCITY_DT);
+
+        deltaMS = loopTime.milliseconds() - prevMS;
+        prevMS = loopTime.milliseconds();
     }
 
     void ArmPresets(){
