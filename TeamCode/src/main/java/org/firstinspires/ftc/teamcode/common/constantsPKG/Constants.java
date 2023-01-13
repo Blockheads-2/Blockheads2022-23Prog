@@ -10,7 +10,7 @@ public class Constants {
     public double LOAD_ON = 0.6; //assumption
     public double RPM = 1150 * LOAD_ON; //690.  Not very accurate so don't rely on this number.
     public double RPS = RPM / 60.0; //11.5 ish motor revolutions per second, with load
-    public double POWER_LIMITER = 1.0;
+    public double POWER_LIMITER = 0.8;
     public double accelTime = 1.4; //outputs 100% of the calculated power within ~1 second
 
     public double CLICKS_PER_BLUE_REV = 537.7; //clicks per rev of motors
@@ -60,10 +60,6 @@ public class Constants {
     public int initDirectionRight = 1;
     public int initDirectionLeft = -1;
 
-    public double kp = 0.03;
-    public double ki = 0;
-    public double kd = 0.01;
-
     /* starting:
         base: 0
         top: 0
@@ -103,6 +99,11 @@ public class Constants {
     public static int topMotor4 = 35;
     public static int bottomMotor5 = 700;
     public static int topMotor5 = 35;
+
+    public static double kp = 0.03;
+    public static double ki = 0;
+    public static double kd = 0.01;
+
 
     //Softstops:
     public int topSoftStop = 840;

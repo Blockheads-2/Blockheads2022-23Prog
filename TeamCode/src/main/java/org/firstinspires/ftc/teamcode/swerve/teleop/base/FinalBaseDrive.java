@@ -163,14 +163,15 @@ public class FinalBaseDrive extends OpMode{
     }
 
     void UpdateTelemetry(){
-//        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addData("IsAlligned", posSystem.isAlligned());
         telemetry.addData("Eligible for turning", posSystem.eligibleForTurning());
-        telemetry.addData("Trying to turn but can't", kinematics.tryingToTurnButCant);
+        telemetry.addData("Trying to turn but can't", kinematics.tryingToTurn);
         telemetry.addData("First movement", kinematics.firstMovement);
         telemetry.addData("PodL initpole", PodL.initPole);
-
         telemetry.addData("PodR initPole", PodR.initPole);
+        telemetry.addData("Drive Type", kinematics.getDriveType());
+        telemetry.addData("resetCycle?", kinematics.resestCycle);
 
         telemetry.addData("Leftstick X", gamepad1.left_stick_x);
         telemetry.addData("Leftstick Y", -gamepad1.left_stick_y);
@@ -189,6 +190,9 @@ public class FinalBaseDrive extends OpMode{
         telemetry.addData("Right W", posSystem.getRightWheelW());
         telemetry.addData("Optimized Left W", PodL.optimizedCurrentW);
         telemetry.addData("Optimized Right W", PodR.optimizedCurrentW);
+        telemetry.addData("Non left wheel Left W", PodL.nonRightStickCurrentW);
+        telemetry.addData("Non right wheel Right W", PodR.nonRightStickCurrentW);
+
         telemetry.addData("R", posSystem.getPositionArr()[4]);
 
         telemetry.addData("Spin Direction (Left)", PodL.output.get("direction"));
@@ -228,6 +232,8 @@ public class FinalBaseDrive extends OpMode{
         telemetry.addData("resetCycle?", kinematics.resestCycle);
         telemetry.addData("Current Stack", stackClawPos);
 
+        telemetry.addData("Arm bottom position", robot.abl.getTargetPosition());
+
         telemetry.update();
     }
 
@@ -250,18 +256,20 @@ public class FinalBaseDrive extends OpMode{
         posSystem.calculatePos();
         kinematics.logic(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, -gamepad1.right_stick_y, gamepad1.right_trigger, -gamepad1.left_trigger); //wheelAllignment is one loop late.
 
-//        if (kinematics.getDriveType() == RevisedKinematics.DriveType.STOP){
-//            boolean wheelsAreAlligned = posSystem.isAlligned();
-//            boolean eligibleForTurning = posSystem.eligibleForTurning();
-//            if (!wheelsAreAlligned || (!eligibleForTurning && kinematics.tryingToTurnOrSpline)){
-//                reset.reset(true);
-//                telemetry.addData("Reset", true);
-//            }
-//            return;
-//        } else {
-//            reset.reset(false);
-//            telemetry.addData("Reset", false);
-//        }
+
+        if (kinematics.getDriveType() == RevisedKinematics.DriveType.STOP || kinematics.tryingToTurn ) {
+            boolean tryingToTurnButCant =  !posSystem.eligibleForTurning() && kinematics.getDriveType() != RevisedKinematics.DriveType.TURN; //will have to make sure that this condition works well with splining as well
+            boolean wheelsAreAlligned = posSystem.isAlligned();
+
+            if (!wheelsAreAlligned || tryingToTurnButCant){
+                reset.reset(true);
+                telemetry.addData("Reset", true);
+                return;
+            }
+        } else {
+            reset.reset(false);
+            telemetry.addData("Reset", false);
+        }
 
         targetClicks = kinematics.getClicks();
         robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + targetClicks[0]);

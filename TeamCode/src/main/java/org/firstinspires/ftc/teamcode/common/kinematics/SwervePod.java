@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.common.kinematics;
 
+import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.teamcode.common.Accelerator;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
@@ -26,7 +27,7 @@ public class SwervePod {
     //teleop
     private double currentW = 0;
     public double optimizedCurrentW = 0;
-    private double nonRightStickCurrentW = 0;
+    public double nonRightStickCurrentW = 0;
     public boolean initPole = true;
 
     private double throttle = 0;
@@ -79,31 +80,36 @@ public class SwervePod {
         this.power = powerFactor;
 //        spinClicksTarget = (int)(power * (1000 * (1.0 + trigger)));
 //        spinClicksTarget = (int)(power * (500 * (1.0 + trigger)));
-        spinClicksTarget = (int)(power * (100 * (1.0 + (1.5 * trigger))));
-        throttle = 1.0;
+        this.spinClicksTarget = (int)(power * (150 * (1.0 + (1.5 * trigger))));
+        this.throttle = 1.0;
 
         if (turn){
-            if (side == Side.RIGHT) direction = (initDirection * -1 * (initPole ? -1 : 1));
-
-            this.spinClicksTarget = rightStickX * 100 * (1.0 + (1.5 * trigger)) * direction;
-            this.power = rightStickX + 0.3;
-            if (power > constants.POWER_LIMITER) power = constants.POWER_LIMITER;
-            else if (power < -constants.POWER_LIMITER) power = -constants.POWER_LIMITER;
-
             setRotClicks(nonRightStickCurrentW);
+
+            this.spinClicksTarget = rightStickX * 150 * (1.0 + (1.5 * trigger));
+
+            if (side == Side.RIGHT) direction *= -1;
+
+            this.power = Math.abs(rightStickX) + 0.3;
+//            if (power > 0.5) power = 0.5;
+//            else if (power < 0) power = 0;
 
             return RevisedKinematics.DriveType.TURN;
         } else if (spline){
 //            double throttle = (rightStickY <= rightStickX ? rightStickY / (1.5*rightStickX) : rightStickX / (1.5 * rightStickY));
-            double throttle = Math.abs(1.0 - Math.abs(Math.sin(rightStickX))); //1 - sinx
+//            double throttle = Math.abs(Math.tanh(rightStickX));
+            double throttle = 1.0 - Math.sin(Math.abs(rightStickX));
             if (rightStickX < 0 && side != Side.RIGHT) this.throttle *= throttle;
             else if (rightStickX >= 0 && side == Side.RIGHT) this.throttle *= throttle;
 
             return RevisedKinematics.DriveType.VARIABLE_SPLINE;
         } else {
-            nonRightStickCurrentW = currentW;
+            nonRightStickCurrentW = optimizedCurrentW;
             direction = (initPole ? initDirection : -initDirection);
         }
+
+        if (power > constants.POWER_LIMITER) power = constants.POWER_LIMITER;
+        else if (power < -constants.POWER_LIMITER) power = -constants.POWER_LIMITER;
 
         if (rightStickX == 0 && power == 0) return RevisedKinematics.DriveType.STOP;
 
@@ -137,7 +143,6 @@ public class SwervePod {
 //            direction *= -1;
             double temp_target = clamp(target + 180);
             turnAmount = changeAngle(temp_target, currentW);
-
         }
 
         if (initPole){

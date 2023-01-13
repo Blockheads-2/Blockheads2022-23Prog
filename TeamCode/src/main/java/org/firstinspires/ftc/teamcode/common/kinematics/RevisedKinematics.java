@@ -85,7 +85,7 @@ public class RevisedKinematics {
     }
 
     public double target = 0;
-    public boolean tryingToTurnButCant = false;
+    public boolean tryingToTurn = false;
     public void logic(double lx, double ly, double rx, double ry, double rt, double lt){
         this.lx = lx;
         this.ly = ly;
@@ -113,10 +113,10 @@ public class RevisedKinematics {
 
         posSystem.setOptimizedCurrentW(PodR.optimizedCurrentW, PodL.optimizedCurrentW);
 
-        boolean wheelsAreAlligned = posSystem.isAlligned();
+//        boolean wheelsAreAlligned = posSystem.isAlligned();
         boolean eligibleForTurning = posSystem.eligibleForTurning();
-        boolean shouldTurn = (lx == 0 && ly == 0) && (rx != 0 || ry != 0) && eligibleForTurning;
-        boolean shouldSpline = (lx != 0 || ly != 0) && (rx != 0 && ry == 0) && eligibleForTurning;
+        boolean shouldTurn = (lx == 0 && ly == 0) && (rx != 0) && eligibleForTurning; //possible problem: the robot will "jitter" if its turning and then becomes not eligible for turning (may have to increase tolerance?)
+        boolean shouldSpline = (lx != 0 || ly != 0) && (rx != 0) && eligibleForTurning;
 
         //determining spin clicks and spin power
         double power = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
@@ -124,19 +124,10 @@ public class RevisedKinematics {
         type = PodR.setSpinClicksAndPower(power, rt, shouldTurn, shouldSpline, rx);
         PodL.setThrottleUsingPodLReference(PodR, shouldTurn, shouldSpline);
 
-        //resetting modules
-//        tryingToTurnButCant = (lx == 0 && ly == 0) && (rx != 0 || ry != 0) && !eligibleForTurning && type != DriveType.TURN;
-//        if ((type == DriveType.STOP && !wheelsAreAlligned) || resestCycle || tryingToTurnButCant){
-//            resestCycle = !eligibleForTurning;
-//
-//            target = 0;
-//            PodL.setRotClicks(target);
-//            PodR.setRotClicks(target);
-//            PodL.setSpinClicks(0);
-//            PodR.setSpinClicks(0);
-//            PodL.setPower(1);
-//            PodR.setPower(1);
-//        }
+        //resetting modules when:
+        // - the driver has not given controller input AND the wheels aren't alligned,
+        // - the wheels aren't alligned with 0 degrees AND the driver is trying to turn.
+        tryingToTurn = (lx == 0 && ly == 0) && (rx != 0 || ry != 0);
 
         //determining "firstMovement" actions, if it is the robot's "firstMovement."
         firstMovement();
