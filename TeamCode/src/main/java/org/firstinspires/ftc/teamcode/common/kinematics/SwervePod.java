@@ -41,8 +41,6 @@ public class SwervePod {
     public double spinClicksTarget = 0;
     public double rotClicksTarget = 0;
 
-    public int clickFactor = constants.SPIN_CLICK_FACTOR;
-
     //auto
     private double distance = 0;
     private double speed = 0;
@@ -54,10 +52,10 @@ public class SwervePod {
 
     private double[] output = new double[4];
 
-    public SwervePod(double spinDirection, Side side, Accelerator accelerator){
+    public SwervePod(int spinDirection, Side side, Accelerator accelerator){
         pid = new SnapSwerveModulePID();
-        this.direction = (int)spinDirection;
-        this.initDirection = this.direction;
+        this.direction = spinDirection;
+        this.initDirection = spinDirection;
         this.side = side;
         this.accelerator = accelerator;
     }
@@ -83,9 +81,7 @@ public class SwervePod {
     //for spin power and spin clicks
     public RevisedKinematics.DriveType setSpinClicksAndPower(double powerFactor, double trigger, boolean turn, boolean spline, boolean eligibleForTurning, double rightStickX){ //teleop
         this.power = powerFactor;
-//        spinClicksTarget = (int)(power * (1000 * (1.0 + trigger)));
-//        spinClicksTarget = (int)(power * (500 * (1.0 + trigger)));
-        this.spinClicksTarget = (power * (clickFactor * (1.0 + (trigger))));
+        this.spinClicksTarget = (power * (constants.SPIN_CLICK_FACTOR * (1.0 + (trigger))));
         this.throttle = 1.0;
 
         if (turn) {
@@ -95,7 +91,7 @@ public class SwervePod {
                 if (rightStickX < 0 && side == Side.LEFT) direction *= -1;
                 else if (rightStickX >= 0 && side == Side.RIGHT) direction *= -1;
 
-                this.spinClicksTarget = Math.abs(rightStickX * clickFactor * direction);
+                this.spinClicksTarget = Math.abs(rightStickX) * constants.SPIN_CLICK_FACTOR;
                 power = rightStickX;
             } else {
                 setRotClicks(0);
@@ -118,16 +114,10 @@ public class SwervePod {
             direction = (initPole ? initDirection : -initDirection);
         }
 
-        if (power > constants.POWER_LIMITER) power = constants.POWER_LIMITER;
-        else if (power < -constants.POWER_LIMITER) power = -constants.POWER_LIMITER;
-
         if (rightStickX == 0 && power == 0) {
             driveType = RevisedKinematics.DriveType.STOP;
             return driveType;
         }
-
-//        if (throttle > 1.0) throttle = 1;
-//        else if (throttle < 0) throttle = 0;
 
         driveType = RevisedKinematics.DriveType.LINEAR;
         return driveType;
@@ -300,9 +290,13 @@ public class SwervePod {
     }
 
     public double[] getOutput(){
-        power = accelerator.update(Math.abs(power) * constants.POWER_LIMITER, turnAmount);
+        power = accelerator.update(Math.abs(power) * constants.POWER_LIMITER * direction, turnAmount);
+
+        if (power > constants.POWER_LIMITER) power = constants.POWER_LIMITER;
+        else if (power < -constants.POWER_LIMITER) power = -constants.POWER_LIMITER;
+
         throttle = Math.abs(throttle);
-        spinClicksTarget *= direction;
+        spinClicksTarget = Math.abs(spinClicksTarget) * direction;
 
         output[0] = spinClicksTarget;
         output[1] = rotClicksTarget;

@@ -87,7 +87,6 @@ public class RevisedKinematics {
     }
 
     public double target = 0;
-    public boolean tryingToTurn = false;
     public void logic(double lx, double ly, double rx, double ry, double rt, double lt){
         this.lx = lx;
         this.ly = ly;
@@ -102,9 +101,6 @@ public class RevisedKinematics {
 
         //tracking the joystick's movement
         joystickTracker.trackJoystickL(lx, ly);
-
-        if (noMovementRequests()) type = DriveType.STOP;
-        else type = DriveType.LINEAR;
 
         //determining targets, and how much we want to turn
         target = joystickTracker.getAngle(lx, ly);
@@ -371,22 +367,17 @@ public class RevisedKinematics {
         return degrees;
     }
 
-//    public double[] getPower(){
-////        double avgPower = (swerveOutputL.get("power") + swerveOutputL.get("power")) / 2.0;
-//
-//        double[] motorPower = new double[4];
-//        motorPower[0] = (outputL[2] * outputL[3]); //top left
-//        motorPower[1] = (outputL[2] * outputL[3]); //bottom left
-//        motorPower[2] = (outputR[2] * outputR[3]); //top right
-//        motorPower[3] = (outputR[2] * outputR[3]); //bottom right
-//
-//        for (int i = 0; i < 4; i++){
-//            motorPower[i] = accelerator.update(motorPower[i]);
-//            motorPower[i] *= constants.POWER_LIMITER;
-//        }
-//
-//        return motorPower;
-//    }
+    public double[] getPower(){
+//        double avgPower = (swerveOutputL.get("power") + swerveOutputL.get("power")) / 2.0;
+
+        double[] motorPower = new double[4];
+        motorPower[0] = (outputL[2] * outputL[3]); //top left
+        motorPower[1] = (outputL[2] * outputL[3]); //bottom left
+        motorPower[2] = (outputR[2] * outputR[3]); //top right
+        motorPower[3] = (outputR[2] * outputR[3]); //bottom right
+
+        return motorPower;
+    }
 
 //    public double[] getPowerAuto(){
 //    }
