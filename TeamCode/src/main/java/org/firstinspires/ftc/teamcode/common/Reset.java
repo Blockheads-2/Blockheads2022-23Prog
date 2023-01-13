@@ -79,7 +79,8 @@ public class Reset {
             robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         } else{
-            power = accelerator.update(1.0);
+//            power = accelerator.update(1.0);
+            power = 1;
             robot.botL.setPower(power);
             robot.topL.setPower(power);
             robot.botR.setPower(power);

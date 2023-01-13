@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.common.Accelerator;
 import org.firstinspires.ftc.teamcode.common.Reset;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
@@ -28,8 +29,9 @@ public class AutoHub implements Runnable{
     RevisedKinematics kinematics;
     Reset reset;
 
-    SwervePod podR = new SwervePod(constants.initDirectionRight, SwervePod.Side.RIGHT);
-    SwervePod podL = new SwervePod(constants.initDirectionLeft, SwervePod.Side.LEFT);
+    Accelerator accelerator = new Accelerator();
+    SwervePod podR;
+    SwervePod podL;
 
 
     TurnMath turnMath = new TurnMath();
@@ -47,6 +49,11 @@ public class AutoHub implements Runnable{
         hardwareMap = linearOpMode.hardwareMap;
         robot = new HardwareDrive();
         robot.init(hardwareMap);
+
+        accelerator.actuallyAccelerate(true);
+        accelerator.setAccelFactor(constants.accelTimeAuto);
+        podR = new SwervePod(constants.initDirectionRight, SwervePod.Side.RIGHT, accelerator);
+        podL = new SwervePod(constants.initDirectionLeft, SwervePod.Side.LEFT, accelerator);
 
         kinematics = new RevisedKinematics(posSystem, podL, podR);
         posSystem.grabKinematics(kinematics);
@@ -144,7 +151,7 @@ public class AutoHub implements Runnable{
             robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            motorPower = kinematics.getPower();
+//            motorPower = kinematics.getPower();
             robot.topL.setPower(motorPower[0]);
             robot.botL.setPower(motorPower[1]);
             robot.topR.setPower(motorPower[2]);

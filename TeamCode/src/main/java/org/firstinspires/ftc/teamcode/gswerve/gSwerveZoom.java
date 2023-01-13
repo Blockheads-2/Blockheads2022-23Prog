@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.gswerve;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,7 +13,7 @@ import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.kinematics.RevisedKinematics;
 
 @TeleOp(name="Grady's Swerve", group="Drive")
-
+@Disabled
 public class gSwerveZoom extends OpMode {
     HardwareDrive robot = new HardwareDrive();
     GlobalPosSystem posSystem;

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.common.kinematics;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.teamcode.common.Accelerator;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
@@ -16,13 +18,13 @@ public class SwervePod {
     LinearMath linearMath = new LinearMath();
     SplineMath splineMath = new SplineMath();
     TurnMath turnMath = new TurnMath();
+    Accelerator accelerator;
 
     public enum Side{
         RIGHT,
         LEFT
     }
     Side side;
-
 
     //teleop
     private double currentW = 0;
@@ -39,6 +41,8 @@ public class SwervePod {
     public double spinClicksTarget = 0;
     public double rotClicksTarget = 0;
 
+    public int clickFactor = constants.SPIN_CLICK_FACTOR;
+
     //auto
     private double distance = 0;
     private double speed = 0;
@@ -50,12 +54,14 @@ public class SwervePod {
 
     private double[] output = new double[4];
 
-    public SwervePod(double spinDirection, Side side){
+    public SwervePod(double spinDirection, Side side, Accelerator accelerator){
         pid = new SnapSwerveModulePID();
         this.direction = (int)spinDirection;
         this.initDirection = this.direction;
         this.side = side;
+        this.accelerator = accelerator;
     }
+
 
     public void setPID(double kp, double ki, double kd){
         pid.setTargets(kp, ki, kd);
@@ -79,26 +85,25 @@ public class SwervePod {
         this.power = powerFactor;
 //        spinClicksTarget = (int)(power * (1000 * (1.0 + trigger)));
 //        spinClicksTarget = (int)(power * (500 * (1.0 + trigger)));
-        this.spinClicksTarget = (power * (120 * (1.0 + (1.5 * trigger))));
+        this.spinClicksTarget = (power * (clickFactor * (1.0 + (trigger))));
         this.throttle = 1.0;
 
         if (turn) {
             if (eligibleForTurning) {
                 setRotClicks(0);
-
                 //            leftThrottle = leftThrottle;
-                if (side == Side.RIGHT) direction *= -1;
+                if (rightStickX < 0 && side == Side.LEFT) direction *= -1;
+                else if (rightStickX >= 0 && side == Side.RIGHT) direction *= -1;
 
-                this.spinClicksTarget = (rightStickX * 120 * direction);
+                this.spinClicksTarget = Math.abs(rightStickX * clickFactor * direction);
                 power = rightStickX;
-
-                driveType = RevisedKinematics.DriveType.TURN;
-                return driveType;
             } else {
                 setRotClicks(0);
                 spinClicksTarget = 0;
                 power = 1.0;
             }
+            driveType = RevisedKinematics.DriveType.TURN;
+            return driveType;
         } else if (spline){
 //            double throttle = (rightStickY <= rightStickX ? rightStickY / (1.5*rightStickX) : rightStickX / (1.5 * rightStickY));
 //            double throttle = Math.abs(Math.tanh(rightStickX));
@@ -151,7 +156,6 @@ public class SwervePod {
 
         if(Math.abs(turnAmount) > 90){
             initPole = !initPole;
-//            direction *= -1;
             double temp_target = clamp(target + 180);
             turnAmount = changeAngle(temp_target, currentW);
         }
@@ -252,29 +256,6 @@ public class SwervePod {
         setPowerAuto();
     }
 
-//    public double wheelOptimization(double target, double currentW){ //returns how much the wheels should rotate in which direction
-//        double target2 = (target < 0 ? target + 360 : target);
-//        double current2 = (currentW < 0 ? currentW + 360 : currentW);
-//
-//        double turnAmount1 = target - currentW;
-//        double turnAmount2 = target2 - current2;
-//        double turnAmount = (Math.abs(turnAmount1) < Math.abs(turnAmount2) ? turnAmount1 : turnAmount2);
-//
-//        direction = initDirection;
-//
-//        optimizedCurrentW = currentW;
-//
-//        if(Math.abs(turnAmount) > 90){
-//            double temp_target = clamp(target + 180);
-//            turnAmount = temp_target - currentW;
-//
-//            direction *= -1;
-//            optimizedCurrentW = clamp(currentW + 180);
-//        }
-//        return turnAmount;
-//    }
-
-
     public static double changeAngle(double target, double current){
         double target2 = (target < 0 ? target + 360 : target);
         double current2 = (current < 0 ? current + 360 : current);
@@ -319,7 +300,7 @@ public class SwervePod {
     }
 
     public double[] getOutput(){
-        power = Math.abs(power);
+        power = accelerator.update(Math.abs(power) * constants.POWER_LIMITER, turnAmount);
         throttle = Math.abs(throttle);
         spinClicksTarget *= direction;
 

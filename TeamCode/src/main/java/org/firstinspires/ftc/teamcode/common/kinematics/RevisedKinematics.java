@@ -55,7 +55,7 @@ public class RevisedKinematics {
     TrackJoystick joystickTracker;
 
     public boolean firstMovement = true;
-    public boolean resestCycle = false;
+//    public boolean resestCycle = false;
 
     //arm stuff!
     public enum ArmType{
@@ -117,8 +117,8 @@ public class RevisedKinematics {
 
 //        boolean wheelsAreAlligned = posSystem.isAlligned();
         boolean eligibleForTurning = posSystem.eligibleForTurning();
-        boolean shouldTurn = (lx == 0 && ly == 0) && (rx != 0) && eligibleForTurning; //possible problem: the robot will "jitter" if its turning and then becomes not eligible for turning (may have to increase tolerance?)
-        boolean shouldSpline = (lx != 0 || ly != 0) && (rx != 0) && eligibleForTurning;
+        boolean shouldTurn = (lx == 0 && ly == 0) && (rx != 0); //possible problem: the robot will "jitter" if its turning and then becomes not eligible for turning (may have to increase tolerance?)
+        boolean shouldSpline = (lx != 0 || ly != 0) && (rx != 0);
 
         //determining spin clicks and spin power
         double power = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
@@ -371,22 +371,22 @@ public class RevisedKinematics {
         return degrees;
     }
 
-    public double[] getPower(){
-//        double avgPower = (swerveOutputL.get("power") + swerveOutputL.get("power")) / 2.0;
-
-        double[] motorPower = new double[4];
-        motorPower[0] = (outputL[2] * outputL[3]); //top left
-        motorPower[1] = (outputL[2] * outputL[3]); //bottom left
-        motorPower[2] = (outputR[2] * outputR[3]); //top right
-        motorPower[3] = (outputR[2] * outputR[3]); //bottom right
-
-        for (int i = 0; i < 4; i++){
-            motorPower[i] = accelerator.update(motorPower[i], true);
-            motorPower[i] *= constants.POWER_LIMITER;
-        }
-
-        return motorPower;
-    }
+//    public double[] getPower(){
+////        double avgPower = (swerveOutputL.get("power") + swerveOutputL.get("power")) / 2.0;
+//
+//        double[] motorPower = new double[4];
+//        motorPower[0] = (outputL[2] * outputL[3]); //top left
+//        motorPower[1] = (outputL[2] * outputL[3]); //bottom left
+//        motorPower[2] = (outputR[2] * outputR[3]); //top right
+//        motorPower[3] = (outputR[2] * outputR[3]); //bottom right
+//
+//        for (int i = 0; i < 4; i++){
+//            motorPower[i] = accelerator.update(motorPower[i]);
+//            motorPower[i] *= constants.POWER_LIMITER;
+//        }
+//
+//        return motorPower;
+//    }
 
 //    public double[] getPowerAuto(){
 //    }
