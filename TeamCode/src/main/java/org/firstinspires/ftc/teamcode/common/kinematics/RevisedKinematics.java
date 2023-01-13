@@ -45,8 +45,8 @@ public class RevisedKinematics {
     double lt;
 
     //output
-    HashMap<String, Double> swerveOutputR = new HashMap<String, Double>();
-    HashMap<String, Double> swerveOutputL = new HashMap<String, Double>();
+    double[] outputL = new double[4];
+    double[] outputR = new double[4];
 
     //current orientation
     GlobalPosSystem posSystem;
@@ -143,6 +143,8 @@ public class RevisedKinematics {
         //determining "firstMovement" actions, if it is the robot's "firstMovement."
         firstMovement();
 
+        outputL = PodL.getOutput();
+        outputR = PodR.getOutput();
     }
 
     public void firstMovement(){
@@ -370,16 +372,13 @@ public class RevisedKinematics {
     }
 
     public double[] getPower(){
-//        swerveOutputL = PodL.getOutput();
-//        swerveOutputR = PodR.getOutput();
-
 //        double avgPower = (swerveOutputL.get("power") + swerveOutputL.get("power")) / 2.0;
 
         double[] motorPower = new double[4];
-        motorPower[0] = (swerveOutputL.get("power") * swerveOutputL.get("throttle")); //top left
-        motorPower[1] = (swerveOutputL.get("power") * swerveOutputL.get("throttle")); //bottom left
-        motorPower[2] = (swerveOutputR.get("power") * swerveOutputR.get("throttle")); //top right
-        motorPower[3] = (swerveOutputR.get("power") * swerveOutputR.get("throttle")); //bottom right
+        motorPower[0] = (outputL[2] * outputL[3]); //top left
+        motorPower[1] = (outputL[2] * outputL[3]); //bottom left
+        motorPower[2] = (outputR[2] * outputR[3]); //top right
+        motorPower[3] = (outputR[2] * outputR[3]); //bottom right
 
         for (int i = 0; i < 4; i++){
             motorPower[i] = accelerator.update(motorPower[i], true);
@@ -389,53 +388,24 @@ public class RevisedKinematics {
         return motorPower;
     }
 
-    public double[] getPowerAuto(){
-//        swerveOutputL = PodL.getOutput();
-//        swerveOutputR = PodR.getOutput();
-
-        double[] motorPower = new double[4];
-        double powerR = swerveOutputR.get("power");
-        double powerL = swerveOutputL.get("power");
-        motorPower[0] = (powerL * swerveOutputL.get("throttle")); //top left
-        motorPower[1] = (powerL * swerveOutputL.get("throttle")); //bottom left
-        motorPower[2] = (powerR * swerveOutputR.get("throttle")); //top right
-        motorPower[3] = (powerR * swerveOutputR.get("throttle")); //bottom right
-
-        for (int i = 0; i < 4; i++){
-            motorPower[i] = accelerator.update(motorPower[i], true);
-            motorPower[i] *= constants.POWER_LIMITER;
-        }
-
-        return motorPower;
-    }
+//    public double[] getPowerAuto(){
+//    }
 
     public int[] getClicks(){
-//        swerveOutputL = PodL.getOutput();
-//        swerveOutputR = PodR.getOutput();
-
-        double leftClicks = swerveOutputL.get("spinClicksTarget");
-        double rightClicks = swerveOutputR.get("spinClicksTarget");
+//        double leftClicks = swerveOutputL.get("spinClicksTarget");
+//        double rightClicks = swerveOutputR.get("spinClicksTarget");
 //        int avgClicks = (int)((leftClicks + rightClicks) / 2.0);
 
         int[] clicks = new int[4];
-        clicks[0] = (int)(leftClicks  + swerveOutputL.get("rotClicksTarget")); //left
-        clicks[1] = (int)(-leftClicks + swerveOutputL.get("rotClicksTarget")); //left
-        clicks[2] = (int)(rightClicks + swerveOutputR.get("rotClicksTarget")); //right
-        clicks[3] = (int)(-rightClicks + swerveOutputR.get("rotClicksTarget")); //right
+        clicks[0] = (int)(outputL[0] + outputL[1]); //left
+        clicks[1] = (int)(-outputL[0] + outputL[1]); //left
+        clicks[2] = (int)(outputR[0] + outputR[1]); //right
+        clicks[3] = (int)(-outputR[0] + outputR[1]); //right
         return clicks;
     }
 
-    public int[] getClicksAuto(){
-//        swerveOutputL = PodL.getOutput();
-//        swerveOutputR = PodR.getOutput();
-
-        int[] clicks = new int[4];
-        clicks[0] = (int)(swerveOutputL.get("spinClicksTarget") + swerveOutputL.get("rotClicksTarget")); //left
-        clicks[1] = (int)(-swerveOutputL.get("spinClicksTarget") + swerveOutputL.get("rotClicksTarget")); //left
-        clicks[2] = (int)(swerveOutputR.get("spinClicksTarget") + swerveOutputR.get("rotClicksTarget")); //right
-        clicks[3] = (int)(-swerveOutputR.get("spinClicksTarget") + swerveOutputR.get("rotClicksTarget")); //right
-        return clicks;
-    }
+//    public int[] getClicksAuto(){
+//    }
 
     public DriveType getDriveType(){
         return type;
