@@ -31,7 +31,7 @@ public class SwervePod {
     public boolean initPole = true;
 
     private double throttle = 0;
-    private int direction;
+    public int direction;
     private int initDirection;
     private double turnAmount = 0;
 
@@ -48,7 +48,7 @@ public class SwervePod {
     //both teleop & auto
     SnapSwerveModulePID pid;
 
-    public HashMap<String, Double> output = new HashMap<String, Double>();
+    private HashMap<String, Double> output = new HashMap<String, Double>();
 
     public SwervePod(double spinDirection, Side side){
         pid = new SnapSwerveModulePID();
@@ -74,35 +74,40 @@ public class SwervePod {
         rotClicksTarget = clicks;
     }
 
-
     //for spin power and spin clicks
-    public RevisedKinematics.DriveType setSpinClicksAndPower(double powerFactor, double trigger, boolean turn, boolean spline, double rightStickX){ //teleop
+    public RevisedKinematics.DriveType setSpinClicksAndPower(double powerFactor, double trigger, boolean turn, boolean spline, boolean eligibleForTurning, double rightStickX){ //teleop
         this.power = powerFactor;
 //        spinClicksTarget = (int)(power * (1000 * (1.0 + trigger)));
 //        spinClicksTarget = (int)(power * (500 * (1.0 + trigger)));
-        this.spinClicksTarget = (int)(power * (150 * (1.0 + (1.5 * trigger))));
+        this.spinClicksTarget = (int)(power * (120 * (1.0 + (1.5 * trigger))));
         this.throttle = 1.0;
 
-        if (turn){
-            setRotClicks(nonRightStickCurrentW);
+        if (turn) {
+            if (eligibleForTurning) {
+                //            leftThrottle = leftThrottle;
+                if (side == Side.RIGHT) direction *= -1;
 
-            this.spinClicksTarget = rightStickX * 150 * (1.0 + (1.5 * trigger));
+                spinClicksTarget = (int) (rightStickX * 100 * direction);
+                power = rightStickX;
 
-            if (side == Side.RIGHT) direction *= -1;
+                setRotClicks(0);
 
-            this.power = Math.abs(rightStickX) + 0.3;
-//            if (power > 0.5) power = 0.5;
-//            else if (power < 0) power = 0;
-
-            return RevisedKinematics.DriveType.TURN;
+                driveType = RevisedKinematics.DriveType.TURN;
+                return driveType;
+            } else {
+                spinClicksTarget = 0;
+                power = 1.0;
+                setRotClicks(0);
+            }
         } else if (spline){
 //            double throttle = (rightStickY <= rightStickX ? rightStickY / (1.5*rightStickX) : rightStickX / (1.5 * rightStickY));
 //            double throttle = Math.abs(Math.tanh(rightStickX));
             double throttle = 1.0 - Math.sin(Math.abs(rightStickX));
-            if (rightStickX < 0 && side != Side.RIGHT) this.throttle *= throttle;
+            if (rightStickX < 0 && side == Side.LEFT) this.throttle *= throttle;
             else if (rightStickX >= 0 && side == Side.RIGHT) this.throttle *= throttle;
 
-            return RevisedKinematics.DriveType.VARIABLE_SPLINE;
+            driveType = RevisedKinematics.DriveType.VARIABLE_SPLINE;
+            return driveType;
         } else {
             nonRightStickCurrentW = optimizedCurrentW;
             direction = (initPole ? initDirection : -initDirection);
@@ -111,12 +116,16 @@ public class SwervePod {
         if (power > constants.POWER_LIMITER) power = constants.POWER_LIMITER;
         else if (power < -constants.POWER_LIMITER) power = -constants.POWER_LIMITER;
 
-        if (rightStickX == 0 && power == 0) return RevisedKinematics.DriveType.STOP;
+        if (rightStickX == 0 && power == 0) {
+            driveType = RevisedKinematics.DriveType.STOP;
+            return driveType;
+        }
 
 //        if (throttle > 1.0) throttle = 1;
 //        else if (throttle < 0) throttle = 0;
 
-        return RevisedKinematics.DriveType.LINEAR;
+        driveType = RevisedKinematics.DriveType.LINEAR;
+        return driveType;
     }
 
     public void setThrottleUsingPodLReference(SwervePod PodR, boolean turn, boolean spline){
@@ -308,10 +317,13 @@ public class SwervePod {
     }
 
     public HashMap<String, Double> getOutput(){
+        power = Math.abs(power);
+        throttle = Math.abs(throttle);
+        spinClicksTarget *= direction;
+
         output.put("power", power);
         output.put("spinClicksTarget", spinClicksTarget);
         output.put("rotClicksTarget", rotClicksTarget);
-        output.put("direction", (double)direction);
         output.put("throttle", Math.abs(throttle));
 
         return output;

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.common.kinematics;
 
+import com.vuforia.STORAGE_TYPE;
+
 import org.firstinspires.ftc.teamcode.common.Accelerator;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
@@ -120,14 +122,23 @@ public class RevisedKinematics {
 
         //determining spin clicks and spin power
         double power = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
-        type = PodL.setSpinClicksAndPower(power, rt, shouldTurn, shouldSpline, rx);
-        type = PodR.setSpinClicksAndPower(power, rt, shouldTurn, shouldSpline, rx);
+        type = PodL.setSpinClicksAndPower(power, rt, shouldTurn, shouldSpline, eligibleForTurning, rx);
+        type = PodR.setSpinClicksAndPower(power, rt, shouldTurn, shouldSpline, eligibleForTurning, rx);
         PodL.setThrottleUsingPodLReference(PodR, shouldTurn, shouldSpline);
 
         //resetting modules when:
         // - the driver has not given controller input AND the wheels aren't alligned,
         // - the wheels aren't alligned with 0 degrees AND the driver is trying to turn.
-        tryingToTurn = (lx == 0 && ly == 0) && (rx != 0 || ry != 0);
+        if (type == DriveType.STOP){
+            if (!posSystem.isAlligned()){
+                PodL.setRotClicks(0);
+                PodR.setRotClicks(0);
+                PodL.setSpinClicks(0);
+                PodR.setSpinClicks(0);
+                PodL.setPower(1);
+                PodR.setPower(1);
+            }
+        }
 
         //determining "firstMovement" actions, if it is the robot's "firstMovement."
         firstMovement();
@@ -363,16 +374,16 @@ public class RevisedKinematics {
     }
 
     public double[] getPower(){
-        PodL.getOutput();
-        PodR.getOutput();
+        swerveOutputL = PodL.getOutput();
+        swerveOutputR = PodR.getOutput();
 
-        double power = Math.abs(PodL.getOutput().get("power") + PodR.getOutput().get("power")) / 2.0;
+//        double avgPower = (swerveOutputL.get("power") + swerveOutputL.get("power")) / 2.0;
 
         double[] motorPower = new double[4];
-        motorPower[0] = (power * PodL.getOutput().get("throttle")); //top left
-        motorPower[1] = (power * PodL.getOutput().get("throttle")); //bottom left
-        motorPower[2] = (power * PodR.getOutput().get("throttle")); //top right
-        motorPower[3] = (power * PodR.getOutput().get("throttle")); //bottom right
+        motorPower[0] = (swerveOutputL.get("power") * swerveOutputL.get("throttle")); //top left
+        motorPower[1] = (swerveOutputL.get("power") * swerveOutputL.get("throttle")); //bottom left
+        motorPower[2] = (swerveOutputR.get("power") * swerveOutputR.get("throttle")); //top right
+        motorPower[3] = (swerveOutputR.get("power") * swerveOutputR.get("throttle")); //bottom right
 
         for (int i = 0; i < 4; i++){
             motorPower[i] = accelerator.update(motorPower[i], true);
@@ -383,12 +394,16 @@ public class RevisedKinematics {
     }
 
     public double[] getPowerAuto(){
+        swerveOutputL = PodL.getOutput();
+        swerveOutputR = PodR.getOutput();
+
         double[] motorPower = new double[4];
-        double power = (swerveOutputL.get("power") + swerveOutputR.get("power")) / 2.0;
-        motorPower[0] = (power * swerveOutputL.get("throttle")); //top left
-        motorPower[1] = (power * swerveOutputL.get("throttle")); //bottom left
-        motorPower[2] = (power * swerveOutputR.get("throttle")); //top right
-        motorPower[3] = (power * swerveOutputR.get("throttle")); //bottom right
+        double powerR = swerveOutputR.get("power");
+        double powerL = swerveOutputL.get("power");
+        motorPower[0] = (powerL * swerveOutputL.get("throttle")); //top left
+        motorPower[1] = (powerL * swerveOutputL.get("throttle")); //bottom left
+        motorPower[2] = (powerR * swerveOutputR.get("throttle")); //top right
+        motorPower[3] = (powerR * swerveOutputR.get("throttle")); //bottom right
 
         for (int i = 0; i < 4; i++){
             motorPower[i] = accelerator.update(motorPower[i], true);
@@ -399,21 +414,30 @@ public class RevisedKinematics {
     }
 
     public int[] getClicks(){
-        double spinTargets = (swerveOutputL.get("spinClicksTarget") + swerveOutputR.get("spinClicksTarget")) / 2.0;
+        swerveOutputL = PodL.getOutput();
+        swerveOutputR = PodR.getOutput();
+
+        double leftClicks = swerveOutputL.get("spinClicksTarget");
+        double rightClicks = swerveOutputR.get("spinClicksTarget");
+//        int avgClicks = (int)((leftClicks + rightClicks) / 2.0);
+
         int[] clicks = new int[4];
-        clicks[0] = (int)(spinTargets * swerveOutputL.get("direction") + swerveOutputL.get("rotClicksTarget")); //left
-        clicks[1] = (int)(-spinTargets * swerveOutputL.get("direction") + swerveOutputL.get("rotClicksTarget")); //left
-        clicks[2] = (int)(spinTargets * swerveOutputR.get("direction") + swerveOutputR.get("rotClicksTarget")); //right
-        clicks[3] = (int)(-spinTargets * swerveOutputR.get("direction") + swerveOutputR.get("rotClicksTarget")); //right
+        clicks[0] = (int)(leftClicks  + swerveOutputL.get("rotClicksTarget")); //left
+        clicks[1] = (int)(-leftClicks + swerveOutputL.get("rotClicksTarget")); //left
+        clicks[2] = (int)(rightClicks + swerveOutputR.get("rotClicksTarget")); //right
+        clicks[3] = (int)(-rightClicks + swerveOutputR.get("rotClicksTarget")); //right
         return clicks;
     }
 
     public int[] getClicksAuto(){
+        swerveOutputL = PodL.getOutput();
+        swerveOutputR = PodR.getOutput();
+
         int[] clicks = new int[4];
-        clicks[0] = (int)(swerveOutputL.get("spinClicksTarget") * swerveOutputL.get("direction") + swerveOutputL.get("rotClicksTarget")); //left
-        clicks[1] = (int)(-swerveOutputL.get("spinClicksTarget") * swerveOutputL.get("direction") + swerveOutputL.get("rotClicksTarget")); //left
-        clicks[2] = (int)(swerveOutputR.get("spinClicksTarget") * swerveOutputR.get("direction") + swerveOutputR.get("rotClicksTarget")); //right
-        clicks[3] = (int)(-swerveOutputR.get("spinClicksTarget") * swerveOutputR.get("direction") + swerveOutputR.get("rotClicksTarget")); //right
+        clicks[0] = (int)(swerveOutputL.get("spinClicksTarget") + swerveOutputL.get("rotClicksTarget")); //left
+        clicks[1] = (int)(-swerveOutputL.get("spinClicksTarget") + swerveOutputL.get("rotClicksTarget")); //left
+        clicks[2] = (int)(swerveOutputR.get("spinClicksTarget") + swerveOutputR.get("rotClicksTarget")); //right
+        clicks[3] = (int)(-swerveOutputR.get("spinClicksTarget") + swerveOutputR.get("rotClicksTarget")); //right
         return clicks;
     }
 

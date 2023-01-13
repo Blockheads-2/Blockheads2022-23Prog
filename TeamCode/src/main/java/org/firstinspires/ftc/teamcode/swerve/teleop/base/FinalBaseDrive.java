@@ -195,34 +195,34 @@ public class FinalBaseDrive extends OpMode{
 
         telemetry.addData("R", posSystem.getPositionArr()[4]);
 
-        telemetry.addData("Spin Direction (Left)", PodL.output.get("direction"));
-        telemetry.addData("Spin Direction (Right)", PodR.output.get("direction"));
+        telemetry.addData("Spin Direction (Left)", PodL.direction);
+        telemetry.addData("Spin Direction (Right)", PodR.direction);
 //
         telemetry.addData("target", kinematics.target);
         telemetry.addData("Turn Amount (Left)", PodL.getTurnAmount());
         telemetry.addData("Turn Amount (Right)", PodR.getTurnAmount());
-        telemetry.addData("Throttle (Left)", PodL.output.get("throttle"));
-        telemetry.addData("Throttle (Right)", PodR.output.get("throttle"));
+        telemetry.addData("Throttle (Left)", PodL.getOutput().get("throttle"));
+        telemetry.addData("Throttle (Right)", PodR.getOutput().get("throttle"));
 
         telemetry.addData("topL clicks", robot.topL.getCurrentPosition());
         telemetry.addData("botL clicks", robot.botL.getCurrentPosition());
         telemetry.addData("topR clicks", robot.topR.getCurrentPosition());
         telemetry.addData("botR clicks", robot.botR.getCurrentPosition());
 
-        telemetry.addData("Left Spin Clicks Target", PodL.output.get("spinClicksTarget"));
-        telemetry.addData("Left Rotate Clicks target",  PodL.output.get("rotClicksTarget"));
-        telemetry.addData("Right Spin clicks target", PodR.output.get("spinClicksTarget"));
-        telemetry.addData("Right Rotate clicks target",  PodR.output.get("rotClicksTarget"));
+        telemetry.addData("Left Spin Clicks Target", PodL.getOutput().get("spinClicksTarget"));
+        telemetry.addData("Left Rotate Clicks target",  PodL.getOutput().get("rotClicksTarget"));
+        telemetry.addData("Right Spin clicks target", PodR.getOutput().get("spinClicksTarget"));
+        telemetry.addData("Right Rotate clicks target",  PodR.getOutput().get("rotClicksTarget"));
         telemetry.addData("topL velocity", robot.topL.getVelocity()); //ticks per second
         telemetry.addData("botL velocity", robot.botL.getVelocity()); //ticks per second
         telemetry.addData("topR velocity", robot.topR.getVelocity());
         telemetry.addData("botR velocity", robot.botR.getVelocity());
 
 
-        telemetry.addData("Power TopL", PodL.output.get("power"));
-        telemetry.addData("Power BotL", PodL.output.get("power"));
-        telemetry.addData("Power TopR", PodR.output.get("power"));
-        telemetry.addData("Power BotR", PodR.output.get("power"));
+        telemetry.addData("Power TopL", PodL.getOutput().get("power"));
+        telemetry.addData("Power BotL", PodL.getOutput().get("power"));
+        telemetry.addData("Power TopR", PodR.getOutput().get("power"));
+        telemetry.addData("Power BotR", PodR.getOutput().get("power"));
         telemetry.addData("Clicks Target TopL", robot.topL.getTargetPosition() - robot.topL.getCurrentPosition());
         telemetry.addData("Clicks Target BotL",robot.botL.getTargetPosition() - robot.botL.getCurrentPosition());
         telemetry.addData("Clicks Target TopR", robot.topR.getTargetPosition() - robot.topR.getCurrentPosition());
@@ -257,11 +257,10 @@ public class FinalBaseDrive extends OpMode{
         kinematics.logic(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, -gamepad1.right_stick_y, gamepad1.right_trigger, -gamepad1.left_trigger); //wheelAllignment is one loop late.
 
 
-        if (kinematics.getDriveType() == RevisedKinematics.DriveType.STOP || kinematics.tryingToTurn ) {
-            boolean tryingToTurnButCant =  !posSystem.eligibleForTurning() && kinematics.getDriveType() != RevisedKinematics.DriveType.TURN; //will have to make sure that this condition works well with splining as well
+        if (kinematics.getDriveType() == RevisedKinematics.DriveType.STOP) {
             boolean wheelsAreAlligned = posSystem.isAlligned();
 
-            if (!wheelsAreAlligned || tryingToTurnButCant){
+            if (!wheelsAreAlligned){
                 reset.reset(true);
                 telemetry.addData("Reset", true);
                 return;
