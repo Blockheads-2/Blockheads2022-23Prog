@@ -28,6 +28,9 @@ public class FinalBaseDrive extends OpMode{
     Constants constants = new Constants();
     Reset reset;
 
+    ElapsedTime loopTime = new ElapsedTime();
+    int prevMS = 0;
+
     private enum TelemetryData{
         LEFT,
         RIGHT
@@ -80,6 +83,7 @@ public class FinalBaseDrive extends OpMode{
         kinematics = new RevisedKinematics(posSystem);
         posSystem.grabKinematics(kinematics);
         reset = new Reset(robot, posSystem);
+        loopTime.reset();
 
         telemetry.addData("Say", "Hello Driver");
 
@@ -155,6 +159,7 @@ public class FinalBaseDrive extends OpMode{
 
     void UpdateTelemetry(){
         telemetry.addData("IsAlligned", posSystem.isAlligned());
+
         telemetry.addData("Eligible for turning", posSystem.eligibleForTurning());
 
         telemetry.addData("Leftstick X", gamepad1.left_stick_x);
@@ -228,7 +233,7 @@ public class FinalBaseDrive extends OpMode{
         kinematics.logic(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, -gamepad1.right_stick_y, gamepad1.right_trigger, -gamepad1.left_trigger); //wheelAllignment is one loop late.
 
         if (kinematics.getDriveType() == RevisedKinematics.DriveType.STOP){
-            if (!posSystem.isAlligned() || x.getState() == Button.State.TAP){
+            if (!posSystem.isAlligned()){
                 reset.reset(true);
             }
             return;

@@ -171,8 +171,8 @@ public class RevisedKinematics {
     }
 
     public void rightStick(){
-        if (posSystem.eligibleForTurning()){
-            if ((lx == 0 && ly == 0) && (rx != 0 || ry != 0)){
+        if ((lx == 0 && ly == 0) && (rx != 0 || ry != 0)){
+            if (posSystem.eligibleForTurning()){
                 //            leftThrottle = leftThrottle;
                 rightThrottle *= -1;
 
@@ -180,22 +180,31 @@ public class RevisedKinematics {
                 spinClicksR = (int) (rx * 100 * rightThrottle);
                 power = rx;
 
-                turnAmountL = -leftCurrentW;
+                turnAmountL = wheelOptimization(0, leftCurrentW, false);
                 leftRotClicks = (int)(turnAmountL * constants.CLICKS_PER_DEGREE);
 
-                turnAmountR = -rightCurrentW;
+                turnAmountR = wheelOptimization(0, rightCurrentW, true);
                 rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE);
 
                 type = DriveType.TURN;
-            } else if ((lx != 0 || ly != 0) && (rx != 0 && ry == 0)){
-                double throttle = (ry <= lx ? ry / (1.5*rx) : rx / (1.5 * ry));
-                throttle = Math.abs(throttle);
-                if (rx < 0) leftThrottle *= throttle;
-                else rightThrottle *= throttle;
-                type = DriveType.VARIABLE_SPLINE;
+            } else {
+                spinClicksL = 0;
+                spinClicksR = 0;
+                power = 0.8;
+                turnAmountL = wheelOptimization(0, leftCurrentW, false);
+                leftRotClicks = (int)(turnAmountL * constants.CLICKS_PER_DEGREE);
 
+                turnAmountR = wheelOptimization(0, rightCurrentW, true);
+                rightRotClicks = (int)(turnAmountR * constants.CLICKS_PER_DEGREE);
             }
+        } else if ((lx != 0 || ly != 0) && (rx != 0 && ry == 0)){
+            double throttle = (ry <= lx ? ry / (1.5*rx) : rx / (1.5 * ry));
+            throttle = Math.abs(throttle);
+            if (rx < 0) leftThrottle *= throttle;
+            else rightThrottle *= throttle;
+            type = DriveType.VARIABLE_SPLINE;
         }
+
     }
 
     public double wheelOptimization(double target, double currentW, boolean right){ //returns how much the wheels should rotate in which direction
@@ -229,6 +238,16 @@ public class RevisedKinematics {
                 posSystem.setOptimizedCurrentWL(clamp(leftCurrentW + 180));
             }
         }
+        return turnAmount;
+    }
+
+    public static double getAngleChange(double current, double target){
+        double target2 = (target < 0 ? target + 360 : target);
+        double current2 = (current < 0 ? current + 360 : current);
+
+        double turnAmount1 = target - current;
+        double turnAmount2 = target2 - current2;
+        double turnAmount = (Math.abs(turnAmount1) < Math.abs(turnAmount2) ? turnAmount1 : turnAmount2);
         return turnAmount;
     }
 

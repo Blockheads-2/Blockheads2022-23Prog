@@ -153,7 +153,7 @@ public class GlobalPosSystem implements Runnable{
     }
 
     public boolean isAlligned(){
-        return (Math.abs(positionArr[2] - positionArr[3]) < 15);
+        return (RevisedKinematics.getAngleChange(optimizedCurrentWR, optimizedCurrentWL) < 15);
     }
 
     public void setOptimizedCurrentWR(double WR){
@@ -174,8 +174,8 @@ public class GlobalPosSystem implements Runnable{
 
     public boolean eligibleForTurning(){
         return (isAlligned() &&
-                Math.abs(Math.abs(positionArr[2]) - 90) >= 40 &&
-                Math.abs(Math.abs(positionArr[3]) - 90) >= 40); //wheels must be
+                Math.abs(optimizedCurrentWL) <= 10 &&
+                Math.abs(optimizedCurrentWR) <= 10); //wheels must be
     }
 
     public void hardResetGPS(){
