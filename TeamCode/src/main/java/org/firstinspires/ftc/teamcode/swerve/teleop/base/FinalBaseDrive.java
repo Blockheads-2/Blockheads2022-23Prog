@@ -104,6 +104,13 @@ public class FinalBaseDrive extends OpMode{
         posSystem.grabKinematics(kinematics);
         reset = new Reset(robot, posSystem);
 
+        robot.at.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.at.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.abl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.abl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.abr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.abr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         telemetry.addData("Say", "Hello Driver");
 
         robot.abl.setTargetPosition(constants.INIT_ARMBASE_POS);
