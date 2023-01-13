@@ -262,7 +262,7 @@ public class FinalBaseDrive extends OpMode{
     }
 
     void UpdateButton(){
-        x.update(gamepad1.x);
+        x.update(gamepad2.x);
         y.update(gamepad1.y);
         a.update(gamepad1.a);
         b.update(gamepad1.b);
