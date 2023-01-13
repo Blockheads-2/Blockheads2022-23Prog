@@ -93,8 +93,8 @@ public class Constants {
     public static int topMotor1 = 35;
     public static int bottomMotor2 = 700;
     public static int topMotor2 = 35;
-    public static int bottomMotor3 = 700;
-    public static int topMotor3 = 35;
+    public static int bottomMotor3 = 500;
+    public static int topMotor3 = 80;
     public static int bottomMotor4 = 700;
     public static int topMotor4 = 35;
     public static int bottomMotor5 = 700;
