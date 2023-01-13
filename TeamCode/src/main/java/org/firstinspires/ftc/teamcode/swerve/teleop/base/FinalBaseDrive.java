@@ -387,8 +387,8 @@ public class FinalBaseDrive extends OpMode{
         }
         if (rightBumpy.is(Button.State.TAP)){
             stackClawPos++;
-            if (stackClawPos<1){
-                stackClawPos = 1;
+            if (stackClawPos>5){
+                stackClawPos = 5;
             }
             switch (stackClawPos) {
                 case 1: {
