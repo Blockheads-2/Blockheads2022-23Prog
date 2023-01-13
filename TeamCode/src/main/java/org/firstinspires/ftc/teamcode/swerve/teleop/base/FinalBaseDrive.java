@@ -396,22 +396,20 @@ public class FinalBaseDrive extends OpMode{
             if (stackClawPos<1){
                 stackClawPos = 1;
             }
-            switch (stackClawPos) {
-                case 1: {
-                    setArmPos(Constants.topMotor1, Constants.bottomMotor1);
-                }
-                case 2: {
-                    setArmPos(Constants.topMotor2, Constants.bottomMotor2);
-                }
-                case 3: {
-                    setArmPos(Constants.topMotor3, Constants.bottomMotor3);
-                }
-                case 4: {
-                    setArmPos(Constants.topMotor4, Constants.bottomMotor4);
-                }
-                case 5: {
-                    setArmPos(Constants.topMotor5, Constants.bottomMotor5);
-                }
+            if (stackClawPos == 1) {
+                setArmPos(Constants.topMotor1, Constants.bottomMotor1);
+            }
+            else if (stackClawPos == 2) {
+                setArmPos(Constants.topMotor2, Constants.bottomMotor2);
+            }
+            else if (stackClawPos == 3) {
+                setArmPos(Constants.topMotor3, Constants.bottomMotor3);
+            }
+            else if (stackClawPos == 4) {
+                setArmPos(Constants.topMotor4, Constants.bottomMotor4);
+            }
+            else if (stackClawPos == 5) {
+                setArmPos(Constants.topMotor5, Constants.bottomMotor5);
             }
         }
         if (rightBumpy.is(Button.State.TAP)){
@@ -419,31 +417,29 @@ public class FinalBaseDrive extends OpMode{
             if (stackClawPos>5){
                 stackClawPos = 5;
             }
-            switch (stackClawPos) {
-                case 1: {
-                    setArmPos(Constants.topMotor1, Constants.bottomMotor1);
-                }
-                case 2: {
-                    setArmPos(Constants.topMotor2, Constants.bottomMotor2);
-                }
-                case 3: {
-                    setArmPos(Constants.topMotor3, Constants.bottomMotor3);
-                }
-                case 4: {
-                    setArmPos(Constants.topMotor4, Constants.bottomMotor4);
-                }
-                case 5: {
-                    setArmPos(Constants.topMotor5, Constants.bottomMotor5);
-                }
+            if (stackClawPos == 1) {
+                setArmPos(Constants.topMotor1, Constants.bottomMotor1);
+            }
+            else if (stackClawPos == 2) {
+                setArmPos(Constants.topMotor2, Constants.bottomMotor2);
+            }
+            else if (stackClawPos == 3) {
+                setArmPos(Constants.topMotor3, Constants.bottomMotor3);
+            }
+            else if (stackClawPos == 4) {
+                setArmPos(Constants.topMotor4, Constants.bottomMotor4);
+            }
+            else if (stackClawPos == 5) {
+                setArmPos(Constants.topMotor5, Constants.bottomMotor5);
             }
         }
 
     }
 
     void setArmPos(int topMotorPos, int bottomMotorPos){
-        atPID.setTargets(topMotorPos, 0.4, 0, 0.2);
-        ablPID.setTargets(bottomMotorPos, 0.4, 0, 0.2);
-        abrPID.setTargets(bottomMotorPos, 0.4, 0, 0.2);
+        //atPID.setTargets(topMotorPos, 0.4, 0, 0.2);
+        //ablPID.setTargets(bottomMotorPos, 0.4, 0, 0.2);
+        //abrPID.setTargets(bottomMotorPos, 0.4, 0, 0.2);
 
         robot.abl.setTargetPosition(bottomMotorPos);
         robot.abr.setTargetPosition(bottomMotorPos);
