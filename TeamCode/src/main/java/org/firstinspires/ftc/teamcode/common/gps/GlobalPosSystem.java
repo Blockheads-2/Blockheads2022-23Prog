@@ -59,6 +59,8 @@ public class GlobalPosSystem {
         updateHash();
         calculateWheel();
         calculateHeader();
+        positionArr[2] = clamp(positionArr[2] +  positionArr[4]);
+        positionArr[3] = clamp(positionArr[3] + positionArr[4]);
         calculateRobot();
     }
 
