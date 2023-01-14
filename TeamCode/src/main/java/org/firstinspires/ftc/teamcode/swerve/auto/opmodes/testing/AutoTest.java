@@ -29,7 +29,9 @@ public class AutoTest extends LinearOpMode {
 
 
         while (!opModeIsActive()) { //checks if play hasn't been pressed (in init stage)
+            dispatch.moveToInit();
         }
+        dispatch.resetArmEncoderPos();
 
         waitForStart();
 
@@ -39,10 +41,14 @@ public class AutoTest extends LinearOpMode {
 //        Thread gpsUpdateThread = new Thread(posSystem);
 //        gpsUpdateThread.start();
 
-        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 45, 0.4, RevisedKinematics.ArmType.HOLD);
-        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, constants.WHEEL_CIRCUMFERENCE, 0, 0.4, RevisedKinematics.ArmType.HIGH);
-        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, -90, 0.4, RevisedKinematics.ArmType.HOLD);
-        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 27, 0, 0.4, RevisedKinematics.ArmType.HOLD);
+        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.5, RevisedKinematics.ArmType.HOLD);
+        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 27, 0, 0.5, RevisedKinematics.ArmType.HOLD);
+        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 0, 0.5, RevisedKinematics.ArmType.HOLD);
+        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 15, 0, 0.5, RevisedKinematics.ArmType.HOLD);
+
+//        dispatch.Move(RevisedKinematics.DriveType.TURN, 0, 0, -90, 0.5, RevisedKinematics.ArmType.HOLD);
+
+//        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 27, 0, 0.4, RevisedKinematics.ArmType.HOLD);
 
         /*
         working movement types:

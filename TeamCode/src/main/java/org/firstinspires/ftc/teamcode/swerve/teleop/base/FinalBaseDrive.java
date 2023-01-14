@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.kinematics.RevisedKinematics;
 import org.firstinspires.ftc.teamcode.common.kinematics.SwervePod;
 import org.firstinspires.ftc.teamcode.common.pid.ArmPID;
+import org.firstinspires.ftc.teamcode.common.pid.HeaderControlPID;
 
 import java.util.HashMap;
 
@@ -160,6 +161,8 @@ public class FinalBaseDrive extends OpMode{
         robot.setRunMode(DcMotor.RunMode.RUN_TO_POSITION); //leave it in RUN_TO_POSITION for the entirety
 
         loopTime.reset();
+        PodL.setHeaderController(new HeaderControlPID(posSystem.getMotorClicks()));
+        PodR.setHeaderController(new HeaderControlPID(posSystem.getMotorClicks()));
     }
 
     @Override
@@ -208,7 +211,7 @@ public class FinalBaseDrive extends OpMode{
         telemetry.addData("Optimized Right W", PodR.optimizedCurrentW);
         telemetry.addData("Non left wheel Left W", PodL.nonRightStickCurrentW);
         telemetry.addData("Non right wheel Right W", PodR.nonRightStickCurrentW);
-
+        telemetry.addData("R reference point", PodR.controlHeaderReference);
         telemetry.addData("R", posSystem.getPositionArr()[4]);
 
         telemetry.addData("Spin Direction (Left)", PodL.direction);
@@ -219,15 +222,15 @@ public class FinalBaseDrive extends OpMode{
         telemetry.addData("Turn Amount (Right)", PodR.getTurnAmount());
         telemetry.addData("Throttle (Left)", PodL.getThrottle());
         telemetry.addData("Throttle (Right)", PodR.getThrottle());
+        telemetry.addData("error L", PodL.controlHeader.error);
+        telemetry.addData("error R", PodR.controlHeader.error);
+        telemetry.addData("error L arc", PodL.controlHeader.biggerArc);
+        telemetry.addData("error R arc", PodR.controlHeader.biggerArc);
 
         telemetry.addData("topL clicks", robot.topL.getCurrentPosition());
-        telemetry.addData("topL Target clicks", robot.topL.getTargetPosition());
         telemetry.addData("botL clicks", robot.botL.getCurrentPosition());
-        telemetry.addData("botL Target clicks", robot.botL.getTargetPosition());
         telemetry.addData("topR clicks", robot.topR.getCurrentPosition());
-        telemetry.addData("topR Target clicks", robot.topR.getTargetPosition());
         telemetry.addData("botR clicks", robot.botR.getCurrentPosition());
-        telemetry.addData("botR Target clicks", robot.botR.getTargetPosition());
 
 
         telemetry.addData("Left Spin Clicks Target", PodL.getOutput()[0]);
@@ -274,15 +277,16 @@ public class FinalBaseDrive extends OpMode{
         rightBumpy.update(gamepad2.right_bumper);
     }
 
+    SwervePod.Side throttleSide;
     void DriveTrainPowerEncoder(){
         posSystem.calculatePos();
         kinematics.logic(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, -gamepad1.right_stick_y, gamepad1.right_trigger, -gamepad1.left_trigger); //wheelAllignment is one loop late.
 
         targetClicks = kinematics.getClicks();
-        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + targetClicks[0]);
-        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + targetClicks[1]);
-        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + targetClicks[2]);
-        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() + targetClicks[3]);
+        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + (int)(targetClicks[0]));
+        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + (int)(targetClicks[1]));
+        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + (int)(targetClicks[2]));
+        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() + (int)(targetClicks[3]));
 
         motorPower = kinematics.getPower();
         robot.topL.setVelocity(motorPower[0] * constants.MAX_VELOCITY_DT);

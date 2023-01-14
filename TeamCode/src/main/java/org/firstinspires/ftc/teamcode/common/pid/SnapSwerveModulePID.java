@@ -50,6 +50,15 @@ public class SnapSwerveModulePID {
         this.kd = kd;
     }
 
+    public void resetValues(){
+
+        timer.reset();
+        prevError = 0;
+        prevTime = 0;
+        accumulatedError = 0;
+        target = 0;
+    }
+
     public void makeSomeLog() {
         // add some code of your choice here
         // Moving to the logging part now

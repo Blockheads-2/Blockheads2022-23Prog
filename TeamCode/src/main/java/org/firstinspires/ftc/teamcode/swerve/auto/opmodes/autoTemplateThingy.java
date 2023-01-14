@@ -129,8 +129,6 @@ public class autoTemplateThingy extends LinearOpMode{
                         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
                         */
                     }
-
-
                 }
 
                 telemetry.update();

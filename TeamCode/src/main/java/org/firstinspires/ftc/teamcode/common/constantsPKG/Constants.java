@@ -10,8 +10,11 @@ public class Constants {
     public double LOAD_ON = 0.6; //assumption
     public double RPM = 1150 * LOAD_ON; //690.  Not very accurate so don't rely on this number.
     public double RPS = RPM / 60.0; //11.5 ish motor revolutions per second, with load
-    public double POWER_LIMITER = 0.8;
-    public int SPIN_CLICK_FACTOR = 100; //0.6 : 130
+    public double POWER_LIMITER = 1.0; //0.8 : 100
+    public int SPIN_CLICK_FACTOR = 140;
+
+    //30~70 clicks per loop at a spin click factor of 140.
+    //95 clicks per loop, 30 clicks per second at a spin factor of 300 (right trigger used)
 
     public double accelTime = 1.5; //outputs 100% of the calculated power within ~1 second
     public double accelTimeAuto = 2; //outputs 100% of the calculated power within 2.5 seconds
@@ -20,7 +23,8 @@ public class Constants {
     public double WHEEL_DIAMETER = 92 / 25.4; //3.622 inches
     public double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER; //11.378 inches
     public double MAX_VELOCITY_DT = 2400.0; // unit is clicks/sec
-    public double clickTOLERANCE = 15; //number of clicks or degrees the robot can be off by
+    public double clickTOLERANCE = 10; //number of clicks or degrees the robot can be off by
+    public double clickToleranceAuto = 20;
     public double degreeTOLERANCE = 5;
     public double allignmentTolerance = 13;
 
@@ -104,9 +108,9 @@ public class Constants {
     public static int bottomMotor5 = 275;
     public static int topMotor5 = 100;
 
-    public static double kp = 0.03;
+    public static double kp = 0.01;
     public static double ki = 0;
-    public static double kd = 0.01;
+    public static double kd = 0.05;
 
 
     //Softstops:

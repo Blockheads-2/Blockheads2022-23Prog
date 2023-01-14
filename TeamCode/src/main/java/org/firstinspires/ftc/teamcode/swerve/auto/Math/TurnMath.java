@@ -32,7 +32,7 @@ public class TurnMath {
     }
 
     public double distanceRemaining(int currClick){
-        double delta=  (targetClicks - currClick) * constants.INCHES_PER_CLICK;
+        double delta = (targetClicks - currClick) * constants.INCHES_PER_CLICK;
 
         return delta;
     }

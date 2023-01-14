@@ -6,6 +6,7 @@ import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.teamcode.common.Accelerator;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
+import org.firstinspires.ftc.teamcode.common.pid.HeaderControlPID;
 import org.firstinspires.ftc.teamcode.common.pid.SnapSwerveModulePID;
 import org.firstinspires.ftc.teamcode.swerve.auto.Math.LinearMath;
 import org.firstinspires.ftc.teamcode.swerve.auto.Math.SplineMath;
@@ -18,6 +19,7 @@ public class SwervePod {
     LinearMath linearMath = new LinearMath();
     SplineMath splineMath = new SplineMath();
     TurnMath turnMath = new TurnMath();
+    public HeaderControlPID controlHeader;
     Accelerator accelerator;
 
     public enum Side{
@@ -28,7 +30,9 @@ public class SwervePod {
 
     //teleop
     private double currentW = 0;
+    private double currentR = 0;
     public double optimizedCurrentW = 0;
+    public double controlHeaderReference = 0;
     public double nonRightStickCurrentW = 0;
     public boolean initPole = true;
 
@@ -50,7 +54,7 @@ public class SwervePod {
     //both teleop & auto
     SnapSwerveModulePID pid;
 
-    private double[] output = new double[4];
+    private double[] output = new double[3];
 
     public SwervePod(int spinDirection, Side side, Accelerator accelerator){
         pid = new SnapSwerveModulePID();
@@ -58,6 +62,11 @@ public class SwervePod {
         this.initDirection = spinDirection;
         this.side = side;
         this.accelerator = accelerator;
+        this.controlHeader = controlHeader;
+    }
+
+    public void setHeaderController(HeaderControlPID controlHeader){
+        this.controlHeader = controlHeader;
     }
 
 
@@ -65,8 +74,9 @@ public class SwervePod {
         pid.setTargets(kp, ki, kd);
     }
 
-    public void setCurrents(double currentW){
+    public void setCurrents(double currentW, double currentR){
         this.currentW = currentW;
+        this.currentR = currentR;
     }
 
     public void setRotClicks(double target){
@@ -79,7 +89,7 @@ public class SwervePod {
     }
 
     //for spin power and spin clicks
-    public RevisedKinematics.DriveType setSpinClicksAndPower(double powerFactor, double trigger, boolean turn, boolean spline, boolean eligibleForTurning, double rightStickX){ //teleop
+    public RevisedKinematics.DriveType setSpinClicksAndPower(double powerFactor, double trigger, boolean turn, boolean spline, boolean eligibleForTurning, double rightStickX, int[] pos){ //teleop
         this.power = powerFactor;
         this.spinClicksTarget = (power * (constants.SPIN_CLICK_FACTOR * (1.0 + (trigger))));
         this.throttle = 1.0;
@@ -98,20 +108,31 @@ public class SwervePod {
                 spinClicksTarget = 0;
                 power = 1.0;
             }
+
+//            controlHeader.calculateThrottle(pos, currentR, controlHeaderReference, true);
+//            controlHeaderReference = currentR;
+
             driveType = RevisedKinematics.DriveType.TURN;
             return driveType;
         } else if (spline){
 //            double throttle = (rightStickY <= rightStickX ? rightStickY / (1.5*rightStickX) : rightStickX / (1.5 * rightStickY));
 //            double throttle = Math.abs(Math.tanh(rightStickX));
             double throttle = 1.0 - Math.sin(Math.abs(rightStickX));
-            if (rightStickX < 0 && side == Side.LEFT) this.throttle *= throttle;
-            else if (rightStickX >= 0 && side == Side.RIGHT) this.throttle *= throttle;
+            if (rightStickX < 0 && side == Side.LEFT) this.throttle = throttle;
+            else if (rightStickX >= 0 && side == Side.RIGHT) this.throttle = throttle;
+
+//            if (SwervePod.changeAngle(controlHeaderReference, currentR) > 30) controlHeaderReference = currentR;
+//            controlHeaderReference = currentR;
+//            controlHeader.calculateThrottle(pos, currentR, controlHeaderReference, true);
 
             driveType = RevisedKinematics.DriveType.VARIABLE_SPLINE;
             return driveType;
         } else {
             nonRightStickCurrentW = optimizedCurrentW;
             direction = (initPole ? initDirection : -initDirection);
+//            if (SwervePod.changeAngle(controlHeaderReference, currentR) > 30) controlHeaderReference = currentR;
+//            controlHeader.calculateThrottle(pos, currentR, controlHeaderReference, false);
+//            throttle = controlHeader.getThrottle(side);
         }
 
         if (rightStickX == 0 && power == 0) {
@@ -122,18 +143,6 @@ public class SwervePod {
         driveType = RevisedKinematics.DriveType.LINEAR;
         return driveType;
     }
-
-    public void setThrottleUsingPodLReference(SwervePod PodR, boolean turn, boolean spline){
-        double minThrottle = Math.min(PodR.getThrottle(), getThrottle());
-        minThrottle += 0.1; //play with the 0.1 factor
-        if (minThrottle > 1.0) minThrottle = 1;
-        else if (minThrottle < 0) minThrottle = 0;
-        if (!turn && !spline){
-            PodR.setThrottle(minThrottle);
-            setThrottle(minThrottle);
-        }
-    }
-
 
     public double wheelOptimization(double target, double currentW){
         double target2 = (target < 0 ? target + 360 : target);
@@ -171,8 +180,12 @@ public class SwervePod {
         this.throttle = throttle;
     }
 
-    public void setPosAuto(double x, double y, double finalAngle, double speed, RevisedKinematics.DriveType driveType, int initClicks, boolean right){
+    public void setPosAuto(double x, double y, double finalAngle, double speed, RevisedKinematics.DriveType driveType, int initClicks, boolean right, int[] posClicks, double currentW, double currentR){
+        setCurrents(currentW, currentR);
+
         this.driveType = driveType;
+
+        if (this.driveType != RevisedKinematics.DriveType.SNAP) finalAngle = currentW;
 
         //target position
         this.speed = speed;
@@ -186,22 +199,23 @@ public class SwervePod {
 
         setPID(constants.kp, constants.ki, constants.kd);
 
+        controlHeader.calculateThrottle(posClicks, currentR, currentR, true);
+
         setPowerAuto();
     }
 
     public void setPowerAuto(){ //auto
-        double powerSpin = Math.abs(pid.update(turnAmount)) * speed;
-        double powerRotate = Math.abs(pid.update(distance)) * speed;
+        double powerSpin = Math.abs(pid.update(distance)) * speed;
+        double powerRotate = Math.abs(pid.update(turnAmount)) * speed;
         power = (driveType == RevisedKinematics.DriveType.SNAP ? powerRotate : powerSpin);
     }
-
 
     public void setPower(double power){
         this.power = power;
     }
 
-    public void autoLogic(double currentW, int currClick){
-        setCurrents(currentW);
+    public void autoLogic(double currentW, double currentR, int currClick, int[] posClicks){
+        setCurrents(currentW, currentR);
 
         if (driveType != RevisedKinematics.DriveType.TURN && driveType != RevisedKinematics.DriveType.VARIABLE_SPLINE) nonRightStickCurrentW = currentW;
 
@@ -210,27 +224,44 @@ public class SwervePod {
             case CONSTANT_SPLINE:
 
             case LINEAR:
+                setRotClicks(finalAngle);
+
                 distance = linearMath.distanceRemaining(currClick);
                 throttle = 1.0;
+                controlHeader.calculateThrottle(posClicks, currentR, currentR, true);
+                direction = (initPole ? initDirection : -initDirection);
 
-                setRotClicks(finalAngle);
                 break;
 
             case VARIABLE_SPLINE: //using gps for variable_spline may be incredibly unreliable.  Though the nature of clicks (they are integers) gives us an inaccurate account (but this fear depends on the fact that the code loops really really quickly).
+                setRotClicks(0);
+
+                direction = (initPole ? initDirection : -initDirection);
                 distance = splineMath.distanceRemaining(currClick);
-                setRotClicks(nonRightStickCurrentW);
                 break;
 
             case SNAP:
+                if (side == Side.RIGHT){
+                    setRotClicks(finalAngle-2);
+                } else {
+                    setRotClicks(finalAngle);
+                }
+
+                direction = (initPole ? initDirection : -initDirection);
                 distance = 0;
-                setRotClicks(finalAngle);
                 throttle = 1.0;
 
                 break;
 
             case TURN:
+                setRotClicks(0);
+
                 distance = turnMath.distanceRemaining(currClick);
-                setRotClicks(nonRightStickCurrentW);
+
+                direction = (initPole ? initDirection : -initDirection);
+                if (finalAngle < 0 && side == Side.LEFT) direction *= -1;
+                else if (finalAngle >= 0 && side == Side.RIGHT) direction *= -1;
+
                 break;
 
             case STOP:
@@ -253,7 +284,6 @@ public class SwervePod {
         double turnAmount2 = target2 - current2;
         return (Math.abs(turnAmount1) < Math.abs(turnAmount2) ? turnAmount1 : turnAmount2);
     }
-
 
     public double clamp(double degrees){
         if (Math.abs(degrees) >= 360) degrees %= 360;
@@ -296,12 +326,29 @@ public class SwervePod {
         else if (power < -constants.POWER_LIMITER) power = -constants.POWER_LIMITER;
 
         throttle = Math.abs(throttle);
-        spinClicksTarget = Math.abs(spinClicksTarget) * direction;
+        power *= throttle;
+        spinClicksTarget = Math.abs(spinClicksTarget) * direction * throttle;
 
         output[0] = spinClicksTarget;
         output[1] = rotClicksTarget;
         output[2] = power;
-        output[3] = throttle;
+
+        return output;
+    }
+
+    public double[] getOutputAuto(){
+        power = accelerator.update(Math.abs(power) * constants.POWER_LIMITER * direction, turnAmount);
+
+        if (power > constants.POWER_LIMITER) power = constants.POWER_LIMITER;
+        else if (power < -constants.POWER_LIMITER) power = -constants.POWER_LIMITER;
+
+        throttle = Math.abs(throttle);
+        power *= throttle;
+        spinClicksTarget = spinClicksTarget * direction * throttle;
+
+        output[0] = spinClicksTarget;
+        output[1] = rotClicksTarget;
+        output[2] = power;
 
         return output;
     }

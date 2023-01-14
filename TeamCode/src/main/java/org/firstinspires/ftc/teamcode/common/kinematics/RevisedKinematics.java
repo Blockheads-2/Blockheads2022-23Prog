@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.common.Accelerator;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.pid.ArmPID;
+import org.firstinspires.ftc.teamcode.common.pid.HeaderControlPID;
 import org.firstinspires.ftc.teamcode.common.pid.SnapSwerveModulePID;
 import org.firstinspires.ftc.teamcode.common.pid.SpinPID;
 import org.firstinspires.ftc.teamcode.swerve.auto.Math.LinearMath;
@@ -21,9 +22,11 @@ public class RevisedKinematics {
     public SwervePod PodL;
     public SwervePod PodR;
 
+    public HeaderControlPID controlHeader;
+
     double targetX;
     double targetY;
-    private double finalAngle; //auto
+    public double finalAngle; //auto
 
     public enum DriveType{
         LINEAR,
@@ -74,7 +77,8 @@ public class RevisedKinematics {
     ArmPID atPID = new ArmPID();
     ArmPID abrPID = new ArmPID();
     ArmPID ablPID = new ArmPID();
-    HashMap<String, Double> armOutput = new HashMap<String, Double>();
+//    HashMap<String, Double> armOutput = new HashMap<String, Double>();
+    double[] armOutput = new double[8];
 
     public RevisedKinematics(GlobalPosSystem posSystem, SwervePod podlL, SwervePod podR){
         this.posSystem = posSystem;
@@ -84,6 +88,8 @@ public class RevisedKinematics {
 
         this.PodL = podlL;
         this.PodR = podR;
+
+        controlHeader = new HeaderControlPID(posSystem.getMotorClicks());
     }
 
     public double target = 0;
@@ -96,8 +102,8 @@ public class RevisedKinematics {
         this.lt = lt;
 
         //telling the pods where it is
-        PodL.setCurrents(posSystem.getLeftWheelW());
-        PodR.setCurrents(posSystem.getRightWheelW());
+        PodL.setCurrents(posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
+        PodR.setCurrents(posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);
 
         //tracking the joystick's movement
         joystickTracker.trackJoystickL(lx, ly);
@@ -118,9 +124,9 @@ public class RevisedKinematics {
 
         //determining spin clicks and spin power
         double power = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
-        type = PodL.setSpinClicksAndPower(power, rt, shouldTurn, shouldSpline, eligibleForTurning, rx);
-        type = PodR.setSpinClicksAndPower(power, rt, shouldTurn, shouldSpline, eligibleForTurning, rx);
-        PodL.setThrottleUsingPodLReference(PodR, shouldTurn, shouldSpline);
+        type = PodL.setSpinClicksAndPower(power, rt, shouldTurn, shouldSpline, eligibleForTurning, rx, posSystem.getMotorClicks());
+        type = PodR.setSpinClicksAndPower(power, rt, shouldTurn, shouldSpline, eligibleForTurning, rx, posSystem.getMotorClicks());
+//        PodL.setThrottleUsingPodLReference(PodR, shouldTurn, shouldSpline);
 
         //resetting modules when:
         // - the driver has not given controller input AND the wheels aren't alligned,
@@ -159,26 +165,28 @@ public class RevisedKinematics {
         this.targetX = x;
         this.targetY = y;
         this.finalAngle = finalAngle;
-
         //determining current position
         this.type = driveType;
-        PodL.setCurrents(posSystem.getLeftWheelW());
-        PodR.setCurrents(posSystem.getRightWheelW());
+        PodL.setCurrents(posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
+        PodR.setCurrents(posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);
 
-        PodL.setPosAuto(x, y, finalAngle, speed, driveType, posSystem.getMotorClicks()[0], false);
-        PodR.setPosAuto(x, y, finalAngle, speed, driveType, posSystem.getMotorClicks()[2], true);
+        PodL.setPosAuto(x, y, finalAngle, speed, driveType, posSystem.getMotorClicks()[0], false, posSystem.getMotorClicks(), posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
+        PodR.setPosAuto(x, y, finalAngle, speed, driveType, posSystem.getMotorClicks()[2], true, posSystem.getMotorClicks(), posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);
     }
 
     public void logicAuto(){ //should run everytime, but currently only runs once.
-        PodL.setCurrents(posSystem.getLeftWheelW());
-        PodR.setCurrents(posSystem.getRightWheelW());
+        PodL.setCurrents(posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
+        PodR.setCurrents(posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);
 
         posSystem.setOptimizedCurrentW(PodR.optimizedCurrentW, PodL.optimizedCurrentW);
 
         //4) determining distance travel amount and power based on that
-        PodL.autoLogic(posSystem.getLeftWheelW(),  posSystem.getMotorClicks()[0]);
-        PodR.autoLogic(posSystem.getRightWheelW(), posSystem.getMotorClicks()[2]);
+        PodL.autoLogic(posSystem.getLeftWheelW(),  posSystem.getPositionArr()[4], -posSystem.getMotorClicks()[0], posSystem.getMotorClicks());
+        //for some reason, we negate the negative clicks for the left topL encoder
+        PodR.autoLogic(posSystem.getRightWheelW(), posSystem.getPositionArr()[4], posSystem.getMotorClicks()[2], posSystem.getMotorClicks());
 
+        outputL = PodL.getOutputAuto();
+        outputR = PodR.getOutputAuto();
     }
 
     public void armLogicAuto(ArmType aType){
@@ -322,17 +330,17 @@ public class RevisedKinematics {
                     Math.abs(posSystem.getArmClicks().get("armServo") - clawAngle) <= 0.04);
         }
 
-        armOutput.put("atPower", atPower);
-        armOutput.put("ablPower", ablPower);
-        armOutput.put("abrPower", abrPower);
-        armOutput.put("atTargetPos", atTargetPos);
-        armOutput.put("ablTargetPos", ablTargetPos);
-        armOutput.put("abrTargetPos", abrTargetPos);
-        armOutput.put("clawClampPos", clawClamp);
-        armOutput.put("clawAnglePos", clawAngle); //armServo
+        armOutput[0] = atPower;
+        armOutput[1] = ablPower;
+        armOutput[2] = abrPower;
+        armOutput[3] = atTargetPos;
+        armOutput[4] = ablTargetPos;
+        armOutput[5] = abrTargetPos;
+        armOutput[6] = clawClamp;
+        armOutput[7] = clawAngle;
     }
 
-    public HashMap<String, Double> getArmOutput(){
+    public double[] getArmOutput(){
         return armOutput;
     }
 
@@ -371,10 +379,10 @@ public class RevisedKinematics {
 //        double avgPower = (swerveOutputL.get("power") + swerveOutputL.get("power")) / 2.0;
 
         double[] motorPower = new double[4];
-        motorPower[0] = (outputL[2] * outputL[3]); //top left
-        motorPower[1] = (outputL[2] * outputL[3]); //bottom left
-        motorPower[2] = (outputR[2] * outputR[3]); //top right
-        motorPower[3] = (outputR[2] * outputR[3]); //bottom right
+        motorPower[0] = (outputL[2]); //top left
+        motorPower[1] = (outputL[2]); //bottom left
+        motorPower[2] = (outputR[2]); //top right
+        motorPower[3] = (outputR[2]); //bottom right
 
         return motorPower;
     }
