@@ -96,7 +96,7 @@ public class SwervePod {
 
         if (turn) {
             if (eligibleForTurning) {
-                setRotClicks(0);
+                setRotClicks(currentR);
                 //            leftThrottle = leftThrottle;
                 if (rightStickX < 0 && side == Side.LEFT) direction *= -1;
                 else if (rightStickX >= 0 && side == Side.RIGHT) direction *= -1;
@@ -104,7 +104,7 @@ public class SwervePod {
                 this.spinClicksTarget = Math.abs(rightStickX) * constants.SPIN_CLICK_FACTOR;
                 power = rightStickX;
             } else {
-                setRotClicks(0);
+                setRotClicks(currentR);
                 spinClicksTarget = 0;
                 power = 1.0;
             }

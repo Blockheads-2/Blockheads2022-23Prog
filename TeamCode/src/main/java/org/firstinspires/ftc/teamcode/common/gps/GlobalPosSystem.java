@@ -150,6 +150,22 @@ public class GlobalPosSystem {
         positionArr[4] = clamp(positionArr[4]);
     }
 
+    public double[] calculateDeltaClicks(int[] prevClicks, int[] currClicks){
+        //right
+        int topR = motorClicksPos[2] - prevMotorClicks[2]; //change in top right
+        int botR = motorClicksPos[3] - prevMotorClicks[3]; //change in bottom right
+        double translationalClicksR = (topR - botR) / 2.0;
+        double rotationalClicksR = topR - translationalClicksR;
+
+        //left
+        int topL = motorClicksPos[0] - prevMotorClicks[0]; //change in top left
+        int botL = motorClicksPos[1] - prevMotorClicks[1]; //change in bottom left
+        double translationalClicksL = (topL - botL) / 2.0;
+        double rotationalClicksL = topL - translationalClicksL;
+
+        return (new double[]{rotationalClicksL, rotationalClicksR});
+    }
+
     public double getLeftWheelW(){
         return positionArr[2];
     }
