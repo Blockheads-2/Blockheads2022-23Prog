@@ -101,7 +101,6 @@ public class GlobalPosSystem {
         int botR = motorClicksPos[3] - prevMotorClicks[3]; //change in bottom right
         double translationalInchesR = (topR - botR) / 2.0;
         translationalInchesR *= constants.INCHES_PER_CLICK;
-        translationalInchesR *= constants.initDirectionRight;
         double currentAngleR = positionArr[3];
 
         //left
@@ -109,7 +108,6 @@ public class GlobalPosSystem {
         int botL = motorClicksPos[1] - prevMotorClicks[1]; //change in bottom left
         double translationalInchesL = (topL - botL) / 2.0;
         translationalInchesL *= constants.INCHES_PER_CLICK;
-        translationalInchesL *= constants.initDirectionLeft;
         double currentAngleL = positionArr[2];
 
         double splineOrientation = 0.0;
