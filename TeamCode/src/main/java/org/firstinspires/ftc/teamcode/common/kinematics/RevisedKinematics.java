@@ -102,8 +102,8 @@ public class RevisedKinematics {
         this.lt = lt;
 
         //telling the pods where it is
-        PodL.setCurrents(posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
-        PodR.setCurrents(posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);
+        PodL.setCurrents(posSystem.getLeftWheelW(), posSystem.getPositionArr()[4], posSystem.getRobotCentricCurrentL());
+        PodR.setCurrents(posSystem.getRightWheelW(), posSystem.getPositionArr()[4], posSystem.getRobotCentricCurrentR());
 
         //tracking the joystick's movement
         joystickTracker.trackJoystickL(lx, ly);
@@ -167,23 +167,24 @@ public class RevisedKinematics {
         this.finalAngle = finalAngle;
         //determining current position
         this.type = driveType;
-        PodL.setCurrents(posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
-        PodR.setCurrents(posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);
+        PodL.setCurrents(posSystem.getLeftWheelW(), posSystem.getPositionArr()[4], posSystem.getRobotCentricCurrentL());
+        PodR.setCurrents(posSystem.getRightWheelW(), posSystem.getPositionArr()[4], posSystem.getRobotCentricCurrentR());
 
-        PodL.setPosAuto(x, y, finalAngle, speed, driveType, posSystem.getMotorClicks()[0], false, posSystem.getMotorClicks(), posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
-        PodR.setPosAuto(x, y, finalAngle, speed, driveType, posSystem.getMotorClicks()[2], true, posSystem.getMotorClicks(), posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);
+        //not sure if we have to make posSystem.getMotorClicks()[0] negative as well.
+        PodL.setPosAuto(x, y, finalAngle, speed, driveType, posSystem.getMotorClicks()[0], false, posSystem.getMotorClicks(), posSystem.getLeftWheelW(), posSystem.getPositionArr()[4], posSystem.getRobotCentricCurrentL());
+        PodR.setPosAuto(x, y, finalAngle, speed, driveType, posSystem.getMotorClicks()[2], true, posSystem.getMotorClicks(), posSystem.getRightWheelW(), posSystem.getPositionArr()[4], posSystem.getRobotCentricCurrentR());
     }
 
     public void logicAuto(){ //should run everytime, but currently only runs once.
-        PodL.setCurrents(posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
-        PodR.setCurrents(posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);
+        PodL.setCurrents(posSystem.getLeftWheelW(), posSystem.getPositionArr()[4], posSystem.getRobotCentricCurrentL());
+        PodR.setCurrents(posSystem.getRightWheelW(), posSystem.getPositionArr()[4], posSystem.getRobotCentricCurrentR());
 
         posSystem.setOptimizedCurrentW(PodR.optimizedCurrentW, PodL.optimizedCurrentW);
 
         //4) determining distance travel amount and power based on that
-        PodL.autoLogic(posSystem.getLeftWheelW(),  posSystem.getPositionArr()[4], -posSystem.getMotorClicks()[0], posSystem.getMotorClicks());
+        PodL.autoLogic(posSystem.getLeftWheelW(),  posSystem.getPositionArr()[4], posSystem.getRobotCentricCurrentL(), -posSystem.getMotorClicks()[0], posSystem.getMotorClicks());
         //for some reason, we negate the negative clicks for the left topL encoder
-        PodR.autoLogic(posSystem.getRightWheelW(), posSystem.getPositionArr()[4], posSystem.getMotorClicks()[2], posSystem.getMotorClicks());
+        PodR.autoLogic(posSystem.getRightWheelW(), posSystem.getPositionArr()[4], posSystem.getRobotCentricCurrentR(), posSystem.getMotorClicks()[2], posSystem.getMotorClicks());
 
         outputL = PodL.getOutputAuto();
         outputR = PodR.getOutputAuto();
