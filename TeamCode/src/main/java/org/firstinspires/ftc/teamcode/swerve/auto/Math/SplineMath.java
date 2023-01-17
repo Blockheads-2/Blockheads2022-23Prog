@@ -30,7 +30,8 @@ public class SplineMath {
 
         calculateDistance();
 
-        if (right) targetClicks = initClick + (int)(distanceL * constants.CLICKS_PER_INCH);
+        if (right) targetClicks = initClick + (int)(distanceR * constants.CLICKS_PER_INCH);
+        else targetClicks = initClick + (int)(distanceL * constants.CLICKS_PER_INCH);
 
         spinPIDL.setTargets(distanceL, kp, ki, kd);
         spinPIDR.setTargets(distanceR, kp, ki, kd);

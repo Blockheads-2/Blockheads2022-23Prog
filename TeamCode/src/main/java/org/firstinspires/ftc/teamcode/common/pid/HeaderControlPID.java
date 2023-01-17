@@ -12,6 +12,7 @@ public class HeaderControlPID {
 
     private double throttle;
     public double error = 0;
+    public double prevError = 0;
     public double biggerArc = 0;
 
     private int[] prevClicksPos = new int[4];
@@ -51,11 +52,12 @@ public class HeaderControlPID {
         } else if (biggerArc == deltaLeft) throttleSide = SwervePod.Side.LEFT;
         else throttleSide = SwervePod.Side.RIGHT;
 
-        error = Math.abs(SwervePod.changeAngle(targetTheta, currentR));
+        prevError = error;
+        error = SwervePod.changeAngle(targetTheta, currentR);
 
-        throttle = 1.0 - ((2.0 * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER * error) / biggerArc);
+        throttle = 1.0 - ((2.0 * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER * Math.abs(error)) / Math.abs(biggerArc));
 
-        if (biggerArc > 25){
+        if ((prevError < 0 ? -1 : 1) != (error < 0 ? -1 : 1)){ //if the error changes signs, then that means that the greater arc has changed.
             prevClicksPos = clicksPos;
             prevTranslateL = translateClicksL;
             prevTranslateR = translateClicksR;

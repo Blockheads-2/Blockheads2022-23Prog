@@ -33,7 +33,7 @@ public class SwervePod {
     private double currentR = 0;
     public double optimizedCurrentW = 0;
     public double controlHeaderReference = 0;
-    public double nonRightStickCurrentW = 0;
+//    public double nonRightStickCurrentW = 0;
     public boolean initPole = true;
 
     private double throttle = 0;
@@ -128,7 +128,7 @@ public class SwervePod {
             driveType = RevisedKinematics.DriveType.VARIABLE_SPLINE;
             return driveType;
         } else {
-            nonRightStickCurrentW = optimizedCurrentW;
+//            nonRightStickCurrentW = optimizedCurrentW;
             direction = (initPole ? initDirection : -initDirection);
 //            if (SwervePod.changeAngle(controlHeaderReference, currentR) > 30) controlHeaderReference = currentR;
 //            controlHeader.calculateThrottle(pos, currentR, controlHeaderReference, false);
@@ -171,7 +171,6 @@ public class SwervePod {
         return turnAmount;
     }
 
-
     public void setSpinClicks(int clicks) {
         spinClicksTarget = (double) (clicks);
     }
@@ -191,15 +190,13 @@ public class SwervePod {
         this.speed = speed;
         this.finalAngle = finalAngle;
 
-        linearMath.setPos(x, y, finalAngle, constants.kp, constants.ki, constants.kd, initClicks);
-
-        splineMath.setPos(x, y, finalAngle, constants.kp, constants.ki, constants.kd, initClicks, right);
-
-        turnMath.setPos(finalAngle, initClicks, (finalAngle < 0 ? -1 : 1), right);
+        if (driveType == RevisedKinematics.DriveType.LINEAR) linearMath.setPos(x, y, finalAngle, constants.kp, constants.ki, constants.kd, initClicks);
+        else if (driveType == RevisedKinematics.DriveType.VARIABLE_SPLINE) splineMath.setPos(x, y, finalAngle, constants.kp, constants.ki, constants.kd, initClicks, right);
+        else if (driveType == RevisedKinematics.DriveType.TURN) turnMath.setPos(finalAngle, initClicks, (finalAngle < 0 ? -1 : 1), right);
 
         setPID(constants.kp, constants.ki, constants.kd);
 
-        controlHeader.calculateThrottle(posClicks, currentR, currentR, true);
+//        controlHeader.calculateThrottle(posClicks, currentR, currentR, true);
 
         setPowerAuto();
     }
@@ -217,7 +214,7 @@ public class SwervePod {
     public void autoLogic(double currentW, double currentR, int currClick, int[] posClicks){
         setCurrents(currentW, currentR);
 
-        if (driveType != RevisedKinematics.DriveType.TURN && driveType != RevisedKinematics.DriveType.VARIABLE_SPLINE) nonRightStickCurrentW = currentW;
+//        if (driveType != RevisedKinematics.DriveType.TURN && driveType != RevisedKinematics.DriveType.VARIABLE_SPLINE) nonRightStickCurrentW = currentW;
 
         //determining distance left for rotating and spinning the module
         switch(driveType){
@@ -226,9 +223,13 @@ public class SwervePod {
             case LINEAR:
                 setRotClicks(finalAngle);
 
+//                nonRightStickCurrentW = optimizedCurrentW;
+
                 distance = linearMath.distanceRemaining(currClick);
+                power = Math.abs(pid.update(distance)) * speed; //probably needs a way to keep the power alive to take into account power directed toward rotating the module.
                 throttle = 1.0;
-                controlHeader.calculateThrottle(posClicks, currentR, currentR, true);
+//                controlHeader.calculateThrottle(posClicks, currentR, currentR, true);
+//                throttle = controlHeader.getThrottle(side);
                 direction = (initPole ? initDirection : -initDirection);
 
                 break;
@@ -238,16 +239,14 @@ public class SwervePod {
 
                 direction = (initPole ? initDirection : -initDirection);
                 distance = splineMath.distanceRemaining(currClick);
+                //throttle needs work for this mode
                 break;
 
             case SNAP:
-                if (side == Side.RIGHT){
-                    setRotClicks(finalAngle-2);
-                } else {
-                    setRotClicks(finalAngle);
-                }
+                setRotClicks(finalAngle);
 
                 direction = (initPole ? initDirection : -initDirection);
+                power = Math.abs(pid.update(turnAmount)) * speed;
                 distance = 0;
                 throttle = 1.0;
 
@@ -257,7 +256,7 @@ public class SwervePod {
                 setRotClicks(0);
 
                 distance = turnMath.distanceRemaining(currClick);
-
+                power = Math.abs(pid.update(distance)) * speed;
                 direction = (initPole ? initDirection : -initDirection);
                 if (finalAngle < 0 && side == Side.LEFT) direction *= -1;
                 else if (finalAngle >= 0 && side == Side.RIGHT) direction *= -1;
@@ -267,14 +266,15 @@ public class SwervePod {
             case STOP:
                 distance = 0;
                 turnAmount = 0;
+                power = 0;
                 throttle = 1.0;
+                rotClicksTarget = 0;
+                direction = (initPole ? initDirection : -initDirection);
                 break;
         }
 
         spinClicksTarget = distance * constants.CLICKS_PER_INCH;
-        rotClicksTarget = turnAmount * constants.CLICKS_PER_DEGREE;
-
-        setPowerAuto();
+//        setPowerAuto();
     }
 
     public static double changeAngle(double target, double current){
