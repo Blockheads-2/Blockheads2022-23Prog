@@ -175,12 +175,12 @@ public class GlobalPosSystem {
     public boolean isAlligned(){
         double error = SwervePod.changeAngle(optimizedCurrentWL, optimizedCurrentWR);
 
-        return (Math.abs(error) < constants.allignmentTolerance);
+        return (Math.abs(error) <= constants.allignmentTolerance);
     }
 
     public boolean resetWorthy(){
         double error = SwervePod.changeAngle(optimizedCurrentWL, optimizedCurrentWR);
-        return (Math.abs(error) < constants.degreeTOLERANCE);
+        return (Math.abs(error) <= constants.degreeTOLERANCE);
     }
 
     public void setOptimizedCurrentW(double angleR, double angleL){
@@ -189,8 +189,8 @@ public class GlobalPosSystem {
     }
 
     public boolean eligibleForTurning(){
-        return (Math.abs(optimizedCurrentWL) <= constants.allignmentTolerance &&
-                Math.abs(optimizedCurrentWR) <= constants.allignmentTolerance &&
+        return (Math.abs(SwervePod.changeAngle(optimizedCurrentWL, positionArr[4])) <= constants.allignmentTolerance &&
+                Math.abs(SwervePod.changeAngle(optimizedCurrentWR, positionArr[4])) <= constants.allignmentTolerance &&
                 isAlligned());
     }
 
