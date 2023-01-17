@@ -33,7 +33,7 @@ public class SwervePod {
     private double currentR = 0;
     public double optimizedCurrentW = 0;
     public double controlHeaderReference = 0;
-//    public double nonRightStickCurrentW = 0;
+    public double nonRightStickCurrentW = 0;
     public boolean initPole = true;
 
     private double throttle = 0;
@@ -214,7 +214,7 @@ public class SwervePod {
     public void autoLogic(double currentW, double currentR, int currClick, int[] posClicks){
         setCurrents(currentW, currentR);
 
-//        if (driveType != RevisedKinematics.DriveType.TURN && driveType != RevisedKinematics.DriveType.VARIABLE_SPLINE) nonRightStickCurrentW = currentW;
+        if (driveType != RevisedKinematics.DriveType.TURN && driveType != RevisedKinematics.DriveType.VARIABLE_SPLINE) nonRightStickCurrentW = currentW;
 
         //determining distance left for rotating and spinning the module
         switch(driveType){
@@ -235,7 +235,7 @@ public class SwervePod {
                 break;
 
             case VARIABLE_SPLINE: //using gps for variable_spline may be incredibly unreliable.  Though the nature of clicks (they are integers) gives us an inaccurate account (but this fear depends on the fact that the code loops really really quickly).
-                setRotClicks(0);
+                setRotClicks(nonRightStickCurrentW);
 
                 direction = (initPole ? initDirection : -initDirection);
                 distance = splineMath.distanceRemaining(currClick);
@@ -253,7 +253,7 @@ public class SwervePod {
                 break;
 
             case TURN:
-                setRotClicks(0);
+                setRotClicks(currentR);
 
                 distance = turnMath.distanceRemaining(currClick);
                 power = Math.abs(pid.update(distance)) * speed;
