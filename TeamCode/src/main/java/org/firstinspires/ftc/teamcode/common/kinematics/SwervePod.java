@@ -30,7 +30,6 @@ public class SwervePod {
 
     //teleop
     private double currentW = 0;
-    public double robotCentricCurrentW = 0;
     private double currentR = 0;
     public double optimizedCurrentW = 0;
     public double controlHeaderReference = 0;
@@ -75,10 +74,9 @@ public class SwervePod {
         pid.setTargets(kp, ki, kd);
     }
 
-    public void setCurrents(double currentW, double currentR, double robotCentricCurrentW){
+    public void setCurrents(double currentW, double currentR){
         this.currentW = currentW;
         this.currentR = currentR;
-        this.robotCentricCurrentW = currentW;
     }
 
     public void setRotClicks(double target){
@@ -163,10 +161,10 @@ public class SwervePod {
 
         if (initPole){
             direction = initDirection;
-            optimizedCurrentW = robotCentricCurrentW;
+            optimizedCurrentW = currentW;
         } else{
             direction = -initDirection;
-            optimizedCurrentW = clamp(robotCentricCurrentW + 180);
+            optimizedCurrentW = clamp(currentW + 180);
         }
 
 
@@ -182,8 +180,8 @@ public class SwervePod {
         this.throttle = throttle;
     }
 
-    public void setPosAuto(double x, double y, double finalAngle, double speed, RevisedKinematics.DriveType driveType, int initClicks, boolean right, int[] posClicks, double currentW, double currentR, double robotCentricCurrentW){
-        setCurrents(currentW, currentR, robotCentricCurrentW);
+    public void setPosAuto(double x, double y, double finalAngle, double speed, RevisedKinematics.DriveType driveType, int initClicks, boolean right, int[] posClicks, double currentW, double currentR){
+        setCurrents(currentW, currentR);
 
         this.driveType = driveType;
 
@@ -216,8 +214,8 @@ public class SwervePod {
         this.power = power;
     }
 
-    public void autoLogic(double currentW, double currentR, double robotCentricCurrentW, int currClick, int[] posClicks){
-        setCurrents(currentW, currentR, robotCentricCurrentW);
+    public void autoLogic(double currentW, double currentR, int currClick, int[] posClicks){
+        setCurrents(currentW, currentR);
 
         if (driveType != RevisedKinematics.DriveType.TURN && driveType != RevisedKinematics.DriveType.VARIABLE_SPLINE) nonRightStickCurrentW = currentW;
 

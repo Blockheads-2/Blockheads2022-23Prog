@@ -28,9 +28,6 @@ public class GlobalPosSystem {
     public double optimizedCurrentWR = 0;
     public double optimizedCurrentWL = 0;
 
-    private double robotCentricCurrentR = 0;
-    private double robotCentricCurrentL = 0;
-
     Orientation lastOrientation;
     Orientation currentOrientation;
     double currAngle = 0;
@@ -74,9 +71,7 @@ public class GlobalPosSystem {
         rotateR *= constants.DEGREES_PER_CLICK;
 
         positionArr[2] = clamp(rotateL);
-        robotCentricCurrentL = positionArr[2];
         positionArr[3] = clamp(rotateR);
-        robotCentricCurrentR = positionArr[3];
     }
 
     public void calculateHeader(){ //add this after implementing the extension hub onto the robot
@@ -175,14 +170,6 @@ public class GlobalPosSystem {
 
     public double getRightWheelW(){
         return positionArr[3];
-    }
-
-    public double getRobotCentricCurrentR(){
-        return robotCentricCurrentR;
-    }
-
-    public double getRobotCentricCurrentL(){
-        return robotCentricCurrentL;
     }
 
     public boolean isAlligned(){
