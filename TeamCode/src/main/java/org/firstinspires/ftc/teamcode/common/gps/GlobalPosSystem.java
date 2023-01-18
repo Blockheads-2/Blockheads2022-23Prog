@@ -25,8 +25,11 @@ public class GlobalPosSystem {
 
     HardwareDrive robot;
 
-    public double optimizedCurrentWR = 0;
-    public double optimizedCurrentWL = 0;
+    private double optimizedCurrentWR = 0;
+    private double optimizedCurrentWL = 0;
+
+    private double distanceTravelledR = 0; //For auto.  Should be reset after every "action."  Represents how much the wheel has spinned.
+    private double distanceTravelledL = 0;
 
     Orientation lastOrientation;
     Orientation currentOrientation;
@@ -101,6 +104,7 @@ public class GlobalPosSystem {
         int botR = motorClicksPos[3] - prevMotorClicks[3]; //change in bottom right
         double translationalInchesR = (topR - botR) / 2.0;
         translationalInchesR *= constants.INCHES_PER_CLICK;
+        distanceTravelledR = translationalInchesR;
         double currentAngleR = positionArr[3];
 
         //left
@@ -108,6 +112,7 @@ public class GlobalPosSystem {
         int botL = motorClicksPos[1] - prevMotorClicks[1]; //change in bottom left
         double translationalInchesL = (topL - botL) / 2.0;
         translationalInchesL *= constants.INCHES_PER_CLICK;
+        distanceTravelledL = translationalInchesL;
         double currentAngleL = positionArr[2];
 
         double splineOrientation = 0.0;
@@ -148,20 +153,12 @@ public class GlobalPosSystem {
         positionArr[4] = clamp(positionArr[4]);
     }
 
-    public double[] calculateDeltaClicks(int[] prevClicks, int[] currClicks){
-        //right
-        int topR = motorClicksPos[2] - prevMotorClicks[2]; //change in top right
-        int botR = motorClicksPos[3] - prevMotorClicks[3]; //change in bottom right
-        double translationalClicksR = (topR - botR) / 2.0;
-        double rotationalClicksR = topR - translationalClicksR;
+    public double getDistanceTravelledL(){
+        return distanceTravelledL;
+    }
 
-        //left
-        int topL = motorClicksPos[0] - prevMotorClicks[0]; //change in top left
-        int botL = motorClicksPos[1] - prevMotorClicks[1]; //change in bottom left
-        double translationalClicksL = (topL - botL) / 2.0;
-        double rotationalClicksL = topL - translationalClicksL;
-
-        return (new double[]{rotationalClicksL, rotationalClicksR});
+    public double getDistanceTravelledR(){
+        return distanceTravelledR;
     }
 
     public double getLeftWheelW(){
@@ -178,11 +175,6 @@ public class GlobalPosSystem {
         return (Math.abs(error) <= constants.allignmentTolerance);
     }
 
-    public boolean resetWorthy(){
-        double error = SwervePod.changeAngle(optimizedCurrentWL, optimizedCurrentWR);
-        return (Math.abs(error) <= constants.degreeTOLERANCE);
-    }
-
     public void setOptimizedCurrentW(double angleR, double angleL){
         optimizedCurrentWR = angleR;
         optimizedCurrentWL = angleL;
@@ -192,6 +184,17 @@ public class GlobalPosSystem {
         return (Math.abs(SwervePod.changeAngle(optimizedCurrentWL, positionArr[4])) <= constants.allignmentTolerance &&
                 Math.abs(SwervePod.changeAngle(optimizedCurrentWR, positionArr[4])) <= constants.allignmentTolerance &&
                 isAlligned());
+    }
+
+    public boolean specialSpliningCondition(){
+        double nonRobotCentricCurrentL = clamp(optimizedCurrentWL - positionArr[4]);
+        double nonRobotCentricCurrentR = clamp(optimizedCurrentWR - positionArr[4]);
+        return ((Math.abs(nonRobotCentricCurrentL - 90) <= 8 && Math.abs(nonRobotCentricCurrentR - 90) <= 8) ||
+                (Math.abs(nonRobotCentricCurrentL + 90) <= 8 && Math.abs(nonRobotCentricCurrentR + 90) <= 8));
+    }
+
+    public void resetHeader(){
+        positionArr[4] = 0;
     }
 
     public void hardResetGPS(){
@@ -219,6 +222,8 @@ public class GlobalPosSystem {
     public void resetXY(){
         positionArr[0] = 0;
         positionArr[1] = 0;
+        distanceTravelledR = 0;
+        distanceTravelledL = 0;
     }
 
     public void updateHash(){

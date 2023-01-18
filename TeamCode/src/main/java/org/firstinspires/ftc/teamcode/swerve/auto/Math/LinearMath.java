@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.swerve.auto.Math;
 
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
+import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.pid.SpinPID;
 
 public class LinearMath { //Note: snap() is used in the auto class separately. This class is used assuming that the wheels are already pointing the way we want it to.
@@ -12,16 +13,15 @@ public class LinearMath { //Note: snap() is used in the auto class separately. T
     private double y;
     private double theta; //amount robot header should turn (for table-spinning)
 
-
     public LinearMath(){
     }
 
-    public void setPos(double x, double y, double theta, double kp, double ki, double kd, int initClick){
+    public void setPos(double x, double y, double theta, double kp, double ki, double kd){
         this.x = x;
         this.y = y;
         this.theta = theta;
 
-        targetClicks = (int)(getDistance() * constants.CLICKS_PER_INCH) + initClick;
+        targetClicks = (int)(getDistance() * constants.CLICKS_PER_INCH);
     }
 
     public double getDistance(){
@@ -40,10 +40,8 @@ public class LinearMath { //Note: snap() is used in the auto class separately. T
         return clicks;
     }
 
-    public double distanceRemaining(int currClick){
-        double delta = (targetClicks - currClick) * constants.INCHES_PER_CLICK;
-
-        return delta;
+    public double distanceRemaining(double distanceRan){
+        return targetClicks - (distanceRan * constants.CLICKS_PER_INCH);
     }
 
     public double getRunTime(double rate){

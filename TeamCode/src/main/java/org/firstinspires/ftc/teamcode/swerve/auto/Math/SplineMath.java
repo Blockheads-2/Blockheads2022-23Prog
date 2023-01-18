@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.swerve.auto.Math;
 
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
+import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.pid.SpinPID;
 
 public class SplineMath {
@@ -23,15 +24,15 @@ public class SplineMath {
         spinPIDL = new SpinPID();
     }
 
-    public void setPos(double x, double y, double theta, double kp, double ki, double kd, int initClick, boolean right){
+    public void setPos(double x, double y, double theta, double kp, double ki, double kd, boolean right){
         this.x = x;
         this.y = y;
         turnAmount = theta;
 
         calculateDistance();
 
-        if (right) targetClicks = initClick + (int)(distanceR * constants.CLICKS_PER_INCH);
-        else targetClicks = initClick + (int)(distanceL * constants.CLICKS_PER_INCH);
+        if (right) targetClicks =  (int)(distanceR * constants.CLICKS_PER_INCH);
+        else targetClicks = (int)(distanceL * constants.CLICKS_PER_INCH);
 
         spinPIDL.setTargets(distanceL, kp, ki, kd);
         spinPIDR.setTargets(distanceR, kp, ki, kd);
@@ -62,14 +63,12 @@ public class SplineMath {
         distanceR = (radius - constants.DISTANCE_BETWEEN_MODULE_AND_CENTER) * theta; //right distance
     }
 
-    public double distanceRemaining(int currClick){
-        double delta = (targetClicks - currClick) * constants.INCHES_PER_CLICK;
-
-        return delta;
-    }
-
     public double[] getDistance(){
         return new double[]{distanceL, distanceR};
+    }
+
+    public double distanceRemaining(double distanceRan){
+        return targetClicks - (distanceRan * constants.CLICKS_PER_INCH);
     }
 
     public int[] getClicks(){

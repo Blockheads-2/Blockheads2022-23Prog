@@ -57,7 +57,7 @@ public class FinalBaseDrive extends OpMode{
     }
     TelemetryData tData = TelemetryData.LEFT;
 
-    Button x = new Button();
+    Button resetHeader = new Button();
     Button y = new Button();
     Button a = new Button();
     Button b = new Button();
@@ -66,6 +66,7 @@ public class FinalBaseDrive extends OpMode{
     double[] motorPower = new double[4];
 
     //ARM ATTRIBUTES
+    Button x = new Button();
     Button bottomButton = new Button();
     Button lowButton = new Button();
     Button midButton = new Button();
@@ -174,6 +175,7 @@ public class FinalBaseDrive extends OpMode{
     }
 
     void UpdatePlayer1(){
+        if (resetHeader.getState() == Button.State.DOUBLE_TAP) posSystem.resetHeader();
         DriveTrainPowerEncoder();
     }
 
@@ -185,6 +187,7 @@ public class FinalBaseDrive extends OpMode{
 
     void UpdateTelemetry(){
 //        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        telemetry.addData("Splining Special Condition", posSystem.specialSpliningCondition());
         telemetry.addData("IsAlligned", posSystem.isAlligned());
         telemetry.addData("Eligible for turning", posSystem.eligibleForTurning());
         telemetry.addData("First movement", kinematics.firstMovement);
@@ -209,9 +212,9 @@ public class FinalBaseDrive extends OpMode{
         telemetry.addData("Right W", posSystem.getRightWheelW());
         telemetry.addData("Optimized Left W", PodL.optimizedCurrentW);
         telemetry.addData("Optimized Right W", PodR.optimizedCurrentW);
-        telemetry.addData("Non left wheel Left W", PodL.nonRightStickCurrentW);
-        telemetry.addData("Non right wheel Right W", PodR.nonRightStickCurrentW);
-        telemetry.addData("R reference point", PodR.controlHeaderReference);
+//        telemetry.addData("Non left wheel Left W", PodL.nonRightStickCurrentW);
+//        telemetry.addData("Non right wheel Right W", PodR.nonRightStickCurrentW);
+//        telemetry.addData("R reference point", PodR.controlHeaderReference);
         telemetry.addData("R", posSystem.getPositionArr()[4]);
 
         telemetry.addData("Spin Direction (Left)", PodL.direction);
@@ -222,10 +225,10 @@ public class FinalBaseDrive extends OpMode{
         telemetry.addData("Turn Amount (Right)", PodR.getTurnAmount());
         telemetry.addData("Throttle (Left)", PodL.getThrottle());
         telemetry.addData("Throttle (Right)", PodR.getThrottle());
-        telemetry.addData("error L", PodL.controlHeader.error);
-        telemetry.addData("error R", PodR.controlHeader.error);
-        telemetry.addData("error L arc", PodL.controlHeader.biggerArc);
-        telemetry.addData("error R arc", PodR.controlHeader.biggerArc);
+//        telemetry.addData("error L", PodL.controlHeader.error);
+//        telemetry.addData("error R", PodR.controlHeader.error);
+//        telemetry.addData("error L arc", PodL.controlHeader.biggerArc);
+//        telemetry.addData("error R arc", PodR.controlHeader.biggerArc);
 
         telemetry.addData("topL clicks", robot.topL.getCurrentPosition());
         telemetry.addData("botL clicks", robot.botL.getCurrentPosition());
@@ -263,11 +266,12 @@ public class FinalBaseDrive extends OpMode{
     }
 
     void UpdateButton(){
-        x.update(gamepad2.x);
+        resetHeader.update(gamepad1.x);
         y.update(gamepad1.y);
         a.update(gamepad1.a);
         b.update(gamepad1.b);
 
+        x.update(gamepad2.x);
         bottomButton.update(gamepad2.dpad_down);
         lowButton.update(gamepad2.dpad_right);
         midButton.update(gamepad2.dpad_left);
@@ -277,7 +281,6 @@ public class FinalBaseDrive extends OpMode{
         rightBumpy.update(gamepad2.right_bumper);
     }
 
-    SwervePod.Side throttleSide;
     void DriveTrainPowerEncoder(){
         posSystem.calculatePos();
         kinematics.logic(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, -gamepad1.right_stick_y, gamepad1.right_trigger, -gamepad1.left_trigger); //wheelAllignment is one loop late.

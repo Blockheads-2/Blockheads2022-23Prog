@@ -121,11 +121,12 @@ public class RevisedKinematics {
         boolean eligibleForTurning = posSystem.eligibleForTurning();
         boolean shouldTurn = (lx == 0 && ly == 0) && (rx != 0); //possible problem: the robot will "jitter" if its turning and then becomes not eligible for turning (may have to increase tolerance?)
         boolean shouldSpline = (lx != 0 || ly != 0) && (rx != 0);
+        boolean specialSpliningCondition = posSystem.specialSpliningCondition();
 
         //determining spin clicks and spin power
         double power = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
-        type = PodL.setSpinClicksAndPower(power, rt, shouldTurn, shouldSpline, eligibleForTurning, rx, posSystem.getMotorClicks());
-        type = PodR.setSpinClicksAndPower(power, rt, shouldTurn, shouldSpline, eligibleForTurning, rx, posSystem.getMotorClicks());
+        type = PodL.setSpinClicksAndPower(power, rt, shouldTurn, eligibleForTurning, shouldSpline, specialSpliningCondition, rx, posSystem.getMotorClicks());
+        type = PodR.setSpinClicksAndPower(power, rt, shouldTurn, eligibleForTurning, shouldSpline, specialSpliningCondition, rx, posSystem.getMotorClicks());
 //        PodL.setThrottleUsingPodLReference(PodR, shouldTurn, shouldSpline);
 
         //resetting modules when:
@@ -181,9 +182,9 @@ public class RevisedKinematics {
         posSystem.setOptimizedCurrentW(PodR.optimizedCurrentW, PodL.optimizedCurrentW);
 
         //4) determining distance travel amount and power based on that
-        PodL.autoLogic(posSystem.getLeftWheelW(),  posSystem.getPositionArr()[4], -posSystem.getMotorClicks()[0], posSystem.getMotorClicks());
+        PodL.autoLogic(posSystem.getLeftWheelW(),  posSystem.getPositionArr()[4], posSystem.getDistanceTravelledL());
         //for some reason, we negate the negative clicks for the left topL encoder
-        PodR.autoLogic(posSystem.getRightWheelW(), posSystem.getPositionArr()[4], posSystem.getMotorClicks()[2], posSystem.getMotorClicks());
+        PodR.autoLogic(posSystem.getRightWheelW(), posSystem.getPositionArr()[4], posSystem.getDistanceTravelledR());
 
         outputL = PodL.getOutputAuto();
         outputR = PodR.getOutputAuto();

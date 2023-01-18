@@ -11,10 +11,10 @@ public class TurnMath {
 
     private int targetClicks;
 
-    public void setPos(double theta, int initClicks, int direction, boolean rightPod){
+    public void setPos(double theta, int direction, boolean rightPod){
         this.theta = theta;
 
-        targetClicks = (int)(getDistance() * constants.CLICKS_PER_INCH * direction) + initClicks;
+        targetClicks = (int)(getDistance() * constants.CLICKS_PER_INCH * direction);
 
         if (rightPod) targetClicks *= -1;
 
@@ -27,14 +27,12 @@ public class TurnMath {
         return arcLength;
     }
 
-    public int getTargetClicks(){
-        return targetClicks;
+    public double distanceRemaining(double distanceRan){
+        return targetClicks - (distanceRan * constants.CLICKS_PER_INCH);
     }
 
-    public double distanceRemaining(int currClick){
-        double delta = (targetClicks - currClick) * constants.INCHES_PER_CLICK;
-
-        return delta;
+    public int getTargetClicks(){
+        return targetClicks;
     }
 
 
