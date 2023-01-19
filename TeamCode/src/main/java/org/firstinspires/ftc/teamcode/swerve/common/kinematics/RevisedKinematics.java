@@ -93,6 +93,7 @@ public class RevisedKinematics {
         this.lt = lt;
 
         //telling the pods where it is
+        posSystem.calculatePos();
         PodL.setCurrents(posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
         PodR.setCurrents(posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);
 
@@ -106,7 +107,7 @@ public class RevisedKinematics {
         PodL.setRotClicks(target);
         PodR.setRotClicks(target);
 
-        posSystem.setOptimizedCurrentW(PodR.optimizedCurrentW, PodL.optimizedCurrentW);
+        posSystem.setOptimizedCurrentW(PodR.optimizedCurrentW, PodL.optimizedCurrentW); //this method MUST be called before setSpinClicksAndPower().
 
 //        boolean wheelsAreAlligned = posSystem.isAlligned();
         boolean eligibleForTurning = posSystem.eligibleForTurning();
