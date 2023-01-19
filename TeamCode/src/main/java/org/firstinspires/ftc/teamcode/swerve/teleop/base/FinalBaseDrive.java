@@ -183,9 +183,9 @@ public class FinalBaseDrive extends OpMode{
 
     void UpdateTelemetry(){
 //        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        telemetry.addData("Splining Special Condition", posSystem.specialSpliningCondition());
-        telemetry.addData("IsAlligned", posSystem.isAlligned());
-        telemetry.addData("Eligible for turning", posSystem.eligibleForTurning());
+        telemetry.addData("Splining Special Condition", posSystem.specialSpliningCondition(PodL.getRobotCentricCurrentW(), PodR.getRobotCentricCurrentW()));
+        telemetry.addData("IsAlligned", posSystem.isAlligned(PodL.getOptimizedCurrentW(), PodR.getOptimizedCurrentW()));
+        telemetry.addData("Eligible for turning", posSystem.eligibleForTurning(PodL.getOptimizedCurrentW(), PodR.getOptimizedCurrentW(), PodL.getRobotCentricCurrentW(), PodR.getRobotCentricCurrentW()));
         telemetry.addData("First movement", kinematics.firstMovement);
         telemetry.addData("PodL initpole", PodL.initPole);
         telemetry.addData("PodR initPole", PodR.initPole);
@@ -206,10 +206,10 @@ public class FinalBaseDrive extends OpMode{
         telemetry.addData("Y pos", posSystem.getPositionArr()[1]);
         telemetry.addData("Left W",  posSystem.getLeftWheelW());
         telemetry.addData("Right W", posSystem.getRightWheelW());
-        telemetry.addData("Optimized Left W", posSystem.optimizedCurrentWL);
-        telemetry.addData("Optimized Right W", posSystem.optimizedCurrentWR);
-        telemetry.addData("robotic centric L", posSystem.robotCentricCurrentL);
-        telemetry.addData("robotic centric R", posSystem.robotCentricCurrentR);
+        telemetry.addData("Optimized Left W", PodL.getOptimizedCurrentW());
+        telemetry.addData("Optimized Right W", PodR.getOptimizedCurrentW());
+        telemetry.addData("robotic centric L", PodL.getRobotCentricCurrentW());
+        telemetry.addData("robotic centric R", PodR.getRobotCentricCurrentW());
 
 //        telemetry.addData("Non left wheel Left W", PodL.nonRightStickCurrentW);
 //        telemetry.addData("Non right wheel Right W", PodR.nonRightStickCurrentW);

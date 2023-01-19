@@ -107,13 +107,16 @@ public class RevisedKinematics {
         PodL.setRotClicks(target);
         PodR.setRotClicks(target);
 
-        posSystem.setOptimizedCurrentW(PodR.optimizedCurrentW, PodL.optimizedCurrentW); //this method MUST be called before setSpinClicksAndPower().
-
 //        boolean wheelsAreAlligned = posSystem.isAlligned();
-        boolean eligibleForTurning = posSystem.eligibleForTurning();
-        boolean shouldTurn = (lx == 0 && ly == 0) && (rx != 0); //possible problem: the robot will "jitter" if its turning and then becomes not eligible for turning (may have to increase tolerance?)
+//        boolean eligibleForTurning = posSystem.eligibleForTurning(PodL.getPole(), PodR.getPole());
+//        boolean shouldTurn = (lx == 0 && ly == 0) && (rx != 0); //possible problem: the robot will "jitter" if its turning and then becomes not eligible for turning (may have to increase tolerance?)
+//        boolean shouldSpline = (lx != 0 || ly != 0) && (rx != 0);
+//        boolean specialSpliningCondition = posSystem.specialSpliningCondition(PodL.getPole(), PodR.getPole());
+
+        boolean eligibleForTurning = posSystem.eligibleForTurning(PodL.getOptimizedCurrentW(), PodR.getOptimizedCurrentW(), PodL.getRobotCentricCurrentW(), PodR.getRobotCentricCurrentW());
+        boolean shouldTurn = (lx == 0 && ly == 0) && (rx != 0);
         boolean shouldSpline = (lx != 0 || ly != 0) && (rx != 0);
-        boolean specialSpliningCondition = posSystem.specialSpliningCondition();
+        boolean specialSpliningCondition = posSystem.specialSpliningCondition(PodL.getRobotCentricCurrentW(), PodR.getRobotCentricCurrentW());
 
         //determining spin clicks and spin power
         double power = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
@@ -125,7 +128,7 @@ public class RevisedKinematics {
         // - the driver has not given controller input AND the wheels aren't alligned,
         // - the wheels aren't alligned with 0 degrees AND the driver is trying to turn.
         if (type == DriveType.STOP){
-            if (!posSystem.isAlligned()){
+            if (!posSystem.isAlligned(PodL.getOptimizedCurrentW(), PodR.getOptimizedCurrentW())){
                 PodL.setRotClicks(0);
                 PodR.setRotClicks(0);
                 PodL.setSpinClicks(0);
@@ -171,7 +174,7 @@ public class RevisedKinematics {
         PodL.setCurrents(posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
         PodR.setCurrents(posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);
 
-        posSystem.setOptimizedCurrentW(PodR.optimizedCurrentW, PodL.optimizedCurrentW);
+//        posSystem.setOptimizedCurrentW(PodR.optimizedCurrentW, PodL.optimizedCurrentW);
 
         //4) determining distance travel amount and power based on that
         PodL.autoLogic(posSystem.getLeftWheelW(),  posSystem.getPositionArr()[4], posSystem.getDistanceTravelledL());

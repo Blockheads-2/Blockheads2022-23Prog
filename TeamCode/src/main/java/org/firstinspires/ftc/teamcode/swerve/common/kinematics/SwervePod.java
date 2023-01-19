@@ -72,6 +72,7 @@ public class SwervePod {
     public void setCurrents(double currentW, double currentR){
         this.currentW = currentW;
         this.currentR = currentR;
+        this.currentW = clamp(this.currentW + this.currentR);
     }
 
     public void setRotClicks(double target){
@@ -159,14 +160,22 @@ public class SwervePod {
         if (initPole){
             direction = initDirection;
             optimizedCurrentW = currentW;
+            robotCentricCurrentW = clamp(optimizedCurrentW - currentR);
         } else{
             direction = -initDirection;
             optimizedCurrentW = clamp(currentW + 180);
+            robotCentricCurrentW = clamp(optimizedCurrentW - currentR);
         }
-
 
         return turnAmount;
     }
+
+    public boolean getPole(){
+        return initPole;
+    }
+
+    public double getOptimizedCurrentW(){return optimizedCurrentW;} //can get rid of optimizedCurrentW and robotCentricW if initPole() thing works
+    public double getRobotCentricCurrentW(){return robotCentricCurrentW;}
 
     public void setSpinClicks(int clicks) {
         spinClicksTarget = (double) (clicks);
@@ -325,7 +334,7 @@ public class SwervePod {
         else if (power < -constants.POWER_LIMITER) power = -constants.POWER_LIMITER;
 
         if (side == Side.RIGHT) {
-            spinClicksTarget *= constants.RIGHT_SIDE_LIMITER;
+            spinClicksTarget *= constants.RIGHT_SIDE_LIMITER; //move this so it only affects it when the robot is translating, not turning.
         }
 
         throttle = Math.abs(throttle);

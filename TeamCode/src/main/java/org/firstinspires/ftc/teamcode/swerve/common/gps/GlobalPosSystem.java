@@ -25,12 +25,6 @@ public class GlobalPosSystem {
 
     HardwareDrive robot;
 
-    public double optimizedCurrentWR = 0;
-    public double optimizedCurrentWL = 0;
-
-    public double robotCentricCurrentL = 0;
-    public double robotCentricCurrentR = 0;
-
     private double distanceTravelledR = 0; //For auto.  Should be reset after every "action."  Represents how much the wheel has spinned.
     private double distanceTravelledL = 0;
 
@@ -65,10 +59,8 @@ public class GlobalPosSystem {
         updateHash();
         calculateWheel();
         calculateHeader();
-        robotCentricCurrentL = positionArr[2];
-        robotCentricCurrentR = positionArr[3];
-        positionArr[2] = clamp(positionArr[2] +  positionArr[4]);
-        positionArr[3] = clamp(positionArr[3] + positionArr[4]);
+//        positionArr[2] = clamp(positionArr[2] +  positionArr[4]);
+//        positionArr[3] = clamp(positionArr[3] + positionArr[4]);
         calculateRobot();
     }
 
@@ -174,28 +166,54 @@ public class GlobalPosSystem {
         return positionArr[3];
     }
 
-    public boolean isAlligned(){
+
+    public boolean isAlligned(boolean initPoleL, boolean initPoleR){
+        double optimizedCurrentWL = positionArr[2];
+        double optimizedCurrentWR = positionArr[3];
+        if (!initPoleL) optimizedCurrentWL = clamp(positionArr[2] + 180);
+        if (!initPoleR) optimizedCurrentWR = clamp(positionArr[3] + 180);
+
         double error = SwervePod.changeAngle(optimizedCurrentWL, optimizedCurrentWR);
 
         return (Math.abs(error) <= constants.allignmentTolerance);
     }
 
-    public void setOptimizedCurrentW(double angleR, double angleL){
-        optimizedCurrentWR = angleR;
-        optimizedCurrentWL = angleL;
-        robotCentricCurrentL = clamp(optimizedCurrentWL - positionArr[4]);
-        robotCentricCurrentR = clamp(optimizedCurrentWR - positionArr[4]);
-    }
+    public boolean eligibleForTurning(boolean initPoleL, boolean initPoleR){
+        double robotCentricCurrentL = positionArr[2];
+        double robotCentricCurrentR = positionArr[3];
+        if (!initPoleL) robotCentricCurrentL = clamp(positionArr[2] + 180);
+        if (!initPoleR) robotCentricCurrentR = clamp(positionArr[3] + 180);
 
-    public boolean eligibleForTurning(){
         return (Math.abs(robotCentricCurrentL) <= constants.allignmentTolerance &&
                 Math.abs(robotCentricCurrentR) <= constants.allignmentTolerance &&
-                isAlligned());
+                isAlligned(initPoleL, initPoleR));
     }
 
-    public boolean specialSpliningCondition(){
-        return ((Math.abs(robotCentricCurrentL - 90) <= 8 && Math.abs(robotCentricCurrentR - 90) <= 8) ||
-                (Math.abs(robotCentricCurrentL + 90) <= 8 && Math.abs(robotCentricCurrentR + 90) <= 8));
+    public boolean specialSpliningCondition(boolean initPoleL, boolean initPoleR){
+        double robotCentricCurrentL = positionArr[2];
+        double robotCentricCurrentR = positionArr[3];
+        if (!initPoleL) robotCentricCurrentL = clamp(positionArr[2] + 180);
+        if (!initPoleR) robotCentricCurrentR = clamp(positionArr[3] + 180);
+
+        return ((Math.abs(robotCentricCurrentL - 90) <= 15 && Math.abs(robotCentricCurrentR - 90) <= 15) ||
+                (Math.abs(robotCentricCurrentL + 90) <= 15 && Math.abs(robotCentricCurrentR + 90) <= 15));
+    }
+
+    public boolean isAlligned(double optimizedCurrentWL, double optimizedCurrentWR){
+        double error = SwervePod.changeAngle(optimizedCurrentWL, optimizedCurrentWR);
+
+        return (Math.abs(error) <= constants.allignmentTolerance);
+    }
+
+    public boolean eligibleForTurning(double optimizedCurrentWL, double optimizedCurrentWR, double robotCentricCurrentL, double robotCentricCurrentR){
+        return (Math.abs(robotCentricCurrentL) <= constants.allignmentTolerance &&
+                Math.abs(robotCentricCurrentR) <= constants.allignmentTolerance &&
+                isAlligned(optimizedCurrentWL, optimizedCurrentWR));
+    }
+
+    public boolean specialSpliningCondition(double robotCentricCurrentL, double robotCentricCurrentR){
+        return ((Math.abs(robotCentricCurrentL - 90) <= 15 && Math.abs(robotCentricCurrentR - 90) <= 15) ||
+                (Math.abs(robotCentricCurrentL + 90) <= 15 && Math.abs(robotCentricCurrentR + 90) <= 15));
     }
 
     public void resetHeader(){
