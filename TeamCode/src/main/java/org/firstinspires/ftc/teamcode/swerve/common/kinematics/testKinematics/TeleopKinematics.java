@@ -1,9 +1,9 @@
-//package org.firstinspires.ftc.teamcode.common.Kinematics;
+//package org.firstinspires.ftc.teamcode.swerve.common.Kinematics;
 //
 //import com.qualcomm.robotcore.hardware.DcMotor;
 //import com.qualcomm.robotcore.util.ElapsedTime;
 //
-//import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
+//import org.firstinspires.ftc.teamcode.swerve.common.gps.GlobalPosSystem;
 //
 //public class TeleopKinematics extends Kinematics{
 //    ElapsedTime timer = new ElapsedTime();

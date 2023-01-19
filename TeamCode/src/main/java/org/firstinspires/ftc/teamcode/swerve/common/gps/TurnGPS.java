@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.common.gps;
+package org.firstinspires.ftc.teamcode.swerve.common.gps;
 
-import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
-import org.firstinspires.ftc.teamcode.common.HardwareDrive;
-import org.firstinspires.ftc.teamcode.common.kinematics.RevisedKinematics;
+import org.firstinspires.ftc.teamcode.swerve.common.constantsPKG.Constants;
+import org.firstinspires.ftc.teamcode.swerve.common.HardwareDrive;
+import org.firstinspires.ftc.teamcode.swerve.common.kinematics.RevisedKinematics;
 
 import java.util.HashMap;
 

@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.teamcode.swerve.auto.Math;
 
-import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
-import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
-import org.firstinspires.ftc.teamcode.common.pid.SpinPID;
+import org.firstinspires.ftc.teamcode.swerve.common.constantsPKG.Constants;
+import org.firstinspires.ftc.teamcode.swerve.common.pid.SpinPID;
 
 public class SplineMath {
     Constants constants = new Constants();
