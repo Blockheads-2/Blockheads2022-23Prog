@@ -11,44 +11,41 @@ public class Reset {
     HardwareDrive robot;
     GlobalPosSystem globalPosSystem;
     Constants constants = new Constants();
+    ElapsedTime gapTime = new ElapsedTime();
     Accelerator accelerator = new Accelerator();
-
-    //PIDs
-    SnapSwerveModulePID snapLeftWheelPID;
-    SnapSwerveModulePID snapRightWheelPID;
-
     double power = 0;
-    double powerL = 0; //for auto
-    double powerR = 0;
+    int waitForMS = 400;
+    double prevTime=0;
+    double currentTime=0;
 
+    boolean STOP_RESET_L = false;
+    boolean STOP_RESET_R = false;
     boolean isResetCycle = false;
-    boolean resetDone = false;
 
     public Reset(HardwareDrive r, GlobalPosSystem gps){
         robot = r;
         globalPosSystem=gps;
-
-        snapLeftWheelPID = new SnapSwerveModulePID();
-        snapRightWheelPID = new SnapSwerveModulePID();
-        snapLeftWheelPID.setTargets(constants.kp, constants.ki, constants.kd);
-        snapRightWheelPID.setTargets(constants.kp, constants.ki, constants.kd);
+        gapTime.reset();
     }
 
     public void reset(boolean shouldReset){
         if (shouldReset){
-            updateReset();
-        } else{
-            isResetCycle = false;
-            resetDone = false;
-        }
-    }
+            if(gapTime.milliseconds()-prevTime>waitForMS){
+                updateReset();
+            }else{
+                power = accelerator.update(0);
+                robot.botL.setPower(power);
+                robot.topL.setPower(power);
+                robot.botR.setPower(power);
+                robot.topR.setPower(power);
+            }
 
-    public void resetAuto(boolean shouldReset){
-        if (shouldReset){
-            updateResetAuto();
         } else{
+            STOP_RESET_L = false;
+            STOP_RESET_R = false;
             isResetCycle = false;
-            resetDone = false;
+            gapTime.reset();
+            prevTime=gapTime.milliseconds();
         }
     }
 
@@ -78,58 +75,61 @@ public class Reset {
             robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        } else{
-//            power = accelerator.update(1.0);
-            power = 1;
+
+            power = accelerator.update(0.7);
             robot.botL.setPower(power);
             robot.topL.setPower(power);
             robot.botR.setPower(power);
             robot.topR.setPower(power);
         }
-    }
 
-    private void updateResetAuto(){
-        globalPosSystem.calculatePos();
-        int rotateL = (int)(globalPosSystem.getLeftWheelW() * constants.CLICKS_PER_DEGREE); //total rotation of left module
-        int rotateR = (int)(globalPosSystem.getRightWheelW() * constants.CLICKS_PER_DEGREE); //total rotation of right module
+        else{
+            if (robot.topL.getCurrentPosition() == topLTarget && robot.botL.getCurrentPosition() == botLTarget){
+                robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        rotateL %= constants.CLICKS_PER_PURPLE_REV;
-        rotateR %= constants.CLICKS_PER_PURPLE_REV;
+                power = accelerator.update(0);
+                robot.botL.setPower(power);
+                robot.topL.setPower(power);
 
-        int topLTarget = (int)((robot.topL.getCurrentPosition() - rotateL));
-        int botLTarget = (int)((robot.botL.getCurrentPosition() - rotateL));
-        int topRTarget = (int)((robot.topR.getCurrentPosition() - rotateR));
-        int botRTarget = (int)((robot.botR.getCurrentPosition() - rotateR));
+                STOP_RESET_L = true;
+            } else if (!STOP_RESET_L){
+                power = accelerator.update(0.7);
+                robot.botL.setPower(power);
+                robot.topL.setPower(power);
+            }
 
+            if (robot.topR.getCurrentPosition() == topRTarget && robot.botR.getCurrentPosition() == botRTarget){
+                robot.topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        if (!isResetCycle){
-            isResetCycle = true;
+                power = accelerator.update(0);
+                robot.botR.setPower(power);
+                robot.topR.setPower(power);
 
-            robot.topL.setTargetPosition(topLTarget);
-            robot.botL.setTargetPosition(botLTarget);
-            robot.topR.setTargetPosition(topRTarget);
-            robot.botR.setTargetPosition(botRTarget);
+                STOP_RESET_R = true;
+            } else if (!STOP_RESET_R){
+                power = accelerator.update(0.7);
+                robot.botR.setPower(power);
+                robot.topR.setPower(power);
+            }
 
-            robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        } else{
-            powerL = snapLeftWheelPID.update(rotateL * constants.DEGREES_PER_CLICK);
-            powerR = snapRightWheelPID.update(rotateR * constants.DEGREES_PER_CLICK);
+            if (finishedReset()) {
+                robot.topL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.botL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.topR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.botR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-            robot.botL.setPower(powerL);
-            robot.topL.setPower(powerL);
-            robot.botR.setPower(powerR);
-            robot.topR.setPower(powerR);
-            resetDone = (Math.abs(robot.topL.getCurrentPosition() - topLTarget) < constants.degreeTOLERANCE &&
-                    Math.abs(robot.botL.getCurrentPosition() - botLTarget) < constants.degreeTOLERANCE &&
-                    Math.abs(robot.topR.getCurrentPosition() - topRTarget) < constants.degreeTOLERANCE &&
-                    Math.abs(robot.botR.getCurrentPosition() - botRTarget) < constants.degreeTOLERANCE);
+                robot.topL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.botL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.topR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.botR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                globalPosSystem.hardResetGPS();
+            }
         }
     }
 
     public boolean finishedReset(){
-        return resetDone;
+        return (STOP_RESET_L && STOP_RESET_R);
     }
 }

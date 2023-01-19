@@ -1,27 +1,34 @@
 package org.firstinspires.ftc.teamcode.swerve.auto.Math;
 
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
-import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.pid.SpinPID;
 
 public class LinearMath { //Note: snap() is used in the auto class separately. This class is used assuming that the wheels are already pointing the way we want it to.
     Constants constants = new Constants();
+    SpinPID spinPID;
 
-    private int targetClicks;
+    private double initialX;
+    private double initialY;
 
     private double x;
     private double y;
     private double theta; //amount robot header should turn (for table-spinning)
 
+
     public LinearMath(){
+        spinPID = new SpinPID();
+    }
+
+    public void setInits(double x, double y){
+        initialX = x;
+        initialY = y;
     }
 
     public void setPos(double x, double y, double theta, double kp, double ki, double kd){
         this.x = x;
         this.y = y;
         this.theta = theta;
-
-        targetClicks = (int)(getDistance() * constants.CLICKS_PER_INCH);
+        spinPID.setTargets(getDistance(), kp, ki, kd);
     }
 
     public double getDistance(){
@@ -40,8 +47,14 @@ public class LinearMath { //Note: snap() is used in the auto class separately. T
         return clicks;
     }
 
-    public double distanceRemaining(double distanceRan){
-        return targetClicks - (distanceRan * constants.CLICKS_PER_INCH);
+    public double distanceRemaining(double x, double y){
+        return (Math.sqrt(Math.pow(x - initialX, 2) + Math.pow(y - initialY, 2)));
+    }
+
+    public double getSpinPower(double x, double y){
+        double distanceTravelled = Math.sqrt(Math.pow(x - initialX, 2) + Math.pow(y - initialY, 2));
+
+        return spinPID.update(distanceTravelled);
     }
 
     public double getRunTime(double rate){

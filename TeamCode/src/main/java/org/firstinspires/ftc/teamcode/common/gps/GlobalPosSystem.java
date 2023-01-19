@@ -1,27 +1,25 @@
 package org.firstinspires.ftc.teamcode.common.gps;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
-import org.firstinspires.ftc.teamcode.common.kinematics.RevisedKinematics;
-import org.firstinspires.ftc.teamcode.common.kinematics.SwervePod;
+import org.firstinspires.ftc.teamcode.common.kinematics.drive.Kinematics;
+import org.firstinspires.ftc.teamcode.swerve.teleop.RevisedKinematics;
 
 import java.util.HashMap;
 
 public class GlobalPosSystem {
 
     Constants constants = new Constants();
+    Kinematics kinematics;
     RevisedKinematics revisedKinematics;
 
     private double[] positionArr = new double[5];
-
-    private int[] motorClicksPos = new int[4];
-    private int[] prevMotorClicks = new int[4];
+    public HashMap<String, Integer> motorClicksPose = new HashMap<>();
+    public HashMap<String, Integer> prevMotorClicks = new HashMap<>();
 
     HardwareDrive robot;
 
@@ -35,23 +33,25 @@ public class GlobalPosSystem {
     Orientation currentOrientation;
     double currAngle = 0;
 
-    private boolean updateGPS = true;
-
-    public GlobalPosSystem(HardwareDrive robot) {
+    public GlobalPosSystem(HardwareDrive robot){
         this.robot = robot;
 
-        motorClicksPos[0] = robot.topL.getCurrentPosition();
-        motorClicksPos[1] = robot.botL.getCurrentPosition();
-        motorClicksPos[2] = robot.topR.getCurrentPosition();
-        motorClicksPos[3] = robot.botR.getCurrentPosition();
+        motorClicksPose.put("topR", robot.topR.getCurrentPosition());
+        motorClicksPose.put("botR", robot.botR.getCurrentPosition());
+        motorClicksPose.put("topL", robot.topL.getCurrentPosition());
+        motorClicksPose.put("botL", robot.botL.getCurrentPosition());
 
-        prevMotorClicks[0] =  motorClicksPos[0];
-        prevMotorClicks[1] =  motorClicksPos[1];
-        prevMotorClicks[2] =  motorClicksPos[2];
-        prevMotorClicks[3] =  motorClicksPos[3];
+        prevMotorClicks.put("topR", motorClicksPose.get("topR"));
+        prevMotorClicks.put("botR", motorClicksPose.get("botR"));
+        prevMotorClicks.put("topL", motorClicksPose.get("topL"));
+        prevMotorClicks.put("botL", motorClicksPose.get("botL"));
 
         currentOrientation = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         lastOrientation = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+    }
+
+    public void grabKinematics(Kinematics k){
+        kinematics = k;
     }
 
     public void grabKinematics(RevisedKinematics k){
@@ -62,8 +62,6 @@ public class GlobalPosSystem {
         updateHash();
         calculateWheel();
         calculateHeader();
-        positionArr[2] = clamp(positionArr[2] +  positionArr[4]);
-        positionArr[3] = clamp(positionArr[3] + positionArr[4]);
         calculateRobot();
     }
 
@@ -100,19 +98,19 @@ public class GlobalPosSystem {
 
     public void calculateRobot(){
         //right
-        int topR = motorClicksPos[2] - prevMotorClicks[2]; //change in top right
-        int botR = motorClicksPos[3] - prevMotorClicks[3]; //change in bottom right
+        int topR = motorClicksPose.get("topR") - prevMotorClicks.get("topR"); //change in top right
+        int botR = motorClicksPose.get("botR") - prevMotorClicks.get("botR"); //change in bottom right
         double translationalInchesR = (topR - botR) / 2.0;
         translationalInchesR *= constants.INCHES_PER_CLICK;
-        distanceTravelledR = translationalInchesR;
+        translationalInchesR *= Math.signum(revisedKinematics.rightThrottle);
         double currentAngleR = positionArr[3];
 
         //left
-        int topL = motorClicksPos[0] - prevMotorClicks[0]; //change in top left
-        int botL = motorClicksPos[1] - prevMotorClicks[1]; //change in bottom left
+        int topL = motorClicksPose.get("topL") - prevMotorClicks.get("topL"); //change in top left
+        int botL = motorClicksPose.get("botL") - prevMotorClicks.get("botL"); //change in bottom left
         double translationalInchesL = (topL - botL) / 2.0;
         translationalInchesL *= constants.INCHES_PER_CLICK;
-        distanceTravelledL = translationalInchesL;
+        translationalInchesL *= Math.signum(revisedKinematics.leftThrottle);
         double currentAngleL = positionArr[2];
 
         double splineOrientation = 0.0;
@@ -136,8 +134,8 @@ public class GlobalPosSystem {
 //            positionArr[3] += positionArr[4];
 //        }
 
-        positionArr[0] += (hypotenuse * Math.sin(baseAngle + positionArr[4]));
-        positionArr[1] += (hypotenuse * Math.cos(baseAngle + positionArr[4]));
+        positionArr[0] += (hypotenuse * Math.sin(baseAngle));
+        positionArr[1] += (hypotenuse * Math.cos(baseAngle));
     }
 
     public void update ( double x, double y, double leftWheelW, double rightWheelW, double robotR){
@@ -153,48 +151,12 @@ public class GlobalPosSystem {
         positionArr[4] = clamp(positionArr[4]);
     }
 
-    public double getDistanceTravelledL(){
-        return distanceTravelledL;
-    }
-
-    public double getDistanceTravelledR(){
-        return distanceTravelledR;
-    }
-
     public double getLeftWheelW(){
         return positionArr[2];
     }
 
     public double getRightWheelW(){
         return positionArr[3];
-    }
-
-    public boolean isAlligned(){
-        double error = SwervePod.changeAngle(optimizedCurrentWL, optimizedCurrentWR);
-
-        return (Math.abs(error) <= constants.allignmentTolerance);
-    }
-
-    public void setOptimizedCurrentW(double angleR, double angleL){
-        optimizedCurrentWR = angleR;
-        optimizedCurrentWL = angleL;
-    }
-
-    public boolean eligibleForTurning(){
-        return (Math.abs(SwervePod.changeAngle(optimizedCurrentWL, positionArr[4])) <= constants.allignmentTolerance &&
-                Math.abs(SwervePod.changeAngle(optimizedCurrentWR, positionArr[4])) <= constants.allignmentTolerance &&
-                isAlligned());
-    }
-
-    public boolean specialSpliningCondition(){
-        double nonRobotCentricCurrentL = clamp(optimizedCurrentWL - positionArr[4]);
-        double nonRobotCentricCurrentR = clamp(optimizedCurrentWR - positionArr[4]);
-        return ((Math.abs(nonRobotCentricCurrentL - 90) <= 8 && Math.abs(nonRobotCentricCurrentR - 90) <= 8) ||
-                (Math.abs(nonRobotCentricCurrentL + 90) <= 8 && Math.abs(nonRobotCentricCurrentR + 90) <= 8));
-    }
-
-    public void resetHeader(){
-        positionArr[4] = 0;
     }
 
     public void hardResetGPS(){
@@ -205,37 +167,34 @@ public class GlobalPosSystem {
         positionArr[2]=0;
         positionArr[3]=0;
 
-        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorClicksPose.put("topR", robot.topR.getCurrentPosition());
+        motorClicksPose.put("botR", robot.botR.getCurrentPosition());
+        motorClicksPose.put("topL", robot.topL.getCurrentPosition());
+        motorClicksPose.put("botL", robot.botL.getCurrentPosition());
 
-        motorClicksPos[0] = robot.topL.getCurrentPosition();
-        motorClicksPos[1] = robot.botL.getCurrentPosition();
-        motorClicksPos[2] = robot.topR.getCurrentPosition();
-        motorClicksPos[3] = robot.botR.getCurrentPosition();
-
-        prevMotorClicks[0] =  motorClicksPos[0];
-        prevMotorClicks[1] =  motorClicksPos[1];
-        prevMotorClicks[2] =  motorClicksPos[2];
-        prevMotorClicks[3] =  motorClicksPos[3];
+        prevMotorClicks.put("topR", motorClicksPose.get("topR"));
+        prevMotorClicks.put("botR", motorClicksPose.get("botR"));
+        prevMotorClicks.put("topL", motorClicksPose.get("topL"));
+        prevMotorClicks.put("botL", motorClicksPose.get("botL"));
     }
 
-    public void resetXY(){
-        positionArr[0] = 0;
-        positionArr[1] = 0;
-        distanceTravelledR = 0;
-        distanceTravelledL = 0;
+    public void resetOrientationIfOneEighty(){
+        if ((Math.abs(positionArr[2]) <= 2 || Math.abs(positionArr[2]) <= 182) && (Math.abs(positionArr[3]) <= 2 || Math.abs(positionArr[3]) <= 182)){
+            positionArr[2] = 0;
+            positionArr[3] = 0;
+        }
     }
 
     public void updateHash(){
-        prevMotorClicks[0] =  motorClicksPos[0];
-        prevMotorClicks[1] =  motorClicksPos[1];
-        prevMotorClicks[2] =  motorClicksPos[2];
-        prevMotorClicks[3] =  motorClicksPos[3];
+        prevMotorClicks.put("topR", motorClicksPose.get("topR"));
+        prevMotorClicks.put("botR", motorClicksPose.get("botR"));
+        prevMotorClicks.put("topL", motorClicksPose.get("topL"));
+        prevMotorClicks.put("botL", motorClicksPose.get("botL"));
 
-        motorClicksPos[0] = robot.topL.getCurrentPosition();
-        motorClicksPos[1] = robot.botL.getCurrentPosition();
-        motorClicksPos[2] = robot.topR.getCurrentPosition();
-        motorClicksPos[3] = robot.botR.getCurrentPosition();
+        motorClicksPose.put("topR", robot.topR.getCurrentPosition());
+        motorClicksPose.put("botR", robot.botR.getCurrentPosition());
+        motorClicksPose.put("topL", robot.topL.getCurrentPosition());
+        motorClicksPose.put("botL", robot.botL.getCurrentPosition());
     }
 
     public double[] getPositionArr() {
@@ -252,17 +211,6 @@ public class GlobalPosSystem {
         return clicks;
     }
 
-    public HashMap<String, Double> getArmClicks() {
-        HashMap<String, Double> armClicks = new HashMap<String, Double>();
-        armClicks.put("at", (double)robot.at.getCurrentPosition());
-        armClicks.put("abl", (double)robot.abl.getCurrentPosition());
-        armClicks.put("abr", (double)robot.abr.getCurrentPosition());
-        armClicks.put("armServo", robot.armServo.getPosition());
-        armClicks.put("claw", robot.claw.getPosition());
-
-        return armClicks;
-    }
-
     public double clamp(double degrees){
         if (Math.abs(degrees) >= 360) degrees %= 360;
         if (degrees == -180) degrees = 180;
@@ -275,17 +223,12 @@ public class GlobalPosSystem {
         return degrees;
     }
 
-//    public void run(){
-//        while (updateGPS){
-//            calculatePos();
-//        }
-//    }
-
-    public void setUpdateGPS(boolean gpsthread){
-        updateGPS = gpsthread;
+    public Kinematics.DriveType getDriveType() {
+        return kinematics.getDriveType();
     }
 
-    public RevisedKinematics.DriveType getDriveType() {
-        return revisedKinematics.getDriveType();
+    public HashMap<String, Integer> getMotorClicksPose () {
+        return motorClicksPose;
     }
+
 }
