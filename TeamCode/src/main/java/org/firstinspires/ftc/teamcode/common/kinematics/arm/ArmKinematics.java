@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.swerve.common.kinematics.arm;
+package org.firstinspires.ftc.teamcode.common.kinematics.arm;
 
-import org.firstinspires.ftc.teamcode.swerve.common.constantsPKG.Constants;
+import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 
 public class ArmKinematics {
     protected Constants constants = new Constants();

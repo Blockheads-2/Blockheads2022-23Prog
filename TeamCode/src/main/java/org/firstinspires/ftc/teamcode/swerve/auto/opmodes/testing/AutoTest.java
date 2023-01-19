@@ -4,10 +4,11 @@ import android.view.View;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.swerve.common.constantsPKG.Constants;
-import org.firstinspires.ftc.teamcode.swerve.common.gps.GlobalPosSystem;
-import org.firstinspires.ftc.teamcode.swerve.common.kinematics.RevisedKinematics;
+import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
+import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
+import org.firstinspires.ftc.teamcode.common.kinematics.RevisedKinematics;
 import org.firstinspires.ftc.teamcode.swerve.auto.opmodes.AutoHub;
 
 @Autonomous (name = "Auto Test", group = "Drive")

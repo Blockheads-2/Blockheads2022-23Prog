@@ -1,10 +1,10 @@
 //the first Kinematics file made in season 2022
 
-//package org.firstinspires.ftc.teamcode.swerve.common.kinematics.testKinematics;
+//package org.firstinspires.ftc.teamcode.common.kinematics.testKinematics;
 //
-//import org.firstinspires.ftc.teamcode.swerve.common.constantsPKG.Constants;
-//import org.firstinspires.ftc.teamcode.swerve.common.gps.GlobalPosSystem;
-//import org.firstinspires.ftc.teamcode.swerve.common.pid.RotateSwerveModulePID;
+//import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
+//import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
+//import org.firstinspires.ftc.teamcode.common.pid.RotateSwerveModulePID;
 //
 //public class Kinematics {
 //    protected Constants constants = new Constants();

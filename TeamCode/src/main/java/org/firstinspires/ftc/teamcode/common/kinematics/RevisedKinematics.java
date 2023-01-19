@@ -1,11 +1,20 @@
-package org.firstinspires.ftc.teamcode.swerve.common.kinematics;
+package org.firstinspires.ftc.teamcode.common.kinematics;
 
-import org.firstinspires.ftc.teamcode.swerve.common.Accelerator;
-import org.firstinspires.ftc.teamcode.swerve.common.constantsPKG.Constants;
-import org.firstinspires.ftc.teamcode.swerve.common.gps.GlobalPosSystem;
-import org.firstinspires.ftc.teamcode.swerve.common.pid.ArmPID;
-import org.firstinspires.ftc.teamcode.swerve.common.pid.HeaderControlPID;
+import com.vuforia.STORAGE_TYPE;
+
+import org.firstinspires.ftc.teamcode.common.Accelerator;
+import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
+import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
+import org.firstinspires.ftc.teamcode.common.pid.ArmPID;
+import org.firstinspires.ftc.teamcode.common.pid.HeaderControlPID;
+import org.firstinspires.ftc.teamcode.common.pid.SnapSwerveModulePID;
+import org.firstinspires.ftc.teamcode.common.pid.SpinPID;
+import org.firstinspires.ftc.teamcode.swerve.auto.Math.LinearMath;
+import org.firstinspires.ftc.teamcode.swerve.auto.Math.SplineMath;
+import org.firstinspires.ftc.teamcode.swerve.auto.Math.TurnMath;
 import org.firstinspires.ftc.teamcode.swerve.teleop.TrackJoystick;
+
+import java.util.HashMap;
 
 public class RevisedKinematics {
     protected Constants constants = new Constants();

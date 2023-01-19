@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.swerve.common.gps;
+package org.firstinspires.ftc.teamcode.common.gps;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -6,10 +6,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.swerve.common.constantsPKG.Constants;
-import org.firstinspires.ftc.teamcode.swerve.common.HardwareDrive;
-import org.firstinspires.ftc.teamcode.swerve.common.kinematics.RevisedKinematics;
-import org.firstinspires.ftc.teamcode.swerve.common.kinematics.SwervePod;
+import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
+import org.firstinspires.ftc.teamcode.common.HardwareDrive;
+import org.firstinspires.ftc.teamcode.common.kinematics.RevisedKinematics;
+import org.firstinspires.ftc.teamcode.common.kinematics.SwervePod;
 
 import java.util.HashMap;
 
@@ -183,17 +183,17 @@ public class GlobalPosSystem {
     public void setOptimizedCurrentW(double angleR, double angleL){
         optimizedCurrentWR = angleR;
         optimizedCurrentWL = angleL;
-        robotCentricCurrentL = clamp(optimizedCurrentWL - positionArr[4]);
-        robotCentricCurrentR = clamp(optimizedCurrentWR - positionArr[4]);
     }
 
     public boolean eligibleForTurning(){
-        return (Math.abs(robotCentricCurrentL) <= constants.allignmentTolerance &&
-                Math.abs(robotCentricCurrentR) <= constants.allignmentTolerance &&
+        return (Math.abs(SwervePod.changeAngle(optimizedCurrentWL, positionArr[4])) <= constants.allignmentTolerance &&
+                Math.abs(SwervePod.changeAngle(optimizedCurrentWR, positionArr[4])) <= constants.allignmentTolerance &&
                 isAlligned());
     }
 
     public boolean specialSpliningCondition(){
+        robotCentricCurrentL = clamp(optimizedCurrentWL - positionArr[4]);
+        robotCentricCurrentR = clamp(optimizedCurrentWR - positionArr[4]);
         return ((Math.abs(robotCentricCurrentL - 90) <= 8 && Math.abs(robotCentricCurrentR - 90) <= 8) ||
                 (Math.abs(robotCentricCurrentL + 90) <= 8 && Math.abs(robotCentricCurrentR + 90) <= 8));
     }
