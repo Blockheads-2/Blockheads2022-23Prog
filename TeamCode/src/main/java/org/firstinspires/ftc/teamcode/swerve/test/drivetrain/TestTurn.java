@@ -7,11 +7,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
-import org.firstinspires.ftc.teamcode.common.Button;
-import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
+import org.firstinspires.ftc.teamcode.swerve.common.gps.GlobalPosSystem;
+import org.firstinspires.ftc.teamcode.swerve.common.Button;
+import org.firstinspires.ftc.teamcode.swerve.common.constantsPKG.Constants;
 
-import org.firstinspires.ftc.teamcode.common.HardwareDrive;
+import org.firstinspires.ftc.teamcode.swerve.common.HardwareDrive;
 
 @TeleOp(name="Test Turn", group="Drive")
 //@Disabled

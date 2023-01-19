@@ -7,19 +7,16 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.common.Accelerator;
-import org.firstinspires.ftc.teamcode.common.Reset;
-import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
-import org.firstinspires.ftc.teamcode.common.HardwareDrive;
-import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
-import org.firstinspires.ftc.teamcode.common.kinematics.RevisedKinematics;
-import org.firstinspires.ftc.teamcode.common.kinematics.SwervePod;
-import org.firstinspires.ftc.teamcode.common.pid.HeaderControlPID;
-import org.firstinspires.ftc.teamcode.common.pid.SnapSwerveModulePID;
+import org.firstinspires.ftc.teamcode.swerve.common.Accelerator;
+import org.firstinspires.ftc.teamcode.swerve.common.Reset;
+import org.firstinspires.ftc.teamcode.swerve.common.constantsPKG.Constants;
+import org.firstinspires.ftc.teamcode.swerve.common.HardwareDrive;
+import org.firstinspires.ftc.teamcode.swerve.common.gps.GlobalPosSystem;
+import org.firstinspires.ftc.teamcode.swerve.common.kinematics.RevisedKinematics;
+import org.firstinspires.ftc.teamcode.swerve.common.kinematics.SwervePod;
+import org.firstinspires.ftc.teamcode.swerve.common.pid.HeaderControlPID;
+import org.firstinspires.ftc.teamcode.swerve.common.pid.SnapSwerveModulePID;
 import org.firstinspires.ftc.teamcode.swerve.auto.Math.TurnMath;
-
-import java.io.BufferedReader;
-import java.util.HashMap;
 
 public class AutoHub implements Runnable{
     LinearOpMode linearOpMode;
