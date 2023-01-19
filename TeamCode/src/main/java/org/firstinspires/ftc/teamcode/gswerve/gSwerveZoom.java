@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.gswerve;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,10 +10,10 @@ import org.firstinspires.ftc.teamcode.common.Reset;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
-import org.firstinspires.ftc.teamcode.swerve.teleop.RevisedKinematics;
+import org.firstinspires.ftc.teamcode.common.kinematics.RevisedKinematics;
 
 @TeleOp(name="Grady's Swerve", group="Drive")
-
+@Disabled
 public class gSwerveZoom extends OpMode {
     HardwareDrive robot = new HardwareDrive();
     GlobalPosSystem posSystem;
@@ -27,8 +28,8 @@ public class gSwerveZoom extends OpMode {
     @Override
     public void init() { //When "init" is clicked
         robot.init(hardwareMap);
-        posSystem = new GlobalPosSystem(robot);
-        kinematics = new RevisedKinematics(posSystem);
+//        posSystem = new GlobalPosSystem(robot);
+//        kinematics = new RevisedKinematics(posSystem);
         reset = new Reset(robot, posSystem);
 
         telemetry.addData("Say", "Hello Driver");

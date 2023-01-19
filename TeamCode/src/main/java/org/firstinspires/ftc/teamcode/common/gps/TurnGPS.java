@@ -2,18 +2,18 @@ package org.firstinspires.ftc.teamcode.common.gps;
 
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
-import org.firstinspires.ftc.teamcode.common.kinematics.drive.Kinematics;
+import org.firstinspires.ftc.teamcode.common.kinematics.RevisedKinematics;
 
 import java.util.HashMap;
 
 public class TurnGPS {
     Constants constants = new Constants();
-    Kinematics kinematics;
 
     private double[] positionArr = new double[5];
     public HashMap<String, Integer> motorClicksPose = new HashMap<>();
     public HashMap<String, Integer> prevMotorClicks = new HashMap<>();
 
+    RevisedKinematics kinematics;
     HardwareDrive robot;
 
     public TurnGPS(HardwareDrive robot){
@@ -30,7 +30,7 @@ public class TurnGPS {
         prevMotorClicks.put("botL", motorClicksPose.get("botL"));
     }
 
-    public void grabKinematics(Kinematics k){
+    public void grabKinematics(RevisedKinematics k){
         kinematics = k;
     }
 
@@ -189,10 +189,6 @@ public class TurnGPS {
             degrees = Math.floorMod((int)degrees, modulo);
         }
         return degrees;
-    }
-
-    public Kinematics.DriveType getDriveType() {
-        return kinematics.getDriveType();
     }
 
     public HashMap<String, Integer> getMotorClicksPose () {

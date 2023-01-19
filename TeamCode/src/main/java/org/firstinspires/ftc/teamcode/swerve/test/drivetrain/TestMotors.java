@@ -12,21 +12,28 @@ import org.firstinspires.ftc.teamcode.common.Button;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
-import org.firstinspires.ftc.teamcode.swerve.teleop.RevisedKinematics;
+import org.firstinspires.ftc.teamcode.common.kinematics.RevisedKinematics;
 
 @TeleOp(name="Test Motors", group="Drive")
 //@Disabled
 public class TestMotors extends OpMode{
     /* Declare OpMode members. */
     HardwareDrive robot = new HardwareDrive();
-    GlobalPosSystem posSystem;
     RevisedKinematics kinematics;
+    GlobalPosSystem posSystem;
     Constants constants = new Constants();
     private double[] posData = new double[4];
 
     private ElapsedTime runtime = new ElapsedTime();
     int distanceClicks;
     int rotClicks;
+
+    double avgClicksPerLoop = 0;
+    double avgClicksPerSecond = 0;
+    double prevClicks = 0;
+    int loopCounter = 0;
+    ElapsedTime avgCliskPerLoopTimer = new ElapsedTime();
+    double prevTime = 0;
 
     Button x = new Button();
     Button y = new Button();
@@ -44,19 +51,24 @@ public class TestMotors extends OpMode{
     public void init() { //When "init" is clicked
         robot.init(hardwareMap);
         posSystem = new GlobalPosSystem(robot);
-        kinematics = new RevisedKinematics(posSystem);
+//        kinematics = new RevisedKinematics(posSystem);
         posSystem.grabKinematics(kinematics);
-        kinematics.leftThrottle = -1;
-        kinematics.rightThrottle = 1;
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();
 
         double distance = constants.WHEEL_CIRCUMFERENCE;
-        double rot = 0;
-        distanceClicks = (int)(distance * constants.CLICKS_PER_INCH); //rotation clicks
+        double rot = 90;
+//        distanceClicks = (int)(distance * constants.CLICKS_PER_INCH); //rotation clicks
+//        rotClicks = (int)(rot * constants.CLICKS_PER_DEGREE);
+        distanceClicks=  (int)(distance * constants.CLICKS_PER_INCH);
         rotClicks = (int)(rot * constants.CLICKS_PER_DEGREE);
+//        drive(distanceClicks, rotClicks);
 
-        drive(distanceClicks, rotClicks);
+
+        robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     @Override
@@ -67,6 +79,7 @@ public class TestMotors extends OpMode{
 
     @Override
     public void start() { //When "start" is pressed
+        avgCliskPerLoopTimer.reset();
     }
 
     @Override
@@ -103,6 +116,10 @@ public class TestMotors extends OpMode{
         telemetry.addData("TopR Mode", robot.topR.getMode());
         telemetry.addData("BotR Mode", robot.botR.getMode());
 
+        telemetry.addData("Average Clicks per Loop", avgClicksPerLoop);
+        telemetry.addData("Average Clicks per Second", avgClicksPerSecond);
+
+
         telemetry.update();
     }
 
@@ -116,19 +133,34 @@ public class TestMotors extends OpMode{
 
 
     void DriveTrainPowerEncoder(){
+        loopCounter++;
+
+        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - constants.SPIN_CLICK_FACTOR);
+        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + constants.SPIN_CLICK_FACTOR);
+        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() - constants.SPIN_CLICK_FACTOR);
+        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + constants.SPIN_CLICK_FACTOR);
+
         posSystem.calculatePos();
 
-        robot.botL.setPower(0.5);
-        robot.topL.setPower(0.5);
-        robot.botR.setPower(0.5);
-        robot.topR.setPower(0.5);
+        robot.botL.setPower(1);
+        robot.topL.setPower(1);
+        robot.botR.setPower(1);
+        robot.topR.setPower(1);
+
+        avgClicksPerLoop = robot.topL.getCurrentPosition() / (double)loopCounter;
+        double deltaTime = (avgCliskPerLoopTimer.milliseconds() - prevTime) / 1000.0;
+        double deltaClicks = robot.topL.getCurrentPosition() / (double)prevClicks;
+        avgClicksPerSecond = deltaClicks / deltaTime;
+
+        prevTime = avgCliskPerLoopTimer.milliseconds();
+        prevClicks = robot.topL.getCurrentPosition();
     }
 
-    public void drive(int distanceClicks, int rotClicks){
-        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - (distanceClicks * kinematics.leftThrottle) + rotClicks);
-        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + (distanceClicks * kinematics.leftThrottle) + rotClicks);
-        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() - (distanceClicks * kinematics.rightThrottle) + rotClicks);
-        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + (distanceClicks * kinematics.rightThrottle) + rotClicks);
+    public void drive(int distanceClicks, int rotClicks) {
+        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - distanceClicks + rotClicks);
+        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + distanceClicks + rotClicks);
+        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() - distanceClicks + rotClicks);
+        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + distanceClicks + rotClicks);
 
         robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);

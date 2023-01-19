@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.Accelerator;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
-import org.firstinspires.ftc.teamcode.common.kinematics.drive.Kinematics;
+import org.firstinspires.ftc.teamcode.common.kinematics.RevisedKinematics;
 import org.firstinspires.ftc.teamcode.common.Reset;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.Button;
@@ -23,7 +23,7 @@ public class SwerveCode extends OpMode{
     /* Declare OpMode members. */
     HardwareDrive robot = new HardwareDrive();
     GlobalPosSystem posSystem;
-    Kinematics kinematics;
+    RevisedKinematics kinematics;
     private double[] posData = new double[4];
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -63,7 +63,7 @@ public class SwerveCode extends OpMode{
     public void init() { //When "init" is clicked
         robot.init(hardwareMap);
         posSystem = new GlobalPosSystem(robot);
-        kinematics = new Kinematics(posSystem);
+//        kinematics = new RevisedKinematics(posSystem);
         posSystem.grabKinematics(kinematics);
         reset = new Reset(robot,posSystem);
 
@@ -113,6 +113,9 @@ public class SwerveCode extends OpMode{
 
         double[] posData = posSystem.getPositionArr();
 
+        telemetry.addData("abrArm Clicks", robot.abr.getCurrentPosition());
+        telemetry.addData("ablArm Clicks", robot.abl.getCurrentPosition());
+
         telemetry.addData("Xpos", posData[0]);
         telemetry.addData("Ypos", posData[1]);
         telemetry.addData("Left W", posData[2]);
@@ -125,10 +128,10 @@ public class SwerveCode extends OpMode{
         telemetry.addData("botR clicks", robot.botR.getCurrentPosition());
         telemetry.addData("Power", power);
 
-        telemetry.addData("target topL", targetTopL);
-        telemetry.addData("target botL", targetBotL);
-        telemetry.addData("target topR", targetTopR);
-        telemetry.addData("target botR", targetBotR);
+        telemetry.addData("target topL", robot.topL.getTargetPosition() - robot.topL.getCurrentPosition());
+        telemetry.addData("target botL", robot.botL.getTargetPosition() - robot.botL.getCurrentPosition());
+        telemetry.addData("target topR", robot.topR.getTargetPosition() - robot.topR.getCurrentPosition());
+        telemetry.addData("target botR", robot.botR.getTargetPosition() - robot.botR.getCurrentPosition());
 
         telemetry.addData("isBusy", robot.wheelsAreBusy());
 
