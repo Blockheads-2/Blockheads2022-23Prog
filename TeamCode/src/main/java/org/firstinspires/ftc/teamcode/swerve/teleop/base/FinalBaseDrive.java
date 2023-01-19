@@ -281,7 +281,6 @@ public class FinalBaseDrive extends OpMode{
     }
 
     void DriveTrainPowerEncoder(){
-        posSystem.calculatePos();
         kinematics.logic(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, -gamepad1.right_stick_y, gamepad1.right_trigger, -gamepad1.left_trigger); //wheelAllignment is one loop late.
 
         targetClicks = kinematics.getClicks();
