@@ -32,6 +32,7 @@ public class SwervePod {
     private double currentW = 0;
     private double currentR = 0;
     public double optimizedCurrentW = 0;
+    public double robotCentricCurrentW = 0;
     public double controlHeaderReference = 0;
     public double nonRightStickCurrentW = 0;
     public boolean initPole = true;
@@ -74,9 +75,10 @@ public class SwervePod {
         pid.setTargets(kp, ki, kd);
     }
 
-    public void setCurrents(double currentW, double currentR){
+    public void setCurrents(double currentW, double currentR, double robotCentricCurrentW){
         this.currentW = currentW;
         this.currentR = currentR;
+        this.robotCentricCurrentW = robotCentricCurrentW;
     }
 
     public void setRotClicks(double target){
@@ -329,13 +331,12 @@ public class SwervePod {
         if (power > constants.POWER_LIMITER) power = constants.POWER_LIMITER;
         else if (power < -constants.POWER_LIMITER) power = -constants.POWER_LIMITER;
 
-//        if (side == Side.RIGHT) {
-//            power *= constants.RIGHT_SIDE_LIMITER;
-//            spinClicksTarget *= constants.RIGHT_SIDE_LIMITER;
-//        }
+        if (side == Side.RIGHT) {
+            spinClicksTarget *= constants.RIGHT_SIDE_LIMITER;
+        }
 
         throttle = Math.abs(throttle);
-        power *= throttle;
+//        power *= throttle;
         spinClicksTarget = Math.abs(spinClicksTarget) * direction * throttle;
 
         output[0] = spinClicksTarget;
@@ -351,13 +352,12 @@ public class SwervePod {
         if (power > constants.POWER_LIMITER) power = constants.POWER_LIMITER;
         else if (power < -constants.POWER_LIMITER) power = -constants.POWER_LIMITER;
 
-//        if (side == Side.RIGHT) {
-//            power *= constants.RIGHT_SIDE_LIMITER;
-//            spinClicksTarget *= constants.RIGHT_SIDE_LIMITER;
-//        }
+        if (side == Side.RIGHT) {
+            spinClicksTarget *= constants.RIGHT_SIDE_LIMITER;
+        }
 
         throttle = Math.abs(throttle);
-        power *= throttle;
+//        power *= throttle;
         spinClicksTarget = spinClicksTarget * direction * throttle;
 
         output[0] = spinClicksTarget;

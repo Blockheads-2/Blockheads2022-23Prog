@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.common.constantsPKG;
 
-import com.acmerobotics.dashboard.config.Config;
+//import com.acmerobotics.dashboard.config.Config;
 
-@Config
+//@Config
 public class Constants {
     public double LOOP_ITERATION_TIME = 0.025; //must test later on
 

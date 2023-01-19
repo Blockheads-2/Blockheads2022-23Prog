@@ -25,8 +25,11 @@ public class GlobalPosSystem {
 
     HardwareDrive robot;
 
-    private double optimizedCurrentWR = 0;
-    private double optimizedCurrentWL = 0;
+    public double optimizedCurrentWR = 0;
+    public double optimizedCurrentWL = 0;
+
+    public double robotCentricCurrentL = 0;
+    public double robotCentricCurrentR = 0;
 
     private double distanceTravelledR = 0; //For auto.  Should be reset after every "action."  Represents how much the wheel has spinned.
     private double distanceTravelledL = 0;
@@ -62,6 +65,8 @@ public class GlobalPosSystem {
         updateHash();
         calculateWheel();
         calculateHeader();
+        robotCentricCurrentL = positionArr[2];
+        robotCentricCurrentR = positionArr[3];
         positionArr[2] = clamp(positionArr[2] +  positionArr[4]);
         positionArr[3] = clamp(positionArr[3] + positionArr[4]);
         calculateRobot();
@@ -187,10 +192,10 @@ public class GlobalPosSystem {
     }
 
     public boolean specialSpliningCondition(){
-        double nonRobotCentricCurrentL = clamp(optimizedCurrentWL - positionArr[4]);
-        double nonRobotCentricCurrentR = clamp(optimizedCurrentWR - positionArr[4]);
-        return ((Math.abs(nonRobotCentricCurrentL - 90) <= 8 && Math.abs(nonRobotCentricCurrentR - 90) <= 8) ||
-                (Math.abs(nonRobotCentricCurrentL + 90) <= 8 && Math.abs(nonRobotCentricCurrentR + 90) <= 8));
+        robotCentricCurrentL = clamp(optimizedCurrentWL - positionArr[4]);
+        robotCentricCurrentR = clamp(optimizedCurrentWR - positionArr[4]);
+        return ((Math.abs(robotCentricCurrentL - 90) <= 8 && Math.abs(robotCentricCurrentR - 90) <= 8) ||
+                (Math.abs(robotCentricCurrentL + 90) <= 8 && Math.abs(robotCentricCurrentR + 90) <= 8));
     }
 
     public void resetHeader(){
