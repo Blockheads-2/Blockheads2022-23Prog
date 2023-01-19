@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.common.constantsPKG;
 
+
+//import com.acmerobotics.dashboard.config.Config;
+
+//@Config
 public class Constants {
     public double LOOP_ITERATION_TIME = 0.025; //must test later on
 
@@ -16,6 +20,7 @@ public class Constants {
     public double MAX_VELOCITY_DT = 2700; // unit is clicks/sec
     public double clickTOLERANCE = 10; //number of clicks or degrees the robot can be off by
     public double degreeTOLERANCE = 5;
+    public double allignmentTolerance = 13;
 
     public double MAX_VELOCITY;
 

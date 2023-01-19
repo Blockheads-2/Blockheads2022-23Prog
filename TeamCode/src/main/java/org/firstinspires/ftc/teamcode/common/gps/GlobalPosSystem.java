@@ -6,6 +6,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
+import org.firstinspires.ftc.teamcode.common.kinematics.SwervePod;
 import org.firstinspires.ftc.teamcode.common.kinematics.drive.Kinematics;
 import org.firstinspires.ftc.teamcode.swerve.teleop.RevisedKinematics;
 
@@ -25,6 +26,8 @@ public class GlobalPosSystem {
 
     public double optimizedCurrentWR = 0;
     public double optimizedCurrentWL = 0;
+    public double robotCentricCurrentL = 0;
+    public double robotCentricCurrentR = 0;
 
     private double distanceTravelledR = 0; //For auto.  Should be reset after every "action."  Represents how much the wheel has spinned.
     private double distanceTravelledL = 0;
@@ -62,6 +65,11 @@ public class GlobalPosSystem {
         updateHash();
         calculateWheel();
         calculateHeader();
+
+        robotCentricCurrentL = positionArr[2];
+        robotCentricCurrentR = positionArr[3];
+        positionArr[2] = clamp(positionArr[2] +  positionArr[4]);
+        positionArr[3] = clamp(positionArr[3] + positionArr[4]);
         calculateRobot();
     }
 
@@ -157,6 +165,35 @@ public class GlobalPosSystem {
 
     public double getRightWheelW(){
         return positionArr[3];
+    }
+
+
+    public boolean isAlligned(){
+        double error = SwervePod.changeAngle(optimizedCurrentWL, optimizedCurrentWR);
+
+        return (Math.abs(error) <= constants.allignmentTolerance);
+    }
+
+    public void setOptimizedCurrentW(double angleR, double angleL){
+        optimizedCurrentWR = angleR;
+        optimizedCurrentWL = angleL;
+    }
+
+    public boolean eligibleForTurning(){
+        return (Math.abs(SwervePod.changeAngle(optimizedCurrentWL, positionArr[4])) <= constants.allignmentTolerance &&
+                Math.abs(SwervePod.changeAngle(optimizedCurrentWR, positionArr[4])) <= constants.allignmentTolerance &&
+                isAlligned());
+    }
+
+    public boolean specialSpliningCondition(){
+        robotCentricCurrentL = clamp(optimizedCurrentWL - positionArr[4]);
+        robotCentricCurrentR = clamp(optimizedCurrentWR - positionArr[4]);
+        return ((Math.abs(robotCentricCurrentL - 90) <= 8 && Math.abs(robotCentricCurrentR - 90) <= 8) ||
+                (Math.abs(robotCentricCurrentL + 90) <= 8 && Math.abs(robotCentricCurrentR + 90) <= 8));
+    }
+
+    public void resetHeader(){
+        positionArr[4] = 0;
     }
 
     public void hardResetGPS(){

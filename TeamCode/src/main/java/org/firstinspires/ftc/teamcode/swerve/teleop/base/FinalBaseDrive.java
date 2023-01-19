@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.swerve.teleop.base;
 
 import android.view.View;
 
+//import com.acmerobotics.dashboard.FtcDashboard;
+//import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -155,6 +157,9 @@ public class FinalBaseDrive extends OpMode{
         telemetry.addData("Right W", posSystem.getRightWheelW());
         telemetry.addData("Optimized Left W", posSystem.optimizedCurrentWL);
         telemetry.addData("Optimized Right W", posSystem.optimizedCurrentWR);
+        telemetry.addData("robotic centric L", posSystem.robotCentricCurrentL);
+        telemetry.addData("robotic centric R", posSystem.robotCentricCurrentR);
+
 //        telemetry.addData("Non left wheel Left W", PodL.nonRightStickCurrentW);
 //        telemetry.addData("Non right wheel Right W", PodR.nonRightStickCurrentW);
 //        telemetry.addData("R reference point", PodR.controlHeaderReference);
