@@ -25,8 +25,8 @@ public class GlobalPosSystem {
 
     HardwareDrive robot;
 
-    private double optimizedCurrentWR = 0;
-    private double optimizedCurrentWL = 0;
+    public double optimizedCurrentWR = 0;
+    public double optimizedCurrentWL = 0;
 
     private double distanceTravelledR = 0; //For auto.  Should be reset after every "action."  Represents how much the wheel has spinned.
     private double distanceTravelledL = 0;

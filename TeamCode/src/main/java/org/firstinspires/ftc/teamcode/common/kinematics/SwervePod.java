@@ -352,7 +352,7 @@ public class SwervePod {
         else if (power < -constants.POWER_LIMITER) power = -constants.POWER_LIMITER;
 
 //        if (side == Side.RIGHT) {
-//            power *= constants.RIGHT_SIDE_LIMITER;
+//            power *= constants.RIGHT_SIDE_LIMITER; //probably only 0.9% the spinClicksTarget, as we want the rotateing speed / target to be the same.
 //            spinClicksTarget *= constants.RIGHT_SIDE_LIMITER;
 //        }
 

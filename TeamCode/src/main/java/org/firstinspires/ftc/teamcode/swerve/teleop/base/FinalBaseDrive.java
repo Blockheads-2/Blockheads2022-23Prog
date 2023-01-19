@@ -210,8 +210,8 @@ public class FinalBaseDrive extends OpMode{
         telemetry.addData("Y pos", posSystem.getPositionArr()[1]);
         telemetry.addData("Left W",  posSystem.getLeftWheelW());
         telemetry.addData("Right W", posSystem.getRightWheelW());
-        telemetry.addData("Optimized Left W", PodL.optimizedCurrentW);
-        telemetry.addData("Optimized Right W", PodR.optimizedCurrentW);
+        telemetry.addData("Optimized Left W", posSystem.optimizedCurrentWL);
+        telemetry.addData("Optimized Right W", posSystem.optimizedCurrentWR);
 //        telemetry.addData("Non left wheel Left W", PodL.nonRightStickCurrentW);
 //        telemetry.addData("Non right wheel Right W", PodR.nonRightStickCurrentW);
 //        telemetry.addData("R reference point", PodR.controlHeaderReference);
