@@ -1,10 +1,10 @@
-//package org.firstinspires.ftc.teamcode.common.kinematics.arm;
+//package org.firstinspires.ftc.teamcode.swerve.common.kinematics.arm;
 //
-//import org.firstinspires.ftc.teamcode.common.HardwareDrive;
-//import org.firstinspires.ftc.teamcode.common.kinematics.drive.Kinematics;
+//import org.firstinspires.ftc.teamcode.swerve.common.HardwareDrive;
+//import org.firstinspires.ftc.teamcode.swerve.common.kinematics.drive.Kinematics;
 //import org.firstinspires.ftc.teamcode.auto.Math.LinearMath;
 //import org.firstinspires.ftc.teamcode.auto.Math.SplineMath;
-//import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
+//import org.firstinspires.ftc.teamcode.swerve.common.gps.GlobalPosSystem;
 //
 //public class AutoKinematics{
 //    SplineMath splinemath;

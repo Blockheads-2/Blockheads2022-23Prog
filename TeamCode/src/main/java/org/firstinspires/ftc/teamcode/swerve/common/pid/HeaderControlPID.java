@@ -1,7 +1,7 @@
-package org.firstinspires.ftc.teamcode.common.pid;
+package org.firstinspires.ftc.teamcode.swerve.common.pid;
 
-import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
-import org.firstinspires.ftc.teamcode.common.kinematics.SwervePod;
+import org.firstinspires.ftc.teamcode.swerve.common.constantsPKG.Constants;
+import org.firstinspires.ftc.teamcode.swerve.common.kinematics.SwervePod;
 
 public class HeaderControlPID {
     //the purpose of this class is to keep the header pointint straight.

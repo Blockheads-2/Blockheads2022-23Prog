@@ -1,18 +1,12 @@
-package org.firstinspires.ftc.teamcode.common.kinematics;
+package org.firstinspires.ftc.teamcode.swerve.common.kinematics;
 
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.checkerframework.checker.units.qual.C;
-import org.firstinspires.ftc.teamcode.common.Accelerator;
-import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
-import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
-import org.firstinspires.ftc.teamcode.common.pid.HeaderControlPID;
-import org.firstinspires.ftc.teamcode.common.pid.SnapSwerveModulePID;
+import org.firstinspires.ftc.teamcode.swerve.common.Accelerator;
+import org.firstinspires.ftc.teamcode.swerve.common.constantsPKG.Constants;
+import org.firstinspires.ftc.teamcode.swerve.common.pid.HeaderControlPID;
+import org.firstinspires.ftc.teamcode.swerve.common.pid.SnapSwerveModulePID;
 import org.firstinspires.ftc.teamcode.swerve.auto.Math.LinearMath;
 import org.firstinspires.ftc.teamcode.swerve.auto.Math.SplineMath;
 import org.firstinspires.ftc.teamcode.swerve.auto.Math.TurnMath;
-
-import java.util.HashMap;
 
 public class SwervePod {
     Constants constants = new Constants();
@@ -75,10 +69,9 @@ public class SwervePod {
         pid.setTargets(kp, ki, kd);
     }
 
-    public void setCurrents(double currentW, double currentR, double robotCentricCurrentW){
+    public void setCurrents(double currentW, double currentR){
         this.currentW = currentW;
         this.currentR = currentR;
-        this.robotCentricCurrentW = robotCentricCurrentW;
     }
 
     public void setRotClicks(double target){
