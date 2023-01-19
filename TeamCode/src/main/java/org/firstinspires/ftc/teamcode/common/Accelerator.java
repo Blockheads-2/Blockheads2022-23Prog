@@ -1,41 +1,81 @@
 package org.firstinspires.ftc.teamcode.common;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
+import org.firstinspires.ftc.teamcode.common.kinematics.drive.SimplifiedKinematics;
 
 
 public class Accelerator {
     ElapsedTime accelerationTimer;
-    Constants constants = new Constants();
-    private boolean actuallyAccelerate = false;
-    private double accelTime = constants.accelTime; //the higher this number is, the longer it takes to send 100% of the calculated power.
+    private boolean isAccelerateCycle = false;
+
+    SimplifiedKinematics.DriveType currentDriveType = SimplifiedKinematics.DriveType.NOT_INITIALIZED;
+    SimplifiedKinematics.DriveType prevDriveType = SimplifiedKinematics.DriveType.NOT_INITIALIZED;
 
     public Accelerator(){
         accelerationTimer = new ElapsedTime();
     }
 
-    public void actuallyAccelerate(boolean accelerate){
-        this.actuallyAccelerate = accelerate;
-    }
 
-    public void setAccelFactor(double factor){
-        accelTime = factor;
-    }
-
-
-    public double update(double power, double turnAmountLeft) {
-        if (actuallyAccelerate && Math.abs(turnAmountLeft) > constants.degreeTOLERANCE) {
-            if (power == 0) {
-                accelerationTimer.reset();
-                return 0.0;
-            }
-
-            double accelerationFactor = (Math.pow(accelerationTimer.seconds(), 0.5) / accelTime) + 0.3;
-            power *= accelerationFactor;
+    public double update(double power){
+        if (power == 0) {
+            accelerationTimer.reset();
+            return 0.0;
         }
-        if (power > constants.POWER_LIMITER) power = constants.POWER_LIMITER;
-        else if (power < -constants.POWER_LIMITER) power = -constants.POWER_LIMITER;
+
+        double accelerationFactor = (Math.pow(accelerationTimer.seconds(), 0.5)/ Constants.accelTime ) + 0.5;
+        power *= accelerationFactor;
+
+        if (power > 1) power = 1;
+        else if (power < -1) power = -1;
 
         return power;
     }
+
+
+    public double update(double power, SimplifiedKinematics.DriveType dType){
+        prevDriveType = currentDriveType;
+        currentDriveType = dType;
+
+        if (power == 0) {
+            isAccelerateCycle = false;
+            accelerationTimer.reset();
+            return 0.0;
+        }
+
+        if (prevDriveType != currentDriveType){
+            accelerationTimer.reset();
+            isAccelerateCycle = true;
+        }
+
+        double accelerationFactor = (Math.pow(accelerationTimer.seconds(), 3)/3.0) + 0.1;
+        power *= accelerationFactor;
+
+        if (power > 1) power = 1;
+        else if (power < -1) power = -1;
+
+        return power;
+    }
+
+//    public double update(double power){
+//        if (power == 0) {
+//            isAccelerateCycle = false;
+//            accelerationTimer.reset();
+//            return 0.0;
+//        }
+//
+//        if (!isAccelerateCycle){
+//            accelerationTimer.reset();
+//            isAccelerateCycle = true;
+//        }
+//
+//        accelerationFactor = (Math.pow(accelerationTimer.seconds(), 3)/3.0) + 0.1;
+//        power *= accelerationFactor;
+//
+//        if (power > 1) power = 1;
+//        else if (power < -1) power = -1;
+//
+//        return power;
+//    }
 }

@@ -4,65 +4,47 @@ import android.view.View;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
-import org.firstinspires.ftc.teamcode.common.kinematics.RevisedKinematics;
-import org.firstinspires.ftc.teamcode.swerve.auto.opmodes.AutoHub;
+import org.firstinspires.ftc.teamcode.common.kinematics.drive.AutoKinematics;
+import org.firstinspires.ftc.teamcode.swerve.auto.opmodes.AutoHubJR;
 
 @Autonomous (name = "Auto Test", group = "Drive")
 public class AutoTest extends LinearOpMode {
 
+    HardwareDrive robot = new HardwareDrive();
+    HardwareMap hardwareMap;
     Constants constants = new Constants();
-    AutoHub dispatch;
     GlobalPosSystem posSystem;
+    AutoHubJR dispatch;
 
     View relativeLayout;
 
+
     @Override
     public void runOpMode() throws InterruptedException {
-        dispatch = new AutoHub(this);
 
-        telemetry.addData("Status", "Waiting on Camera");
-        telemetry.update();
+        robot.init(hardwareMap);
+        posSystem = new GlobalPosSystem(robot);
+        dispatch = new AutoHubJR(this);
 
+        robot.topL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.botL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.topR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.botR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        while (!opModeIsActive()) { //checks if play hasn't been pressed (in init stage)
-            dispatch.moveToInit();
-        }
-        dispatch.resetArmEncoderPos();
+        robot.topL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.botL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.topR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.botR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         waitForStart();
 
-        Thread rigidArmThread = new Thread(dispatch);   // Using the constructor Thread(Runnable r)
-        rigidArmThread.start();
-
-//        Thread gpsUpdateThread = new Thread(posSystem);
-//        gpsUpdateThread.start();
-
-        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.5, RevisedKinematics.ArmType.HOLD);
-        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 27, 0, 0.5, RevisedKinematics.ArmType.HOLD);
-        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 0, 0.5, RevisedKinematics.ArmType.HOLD);
-        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 15, 0, 0.5, RevisedKinematics.ArmType.HOLD);
-
-//        dispatch.Move(RevisedKinematics.DriveType.TURN, 0, 0, -90, 0.5, RevisedKinematics.ArmType.HOLD);
-
-//        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 27, 0, 0.4, RevisedKinematics.ArmType.HOLD);
-
-        /*
-        working movement types:
-        - SNAP
-        - LINEAR
-        - STOP
-        - Arm movements
-         */
-
-//        dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0, RevisedKinematics.ArmType.LOW);
-//        dispatch.Turn(90, 0.7);
-
-        rigidArmThread.interrupt();
-//        gpsUpdateThread.interrupt();
-
+        dispatch.Move(AutoKinematics.DriveType.LINEAR, 10, 10, 0, 1);
     }
 }

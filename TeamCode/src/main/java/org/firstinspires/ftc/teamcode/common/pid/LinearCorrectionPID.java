@@ -4,29 +4,28 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ArmPID {
+public class LinearCorrectionPID {
     private double kp, ki, kd;
     private double pError;
 
     private ElapsedTime timer = new ElapsedTime();
-    private double targetClicks = Integer.MAX_VALUE;
-    private double initClicks = 0;
-
+    private double referenceAngle;
     private double prevError = 0;
     private double prevTime = 0;
     private double accumulatedError = 0;
 
+
     private final static Logger LOGGER =
             Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-    public ArmPID(){
+    public LinearCorrectionPID(){
         timer.reset();
     }
 
-    public double update(double currClicks){
-        double deltaClicks = currClicks - initClicks;
+    public double update(double currentOrientation){
         //proportion
-        double error = targetClicks - deltaClicks;
+        double error = referenceAngle - currentOrientation;
+        error = clamp(error);
 
         //integral
         accumulatedError = Math.abs(accumulatedError) * Math.signum(error); //ensures that accumulatedError and the error have the same sign
@@ -39,17 +38,27 @@ public class ArmPID {
         prevError = error;
         prevTime = timer.milliseconds();
 
-        double motorPower = Math.tanh(kp * error + ki * accumulatedError + kd * slope) * 0.4 + (0.1 * Math.signum(error));
-        //double motorPower =  Math.tanh(kp * error + ki * accumulatedError + kd * slope);
+        double motorPower = Math.tanh(kp * error + ki * accumulatedError + kd * slope);
+
+        if (Math.abs(motorPower) <= 0.1) motorPower = 0;
 
         return motorPower;
     }
 
-    public void setTargets(double targetClicks, double initClicks, double kp, double ki, double kd){
+    public void setValues(double referenceAngle, double kp, double ki, double kd){
         this.kp = kp;
         this.ki = ki;
         this.kd = kd;
-        this.targetClicks = targetClicks;
-        if (this.targetClicks != targetClicks) this.initClicks = initClicks;
+        this.referenceAngle = referenceAngle;
+    }
+
+    public double clamp(double degrees){
+        if (Math.abs(degrees) >= 360) degrees %= 360;
+
+        if (degrees < -179 || degrees > 180) {
+            int modulo = (int)Math.signum(degrees) * -180;
+            degrees = Math.floorMod((int)degrees, modulo);
+        }
+        return degrees;
     }
 }

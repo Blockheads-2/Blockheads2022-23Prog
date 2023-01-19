@@ -37,7 +37,7 @@ public class SpinPID {
         prevError = error;
         prevTime = timer.milliseconds();
 
-        double motorPower = Math.tanh(kp * error + ki * accumulatedError - kd * slope) * 0.9 + (0.1 * Math.signum(error));
+        double motorPower = Math.tanh(kp * error + ki * accumulatedError + kd * slope) * 0.9 + (0.1 * Math.signum(error));
         //multiply by 0.9 because robot is heavy (heavy + friction = wheels slide while turning = inaccurate). The 0.9 somewhat compensates for that
         //0.1 * Math.signum(error) gives the robot a little kick towards the direction of the error
         //probably not necessary for swerve...
