@@ -80,6 +80,11 @@ public class SwervePod {
         rotClicksTarget = turnAmount * constants.CLICKS_PER_DEGREE;
     }
 
+    public void robotCentricSetRotClicks(double target){
+        turnAmount = wheelOptimization(target, robotCentricCurrentW);
+        rotClicksTarget = turnAmount * constants.CLICKS_PER_DEGREE;
+    }
+
     public void forceSetRotClicks(int clicks){
         rotClicksTarget = clicks;
     }
@@ -92,22 +97,25 @@ public class SwervePod {
 
         if (turn) {
             if (eligibleForTurning) {
-                setRotClicks(currentR);
+                robotCentricSetRotClicks(0);
                 //            leftThrottle = leftThrottle;
                 if (rightStickX < 0 && side == Side.LEFT) direction *= -1;
                 else if (rightStickX >= 0 && side == Side.RIGHT) direction *= -1;
 
                 this.spinClicksTarget = Math.abs(rightStickX) * constants.SPIN_CLICK_FACTOR;
                 power = rightStickX;
+
+                driveType = RevisedKinematics.DriveType.TURN;
             } else {
                 setRotClicks(currentR);
                 spinClicksTarget = 0;
                 power = 1.0;
+                driveType = RevisedKinematics.DriveType.NOT_INITIALIZED;
             }
 //            controlHeader.calculateThrottle(pos, currentR, controlHeaderReference, true);
 //            controlHeaderReference = currentR;
 
-            driveType = RevisedKinematics.DriveType.TURN;
+//            driveType = RevisedKinematics.DriveType.TURN;
             return driveType;
         } else if (spline){
 //            if (specialSpliningCondition){

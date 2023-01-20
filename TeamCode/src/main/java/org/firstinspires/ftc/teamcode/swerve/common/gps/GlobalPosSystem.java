@@ -168,8 +168,8 @@ public class GlobalPosSystem {
 
 
     public boolean isAlligned(boolean initPoleL, boolean initPoleR){
-        double optimizedCurrentWL = positionArr[2];
-        double optimizedCurrentWR = positionArr[3];
+        double optimizedCurrentWL = clamp(positionArr[2] + positionArr[4]);
+        double optimizedCurrentWR = clamp(positionArr[3] + positionArr[4]);
         if (!initPoleL) optimizedCurrentWL = clamp(positionArr[2] + 180);
         if (!initPoleR) optimizedCurrentWR = clamp(positionArr[3] + 180);
 
