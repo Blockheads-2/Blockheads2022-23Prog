@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.swerve.common.kinematics;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.swerve.common.Accelerator;
 import org.firstinspires.ftc.teamcode.swerve.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.swerve.common.gps.GlobalPosSystem;
@@ -10,10 +11,12 @@ import org.firstinspires.ftc.teamcode.swerve.teleop.TrackJoystick;
 public class RevisedKinematics {
     protected Constants constants = new Constants();
 
-    public SwervePod PodL;
-    public SwervePod PodR;
+    SwervePod PodL;
+    SwervePod PodR;
 
-    public HeaderControlPID controlHeader;
+    HeaderControlPID controlHeader;
+
+    Telemetry telemetry;
 
     double targetX;
     double targetY;
@@ -45,10 +48,10 @@ public class RevisedKinematics {
     //current orientation
     GlobalPosSystem posSystem;
 
-    public Accelerator accelerator;
+    Accelerator accelerator;
     TrackJoystick joystickTracker;
 
-    public boolean firstMovement = true;
+    private boolean firstMovement = true;
 //    public boolean resestCycle = false;
 
     //arm stuff!
@@ -81,6 +84,12 @@ public class RevisedKinematics {
         this.PodR = podR;
 
         controlHeader = new HeaderControlPID(posSystem.getMotorClicks());
+    }
+
+    public void grabTelemetry(Telemetry t){
+        telemetry = t;
+        PodL.grabTelemetry(t);
+        PodR.grabTelemetry(t);
     }
 
     public double target = 0;
@@ -118,10 +127,18 @@ public class RevisedKinematics {
         boolean shouldSpline = (lx != 0 || ly != 0) && (rx != 0);
         boolean specialSpliningCondition = posSystem.specialSpliningCondition(PodL.getRobotCentricCurrentW(), PodR.getRobotCentricCurrentW());
 
+        telemetry.addData("Splining Special Condition", specialSpliningCondition);
+        telemetry.addData("IsAlligned", posSystem.isAlligned(PodL.getOptimizedCurrentW(), PodR.getOptimizedCurrentW()));
+        telemetry.addData("Eligible for turning", eligibleForTurning);
+        telemetry.addData("First movement", firstMovement);
+
         //determining spin clicks and spin power
         double power = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
         type = PodL.setSpinClicksAndPower(power, rt, shouldTurn, eligibleForTurning, shouldSpline, specialSpliningCondition, rx, posSystem.getMotorClicks());
         type = PodR.setSpinClicksAndPower(power, rt, shouldTurn, eligibleForTurning, shouldSpline, specialSpliningCondition, rx, posSystem.getMotorClicks());
+
+        telemetry.addData("Drive Type", getDriveType());
+
 //        PodL.setThrottleUsingPodLReference(PodR, shouldTurn, shouldSpline);
 
         //resetting modules when:

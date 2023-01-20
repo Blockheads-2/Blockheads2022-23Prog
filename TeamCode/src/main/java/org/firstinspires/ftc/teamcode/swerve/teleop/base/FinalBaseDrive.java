@@ -102,6 +102,7 @@ public class FinalBaseDrive extends OpMode{
         kinematics = new RevisedKinematics(posSystem, PodL, PodR);
         posSystem.grabKinematics(kinematics);
         reset = new Reset(robot, posSystem);
+        kinematics.grabTelemetry(telemetry);
 
         robot.at.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.at.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -183,13 +184,6 @@ public class FinalBaseDrive extends OpMode{
 
     void UpdateTelemetry(){
 //        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        telemetry.addData("Splining Special Condition", posSystem.specialSpliningCondition(PodL.getRobotCentricCurrentW(), PodR.getRobotCentricCurrentW()));
-        telemetry.addData("IsAlligned", posSystem.isAlligned(PodL.getOptimizedCurrentW(), PodR.getOptimizedCurrentW()));
-        telemetry.addData("Eligible for turning", posSystem.eligibleForTurning(PodL.getOptimizedCurrentW(), PodR.getOptimizedCurrentW(), PodL.getRobotCentricCurrentW(), PodR.getRobotCentricCurrentW()));
-        telemetry.addData("First movement", kinematics.firstMovement);
-        telemetry.addData("PodL initpole", PodL.initPole);
-        telemetry.addData("PodR initPole", PodR.initPole);
-        telemetry.addData("Drive Type", kinematics.getDriveType());
 
 //        telemetry.addData("Leftstick X", gamepad1.left_stick_x);
 //        telemetry.addData("Leftstick Y", -gamepad1.left_stick_y);
@@ -215,9 +209,6 @@ public class FinalBaseDrive extends OpMode{
 //        telemetry.addData("Non right wheel Right W", PodR.nonRightStickCurrentW);
 //        telemetry.addData("R reference point", PodR.controlHeaderReference);
         telemetry.addData("R", posSystem.getPositionArr()[4]);
-
-        telemetry.addData("Spin Direction (Left)", PodL.direction);
-        telemetry.addData("Spin Direction (Right)", PodR.direction);
 //
         telemetry.addData("target", kinematics.target);
         telemetry.addData("Turn Amount (Left)", PodL.getTurnAmount());

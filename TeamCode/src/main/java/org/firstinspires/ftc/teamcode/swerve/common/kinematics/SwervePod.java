@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.swerve.common.kinematics;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.swerve.common.Accelerator;
 import org.firstinspires.ftc.teamcode.swerve.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.swerve.common.pid.HeaderControlPID;
@@ -16,6 +17,8 @@ public class SwervePod {
     public HeaderControlPID controlHeader;
     Accelerator accelerator;
 
+    Telemetry telemetry;
+
     public enum Side{
         RIGHT,
         LEFT
@@ -25,20 +28,20 @@ public class SwervePod {
     //teleop
     private double currentW = 0;
     private double currentR = 0;
-    public double optimizedCurrentW = 0;
-    public double robotCentricCurrentW = 0;
-    public double controlHeaderReference = 0;
-    public double nonRightStickCurrentW = 0;
-    public boolean initPole = true;
+    private double optimizedCurrentW = 0;
+    private double robotCentricCurrentW = 0;
+    private double controlHeaderReference = 0;
+    private double nonRightStickCurrentW = 0;
+    private boolean initPole = true;
 
     private double throttle = 0;
-    public int direction;
+    private int direction;
     private int initDirection;
     private double turnAmount = 0;
 
     private double power = 0;
-    public double spinClicksTarget = 0;
-    public double rotClicksTarget = 0;
+    private double spinClicksTarget = 0;
+    private double rotClicksTarget = 0;
 
     //auto
     private double distance = 0;
@@ -58,6 +61,10 @@ public class SwervePod {
         this.side = side;
         this.accelerator = accelerator;
         this.controlHeader = controlHeader;
+    }
+
+    public void grabTelemetry(Telemetry t){
+        this.telemetry = t;
     }
 
     public void setHeaderController(HeaderControlPID controlHeader){
@@ -148,6 +155,10 @@ public class SwervePod {
         }
 
         driveType = RevisedKinematics.DriveType.LINEAR;
+
+        telemetry.addData("Spin Direction " + (side == Side.RIGHT ? "R" : "L"), direction);
+        telemetry.addData("Pod" + (side == Side.RIGHT ? "R" : "L") + " initpole", initPole);
+
         return driveType;
     }
 
