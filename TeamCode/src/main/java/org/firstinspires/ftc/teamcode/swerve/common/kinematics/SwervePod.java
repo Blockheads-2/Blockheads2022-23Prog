@@ -107,7 +107,7 @@ public class SwervePod {
 
                 driveType = RevisedKinematics.DriveType.TURN;
             } else {
-                setRotClicks(currentR);
+                robotCentricSetRotClicks(0);
                 spinClicksTarget = 0;
                 power = 1.0;
                 driveType = RevisedKinematics.DriveType.NOT_INITIALIZED;
@@ -139,6 +139,7 @@ public class SwervePod {
 //            if (SwervePod.changeAngle(controlHeaderReference, currentR) > 30) controlHeaderReference = currentR;
 //            controlHeader.calculateThrottle(pos, currentR, controlHeaderReference, false);
 //            throttle = controlHeader.getThrottle(side);
+            if (side == Side.RIGHT) spinClicksTarget *= constants.RIGHT_SIDE_LIMITER; //move this so it only affects it when the robot is translating, not turning.
         }
 
         if (rightStickX == 0 && power == 0) {
@@ -340,10 +341,6 @@ public class SwervePod {
 
         if (power > constants.POWER_LIMITER) power = constants.POWER_LIMITER;
         else if (power < -constants.POWER_LIMITER) power = -constants.POWER_LIMITER;
-
-        if (side == Side.RIGHT) {
-            spinClicksTarget *= constants.RIGHT_SIDE_LIMITER; //move this so it only affects it when the robot is translating, not turning.
-        }
 
         throttle = Math.abs(throttle);
 //        power *= throttle;
