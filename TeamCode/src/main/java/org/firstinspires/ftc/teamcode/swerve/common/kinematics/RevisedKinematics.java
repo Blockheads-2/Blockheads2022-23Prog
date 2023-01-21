@@ -112,23 +112,26 @@ public class RevisedKinematics {
         //determining targets, and how much we want to turn
         target = joystickTracker.getAngle(lx, ly);
 
-        //determining rotational clicks
-        PodL.setRotClicks(target);
-        PodR.setRotClicks(target);
-
-//        boolean wheelsAreAlligned = posSystem.isAlligned();
-//        boolean eligibleForTurning = posSystem.eligibleForTurning(PodL.getPole(), PodR.getPole());
-//        boolean shouldTurn = (lx == 0 && ly == 0) && (rx != 0); //possible problem: the robot will "jitter" if its turning and then becomes not eligible for turning (may have to increase tolerance?)
-//        boolean shouldSpline = (lx != 0 || ly != 0) && (rx != 0);
-//        boolean specialSpliningCondition = posSystem.specialSpliningCondition(PodL.getPole(), PodR.getPole());
-
-        boolean eligibleForTurning = posSystem.eligibleForTurning(PodL.getOptimizedCurrentW(), PodR.getOptimizedCurrentW(), PodL.getRobotCentricCurrentW(), PodR.getRobotCentricCurrentW());
-        boolean shouldTurn = (lx == 0 && ly == 0) && (rx != 0);
+        boolean shouldTurn = (lx == 0 && ly == 0) && (rx != 0); //possible problem: the robot will "jitter" if its turning and then becomes not eligible for turning (may have to increase tolerance?)
         boolean shouldSpline = (lx != 0 || ly != 0) && (rx != 0);
-        boolean specialSpliningCondition = posSystem.specialSpliningCondition(PodL.getRobotCentricCurrentW(), PodR.getRobotCentricCurrentW());
+
+        //determining rotational clicks
+        if (!shouldTurn){
+            PodL.setRotClicks(target);
+            PodR.setRotClicks(target);
+        }
+
+        boolean eligibleForTurning = posSystem.eligibleForTurning(PodL.getPole(), PodR.getPole());
+
+        boolean specialSpliningCondition = posSystem.specialSpliningCondition(PodL.getPole(), PodR.getPole());
+
+//        boolean eligibleForTurning = posSystem.eligibleForTurning(PodL.getOptimizedCurrentW(), PodR.getOptimizedCurrentW(), PodL.getRobotCentricCurrentW(), PodR.getRobotCentricCurrentW());
+//        boolean shouldTurn = (lx == 0 && ly == 0) && (rx != 0);
+//        boolean shouldSpline = (lx != 0 || ly != 0) && (rx != 0);
+//        boolean specialSpliningCondition = posSystem.specialSpliningCondition(PodL.getRobotCentricCurrentW(), PodR.getRobotCentricCurrentW());
 
         telemetry.addData("Splining Special Condition", specialSpliningCondition);
-        telemetry.addData("IsAlligned", posSystem.isAlligned(PodL.getOptimizedCurrentW(), PodR.getOptimizedCurrentW()));
+        telemetry.addData("IsAlligned", posSystem.isAlligned(PodL.getPole(), PodR.getPole()));
         telemetry.addData("Eligible for turning", eligibleForTurning);
         telemetry.addData("First movement", firstMovement);
 
@@ -145,7 +148,7 @@ public class RevisedKinematics {
         // - the driver has not given controller input AND the wheels aren't alligned,
         // - the wheels aren't alligned with 0 degrees AND the driver is trying to turn.
         if (type == DriveType.STOP){
-            if (!posSystem.isAlligned(PodL.getOptimizedCurrentW(), PodR.getOptimizedCurrentW())){
+            if (!posSystem.isAlligned(PodL.getPole(), PodR.getPole())){
                 PodL.setRotClicks(0);
                 PodR.setRotClicks(0);
                 PodL.setSpinClicks(0);

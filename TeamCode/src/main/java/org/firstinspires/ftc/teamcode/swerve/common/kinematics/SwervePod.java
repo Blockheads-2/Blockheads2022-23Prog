@@ -29,7 +29,7 @@ public class SwervePod {
     private double currentW = 0;
     private double currentR = 0;
     private double optimizedCurrentW = 0;
-    private double robotCentricCurrentW = 0;
+    private double fieldCentricCurrentW = 0;
     private double controlHeaderReference = 0;
     private double nonRightStickCurrentW = 0;
     private boolean initPole = true;
@@ -79,16 +79,17 @@ public class SwervePod {
     public void setCurrents(double currentW, double currentR){
         this.currentW = currentW;
         this.currentR = currentR;
-        this.currentW = clamp(this.currentW + this.currentR);
+        this.fieldCentricCurrentW = clamp(this.currentW + this.currentR);
+//        this.currentW = clamp(this.currentW + this.currentR);
     }
 
     public void setRotClicks(double target){
-        turnAmount = wheelOptimization(target, currentW);
+        turnAmount = wheelOptimization(target, fieldCentricCurrentW);
         rotClicksTarget = turnAmount * constants.CLICKS_PER_DEGREE;
     }
 
     public void robotCentricSetRotClicks(double target){
-        turnAmount = wheelOptimization(target, robotCentricCurrentW);
+        turnAmount = wheelOptimization(target, currentW);
         rotClicksTarget = turnAmount * constants.CLICKS_PER_DEGREE;
     }
 
@@ -179,12 +180,13 @@ public class SwervePod {
 
         if (initPole){
             direction = initDirection;
-            optimizedCurrentW = currentW;
-            robotCentricCurrentW = clamp(optimizedCurrentW - currentR);
+//            optimizedCurrentW = fieldCentricCurrentW;
+//            robotCentricCurrentW = clamp(optimizedCurrentW - currentR);
         } else{
             direction = -initDirection;
-            optimizedCurrentW = clamp(currentW + 180);
-            robotCentricCurrentW = clamp(optimizedCurrentW - currentR);
+//            optimizedCurrentW = clamp(fieldCentricCurrentW + 180);
+//            this.currentW = clamp(this.currentW + 180);
+//            robotCentricCurrentW = clamp(optimizedCurrentW - currentR);
         }
 
         return turnAmount;
@@ -195,7 +197,7 @@ public class SwervePod {
     }
 
     public double getOptimizedCurrentW(){return optimizedCurrentW;} //can get rid of optimizedCurrentW and robotCentricW if initPole() thing works
-    public double getRobotCentricCurrentW(){return robotCentricCurrentW;}
+    public double getRobotCentricCurrentW(){return currentW;}
 
     public void setSpinClicks(int clicks) {
         spinClicksTarget = (double) (clicks);
