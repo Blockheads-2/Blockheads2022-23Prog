@@ -109,9 +109,9 @@ public class Constants {
     public static int bottomMotor5 = 275;
     public static int topMotor5 = 100;
 
-    public static double kp = 0.01;
-    public static double ki = 0;
-    public static double kd = 0.05;
+    public static double kp = 0.03;
+    public static double ki = 0.01;
+    public static double kd = 0.01;
 
 
     //Softstops:

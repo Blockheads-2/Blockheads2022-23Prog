@@ -51,7 +51,7 @@ public class RevisedKinematics {
     Accelerator accelerator;
     TrackJoystick joystickTracker;
 
-    private boolean firstMovement = true;
+    public boolean firstMovement = true;
 //    public boolean resestCycle = false;
 
     //arm stuff!
@@ -130,17 +130,11 @@ public class RevisedKinematics {
 //        boolean shouldSpline = (lx != 0 || ly != 0) && (rx != 0);
 //        boolean specialSpliningCondition = posSystem.specialSpliningCondition(PodL.getRobotCentricCurrentW(), PodR.getRobotCentricCurrentW());
 
-        telemetry.addData("Splining Special Condition", specialSpliningCondition);
-        telemetry.addData("IsAlligned", posSystem.isAlligned(PodL.getPole(), PodR.getPole()));
-        telemetry.addData("Eligible for turning", eligibleForTurning);
-        telemetry.addData("First movement", firstMovement);
-
         //determining spin clicks and spin power
         double power = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
         type = PodL.setSpinClicksAndPower(power, rt, shouldTurn, eligibleForTurning, shouldSpline, specialSpliningCondition, rx, posSystem.getMotorClicks());
         type = PodR.setSpinClicksAndPower(power, rt, shouldTurn, eligibleForTurning, shouldSpline, specialSpliningCondition, rx, posSystem.getMotorClicks());
 
-        telemetry.addData("Drive Type", getDriveType());
 
 //        PodL.setThrottleUsingPodLReference(PodR, shouldTurn, shouldSpline);
 

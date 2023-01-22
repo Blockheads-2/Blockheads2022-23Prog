@@ -6,6 +6,7 @@ public class LinearMath { //Note: snap() is used in the auto class separately. T
     Constants constants = new Constants();
 
     private int targetClicks;
+    private double targetDistance = 0;
 
     private double x;
     private double y;
@@ -20,10 +21,15 @@ public class LinearMath { //Note: snap() is used in the auto class separately. T
         this.theta = theta;
 
         targetClicks = (int)(getDistance() * constants.CLICKS_PER_INCH);
+        targetDistance = getDistance();
     }
 
     public double getDistance(){
         return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+    }
+
+    public double getTargetDistance(){
+        return targetDistance;
     }
 
     public int[] getClicks(){
@@ -39,7 +45,7 @@ public class LinearMath { //Note: snap() is used in the auto class separately. T
     }
 
     public double distanceRemaining(double distanceRan){
-        return targetClicks - (distanceRan * constants.CLICKS_PER_INCH);
+        return targetDistance - distanceRan;
     }
 
     public double getRunTime(double rate){

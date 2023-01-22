@@ -57,6 +57,7 @@ public class AutoHub implements Runnable{
 
         kinematics = new RevisedKinematics(posSystem, podL, podR);
         posSystem.grabKinematics(kinematics);
+        kinematics.grabTelemetry(linearOpMode.telemetry);
         reset = new Reset(robot, posSystem);
         controlHeader = new HeaderControlPID(posSystem.getMotorClicks());
         podR.setHeaderController(controlHeader);
@@ -106,7 +107,7 @@ public class AutoHub implements Runnable{
     }
 
     public void Move(RevisedKinematics.DriveType movementType, double x, double y, double finalAngle, double speed, RevisedKinematics.ArmType armMovementType){
-//        UpdateTelemetry();
+        UpdateTelemetry();
 
         //1) Calculate our current position
         posSystem.resetXY();
@@ -181,7 +182,7 @@ public class AutoHub implements Runnable{
                     Math.abs(robot.botL.getCurrentPosition() - targetBotL) > constants.clickToleranceAuto ||
                     Math.abs(robot.topR.getCurrentPosition() - targetTopR) > constants.clickToleranceAuto ||
                     Math.abs(robot.botR.getCurrentPosition() - targetBotR) > constants.clickToleranceAuto);
-//            UpdateTelemetry();
+            UpdateTelemetry();
         }
 
         if (kinematics.getDriveType() != RevisedKinematics.DriveType.SNAP){
@@ -288,62 +289,60 @@ public class AutoHub implements Runnable{
         robot.abr.setPower(1);
     }
 
-//    public void UpdateTelemetry(){
-//        linearOpMode.telemetry.addData("Wheel target met?", !targetNotMet);
-//        linearOpMode.telemetry.addData("Arm target met?", kinematics.isArmTargetMet());
+    public void UpdateTelemetry(){
+        linearOpMode.telemetry.addData("Wheel target met?", !targetNotMet);
+        linearOpMode.telemetry.addData("Arm target met?", kinematics.isArmTargetMet());
+
+        linearOpMode.telemetry.addData("X pos", posSystem.getPositionArr()[0]);
+        linearOpMode.telemetry.addData("Y pos", posSystem.getPositionArr()[1]);
+        linearOpMode.telemetry.addData("Left W",  posSystem.getLeftWheelW());
+        linearOpMode.telemetry.addData("Right W", posSystem.getRightWheelW());
+        linearOpMode.telemetry.addData("Optimized Left W", podL.getOptimizedCurrentW());
+        linearOpMode.telemetry.addData("Optimized Right W", podR.getOptimizedCurrentW());
+        linearOpMode.telemetry.addData("R reference point", podR.controlHeaderReference);
+        linearOpMode.telemetry.addData("R", posSystem.getPositionArr()[4]);
+
+        linearOpMode.telemetry.addData("Spin Direction (Left)", podL.getSpinDirection());
+        linearOpMode.telemetry.addData("Spin Direction (Right)", podR.getSpinDirection());
 //
-//        linearOpMode.telemetry.addData("X pos", posSystem.getPositionArr()[0]);
-//        linearOpMode.telemetry.addData("Y pos", posSystem.getPositionArr()[1]);
-//        linearOpMode.telemetry.addData("Left W",  posSystem.getLeftWheelW());
-//        linearOpMode.telemetry.addData("Right W", posSystem.getRightWheelW());
-//        linearOpMode.telemetry.addData("Optimized Left W", podL.optimizedCurrentW);
-//        linearOpMode.telemetry.addData("Optimized Right W", podR.optimizedCurrentW);
-//        linearOpMode.telemetry.addData("Non left wheel Left W", podL.nonRightStickCurrentW);
-//        linearOpMode.telemetry.addData("Non right wheel Right W", podR.nonRightStickCurrentW);
-//        linearOpMode.telemetry.addData("R reference point", podR.controlHeaderReference);
-//        linearOpMode.telemetry.addData("R", posSystem.getPositionArr()[4]);
-//
-//        linearOpMode.telemetry.addData("Spin Direction (Left)", podL.direction);
-//        linearOpMode.telemetry.addData("Spin Direction (Right)", podR.direction);
-////
-//        linearOpMode.telemetry.addData("target", kinematics.finalAngle);
-//        linearOpMode.telemetry.addData("Turn Amount (Left)", podL.getTurnAmount());
-//        linearOpMode.telemetry.addData("Turn Amount (Right)", podR.getTurnAmount());
-//        linearOpMode.telemetry.addData("Throttle (Left)", podL.getThrottle());
-//        linearOpMode.telemetry.addData("Throttle (Right)", podR.getThrottle());
-//        linearOpMode.telemetry.addData("error L", podL.controlHeader.error);
-//        linearOpMode.telemetry.addData("error R", podR.controlHeader.error);
-//        linearOpMode.telemetry.addData("error L arc", podL.controlHeader.biggerArc);
-//        linearOpMode.telemetry.addData("error R arc", podR.controlHeader.biggerArc);
-//
-//        linearOpMode.telemetry.addData("DistanceL", podL.getDistance());
-//        linearOpMode.telemetry.addData("DistanceR", podR.getDistance());
-//        linearOpMode.telemetry.addData("TurnAmountL", podL.getTurnAmount());
-//        linearOpMode.telemetry.addData("TurnAmountR", podR.getTurnAmount());
-//
-//        linearOpMode.telemetry.addData("topL clicks", robot.topL.getCurrentPosition());
-//        linearOpMode.telemetry.addData("botL clicks", robot.botL.getCurrentPosition());
-//        linearOpMode.telemetry.addData("topR clicks", robot.topR.getCurrentPosition());
-//        linearOpMode.telemetry.addData("botR clicks", robot.botR.getCurrentPosition());
-//
-//        linearOpMode.telemetry.addData("Power TopL", motorPower[0]);
-//        linearOpMode.telemetry.addData("Power BotL", motorPower[1]);
-//        linearOpMode.telemetry.addData("Power TopR", motorPower[2]);
-//        linearOpMode.telemetry.addData("Power BotR", motorPower[3]);
-//        linearOpMode.telemetry.addData("Clicks Target TopL", targetClicks[0]);
-//        linearOpMode.telemetry.addData("Clicks Target BotL", targetClicks[1]);
-//        linearOpMode.telemetry.addData("Clicks Target TopR", targetClicks[2]);
-//        linearOpMode.telemetry.addData("Clicks Target BotR", targetClicks[3]);
-//
-//        linearOpMode.telemetry.addData("Rot clicks L", podL.rotClicksTarget);
-//        linearOpMode.telemetry.addData("Rot clicks R", podR.rotClicksTarget);
-//        linearOpMode.telemetry.addData("spin clicks L", podL.spinClicksTarget);
-//        linearOpMode.telemetry.addData("spin clicks R", podR.spinClicksTarget);
-//
-//
-//        linearOpMode.telemetry.addData("Drive Type", kinematics.getDriveType());
-//        linearOpMode.telemetry.addData("Arm Type", kinematics.getArmType());
-//
-//        linearOpMode.telemetry.update();
-//    }
+        linearOpMode.telemetry.addData("target", kinematics.finalAngle);
+        linearOpMode.telemetry.addData("Turn Amount (Left)", podL.getTurnAmount());
+        linearOpMode.telemetry.addData("Turn Amount (Right)", podR.getTurnAmount());
+        linearOpMode.telemetry.addData("Throttle (Left)", podL.getThrottle());
+        linearOpMode.telemetry.addData("Throttle (Right)", podR.getThrottle());
+        linearOpMode.telemetry.addData("error L", podL.controlHeader.error);
+        linearOpMode.telemetry.addData("error R", podR.controlHeader.error);
+        linearOpMode.telemetry.addData("error L arc", podL.controlHeader.biggerArc);
+        linearOpMode.telemetry.addData("error R arc", podR.controlHeader.biggerArc);
+
+        linearOpMode.telemetry.addData("DistanceL", podL.getDistance());
+        linearOpMode.telemetry.addData("DistanceR", podR.getDistance());
+        linearOpMode.telemetry.addData("TurnAmountL", podL.getTurnAmount());
+        linearOpMode.telemetry.addData("TurnAmountR", podR.getTurnAmount());
+
+        linearOpMode.telemetry.addData("topL clicks", robot.topL.getCurrentPosition());
+        linearOpMode.telemetry.addData("botL clicks", robot.botL.getCurrentPosition());
+        linearOpMode.telemetry.addData("topR clicks", robot.topR.getCurrentPosition());
+        linearOpMode.telemetry.addData("botR clicks", robot.botR.getCurrentPosition());
+
+        linearOpMode.telemetry.addData("Power TopL", motorPower[0]);
+        linearOpMode.telemetry.addData("Power BotL", motorPower[1]);
+        linearOpMode.telemetry.addData("Power TopR", motorPower[2]);
+        linearOpMode.telemetry.addData("Power BotR", motorPower[3]);
+        linearOpMode.telemetry.addData("Clicks Target TopL", targetClicks[0]);
+        linearOpMode.telemetry.addData("Clicks Target BotL", targetClicks[1]);
+        linearOpMode.telemetry.addData("Clicks Target TopR", targetClicks[2]);
+        linearOpMode.telemetry.addData("Clicks Target BotR", targetClicks[3]);
+
+        linearOpMode.telemetry.addData("Rot clicks L", podL.rotClicksTarget);
+        linearOpMode.telemetry.addData("Rot clicks R", podR.rotClicksTarget);
+        linearOpMode.telemetry.addData("spin clicks L", podL.spinClicksTarget);
+        linearOpMode.telemetry.addData("spin clicks R", podR.spinClicksTarget);
+
+
+        linearOpMode.telemetry.addData("Drive Type", kinematics.getDriveType());
+        linearOpMode.telemetry.addData("Arm Type", kinematics.getArmType());
+
+        linearOpMode.telemetry.update();
+    }
 }

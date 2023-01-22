@@ -30,7 +30,7 @@ public class SwervePod {
     private double currentR = 0;
     private double optimizedCurrentW = 0;
     private double fieldCentricCurrentW = 0;
-    private double controlHeaderReference = 0;
+    public double controlHeaderReference = 0;
     private double nonRightStickCurrentW = 0;
     private boolean initPole = true;
 
@@ -40,8 +40,8 @@ public class SwervePod {
     private double turnAmount = 0;
 
     private double power = 0;
-    private double spinClicksTarget = 0;
-    private double rotClicksTarget = 0;
+    public double spinClicksTarget = 0;
+    public double rotClicksTarget = 0;
 
     //auto
     private double distance = 0;
@@ -156,10 +156,6 @@ public class SwervePod {
         }
 
         driveType = RevisedKinematics.DriveType.LINEAR;
-
-        telemetry.addData("Spin Direction " + (side == Side.RIGHT ? "R" : "L"), direction);
-        telemetry.addData("Pod" + (side == Side.RIGHT ? "R" : "L") + " initpole", initPole);
-
         return driveType;
     }
 
@@ -252,14 +248,17 @@ public class SwervePod {
                 setRotClicks(finalAngle);
 
 //                nonRightStickCurrentW = optimizedCurrentW;
-
+                telemetry.addData("distance ran" + (side == Side.RIGHT ? "R" : "L"), distanceRan);
                 distance = linearMath.distanceRemaining(distanceRan);
+                telemetry.addData("distance remaining" + (side == Side.RIGHT ? "R" : "L"), distance);
+                telemetry.addData("Target pos" + (side == Side.RIGHT ? "R" : "L"), linearMath.getTargetDistance());
+
 
                 power = Math.abs(pid.update(distance)) * speed; //probably needs a way to keep the power alive to take into account power directed toward rotating the module.
                 throttle = 1.0;
 //                controlHeader.calculateThrottle(posClicks, currentR, currentR, true);
 //                throttle = controlHeader.getThrottle(side);
-                direction = (initPole ? initDirection : -initDirection);
+                direction = (initPole ? initDirection : -initDirection) * (distance < 0 ? -1 : 1);
 
                 break;
 
@@ -372,13 +371,13 @@ public class SwervePod {
         if (power > constants.POWER_LIMITER) power = constants.POWER_LIMITER;
         else if (power < -constants.POWER_LIMITER) power = -constants.POWER_LIMITER;
 
-        if (side == Side.RIGHT) {
-            spinClicksTarget *= constants.RIGHT_SIDE_LIMITER;
-        }
+//        if (side == Side.RIGHT) {
+//            spinClicksTarget *= constants.RIGHT_SIDE_LIMITER;
+//        }
 
         throttle = Math.abs(throttle);
 //        power *= throttle;
-        spinClicksTarget = spinClicksTarget * direction * throttle;
+        spinClicksTarget = Math.abs(spinClicksTarget) * direction * throttle;
 
         output[0] = spinClicksTarget;
         output[1] = rotClicksTarget;

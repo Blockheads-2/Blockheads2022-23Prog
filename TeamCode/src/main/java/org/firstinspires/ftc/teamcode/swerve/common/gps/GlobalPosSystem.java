@@ -25,8 +25,8 @@ public class GlobalPosSystem {
 
     HardwareDrive robot;
 
-    private double distanceTravelledR = 0; //For auto.  Should be reset after every "action."  Represents how much the wheel has spinned.
-    private double distanceTravelledL = 0;
+    public double distanceTravelledR = 0; //For auto.  Should be reset after every "action."  Represents how much the wheel has spinned.
+    public double distanceTravelledL = 0;
 
     Orientation lastOrientation;
     Orientation currentOrientation;
@@ -100,19 +100,19 @@ public class GlobalPosSystem {
         int topR = motorClicksPos[2] - prevMotorClicks[2]; //change in top right
         int botR = motorClicksPos[3] - prevMotorClicks[3]; //change in bottom right
         double translationalInchesR = (topR - botR) / 2.0;
-        translationalInchesR *= constants.INCHES_PER_CLICK;
-        distanceTravelledR = translationalInchesR;
+        translationalInchesR *= constants.INCHES_PER_CLICK * constants.initDirectionRight;
+        distanceTravelledR += translationalInchesR;
         double currentAngleR = positionArr[3];
 
         //left
         int topL = motorClicksPos[0] - prevMotorClicks[0]; //change in top left
         int botL = motorClicksPos[1] - prevMotorClicks[1]; //change in bottom left
         double translationalInchesL = (topL - botL) / 2.0;
-        translationalInchesL *= constants.INCHES_PER_CLICK;
-        distanceTravelledL = translationalInchesL;
+        translationalInchesL *= constants.INCHES_PER_CLICK * constants.initDirectionLeft;
+        distanceTravelledL += translationalInchesL;
         double currentAngleL = positionArr[2];
 
-        double splineOrientation = 0.0;
+//        double splineOrientation = 0.0;
         double baseAngle = (currentAngleL + currentAngleR) / 2.0;
         baseAngle = Math.toRadians(baseAngle);
         double hypotenuse = (translationalInchesL + translationalInchesR) / 2.0;
@@ -133,8 +133,8 @@ public class GlobalPosSystem {
 //            positionArr[3] += positionArr[4];
 //        }
 
-        positionArr[0] += (hypotenuse * Math.sin(baseAngle + positionArr[4]));
-        positionArr[1] += (hypotenuse * Math.cos(baseAngle + positionArr[4]));
+        positionArr[0] += (hypotenuse * Math.sin(baseAngle));
+        positionArr[1] += (hypotenuse * Math.cos(baseAngle));
     }
 
     public void update ( double x, double y, double leftWheelW, double rightWheelW, double robotR){

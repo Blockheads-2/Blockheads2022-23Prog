@@ -173,6 +173,9 @@ public class FinalBaseDrive extends OpMode{
 
     void UpdatePlayer1(){
         if (resetHeader.getState() == Button.State.DOUBLE_TAP) posSystem.resetHeader();
+        if (a.getState() == Button.State.TAP){
+            posSystem.resetXY();
+        }
         DriveTrainPowerEncoder();
     }
 
@@ -196,8 +199,22 @@ public class FinalBaseDrive extends OpMode{
 //        telemetry.addData("Arm bot pos", robot.abl.getCurrentPosition());
 //        telemetry.addData("Arm servo pos", robot.armServo.getPosition());
 
+        telemetry.addData("Splining Special Condition", posSystem.specialSpliningCondition(PodL.getPole(), PodR.getPole()));
+        telemetry.addData("IsAlligned", posSystem.isAlligned(PodL.getPole(), PodR.getPole()));
+        telemetry.addData("Eligible for turning", posSystem.eligibleForTurning(PodL.getPole(), PodR.getPole()));
+        telemetry.addData("First movement", kinematics.firstMovement);
+        telemetry.addData("Drive Type", kinematics.getDriveType());
+        telemetry.addData("Spin Direction L", PodL.getSpinDirection());
+        telemetry.addData("Spin Direction R", PodR.getSpinDirection());
+
+        telemetry.addData("Init Pole L?", PodL.getPole());
+        telemetry.addData("Init Pole R?", PodR.getPole());
+
         telemetry.addData("X pos", posSystem.getPositionArr()[0]);
         telemetry.addData("Y pos", posSystem.getPositionArr()[1]);
+        telemetry.addData("Distance travelled Right", posSystem.distanceTravelledR);
+        telemetry.addData("Distance travelled Left", posSystem.distanceTravelledL);
+
         telemetry.addData("Left W",  posSystem.getLeftWheelW());
         telemetry.addData("Right W", posSystem.getRightWheelW());
         telemetry.addData("Optimized Left W", PodL.getOptimizedCurrentW());
