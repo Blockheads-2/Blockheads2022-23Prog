@@ -102,7 +102,7 @@ public class RevisedKinematics {
         this.lt = lt;
 
         //telling the pods where it is
-        posSystem.calculatePos();
+        posSystem.calculatePos(PodL.getPole(), PodR.getPole());
         PodL.setCurrents(posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
         PodR.setCurrents(posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);
 
@@ -121,9 +121,10 @@ public class RevisedKinematics {
             PodR.setRotClicks(target);
         }
 
-        boolean eligibleForTurning = posSystem.eligibleForTurning(PodL.getPole(), PodR.getPole());
-
-        boolean specialSpliningCondition = posSystem.specialSpliningCondition(PodL.getPole(), PodR.getPole());
+        boolean eligibleForTurning = posSystem.eligibleForTurning();
+        boolean specialSpliningCondition = posSystem.specialSpliningCondition();
+        telemetry.addData("eligible for turning", eligibleForTurning);
+        telemetry.addData("special splining condition", specialSpliningCondition);
 
 //        boolean eligibleForTurning = posSystem.eligibleForTurning(PodL.getOptimizedCurrentW(), PodR.getOptimizedCurrentW(), PodL.getRobotCentricCurrentW(), PodR.getRobotCentricCurrentW());
 //        boolean shouldTurn = (lx == 0 && ly == 0) && (rx != 0);
@@ -142,7 +143,7 @@ public class RevisedKinematics {
         // - the driver has not given controller input AND the wheels aren't alligned,
         // - the wheels aren't alligned with 0 degrees AND the driver is trying to turn.
         if (type == DriveType.STOP){
-            if (!posSystem.isAlligned(PodL.getPole(), PodR.getPole())){
+            if (!posSystem.isAlligned()){
                 PodL.setRotClicks(0);
                 PodR.setRotClicks(0);
                 PodL.setSpinClicks(0);

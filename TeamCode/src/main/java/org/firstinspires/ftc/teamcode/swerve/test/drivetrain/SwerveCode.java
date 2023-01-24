@@ -154,7 +154,7 @@ public class SwerveCode extends OpMode{
 
 
     void DriveTrainPowerEncoder(){
-        posSystem.calculatePos();
+        posSystem.calculatePos(true, true);
 
         int posBotL = robot.botL.getCurrentPosition();
         int posTopL = robot.topL.getCurrentPosition();
