@@ -199,9 +199,9 @@ public class FinalBaseDrive extends OpMode{
 //        telemetry.addData("Arm bot pos", robot.abl.getCurrentPosition());
 //        telemetry.addData("Arm servo pos", robot.armServo.getPosition());
 
-//        telemetry.addData("Splining Special Condition", posSystem.specialSpliningCondition()); //telemetry in SwervePod class
-        telemetry.addData("IsAlligned", posSystem.isAlligned());
-//        telemetry.addData("Eligible for turning", posSystem.eligibleForTurning());
+        telemetry.addData("Splining Special Condition", posSystem.specialSpliningCondition(PodL.getPole(), PodR.getPole()));
+        telemetry.addData("IsAlligned", posSystem.isAlligned(PodL.getPole(), PodR.getPole()));
+        telemetry.addData("Eligible for turning", posSystem.eligibleForTurning(PodL.getPole(), PodR.getPole()));
         telemetry.addData("First movement", kinematics.firstMovement);
         telemetry.addData("Drive Type", kinematics.getDriveType());
         telemetry.addData("Spin Direction L", PodL.getSpinDirection());
@@ -217,10 +217,10 @@ public class FinalBaseDrive extends OpMode{
 
         telemetry.addData("Left W",  posSystem.getLeftWheelW());
         telemetry.addData("Right W", posSystem.getRightWheelW());
-//        telemetry.addData("Optimized Left W", PodL.getOptimizedCurrentW());
-//        telemetry.addData("Optimized Right W", PodR.getOptimizedCurrentW());
-//        telemetry.addData("robotic centric L", PodL.getRobotCentricCurrentW());
-//        telemetry.addData("robotic centric R", PodR.getRobotCentricCurrentW());
+        telemetry.addData("Optimized Left W", PodL.getOptimizedCurrentW());
+        telemetry.addData("Optimized Right W", PodR.getOptimizedCurrentW());
+        telemetry.addData("robotic centric L", PodL.getRobotCentricCurrentW());
+        telemetry.addData("robotic centric R", PodR.getRobotCentricCurrentW());
 
 //        telemetry.addData("Non left wheel Left W", PodL.nonRightStickCurrentW);
 //        telemetry.addData("Non right wheel Right W", PodR.nonRightStickCurrentW);

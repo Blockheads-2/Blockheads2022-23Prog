@@ -28,7 +28,7 @@ public class SwervePod {
     //teleop
     private double currentW = 0;
     private double currentR = 0;
-//    private double optimizedCurrentW = 0;
+    private double optimizedCurrentW = 0;
     private double fieldCentricCurrentW = 0;
     public double controlHeaderReference = 0;
     private double nonRightStickCurrentW = 0;
@@ -176,8 +176,13 @@ public class SwervePod {
 
         if (initPole){
             direction = initDirection;
+//            optimizedCurrentW = fieldCentricCurrentW;
+//            robotCentricCurrentW = clamp(optimizedCurrentW - currentR);
         } else{
             direction = -initDirection;
+//            optimizedCurrentW = clamp(fieldCentricCurrentW + 180);
+//            this.currentW = clamp(this.currentW + 180);
+//            robotCentricCurrentW = clamp(optimizedCurrentW - currentR);
         }
 
         return turnAmount;
@@ -187,8 +192,8 @@ public class SwervePod {
         return initPole;
     }
 
-//    public double getOptimizedCurrentW(){return optimizedCurrentW;} //can get rid of optimizedCurrentW and robotCentricW if initPole() thing works
-//    public double getRobotCentricCurrentW(){return currentW;}
+    public double getOptimizedCurrentW(){return optimizedCurrentW;} //can get rid of optimizedCurrentW and robotCentricW if initPole() thing works
+    public double getRobotCentricCurrentW(){return currentW;}
 
     public void setSpinClicks(int clicks) {
         spinClicksTarget = (double) (clicks);
@@ -379,10 +384,6 @@ public class SwervePod {
         output[2] = power;
 
         return output;
-    }
-
-    public double getFieldCentricCurrentW(){
-        return fieldCentricCurrentW;
     }
 
     public int getSpinDirection(){

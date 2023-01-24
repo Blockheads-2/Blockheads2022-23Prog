@@ -111,7 +111,7 @@ public class AutoHub implements Runnable{
 
         //1) Calculate our current position
         posSystem.resetXY();
-        posSystem.calculatePos(podL.getPole(), podR.getPole());
+        posSystem.calculatePos();
 
         //2) Determine the distance from our current pos & the target pos.
         kinematics.setPosAuto(x, y, finalAngle, speed, movementType);
@@ -152,7 +152,7 @@ public class AutoHub implements Runnable{
 
         //3) Tell the robot to travel that distance we just determined.
         while (linearOpMode.opModeIsActive() && (targetNotMet || !kinematics.isArmTargetMet())){ //have a time based something in case our target is never met.
-            posSystem.calculatePos(podL.getPole(), podR.getPole());
+            posSystem.calculatePos();
             kinematics.armLogicAuto(armMovementType); //determine targets/power for the arm
             kinematics.logicAuto();
 
@@ -297,8 +297,8 @@ public class AutoHub implements Runnable{
         linearOpMode.telemetry.addData("Y pos", posSystem.getPositionArr()[1]);
         linearOpMode.telemetry.addData("Left W",  posSystem.getLeftWheelW());
         linearOpMode.telemetry.addData("Right W", posSystem.getRightWheelW());
-        linearOpMode.telemetry.addData("Field Centric Left W", podL.getFieldCentricCurrentW());
-        linearOpMode.telemetry.addData("Field Centric Right W", podR.getFieldCentricCurrentW());
+        linearOpMode.telemetry.addData("Optimized Left W", podL.getOptimizedCurrentW());
+        linearOpMode.telemetry.addData("Optimized Right W", podR.getOptimizedCurrentW());
         linearOpMode.telemetry.addData("R reference point", podR.controlHeaderReference);
         linearOpMode.telemetry.addData("R", posSystem.getPositionArr()[4]);
 

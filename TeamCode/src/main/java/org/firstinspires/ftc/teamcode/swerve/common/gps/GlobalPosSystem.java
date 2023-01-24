@@ -55,13 +55,10 @@ public class GlobalPosSystem {
         revisedKinematics = k;
     }
 
-    public void calculatePos(boolean initPoleL, boolean initPoleR){
+    public void calculatePos(){
         updateHash();
         calculateWheel();
         calculateHeader();
-
-        if (!initPoleL) positionArr[2] = clamp(positionArr[2] + 180.0);
-        if (!initPoleR) positionArr[3] = clamp(positionArr[3] + 180.0);
 //        positionArr[2] = clamp(positionArr[2] +  positionArr[4]);
 //        positionArr[3] = clamp(positionArr[3] + positionArr[4]);
         calculateRobot();
@@ -170,30 +167,53 @@ public class GlobalPosSystem {
     }
 
 
-    public boolean isAlligned(){
+    public boolean isAlligned(boolean initPoleL, boolean initPoleR){
         double optimizedCurrentWL = clamp(positionArr[2] + positionArr[4]);
         double optimizedCurrentWR = clamp(positionArr[3] + positionArr[4]);
+        if (!initPoleL) optimizedCurrentWL = clamp(positionArr[2] + 180);
+        if (!initPoleR) optimizedCurrentWR = clamp(positionArr[3] + 180);
 
         double error = SwervePod.changeAngle(optimizedCurrentWL, optimizedCurrentWR);
 
         return (Math.abs(error) <= constants.allignmentTolerance);
     }
 
-    public boolean eligibleForTurning(){
+    public boolean eligibleForTurning(boolean initPoleL, boolean initPoleR){
         double robotCentricCurrentL = positionArr[2];
         double robotCentricCurrentR = positionArr[3];
+        if (!initPoleL) robotCentricCurrentL = clamp(positionArr[2] + 180);
+        if (!initPoleR) robotCentricCurrentR = clamp(positionArr[3] + 180);
 
         return (Math.abs(robotCentricCurrentL) <= constants.allignmentTolerance &&
                 Math.abs(robotCentricCurrentR) <= constants.allignmentTolerance &&
-                isAlligned());
+                isAlligned(initPoleL, initPoleR));
     }
 
-    public boolean specialSpliningCondition(){
+    public boolean specialSpliningCondition(boolean initPoleL, boolean initPoleR){
         double robotCentricCurrentL = positionArr[2];
         double robotCentricCurrentR = positionArr[3];
+        if (!initPoleL) robotCentricCurrentL = clamp(positionArr[2] + 180);
+        if (!initPoleR) robotCentricCurrentR = clamp(positionArr[3] + 180);
 
-        return ((Math.abs(robotCentricCurrentL - 90) <= 15 || Math.abs(robotCentricCurrentR - 90) <= 15) ||
-                (Math.abs(robotCentricCurrentL + 90) <= 15 || Math.abs(robotCentricCurrentR + 90) <= 15));
+        return ((Math.abs(robotCentricCurrentL - 90) <= 15 && Math.abs(robotCentricCurrentR - 90) <= 15) ||
+                (Math.abs(robotCentricCurrentL + 90) <= 15 && Math.abs(robotCentricCurrentR + 90) <= 15));
+    }
+
+    public boolean isAlligned(double optimizedCurrentWL, double optimizedCurrentWR){
+        double error = SwervePod.changeAngle(optimizedCurrentWL, optimizedCurrentWR);
+
+        return (Math.abs(error) <= constants.allignmentTolerance);
+    }
+
+    public boolean eligibleForTurning(double optimizedCurrentWL, double optimizedCurrentWR, double robotCentricCurrentL, double robotCentricCurrentR){
+        return (Math.abs(robotCentricCurrentL) <= constants.allignmentTolerance &&
+                Math.abs(robotCentricCurrentR) <= constants.allignmentTolerance &&
+                isAlligned(optimizedCurrentWL, optimizedCurrentWR));
+    }
+
+    public boolean specialSpliningCondition(double robotCentricCurrentL, double robotCentricCurrentR){
+        return ((Math.abs(robotCentricCurrentL - 90) <= 15 && Math.abs(robotCentricCurrentR - 90) <= 15) ||
+                (Math.abs(robotCentricCurrentL + 90) <= 15 && Math.abs(robotCentricCurrentR + 90) <= 15));
     }
 
     public void resetHeader(){

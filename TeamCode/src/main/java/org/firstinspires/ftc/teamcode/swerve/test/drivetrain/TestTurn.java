@@ -99,7 +99,7 @@ public class TestTurn extends OpMode{
 
 
     void DriveTrainPowerEncoder(){
-        posSystem.calculatePos(true, true);
+        posSystem.calculatePos();
 
         robot.botL.setPower(0.5);
         robot.topL.setPower(0.5);

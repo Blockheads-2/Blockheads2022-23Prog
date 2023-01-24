@@ -140,7 +140,7 @@ public class TestMotors extends OpMode{
         robot.botR.setTargetPosition(robot.botR.getCurrentPosition() - constants.SPIN_CLICK_FACTOR);
         robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + constants.SPIN_CLICK_FACTOR);
 
-        posSystem.calculatePos(true, true);
+        posSystem.calculatePos();
 
         robot.botL.setPower(1);
         robot.topL.setPower(1);
