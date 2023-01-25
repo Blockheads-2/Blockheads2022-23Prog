@@ -3,10 +3,15 @@ package org.firstinspires.ftc.teamcode.swerve.auto.opmodes;
 import android.app.Activity;
 import android.view.View;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.swerve.common.Accelerator;
 import org.firstinspires.ftc.teamcode.swerve.common.Reset;
 import org.firstinspires.ftc.teamcode.swerve.common.constantsPKG.Constants;
@@ -18,6 +23,7 @@ import org.firstinspires.ftc.teamcode.swerve.common.pid.HeaderControlPID;
 import org.firstinspires.ftc.teamcode.swerve.common.pid.SnapSwerveModulePID;
 import org.firstinspires.ftc.teamcode.swerve.auto.Math.TurnMath;
 
+@Config
 public class AutoHub implements Runnable{
     LinearOpMode linearOpMode;
     HardwareDrive robot;
@@ -32,6 +38,15 @@ public class AutoHub implements Runnable{
     SwervePod podL;
     HeaderControlPID controlHeader;
 
+    public static double kp = 0;
+    public static double ki = 0;
+    public static double kd = 0;
+    private final FtcDashboard dashboard = FtcDashboard.getInstance();
+
+    ElapsedTime loopTime = new ElapsedTime();
+    double prevMS = 0;
+    double deltaMS = 0;
+
 
     TurnMath turnMath = new TurnMath();
     SnapSwerveModulePID turnPID = new SnapSwerveModulePID(); //although it says Snap, it works for turning as well.
@@ -42,6 +57,9 @@ public class AutoHub implements Runnable{
     double[] armOutput = new double[8];
 
     View relativeLayout;
+
+    TelemetryPacket packet;
+
 
     public AutoHub(LinearOpMode plinear){
         linearOpMode = plinear;
@@ -71,6 +89,10 @@ public class AutoHub implements Runnable{
         // Send telemetry message to signify robot waiting;
         linearOpMode.telemetry.addData("Status", "Resetting Encoders and Camera");
         linearOpMode.telemetry.update();
+
+        packet = new TelemetryPacket();
+
+        loopTime.reset();
 
         robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -106,6 +128,8 @@ public class AutoHub implements Runnable{
         robot.abr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
+    double powerR = 0;
+    double powerL = 0;
     public void Move(RevisedKinematics.DriveType movementType, double x, double y, double finalAngle, double speed, RevisedKinematics.ArmType armMovementType){
         UpdateTelemetry();
 
@@ -159,6 +183,9 @@ public class AutoHub implements Runnable{
             targetClicks = kinematics.getClicks();
             motorPower = kinematics.getPower();
 
+            powerL = motorPower[0];
+            powerR = motorPower[2];
+
             targetTopL = robot.topL.getCurrentPosition() + targetClicks[0];
             targetBotL = robot.botL.getCurrentPosition() + targetClicks[1];
             targetTopR = robot.topR.getCurrentPosition() + targetClicks[2];
@@ -183,12 +210,17 @@ public class AutoHub implements Runnable{
                     Math.abs(robot.topR.getCurrentPosition() - targetTopR) > constants.clickToleranceAuto ||
                     Math.abs(robot.botR.getCurrentPosition() - targetBotR) > constants.clickToleranceAuto);
             UpdateTelemetry();
+
+            deltaMS = loopTime.milliseconds() - prevMS;
+            prevMS = loopTime.milliseconds();
         }
 
         if (kinematics.getDriveType() != RevisedKinematics.DriveType.SNAP){
             while(!reset.finishedReset() && linearOpMode.opModeIsActive()){
                 reset.resetAuto(true);
                 linearOpMode.telemetry.addData("RESET", true);
+                deltaMS = loopTime.milliseconds() - prevMS;
+                prevMS = loopTime.milliseconds();
             }
         } else {
             robot.topL.setTargetPosition(robot.topL.getCurrentPosition());
@@ -290,6 +322,9 @@ public class AutoHub implements Runnable{
     }
 
     public void UpdateTelemetry(){
+        linearOpMode.telemetry.addData("KP", kp);
+        linearOpMode.telemetry.addData("KI", ki);
+        linearOpMode.telemetry.addData("KD", kd);
         linearOpMode.telemetry.addData("Wheel target met?", !targetNotMet);
         linearOpMode.telemetry.addData("Arm target met?", kinematics.isArmTargetMet());
 
@@ -310,10 +345,10 @@ public class AutoHub implements Runnable{
         linearOpMode.telemetry.addData("Turn Amount (Right)", podR.getTurnAmount());
         linearOpMode.telemetry.addData("Throttle (Left)", podL.getThrottle());
         linearOpMode.telemetry.addData("Throttle (Right)", podR.getThrottle());
-        linearOpMode.telemetry.addData("error L", podL.controlHeader.error);
-        linearOpMode.telemetry.addData("error R", podR.controlHeader.error);
-        linearOpMode.telemetry.addData("error L arc", podL.controlHeader.biggerArc);
-        linearOpMode.telemetry.addData("error R arc", podR.controlHeader.biggerArc);
+//        linearOpMode.telemetry.addData("error L", podL.controlHeader.error);
+//        linearOpMode.telemetry.addData("error R", podR.controlHeader.error);
+//        linearOpMode.telemetry.addData("error L arc", podL.controlHeader.biggerArc);
+//        linearOpMode.telemetry.addData("error R arc", podR.controlHeader.biggerArc);
 
         linearOpMode.telemetry.addData("DistanceL", podL.getDistance());
         linearOpMode.telemetry.addData("DistanceR", podR.getDistance());
@@ -342,6 +377,13 @@ public class AutoHub implements Runnable{
 
         linearOpMode.telemetry.addData("Drive Type", kinematics.getDriveType());
         linearOpMode.telemetry.addData("Arm Type", kinematics.getArmType());
+
+        linearOpMode.telemetry.addData("Delta time loop (sec)", deltaMS / 1000.0);
+
+        packet.put("PowerR", powerR);
+        packet.put("Error R", podR.getPID().getError());
+        packet.put("PowerL", powerL);
+        packet.put("Error L", podL.getPID().getError());
 
         linearOpMode.telemetry.update();
     }

@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.swerve.common.kinematics;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.swerve.auto.opmodes.AutoHub;
+import org.firstinspires.ftc.teamcode.swerve.auto.opmodes.testing.AutoTest;
 import org.firstinspires.ftc.teamcode.swerve.common.Accelerator;
 import org.firstinspires.ftc.teamcode.swerve.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.swerve.common.pid.HeaderControlPID;
@@ -217,7 +219,7 @@ public class SwervePod {
         else if (driveType == RevisedKinematics.DriveType.VARIABLE_SPLINE) splineMath.setPos(x, y, finalAngle, constants.kp, constants.ki, constants.kd, right);
         else if (driveType == RevisedKinematics.DriveType.TURN) turnMath.setPos(finalAngle, (finalAngle < 0 ? -1 : 1), right);
 
-        setPID(constants.kp, constants.ki, constants.kd);
+        setPID(AutoHub.kp, AutoHub.ki, AutoHub.kd);
 
 //        controlHeader.calculateThrottle(posClicks, currentR, currentR, true);
 
