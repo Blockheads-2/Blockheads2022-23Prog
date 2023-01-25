@@ -91,6 +91,7 @@ public class AutoHub implements Runnable{
         linearOpMode.telemetry.update();
 
         packet = new TelemetryPacket();
+        dashboard.setTelemetryTransmissionInterval(25);
 
         loopTime.reset();
 
