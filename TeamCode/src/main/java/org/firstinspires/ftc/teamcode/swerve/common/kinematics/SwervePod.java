@@ -106,7 +106,6 @@ public class SwervePod {
         if (turn) {
             if (eligibleForTurning) {
                 robotCentricSetRotClicks(0);
-                //            leftThrottle = leftThrottle;
                 if (rightStickX < 0 && side == Side.LEFT) direction *= -1;
                 else if (rightStickX >= 0 && side == Side.RIGHT) direction *= -1;
 
