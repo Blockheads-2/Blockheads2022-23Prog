@@ -29,22 +29,23 @@ public class AutoTest extends LinearOpMode {
 
 
         while (!opModeIsActive()) { //checks if play hasn't been pressed (in init stage)
-            dispatch.moveToInit();
+//            dispatch.moveToInit();
         }
         dispatch.resetArmEncoderPos();
 
         waitForStart();
 
-        Thread rigidArmThread = new Thread(dispatch);   // Using the constructor Thread(Runnable r)
-        rigidArmThread.start();
+//        Thread rigidArmThread = new Thread(dispatch);   // Using the constructor Thread(Runnable r)
+//        rigidArmThread.start();
 
 //        Thread gpsUpdateThread = new Thread(posSystem);
 //        gpsUpdateThread.start();
 
-        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.1, RevisedKinematics.ArmType.HOLD);
-        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 27, 0, 0.1, RevisedKinematics.ArmType.HOLD);
-        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 0, 0.1, RevisedKinematics.ArmType.HOLD);
-        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 15, 0, 0.1, RevisedKinematics.ArmType.HOLD);
+//        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 90, 0, 0.3, RevisedKinematics.ArmType.HOLD);
+
+//        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 27, 0, 0.1, RevisedKinematics.ArmType.HOLD);
+        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.5, RevisedKinematics.ArmType.HOLD);
+//        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 15, 0, 0.1, RevisedKinematics.ArmType.HOLD);
 
 //        dispatch.Move(RevisedKinematics.DriveType.TURN, 0, 0, -90, 0.5, RevisedKinematics.ArmType.HOLD);
 
@@ -61,7 +62,7 @@ public class AutoTest extends LinearOpMode {
 //        dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0, RevisedKinematics.ArmType.LOW);
 //        dispatch.Turn(90, 0.7);
 
-        rigidArmThread.interrupt();
+//        rigidArmThread.interrupt();
 //        gpsUpdateThread.interrupt();
 
     }

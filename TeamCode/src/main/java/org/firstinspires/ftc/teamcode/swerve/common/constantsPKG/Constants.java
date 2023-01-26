@@ -25,7 +25,8 @@ public class Constants {
     public double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER; //11.378 inches
     public double MAX_VELOCITY_DT = 2400.0; // unit is clicks/sec
     public double clickTOLERANCE = 10; //number of clicks or degrees the robot can be off by
-    public double clickToleranceAuto = 20;
+//    public double clickToleranceAuto = 12; //~1/3rd worth of error for translation.  ~2 degrees worth of error for rotation.
+    public double clickToleranceAuto = 0; //for testing with dashboard
     public double degreeTOLERANCE = 5;
     public double allignmentTolerance = 13;
 
@@ -53,13 +54,13 @@ public class Constants {
     //Swerve constants
         //module translation
     public double BLUE_REV_PER_GREEN = 17.0 / 16.0; //assuming other gear isn't messing stuff up, 17 revolutions of the input shaft = 16 revolutions of the wheel
-    public double CLICKS_PER_INCH = (BLUE_REV_PER_GREEN * CLICKS_PER_BLUE_REV * (1.0 / WHEEL_CIRCUMFERENCE)) * (2.0/3.0); //~13.549 clicks per inch
+    public double CLICKS_PER_INCH = (BLUE_REV_PER_GREEN * CLICKS_PER_BLUE_REV * (1.0 / WHEEL_CIRCUMFERENCE)) * (2.0/3.0); //~33.474 clicks per inch
     public double INCHES_PER_CLICK = 1.0 / CLICKS_PER_INCH; //~0.029 inches per click
 
         //module rotation
     public double BLUE_REVS_PER_PURPLE = 85.0 / 24.0; //~3.54 Blue revs per 1 Purple rev
     public double CLICKS_PER_PURPLE_REV = BLUE_REVS_PER_PURPLE * CLICKS_PER_BLUE_REV;
-    public double CLICKS_PER_DEGREE = BLUE_REVS_PER_PURPLE * CLICKS_PER_BLUE_REV * (1/360.0); //1.427 clicks per degree
+    public double CLICKS_PER_DEGREE = BLUE_REVS_PER_PURPLE * CLICKS_PER_BLUE_REV * (1/360.0); //~5.29 clicks per degree
     public double DEGREES_PER_CLICK = 1.0 / CLICKS_PER_DEGREE;
 
     public double DEGREES_PER_INCH = CLICKS_PER_INCH * DEGREES_PER_CLICK;
@@ -112,6 +113,8 @@ public class Constants {
     public static double kp = 0.03;
     public static double ki = 0.01;
     public static double kd = 0.01;
+
+    //so far, <p, i, d> = <2, 0, 1> seems best
 
 
     //Softstops:

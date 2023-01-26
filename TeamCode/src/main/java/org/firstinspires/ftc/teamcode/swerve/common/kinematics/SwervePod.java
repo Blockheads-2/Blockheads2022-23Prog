@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.swerve.common.kinematics;
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.swerve.auto.opmodes.AutoHub;
 import org.firstinspires.ftc.teamcode.swerve.auto.opmodes.testing.AutoTest;
@@ -67,6 +69,11 @@ public class SwervePod {
 
     public void grabTelemetry(Telemetry t){
         this.telemetry = t;
+    }
+
+    TelemetryPacket packet;
+    public void grabDashboard(TelemetryPacket t){
+        packet = t;
     }
 
     public void setHeaderController(HeaderControlPID controlHeader){
@@ -221,12 +228,10 @@ public class SwervePod {
 
         setPID(AutoHub.kp, AutoHub.ki, AutoHub.kd);
 
+        packet.put("Target Distance", linearMath.getDistance());
+
 //        controlHeader.calculateThrottle(posClicks, currentR, currentR, true);
 
-        setPowerAuto();
-    }
-
-    public void setPowerAuto(){ //auto
         double powerSpin = Math.abs(pid.update(distance)) * speed;
         double powerRotate = Math.abs(pid.update(turnAmount)) * speed;
         power = (driveType == RevisedKinematics.DriveType.SNAP ? powerRotate : powerSpin);
@@ -249,7 +254,6 @@ public class SwervePod {
                 setRotClicks(finalAngle);
 
 //                nonRightStickCurrentW = optimizedCurrentW;
-                telemetry.addData("distance ran" + (side == Side.RIGHT ? "R" : "L"), distanceRan);
                 distance = linearMath.distanceRemaining(distanceRan);
                 telemetry.addData("distance remaining" + (side == Side.RIGHT ? "R" : "L"), distance);
                 telemetry.addData("Target pos" + (side == Side.RIGHT ? "R" : "L"), linearMath.getTargetDistance());
@@ -264,7 +268,7 @@ public class SwervePod {
                 break;
 
             case VARIABLE_SPLINE: //using gps for variable_spline may be incredibly unreliable.  Though the nature of clicks (they are integers) gives us an inaccurate account (but this fear depends on the fact that the code loops really really quickly).
-                setRotClicks(nonRightStickCurrentW);
+                robotCentricSetRotClicks(0);
 
                 direction = (initPole ? initDirection : -initDirection);
                 distance = splineMath.distanceRemaining(distanceRan);
@@ -282,7 +286,7 @@ public class SwervePod {
                 break;
 
             case TURN:
-                setRotClicks(currentR);
+                robotCentricSetRotClicks(0);
 
                 distance = turnMath.distanceRemaining(distanceRan);
 
