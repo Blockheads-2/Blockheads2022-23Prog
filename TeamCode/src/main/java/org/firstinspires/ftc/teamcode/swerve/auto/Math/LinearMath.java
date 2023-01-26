@@ -15,7 +15,7 @@ public class LinearMath { //Note: snap() is used in the auto class separately. T
     public LinearMath(){
     }
 
-    public void setPos(double x, double y, double theta, double kp, double ki, double kd){
+    public void setPos(double x, double y, double theta){
         this.x = x;
         this.y = y;
         this.theta = theta;

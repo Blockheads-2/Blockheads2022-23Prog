@@ -146,13 +146,13 @@ public class AutoHub implements Runnable{
         UpdateTelemetry();
 
         //1) Calculate our current position
-        posSystem.resetXY();
+        posSystem.resetXY(); // <-- Must have!
         posSystem.calculatePos();
 
         //2) Determine the distance from our current pos & the target pos.
         kinematics.setPosAuto(x, y, finalAngle, speed, movementType);
         reset.resetAuto(false);
-        kinematics.armLogicAuto(armMovementType); //determine targets/power for the arm
+        kinematics.armLogicAuto(armMovementType, getArmClicks()); //determine targets/power for the arm
         kinematics.logicAuto();
 
         targetNotMet = true;
@@ -256,6 +256,17 @@ public class AutoHub implements Runnable{
         }
         reset.resetAuto(false);
     }
+
+    double[] armClicks = new double[5];
+    public double[] getArmClicks(){
+        armClicks[0] = robot.at.getCurrentPosition();
+        armClicks[1] = robot.abl.getCurrentPosition();
+        armClicks[2] = robot.abr.getCurrentPosition();
+        armClicks[3] = robot.armServo.getPosition();
+        armClicks[4] = robot.claw.getPosition();
+        return armClicks;
+    }
+
 
     public void run(){
         while (linearOpMode.opModeIsActive()){

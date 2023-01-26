@@ -5,8 +5,8 @@ import org.firstinspires.ftc.teamcode.swerve.common.pid.SpinPID;
 
 public class SplineMath {
     Constants constants = new Constants();
-    SpinPID spinPIDR;
-    SpinPID spinPIDL;
+//    SpinPID spinPIDR;
+//    SpinPID spinPIDL;
 
     private double x;
     private double y;
@@ -19,11 +19,11 @@ public class SplineMath {
     private int targetClicks;
 
     public SplineMath(){
-        spinPIDR = new SpinPID();
-        spinPIDL = new SpinPID();
+//        spinPIDR = new SpinPID();
+//        spinPIDL = new SpinPID();
     }
 
-    public void setPos(double x, double y, double theta, double kp, double ki, double kd, boolean right){
+    public void setPos(double x, double y, double theta, boolean right){
         this.x = x;
         this.y = y;
         turnAmount = theta;
@@ -33,8 +33,8 @@ public class SplineMath {
         if (right) targetClicks =  (int)(distanceR * constants.CLICKS_PER_INCH);
         else targetClicks = (int)(distanceL * constants.CLICKS_PER_INCH);
 
-        spinPIDL.setTargets(distanceL, kp, ki, kd);
-        spinPIDR.setTargets(distanceR, kp, ki, kd);
+//        spinPIDL.setTargets(distanceL, kp, ki, kd);
+//        spinPIDR.setTargets(distanceR, kp, ki, kd);
     }
 
     public void calculateDistance(){

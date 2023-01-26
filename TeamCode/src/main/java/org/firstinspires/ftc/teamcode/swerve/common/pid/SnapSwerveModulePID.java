@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.swerve.common.pid;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.swerve.auto.opmodes.AutoHub;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,6 +27,9 @@ public class SnapSwerveModulePID {
 
     double error = 0;
     public double update(double amountLeft){
+        this.kp = AutoHub.kp; //temporary code.  For FtcDashboard pid value fine tuning.
+        this.ki = AutoHub.ki;
+        this.kd = AutoHub.kd;
         //proportion
 //        double error = target - amountLeft;
         error = amountLeft;

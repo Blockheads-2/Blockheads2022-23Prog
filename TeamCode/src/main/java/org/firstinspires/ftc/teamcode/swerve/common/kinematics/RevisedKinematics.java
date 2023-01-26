@@ -125,11 +125,6 @@ public class RevisedKinematics {
 
         boolean specialSpliningCondition = posSystem.specialSpliningCondition(PodL.getPole(), PodR.getPole());
 
-//        boolean eligibleForTurning = posSystem.eligibleForTurning(PodL.getOptimizedCurrentW(), PodR.getOptimizedCurrentW(), PodL.getRobotCentricCurrentW(), PodR.getRobotCentricCurrentW());
-//        boolean shouldTurn = (lx == 0 && ly == 0) && (rx != 0);
-//        boolean shouldSpline = (lx != 0 || ly != 0) && (rx != 0);
-//        boolean specialSpliningCondition = posSystem.specialSpliningCondition(PodL.getRobotCentricCurrentW(), PodR.getRobotCentricCurrentW());
-
         //determining spin clicks and spin power
         double power = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
 
@@ -181,8 +176,8 @@ public class RevisedKinematics {
         PodL.setCurrents(posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
         PodR.setCurrents(posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);
 
-        PodL.setPosAuto(x, y, finalAngle, speed, driveType, posSystem.getMotorClicks()[0], false, posSystem.getMotorClicks(), posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
-        PodR.setPosAuto(x, y, finalAngle, speed, driveType, posSystem.getMotorClicks()[2], true, posSystem.getMotorClicks(), posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);
+        PodL.setPosAuto(x, y, finalAngle, speed, driveType, false, posSystem.getMotorClicks(), posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
+        PodR.setPosAuto(x, y, finalAngle, speed, driveType,true, posSystem.getMotorClicks(), posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);
     }
 
     public void logicAuto(){ //should run everytime, but currently only runs once.
@@ -192,15 +187,15 @@ public class RevisedKinematics {
 //        posSystem.setOptimizedCurrentW(PodR.optimizedCurrentW, PodL.optimizedCurrentW);
 
         //4) determining distance travel amount and power based on that
-        PodL.autoLogic(posSystem.getLeftWheelW(),  posSystem.getPositionArr()[4], posSystem.getDistanceTravelledL());
+        PodL.autoLogic(posSystem.getLeftWheelW(),  posSystem.getPositionArr()[4], posSystem.getDistanceTravelledL(), posSystem.getMotorClicks());
         //for some reason, we negate the negative clicks for the left topL encoder
-        PodR.autoLogic(posSystem.getRightWheelW(), posSystem.getPositionArr()[4], posSystem.getDistanceTravelledR());
+        PodR.autoLogic(posSystem.getRightWheelW(), posSystem.getPositionArr()[4], posSystem.getDistanceTravelledR(), posSystem.getMotorClicks());
 
         outputL = PodL.getOutputAuto();
         outputR = PodR.getOutputAuto();
     }
 
-    public void armLogicAuto(ArmType aType){
+    public void armLogicAuto(ArmType aType, double[] armClicks){
         boolean lowerArmCycle = false;
         boolean lowerAllTheWay = false;
         double atTargetPos = 0;
@@ -236,9 +231,9 @@ public class RevisedKinematics {
                 break;
 
             case LOW:
-                lowerArmCycle = (posSystem.getArmClicks().get("at") >= constants.topMotorLow + constants.degreeTOLERANCE &&
-                        posSystem.getArmClicks().get("abl") >= constants.bottomMotorLow + constants.degreeTOLERANCE &&
-                        posSystem.getArmClicks().get("abr") >= constants.bottomMotorLow + constants.degreeTOLERANCE);
+                lowerArmCycle = (armClicks[0] >= constants.topMotorLow + constants.degreeTOLERANCE &&
+                        armClicks[1] >= constants.bottomMotorLow + constants.degreeTOLERANCE &&
+                        armClicks[2] >= constants.bottomMotorLow + constants.degreeTOLERANCE);
 
                 if (lowerArmCycle){
                     clawAngle = constants.armServoLow;
@@ -246,7 +241,7 @@ public class RevisedKinematics {
                     atTargetPos = constants.topMotorLow;
 
                     int initPos = 0;
-                    if (posSystem.getArmClicks().get("abl") >= initPos && posSystem.getArmClicks().get("abr") >= initPos) {
+                    if (armClicks[1] >= initPos && armClicks[2] >= initPos) {
                         ablTargetPos = initPos;
                         abrTargetPos = initPos;
                     } else{
@@ -258,12 +253,12 @@ public class RevisedKinematics {
                 break;
 
             case GROUND:
-                lowerArmCycle = (posSystem.getArmClicks().get("at") >= constants.topMotorLow + constants.degreeTOLERANCE &&
-                        posSystem.getArmClicks().get("abl") >= constants.bottomMotorLow + constants.degreeTOLERANCE &&
-                        posSystem.getArmClicks().get("abr") >= constants.bottomMotorLow + constants.degreeTOLERANCE);
-                lowerAllTheWay = (posSystem.getArmClicks().get("at") >= constants.topMotorBottom + constants.degreeTOLERANCE &&
-                        posSystem.getArmClicks().get("abl") >= constants.bottomMotorBottom + constants.degreeTOLERANCE &&
-                        posSystem.getArmClicks().get("abr") >= constants.bottomMotorBottom + constants.degreeTOLERANCE);
+                lowerArmCycle = (armClicks[0] >= constants.topMotorLow + constants.degreeTOLERANCE &&
+                        armClicks[1] >= constants.bottomMotorLow + constants.degreeTOLERANCE &&
+                        armClicks[2] >= constants.bottomMotorLow + constants.degreeTOLERANCE);
+                lowerAllTheWay = (armClicks[0] >= constants.topMotorBottom + constants.degreeTOLERANCE &&
+                        armClicks[1] >= constants.bottomMotorBottom + constants.degreeTOLERANCE &&
+                        armClicks[2] >= constants.bottomMotorBottom + constants.degreeTOLERANCE);
 
                 if (lowerArmCycle){
                     clawAngle = constants.armServoLow;
@@ -271,7 +266,7 @@ public class RevisedKinematics {
                     atTargetPos = constants.topMotorLow;
 
                     int initPos = 0;
-                    if (posSystem.getArmClicks().get("abl") >= initPos && posSystem.getArmClicks().get("abr") >= initPos) {
+                    if (armClicks[1] >= initPos && armClicks[2] >= initPos) {
                         ablTargetPos = initPos;
                         abrTargetPos = initPos;
                     } else{
@@ -303,9 +298,9 @@ public class RevisedKinematics {
                 break;
 
             case HOLD:
-                atTargetPos = posSystem.getArmClicks().get("at");
-                ablTargetPos = posSystem.getArmClicks().get("abl");
-                abrTargetPos = posSystem.getArmClicks().get("abr");
+                atTargetPos = armClicks[0];
+                ablTargetPos = armClicks[1];
+                abrTargetPos = armClicks[2];
 
                 usePID = false;
                 break;
@@ -315,9 +310,9 @@ public class RevisedKinematics {
             atPID.setTargets(atTargetPos, constants.kp, constants.ki, constants.kd);
             ablPID.setTargets(ablTargetPos, constants.kp, constants.ki, constants.kd);
             abrPID.setTargets(abrTargetPos, constants.kp, constants.ki, constants.kd);
-            atPower = atPID.update(posSystem.getArmClicks().get("at")) * 0.8;
-            ablPower = ablPID.update(posSystem.getArmClicks().get("abl")) * 0.8;
-            abrPower = abrPID.update(posSystem.getArmClicks().get("abr")) * 0.8;
+            atPower = atPID.update(armClicks[0]);
+            ablPower = ablPID.update(armClicks[1]);
+            abrPower = abrPID.update(armClicks[2]);
             //if you are going to use a PID, you need feed forward
         } else {
             atPower = 0.4;
@@ -327,18 +322,18 @@ public class RevisedKinematics {
 
         if (armType == ArmType.LOW){
             targetMet = (lowerArmCycle &&
-                    Math.abs(posSystem.getArmClicks().get("claw") - clawClamp) <= 0.04 &&
-                    Math.abs(posSystem.getArmClicks().get("armServo") - clawAngle) <= 0.04);
+                    Math.abs(armClicks[4] - clawClamp) <= 0.04 &&
+                    Math.abs(armClicks[3] - clawAngle) <= 0.04);
         } else if (armType == ArmType.GROUND){
             targetMet = (lowerArmCycle && lowerAllTheWay &&
-                    Math.abs(posSystem.getArmClicks().get("claw") - clawClamp) <= 0.04 &&
-                    Math.abs(posSystem.getArmClicks().get("armServo") - clawAngle) <= 0.04);
+                    Math.abs(armClicks[4] - clawClamp) <= 0.04 &&
+                    Math.abs(armClicks[3] - clawAngle) <= 0.04);
         } else {
-            targetMet = (Math.abs(posSystem.getArmClicks().get("at") - atTargetPos) < constants.clickTOLERANCE &&
-                    Math.abs(posSystem.getArmClicks().get("abl") - ablTargetPos) < constants.clickTOLERANCE &&
-                    Math.abs(posSystem.getArmClicks().get("abr") - abrTargetPos) < constants.clickTOLERANCE &&
-                    Math.abs(posSystem.getArmClicks().get("claw") - clawClamp) <= 0.04 &&
-                    Math.abs(posSystem.getArmClicks().get("armServo") - clawAngle) <= 0.04);
+            targetMet = (Math.abs(armClicks[0] - atTargetPos) < constants.clickTOLERANCE &&
+                    Math.abs(armClicks[1] - ablTargetPos) < constants.clickTOLERANCE &&
+                    Math.abs(armClicks[2] - abrTargetPos) < constants.clickTOLERANCE &&
+                    Math.abs(armClicks[4] - clawClamp) <= 0.04 &&
+                    Math.abs(armClicks[3] - clawAngle) <= 0.04);
         }
 
         armOutput[0] = atPower;

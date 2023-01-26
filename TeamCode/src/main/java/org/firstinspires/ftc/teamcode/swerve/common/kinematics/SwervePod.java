@@ -211,7 +211,7 @@ public class SwervePod {
         this.throttle = throttle;
     }
 
-    public void setPosAuto(double x, double y, double finalAngle, double speed, RevisedKinematics.DriveType driveType, int initClicks, boolean right, int[] posClicks, double currentW, double currentR){
+    public void setPosAuto(double x, double y, double finalAngle, double speed, RevisedKinematics.DriveType driveType, boolean right, int[] posClicks, double currentW, double currentR){
         setCurrents(currentW, currentR);
 
         this.driveType = driveType;
@@ -222,15 +222,17 @@ public class SwervePod {
         this.speed = speed;
         this.finalAngle = finalAngle;
 
-        if (driveType == RevisedKinematics.DriveType.LINEAR) linearMath.setPos(x, y, finalAngle, constants.kp, constants.ki, constants.kd);
-        else if (driveType == RevisedKinematics.DriveType.VARIABLE_SPLINE) splineMath.setPos(x, y, finalAngle, constants.kp, constants.ki, constants.kd, right);
-        else if (driveType == RevisedKinematics.DriveType.TURN) turnMath.setPos(finalAngle, (finalAngle < 0 ? -1 : 1), right);
+        direction = (initPole ? initDirection : -initDirection);
+
+        if (driveType == RevisedKinematics.DriveType.LINEAR) linearMath.setPos(x, y, finalAngle);
+        else if (driveType == RevisedKinematics.DriveType.VARIABLE_SPLINE) splineMath.setPos(x, y, finalAngle, right);
+        else if (driveType == RevisedKinematics.DriveType.TURN) turnMath.setPos(finalAngle, direction, right);
 
         setPID(AutoHub.kp, AutoHub.ki, AutoHub.kd);
 
         packet.put("Target Distance", linearMath.getDistance());
 
-//        controlHeader.calculateThrottle(posClicks, currentR, currentR, true);
+        controlHeader.reset(posClicks);
 
         double powerSpin = Math.abs(pid.update(distance)) * speed;
         double powerRotate = Math.abs(pid.update(turnAmount)) * speed;
@@ -241,7 +243,7 @@ public class SwervePod {
         this.power = power;
     }
 
-    public void autoLogic(double currentW, double currentR, double distanceRan){
+    public void autoLogic(double currentW, double currentR, double distanceRan, int[] posClicks){
         setCurrents(currentW, currentR);
 
         if (driveType != RevisedKinematics.DriveType.TURN && driveType != RevisedKinematics.DriveType.VARIABLE_SPLINE) nonRightStickCurrentW = currentW;
@@ -261,8 +263,8 @@ public class SwervePod {
 
                 power = Math.abs(pid.update(distance)) * speed; //probably needs a way to keep the power alive to take into account power directed toward rotating the module.
                 throttle = 1.0;
-//                controlHeader.calculateThrottle(posClicks, currentR, currentR, true);
-//                throttle = controlHeader.getThrottle(side);
+                controlHeader.calculateThrottle(posClicks, currentR, currentR);
+                throttle = controlHeader.getThrottle(side);
                 direction = (initPole ? initDirection : -initDirection) * (distance < 0 ? -1 : 1);
 
                 break;

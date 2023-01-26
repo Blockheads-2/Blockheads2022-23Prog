@@ -275,17 +275,6 @@ public class GlobalPosSystem {
         return clicks;
     }
 
-    public HashMap<String, Double> getArmClicks() {
-        HashMap<String, Double> armClicks = new HashMap<String, Double>();
-        armClicks.put("at", (double)robot.at.getCurrentPosition());
-        armClicks.put("abl", (double)robot.abl.getCurrentPosition());
-        armClicks.put("abr", (double)robot.abr.getCurrentPosition());
-        armClicks.put("armServo", robot.armServo.getPosition());
-        armClicks.put("claw", robot.claw.getPosition());
-
-        return armClicks;
-    }
-
     public double clamp(double degrees){
         if (Math.abs(degrees) >= 360) degrees %= 360;
         if (degrees == -180) degrees = 180;
