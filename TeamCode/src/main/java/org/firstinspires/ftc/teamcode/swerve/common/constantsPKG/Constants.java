@@ -114,7 +114,7 @@ public class Constants {
     public static double ki = 0.01;
     public static double kd = 0.01;
 
-    //so far, <p, i, d> = <2, 0, 1> seems best
+    //so far, <p, i, d> = <2, 0, 1> seems best for module rotation
 
 
     //Softstops:
