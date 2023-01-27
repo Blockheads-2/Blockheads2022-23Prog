@@ -292,6 +292,8 @@ public class SwervePod {
                 robotCentricSetRotClicks(0);
 
                 distance = turnMath.distanceRemaining(distanceRan);
+                packet.put("Target Distance", turnMath.getDistance());
+
 
                 power = Math.abs(pid.update(distance)) * speed;
                 direction = (initPole ? initDirection : -initDirection);

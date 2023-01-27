@@ -141,7 +141,7 @@ public class Constants {
 
     //Distance Between swerve module and Center
     public double MM_INCH = 1/2.56;
-    public double DISTANCE_BETWEEN_MODULE_AND_CENTER = 3.406; //3.405512
+    public double DISTANCE_BETWEEN_MODULE_AND_CENTER = 3.405512; //3.405512
     public double horizontalDistanceOdo = 6.25;
     public double midDistanceOdo = 3.0;
 }
