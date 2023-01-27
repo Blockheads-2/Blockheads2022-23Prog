@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.swerve.common.kinematics;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.swerve.auto.opmodes.AutoHub;
 import org.firstinspires.ftc.teamcode.swerve.common.Accelerator;
 import org.firstinspires.ftc.teamcode.swerve.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.swerve.common.gps.GlobalPosSystem;
@@ -68,9 +69,9 @@ public class RevisedKinematics {
     ArmType armType = ArmType.HOLD;
     boolean targetMet = false;
 
-    ArmPID atPID = new ArmPID();
-    ArmPID abrPID = new ArmPID();
-    ArmPID ablPID = new ArmPID();
+    public ArmPID atPID = new ArmPID();
+    public ArmPID abrPID = new ArmPID();
+    public ArmPID ablPID = new ArmPID();
 //    HashMap<String, Double> armOutput = new HashMap<String, Double>();
     double[] armOutput = new double[8];
 
@@ -217,8 +218,10 @@ public class RevisedKinematics {
                 atTargetPos = constants.topMotorHigh;
                 ablTargetPos = constants.bottomMotorHigh;
                 abrTargetPos = constants.bottomMotorHigh;
-                usePID = true;
                 clawAngle = constants.armServoHigh;
+                clawClamp = armClicks[4];
+
+                usePID = false;
 
                 break;
 
@@ -227,10 +230,13 @@ public class RevisedKinematics {
                 ablTargetPos = constants.bottomMotorMid;
                 abrTargetPos = constants.bottomMotorMid;
                 clawAngle = constants.armServoMid;
-                usePID = true;
+                clawClamp = armClicks[4];
+                usePID = false;
                 break;
 
             case LOW:
+                clawClamp = armClicks[4];
+
                 lowerArmCycle = (armClicks[0] >= constants.topMotorLow + constants.degreeTOLERANCE &&
                         armClicks[1] >= constants.bottomMotorLow + constants.degreeTOLERANCE &&
                         armClicks[2] >= constants.bottomMotorLow + constants.degreeTOLERANCE);
@@ -249,10 +255,12 @@ public class RevisedKinematics {
                         abrTargetPos = constants.bottomMotorLow;
                     }
                 }
-                usePID = true;
+                usePID = false;
                 break;
 
             case GROUND:
+                clawClamp = armClicks[4];
+
                 lowerArmCycle = (armClicks[0] >= constants.topMotorLow + constants.degreeTOLERANCE &&
                         armClicks[1] >= constants.bottomMotorLow + constants.degreeTOLERANCE &&
                         armClicks[2] >= constants.bottomMotorLow + constants.degreeTOLERANCE);
@@ -282,17 +290,19 @@ public class RevisedKinematics {
                     abrTargetPos = constants.bottomMotorBottom;
                 }
 
-                usePID = true;
+                usePID = false;
                 break;
 
             case GRAB:
                 clawClamp = constants.closeClaw;
+                clawAngle = armClicks[3];
 
                 usePID = false;
                 break;
 
             case DROP:
                 clawClamp = constants.openClaw;
+                clawAngle = armClicks[3];
 
                 usePID = false;
                 break;
@@ -301,15 +311,17 @@ public class RevisedKinematics {
                 atTargetPos = armClicks[0];
                 ablTargetPos = armClicks[1];
                 abrTargetPos = armClicks[2];
+                clawClamp = armClicks[4];
+                clawAngle = armClicks[3];
 
                 usePID = false;
                 break;
         }
 
         if (usePID) {
-            atPID.setTargets(atTargetPos, constants.kp, constants.ki, constants.kd);
-            ablPID.setTargets(ablTargetPos, constants.kp, constants.ki, constants.kd);
-            abrPID.setTargets(abrTargetPos, constants.kp, constants.ki, constants.kd);
+            atPID.setTargets(atTargetPos, constants.kpArm, constants.kiArm, constants.kdArm);
+            ablPID.setTargets(ablTargetPos, constants.kpArm, constants.kiArm, constants.kdArm);
+            abrPID.setTargets(abrTargetPos, constants.kpArm, constants.kiArm, constants.kdArm);
             atPower = atPID.update(armClicks[0]);
             ablPower = ablPID.update(armClicks[1]);
             abrPower = abrPID.update(armClicks[2]);

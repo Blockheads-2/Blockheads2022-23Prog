@@ -9,7 +9,7 @@ public class ArmPID {
     private double pError;
 
     private ElapsedTime timer = new ElapsedTime();
-    private double targetClicks = Integer.MAX_VALUE;
+    private double targetClicks = 0;
 
     private double prevError = 0;
     private double prevTime = 0;
@@ -22,9 +22,10 @@ public class ArmPID {
         timer.reset();
     }
 
+    double error = 0;
     public double update(double currClicks){
         //proportion
-        double error = targetClicks - currClicks;
+        error = targetClicks - currClicks;
 
         //integral
         accumulatedError = Math.abs(accumulatedError) * Math.signum(error); //ensures that accumulatedError and the error have the same sign
@@ -41,6 +42,14 @@ public class ArmPID {
         //double motorPower =  Math.tanh(kp * error + ki * accumulatedError + kd * slope);
 
         return motorPower;
+    }
+
+    public double getError(){
+        return error;
+    }
+
+    public double getTarget(){
+        return targetClicks;
     }
 
     public void setTargets(double targetClicks, double kp, double ki, double kd){

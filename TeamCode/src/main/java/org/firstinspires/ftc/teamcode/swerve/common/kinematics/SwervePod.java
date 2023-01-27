@@ -228,7 +228,8 @@ public class SwervePod {
         else if (driveType == RevisedKinematics.DriveType.VARIABLE_SPLINE) splineMath.setPos(x, y, finalAngle, right);
         else if (driveType == RevisedKinematics.DriveType.TURN) turnMath.setPos(finalAngle, direction, right);
 
-        setPID(AutoHub.kp, AutoHub.ki, AutoHub.kd);
+        if (driveType == RevisedKinematics.DriveType.SNAP) setPID(constants.kpRotation, constants.kiRotation, constants.kdRotation);
+        else setPID(constants.kpTranlation, constants.kiTranslation, constants.kdTranslation);
 
         packet.put("Target Distance", linearMath.getDistance());
 
@@ -263,8 +264,8 @@ public class SwervePod {
 
                 power = Math.abs(pid.update(distance)) * speed; //probably needs a way to keep the power alive to take into account power directed toward rotating the module.
                 throttle = 1.0;
-                controlHeader.calculateThrottle(posClicks, currentR, currentR);
-                throttle = controlHeader.getThrottle(side);
+//                controlHeader.calculateThrottle(posClicks, currentR, currentR);
+//                throttle = controlHeader.getThrottle(side);
                 direction = (initPole ? initDirection : -initDirection) * (distance < 0 ? -1 : 1);
 
                 break;
@@ -310,6 +311,12 @@ public class SwervePod {
         }
 
         spinClicksTarget = distance * constants.CLICKS_PER_INCH;
+//        if (side == Side.RIGHT && (driveType == RevisedKinematics.DriveType.LINEAR ||
+//                driveType == RevisedKinematics.DriveType.TURN ||
+//                driveType == RevisedKinematics.DriveType.CONSTANT_SPLINE ||
+//                driveType == RevisedKinematics.DriveType.VARIABLE_SPLINE)) {
+//            spinClicksTarget *= constants.RIGHT_SIDE_LIMITER;
+//        }
 //        setPowerAuto();
     }
 
@@ -377,10 +384,6 @@ public class SwervePod {
 
         if (power > constants.POWER_LIMITER) power = constants.POWER_LIMITER;
         else if (power < -constants.POWER_LIMITER) power = -constants.POWER_LIMITER;
-
-//        if (side == Side.RIGHT) {
-//            spinClicksTarget *= constants.RIGHT_SIDE_LIMITER;
-//        }
 
         throttle = Math.abs(throttle);
 //        power *= throttle;

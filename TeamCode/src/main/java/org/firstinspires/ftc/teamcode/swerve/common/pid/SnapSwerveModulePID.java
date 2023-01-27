@@ -27,9 +27,6 @@ public class SnapSwerveModulePID {
 
     double error = 0;
     public double update(double amountLeft){
-        this.kp = AutoHub.kp; //temporary code.  For FtcDashboard pid value fine tuning.
-        this.ki = AutoHub.ki;
-        this.kd = AutoHub.kd;
         //proportion
 //        double error = target - amountLeft;
         error = amountLeft;

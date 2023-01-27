@@ -26,7 +26,7 @@ public class Constants {
     public double MAX_VELOCITY_DT = 2400.0; // unit is clicks/sec
     public double clickTOLERANCE = 10; //number of clicks or degrees the robot can be off by
 //    public double clickToleranceAuto = 12; //~1/3rd worth of error for translation.  ~2 degrees worth of error for rotation.
-    public double clickToleranceAuto = 0; //for testing with dashboard
+    public double clickToleranceAuto = 5; //for testing with dashboard
     public double degreeTOLERANCE = 5;
     public double allignmentTolerance = 13;
 
@@ -114,7 +114,20 @@ public class Constants {
     public static double ki = 0.01;
     public static double kd = 0.01;
 
-    //so far, <p, i, d> = <2, 0, 1> seems best for module rotation
+    public double kpRotation = 16;
+    public double kiRotation = 1;
+    public double kdRotation = 8;
+
+    public double kpTranlation = 10;
+    public double kiTranslation = 2;
+    public double kdTranslation = 2;
+
+    public double kpArm = 8;
+    public double kiArm = 0;
+    public double kdArm = 0;
+
+    //so far, <p, i, d> = <16, 1, 8> seems best for module rotation
+    //<p, i, d> = <10, 2, 2> for module translation
 
 
     //Softstops:

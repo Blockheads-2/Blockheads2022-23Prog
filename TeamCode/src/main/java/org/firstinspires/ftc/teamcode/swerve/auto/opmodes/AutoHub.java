@@ -41,6 +41,8 @@ public class AutoHub implements Runnable{
     public static double kp = 0;
     public static double ki = 0;
     public static double kd = 0;
+    public static double power = 0;
+    public static double distance = 0;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
     ElapsedTime loopTime = new ElapsedTime();
@@ -101,6 +103,14 @@ public class AutoHub implements Runnable{
         packet.put("Left W",  posSystem.getLeftWheelW());
         packet.put("delta time", deltaMS);
         packet.put("Target Distance", 0);
+        packet.put("Error at", kinematics.atPID.getError());
+        packet.put("Target at", kinematics.atPID.getTarget());
+
+        packet.put("Error abl", kinematics.ablPID.getError());
+        packet.put("Target abl", kinematics.ablPID.getTarget());
+
+        packet.put("Error abr", kinematics.abrPID.getError());
+        packet.put("Target abr", kinematics.abrPID.getTarget());
 
         dashboard.sendTelemetryPacket(packet);
 
@@ -190,7 +200,7 @@ public class AutoHub implements Runnable{
         //3) Tell the robot to travel that distance we just determined.
         while (linearOpMode.opModeIsActive() && (targetNotMet || !armTargetMet)){ //have a time based something in case our target is never met.
             posSystem.calculatePos();
-//            kinematics.armLogicAuto(armMovementType); //determine targets/power for the arm
+            kinematics.armLogicAuto(armMovementType, getArmClicks()); //determine targets/power for the arm
             // see how long program takes without calling armLogicAuto
 
             kinematics.logicAuto();
@@ -201,10 +211,10 @@ public class AutoHub implements Runnable{
             powerL = motorPower[0];
             powerR = motorPower[2];
 
-            targetClicks[2] = 0;
-            targetClicks[3] = 0;
-            motorPower[2] = 0;
-            motorPower[3] = 0;
+//            targetClicks[2] = 0;
+//            targetClicks[3] = 0;
+//            motorPower[2] = 0;
+//            motorPower[3] = 0;
 
             targetTopL = robot.topL.getCurrentPosition() + targetClicks[0];
             targetBotL = robot.botL.getCurrentPosition() + targetClicks[1];
@@ -229,17 +239,14 @@ public class AutoHub implements Runnable{
                     Math.abs(robot.botL.getCurrentPosition() - targetBotL) > constants.clickToleranceAuto ||
                     Math.abs(robot.topR.getCurrentPosition() - targetTopR) > constants.clickToleranceAuto ||
                     Math.abs(robot.botR.getCurrentPosition() - targetBotR) > constants.clickToleranceAuto);
-//            armTargetMet = kinematics.isArmTargetMet();
-            armTargetMet = false;
+            armTargetMet = kinematics.isArmTargetMet();
+//            armTargetMet = false;
 
             UpdateTelemetry();
 
             deltaMS = loopTime.milliseconds() - prevMS;
             prevMS = loopTime.milliseconds();
         }
-
-
-
 
         if (kinematics.getDriveType() != RevisedKinematics.DriveType.SNAP){
             while(!reset.finishedReset() && linearOpMode.opModeIsActive()){
@@ -255,6 +262,12 @@ public class AutoHub implements Runnable{
             robot.botR.setTargetPosition(robot.botR.getCurrentPosition());
         }
         reset.resetAuto(false);
+
+        robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
     }
 
     double[] armClicks = new double[5];
@@ -424,6 +437,17 @@ public class AutoHub implements Runnable{
 //        packet.put("Distance Travelled R", posSystem.getDistanceTravelledR());
         packet.put("Distance Travelled L", posSystem.getDistanceTravelledL());
         packet.put("Left W",  posSystem.getLeftWheelW());
+
+        packet.put("Error at", kinematics.atPID.getError());
+        packet.put("Target at", kinematics.atPID.getTarget());
+
+        packet.put("Error abl", kinematics.ablPID.getError());
+        packet.put("Target abl", kinematics.ablPID.getTarget());
+
+        packet.put("Error abr", kinematics.abrPID.getError());
+        packet.put("Target abr", kinematics.abrPID.getTarget());
+
+
         packet.put("delta time", deltaMS);
 //        packet.put("Right W", posSystem.getRightWheelW());
         dashboard.sendTelemetryPacket(packet);
