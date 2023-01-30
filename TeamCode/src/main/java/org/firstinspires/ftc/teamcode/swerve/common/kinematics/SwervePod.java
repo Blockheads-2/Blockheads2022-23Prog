@@ -93,6 +93,16 @@ public class SwervePod {
     }
 
     public void setRotClicks(double target){
+        if (target != 0){
+            turnAmount = wheelOptimization(target, fieldCentricCurrentW);
+            rotClicksTarget = turnAmount * constants.CLICKS_PER_DEGREE;
+        } else {
+            turnAmount = 0;
+            rotClicksTarget = 0;
+        }
+    }
+
+    public void setRotClicks(double target, int arg){
         turnAmount = wheelOptimization(target, fieldCentricCurrentW);
         rotClicksTarget = turnAmount * constants.CLICKS_PER_DEGREE;
     }
@@ -184,19 +194,16 @@ public class SwervePod {
             turnAmount = changeAngle(temp_target, currentW);
         }
 
-        if (driveType != RevisedKinematics.DriveType.TURN){
-            if (initPole){
-                direction = initDirection;
+        if (initPole){
+            direction = initDirection;
 //            optimizedCurrentW = fieldCentricCurrentW;
 //            robotCentricCurrentW = clamp(optimizedCurrentW - currentR);
-            } else{
-                direction = -initDirection;
+        } else{
+            direction = -initDirection;
 //            optimizedCurrentW = clamp(fieldCentricCurrentW + 180);
 //            this.currentW = clamp(this.currentW + 180);
 //            robotCentricCurrentW = clamp(optimizedCurrentW - currentR);
-            }
         }
-
 
         return turnAmount;
     }
