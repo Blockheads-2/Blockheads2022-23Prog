@@ -93,14 +93,10 @@ public class SwervePod {
     }
 
     public void setRotClicks(double target){
-        if (target != 0){
-            turnAmount = wheelOptimization(target, fieldCentricCurrentW);
-            rotClicksTarget = turnAmount * constants.CLICKS_PER_DEGREE;
-        } else {
-            turnAmount = 0;
-            rotClicksTarget = 0;
-        }
+        turnAmount = wheelOptimization(target, fieldCentricCurrentW);
+        rotClicksTarget = turnAmount * constants.CLICKS_PER_DEGREE;
     }
+
 
     public void setRotClicks(double target, int arg){
         turnAmount = wheelOptimization(target, fieldCentricCurrentW);
@@ -114,6 +110,7 @@ public class SwervePod {
 
     public void forceSetRotClicks(int clicks){
         rotClicksTarget = clicks;
+        turnAmount = clicks * constants.DEGREES_PER_CLICK;
     }
 
     //for spin power and spin clicks
