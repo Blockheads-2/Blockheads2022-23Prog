@@ -113,10 +113,6 @@ public class RevisedKinematics {
         //determining targets, and how much we want to turn
         target = joystickTracker.getAngle(lx, ly);
 
-        //determining rotational clicks
-        PodL.setRotClicks(target);
-        PodR.setRotClicks(target);
-
         boolean shouldTurn = (lx == 0 && ly == 0) && (rx != 0); //possible problem: the robot will "jitter" if its turning and then becomes not eligible for turning (may have to increase tolerance?)
         boolean shouldSpline = (lx != 0 || ly != 0) && (rx != 0);
         boolean eligibleForTurning = posSystem.eligibleForTurning(PodL.getPole(), PodR.getPole());
@@ -131,6 +127,16 @@ public class RevisedKinematics {
         type = PodL.setSpinClicksAndPower(power, rt, shouldTurn, eligibleForTurning, shouldSpline, specialSpliningCondition, rx, posSystem.getMotorClicks());
         type = PodR.setSpinClicksAndPower(power, rt, shouldTurn, eligibleForTurning, shouldSpline, specialSpliningCondition, rx, posSystem.getMotorClicks());
 
+        //determining rotational clicks
+        if (type != DriveType.TURN){
+            PodL.setRotClicks(target);
+            PodR.setRotClicks(target);
+        }
+        /*
+        Turning glitch happens here.  When the right joystick crosses over "0," it'll do that weird thingy.
+        Note: before it was "if (!shouldTurn)"
+         */
+
 //        PodL.setThrottleUsingPodLReference(PodR, shouldTurn, shouldSpline);
 
         //resetting modules when:
@@ -138,8 +144,8 @@ public class RevisedKinematics {
         // - the wheels aren't alligned with 0 degrees AND the driver is trying to turn.
         if (type == DriveType.STOP){
             if (!posSystem.isAlligned(PodL.getPole(), PodR.getPole())){
-                PodL.setRotClicks(0, 1);
-                PodR.setRotClicks(0, 1);
+                PodL.setRotClicks(0);
+                PodR.setRotClicks(0);
                 PodL.setSpinClicks(0);
                 PodR.setSpinClicks(0);
                 PodL.setPower(1);
