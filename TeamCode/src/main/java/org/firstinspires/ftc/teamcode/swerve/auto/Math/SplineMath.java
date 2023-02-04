@@ -66,6 +66,10 @@ public class SplineMath {
         return new double[]{distanceL, distanceR};
     }
 
+    public double getBiggerDistance(){
+        return Math.max(Math.abs(distanceL), Math.abs(distanceR));
+    }
+
     public double distanceRemaining(double distanceRan){
         return targetClicks - (distanceRan * constants.CLICKS_PER_INCH);
     }
