@@ -70,7 +70,7 @@ public class GlobalPosSystem {
         double rotateR = (robot.topR.getCurrentPosition() + robot.botR.getCurrentPosition()) / 2.0; //total rotation of right module
         rotateR *= constants.DEGREES_PER_CLICK;
 
-        positionArr[2] = clamp(-rotateL);
+        positionArr[2] = clamp(rotateL);
         positionArr[3] = clamp(rotateR);
     }
 
