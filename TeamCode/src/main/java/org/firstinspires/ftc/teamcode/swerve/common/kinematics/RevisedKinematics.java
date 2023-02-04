@@ -114,12 +114,8 @@ public class RevisedKinematics {
         target = joystickTracker.getAngle(lx, ly);
 
         //determining rotational clicks
-        if (lx != 0 || ly != 0){
-            PodL.setRotClicks(target);
-            PodR.setRotClicks(target);
-        } else {
-            PodL.forceSetRotClicks(0);
-        }
+        PodL.setRotClicks(target);
+        PodR.setRotClicks(target);
 
         boolean shouldTurn = (lx == 0 && ly == 0) && (rx != 0); //possible problem: the robot will "jitter" if its turning and then becomes not eligible for turning (may have to increase tolerance?)
         boolean shouldSpline = (lx != 0 || ly != 0) && (rx != 0);
