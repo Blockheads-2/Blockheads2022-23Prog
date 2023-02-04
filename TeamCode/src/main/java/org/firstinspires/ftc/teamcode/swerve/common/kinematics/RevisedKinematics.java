@@ -414,8 +414,8 @@ public class RevisedKinematics {
 //        int avgClicks = (int)((leftClicks + rightClicks) / 2.0);
 
         int[] clicks = new int[4];
-        clicks[0] = (int)(outputL[0] + outputL[1]); //left
-        clicks[1] = (int)(-outputL[0] + outputL[1]); //left
+        clicks[0] = (int)(outputL[0] - outputL[1]); //left
+        clicks[1] = (int)(-outputL[0] - outputL[1]); //left
         clicks[2] = (int)(outputR[0] + outputR[1]); //right
         clicks[3] = (int)(-outputR[0] + outputR[1]); //right
         return clicks;

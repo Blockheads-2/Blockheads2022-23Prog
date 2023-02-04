@@ -53,7 +53,7 @@ public class Reset {
 
     private void updateReset(){
         globalPosSystem.calculatePos();
-        int rotateL = (int)(globalPosSystem.getLeftWheelW() * constants.CLICKS_PER_DEGREE); //total rotation of left module
+        int rotateL = -(int)(globalPosSystem.getLeftWheelW() * constants.CLICKS_PER_DEGREE); //total rotation of left module
         int rotateR = (int)(globalPosSystem.getRightWheelW() * constants.CLICKS_PER_DEGREE); //total rotation of right module
 
         rotateL %= constants.CLICKS_PER_PURPLE_REV;
@@ -89,7 +89,7 @@ public class Reset {
 
     private void updateResetAuto(){
         globalPosSystem.calculatePos();
-        int rotateL = (int)(globalPosSystem.getLeftWheelW() * constants.CLICKS_PER_DEGREE); //total rotation of left module
+        int rotateL = -(int)(globalPosSystem.getLeftWheelW() * constants.CLICKS_PER_DEGREE); //total rotation of left module
         int rotateR = (int)(globalPosSystem.getRightWheelW() * constants.CLICKS_PER_DEGREE); //total rotation of right module
 
         rotateL %= constants.CLICKS_PER_PURPLE_REV;
