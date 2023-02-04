@@ -152,6 +152,8 @@ public class AutoHub implements Runnable{
 
     double powerR = 0;
     double powerL = 0;
+    ElapsedTime runTime = new ElapsedTime();
+    double timeoutS = 0;
     public void Move(RevisedKinematics.DriveType movementType, double x, double y, double finalAngle, double speed, RevisedKinematics.ArmType armMovementType){
         UpdateTelemetry();
 
@@ -160,7 +162,7 @@ public class AutoHub implements Runnable{
         posSystem.calculatePos();
 
         //2) Determine the distance from our current pos & the target pos.
-        kinematics.setPosAuto(x, y, finalAngle, speed, movementType);
+        timeoutS = kinematics.setPosAuto(x, y, finalAngle, speed, movementType);
         reset.resetAuto(false);
         kinematics.armLogicAuto(armMovementType, getArmClicks()); //determine targets/power for the arm
         kinematics.logicAuto();
@@ -198,7 +200,9 @@ public class AutoHub implements Runnable{
 
         boolean armTargetMet = kinematics.isArmTargetMet();
         //3) Tell the robot to travel that distance we just determined.
-        while (linearOpMode.opModeIsActive() && (targetNotMet || !armTargetMet)){ //have a time based something in case our target is never met.
+
+        runTime.reset();
+        while (linearOpMode.opModeIsActive() && (targetNotMet || !armTargetMet) && runTime.seconds() < timeoutS + 2){ //have a time based something in case our target is never met.
             posSystem.calculatePos();
             kinematics.armLogicAuto(armMovementType, getArmClicks()); //determine targets/power for the arm
             // see how long program takes without calling armLogicAuto
@@ -446,6 +450,7 @@ public class AutoHub implements Runnable{
 
         packet.put("Error abr", kinematics.abrPID.getError());
         packet.put("Target abr", kinematics.abrPID.getTarget());
+        packet.put("TimeOut", timeoutS);
 
 
         packet.put("delta time", deltaMS);

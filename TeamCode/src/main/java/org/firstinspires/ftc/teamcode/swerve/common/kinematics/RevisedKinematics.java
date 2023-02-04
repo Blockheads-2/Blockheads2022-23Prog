@@ -116,12 +116,6 @@ public class RevisedKinematics {
         boolean shouldTurn = (lx == 0 && ly == 0) && (rx != 0); //possible problem: the robot will "jitter" if its turning and then becomes not eligible for turning (may have to increase tolerance?)
         boolean shouldSpline = (lx != 0 || ly != 0) && (rx != 0);
 
-        //determining rotational clicks
-        if (!shouldTurn){
-            PodL.setRotClicks(target);
-            PodR.setRotClicks(target);
-        }
-
         boolean eligibleForTurning = posSystem.eligibleForTurning(PodL.getPole(), PodR.getPole());
 
         boolean specialSpliningCondition = posSystem.specialSpliningCondition(PodL.getPole(), PodR.getPole());
@@ -132,6 +126,12 @@ public class RevisedKinematics {
         type = PodL.setSpinClicksAndPower(power, rt, shouldTurn, eligibleForTurning, shouldSpline, specialSpliningCondition, rx, posSystem.getMotorClicks());
         type = PodR.setSpinClicksAndPower(power, rt, shouldTurn, eligibleForTurning, shouldSpline, specialSpliningCondition, rx, posSystem.getMotorClicks());
 
+        if (lx != 0 || ly != 0){
+            PodL.setRotClicks(target);
+            PodR.setRotClicks(target);
+        } else {
+            PodL.forceSetRotClicks(0);
+        }
 
 //        PodL.setThrottleUsingPodLReference(PodR, shouldTurn, shouldSpline);
 
@@ -167,7 +167,7 @@ public class RevisedKinematics {
         }
     }
 
-    public void setPosAuto(double x, double y, double finalAngle, double speed, DriveType driveType){ //runs onc
+    public double setPosAuto(double x, double y, double finalAngle, double speed, DriveType driveType){ //runs onc
         //target position
         this.targetX = x;
         this.targetY = y;
@@ -177,8 +177,9 @@ public class RevisedKinematics {
         PodL.setCurrents(posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
         PodR.setCurrents(posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);
 
-        PodL.setPosAuto(x, y, finalAngle, speed, driveType, false, posSystem.getMotorClicks(), posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
-        PodR.setPosAuto(x, y, finalAngle, speed, driveType,true, posSystem.getMotorClicks(), posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);
+        double timeOutL = PodL.setPosAuto(x, y, finalAngle, speed, driveType, false, posSystem.getMotorClicks(), posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
+        double timeOutR = PodR.setPosAuto(x, y, finalAngle, speed, driveType,true, posSystem.getMotorClicks(), posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);
+        return Math.max(timeOutL, timeOutR);
     }
 
     public void logicAuto(){ //should run everytime, but currently only runs once.
