@@ -112,8 +112,6 @@ public class SwervePod {
         this.spinClicksTarget = (power * (constants.SPIN_CLICK_FACTOR * (1.0 + (trigger))));
         this.throttle = 1.0;
 
-        direction = (initPole ? initDirection : -initDirection);
-
         if (turn) {
             if (eligibleForTurning) {
                 robotCentricSetRotClicks(0);
@@ -184,19 +182,16 @@ public class SwervePod {
             turnAmount = changeAngle(temp_target, currentW);
         }
 
-        if (driveType != RevisedKinematics.DriveType.TURN){
-            if (initPole){
-                direction = initDirection;
+        if (initPole){
+            direction = initDirection;
 //            optimizedCurrentW = fieldCentricCurrentW;
 //            robotCentricCurrentW = clamp(optimizedCurrentW - currentR);
-            } else{
-                direction = -initDirection;
+        } else{
+            direction = -initDirection;
 //            optimizedCurrentW = clamp(fieldCentricCurrentW + 180);
 //            this.currentW = clamp(this.currentW + 180);
 //            robotCentricCurrentW = clamp(optimizedCurrentW - currentR);
-            }
         }
-
 
         return turnAmount;
     }

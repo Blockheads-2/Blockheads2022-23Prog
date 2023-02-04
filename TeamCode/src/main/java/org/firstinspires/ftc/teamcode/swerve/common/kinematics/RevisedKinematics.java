@@ -115,6 +115,13 @@ public class RevisedKinematics {
 
         boolean shouldTurn = (lx == 0 && ly == 0) && (rx != 0); //possible problem: the robot will "jitter" if its turning and then becomes not eligible for turning (may have to increase tolerance?)
         boolean shouldSpline = (lx != 0 || ly != 0) && (rx != 0);
+
+        //determining rotational clicks
+        if (!shouldTurn){
+            PodL.setRotClicks(target);
+            PodR.setRotClicks(target);
+        }
+
         boolean eligibleForTurning = posSystem.eligibleForTurning(PodL.getPole(), PodR.getPole());
         boolean specialSpliningCondition = posSystem.specialSpliningCondition(PodL.getPole(), PodR.getPole());
         telemetry.addData("Splining Special Condition", posSystem.specialSpliningCondition(PodL.getPole(), PodR.getPole()));
@@ -127,15 +134,6 @@ public class RevisedKinematics {
         type = PodL.setSpinClicksAndPower(power, rt, shouldTurn, eligibleForTurning, shouldSpline, specialSpliningCondition, rx, posSystem.getMotorClicks());
         type = PodR.setSpinClicksAndPower(power, rt, shouldTurn, eligibleForTurning, shouldSpline, specialSpliningCondition, rx, posSystem.getMotorClicks());
 
-        //determining rotational clicks
-        if (type != DriveType.TURN){
-            PodL.setRotClicks(target);
-            PodR.setRotClicks(target);
-        }
-        /*
-        Turning glitch happens here.  When the right joystick crosses over "0," it'll do that weird thingy.
-        Note: before it was "if (!shouldTurn)"
-         */
 
 //        PodL.setThrottleUsingPodLReference(PodR, shouldTurn, shouldSpline);
 
@@ -150,9 +148,6 @@ public class RevisedKinematics {
                 PodR.setSpinClicks(0);
                 PodL.setPower(1);
                 PodR.setPower(1);
-            } else {
-                PodL.setPower(0);
-                PodR.setPower(0);
             }
         }
 
