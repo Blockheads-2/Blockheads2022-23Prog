@@ -172,18 +172,20 @@ public class RevisedKinematics {
         }
     }
 
-    public void setPosAuto(double x, double y, double finalAngle, double speed, DriveType driveType){ //runs onc
-        //target position
-        this.targetX = x;
-        this.targetY = y;
-        this.finalAngle = finalAngle;
+    public double setPosAuto(double x, double y, double finalAngle, double speed, DriveType driveType){ //runs onc
         //determining current position
         this.type = driveType;
         PodL.setCurrents(posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
         PodR.setCurrents(posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);
 
-        PodL.setPosAuto(x, y, finalAngle, speed, driveType, false, posSystem.getMotorClicks(), posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
-        PodR.setPosAuto(x, y, finalAngle, speed, driveType,true, posSystem.getMotorClicks(), posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);
+        //target position
+        this.targetX = x;
+        this.targetY = y;
+        this.finalAngle = finalAngle;
+
+        double timeOutSL = PodL.setPosAuto(x, y, finalAngle, speed, driveType, false, posSystem.getMotorClicks(), posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
+        double timeOutSR = PodR.setPosAuto(x, y, finalAngle, speed, driveType,true, posSystem.getMotorClicks(), posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);
+        return Math.max(timeOutSL, timeOutSR);
     }
 
     public void logicAuto(){ //should run everytime, but currently only runs once.
@@ -427,6 +429,12 @@ public class RevisedKinematics {
     }
 
 //    public int[] getClicksAuto(){
+//        int[] clicks = new int[4];
+//        clicks[0] = (int)(outputL[0] + outputL[1]); //left
+//        clicks[1] = (int)(-outputL[0] + outputL[1]); //left
+//        clicks[2] = (int)(outputR[0] + outputR[1]); //right
+//        clicks[3] = (int)(-outputR[0] + outputR[1]); //right
+//        return clicks;
 //    }
 
     public DriveType getDriveType(){

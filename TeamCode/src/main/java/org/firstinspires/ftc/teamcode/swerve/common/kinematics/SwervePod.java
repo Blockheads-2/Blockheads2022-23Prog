@@ -124,6 +124,7 @@ public class SwervePod {
         if (turn) {
             if (eligibleForTurning) {
                 robotCentricSetRotClicks(0);
+
                 if (rightStickX < 0 && side == Side.LEFT) direction *= -1;
                 else if (rightStickX >= 0 && side == Side.RIGHT) direction *= -1;
 
@@ -146,6 +147,9 @@ public class SwervePod {
 //            if (specialSpliningCondition){
 //                double offset = clamp(turnAmount + (rightStickX < 0 ? -8 : 8));
 //                forceSetRotClicks((int)(offset * constants.CLICKS_PER_DEGREE));
+
+            // from the wheel's perspective, it's either going right or left.
+
 //            }
 
             double throttle = 1.0 - Math.sin(Math.abs(rightStickX));
@@ -220,7 +224,8 @@ public class SwervePod {
         this.throttle = throttle;
     }
 
-    public void setPosAuto(double x, double y, double finalAngle, double speed, RevisedKinematics.DriveType driveType, boolean right, int[] posClicks, double currentW, double currentR){
+    //sets position and returns timeout
+    public double setPosAuto(double x, double y, double finalAngle, double speed, RevisedKinematics.DriveType driveType, boolean right, int[] posClicks, double currentW, double currentR){
         setCurrents(currentW, currentR);
 
         this.driveType = driveType;
@@ -229,13 +234,21 @@ public class SwervePod {
 
         //target position
         this.speed = speed;
-        this.finalAngle = finalAngle;
 
         direction = (initPole ? initDirection : -initDirection);
 
-        if (driveType == RevisedKinematics.DriveType.LINEAR) linearMath.setPos(x, y, finalAngle);
-        else if (driveType == RevisedKinematics.DriveType.VARIABLE_SPLINE) splineMath.setPos(x, y, finalAngle, right);
-        else if (driveType == RevisedKinematics.DriveType.TURN) turnMath.setPos(finalAngle, direction, right);
+        if (driveType == RevisedKinematics.DriveType.LINEAR) {
+            linearMath.setPos(x, y, finalAngle, currentW);
+            distance = Math.abs(linearMath.getDistance());
+        }
+        else if (driveType == RevisedKinematics.DriveType.VARIABLE_SPLINE){
+            splineMath.setPos(x, y, finalAngle, right);
+            distance = Math.abs(splineMath.getBiggerDistance());
+        }
+        else if (driveType == RevisedKinematics.DriveType.TURN) {
+            turnMath.setPos(finalAngle, currentR, direction, right);
+            distance = Math.abs(turnMath.getDistance());
+        }
 
         if (driveType == RevisedKinematics.DriveType.SNAP) setPID(constants.kpRotation, constants.kiRotation, constants.kdRotation);
         else setPID(constants.kpTranlation, constants.kiTranslation, constants.kdTranslation);
@@ -247,6 +260,9 @@ public class SwervePod {
         double powerSpin = Math.abs(pid.update(distance)) * speed;
         double powerRotate = Math.abs(pid.update(turnAmount)) * speed;
         power = (driveType == RevisedKinematics.DriveType.SNAP ? powerRotate : powerSpin);
+
+        double rate = speed * constants.MAX_VELOCITY_DT * constants.INCHES_PER_CLICK; //unti: inches / sec
+        return (distance / rate);
     }
 
     public void setPower(double power){

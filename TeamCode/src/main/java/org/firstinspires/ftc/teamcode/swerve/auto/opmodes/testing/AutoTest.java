@@ -29,7 +29,7 @@ public class AutoTest extends LinearOpMode {
 
 
         while (!opModeIsActive()) { //checks if play hasn't been pressed (in init stage)
-            dispatch.moveToInit();
+//            dispatch.moveToInit();
         }
         dispatch.resetArmEncoderPos();
 
@@ -47,9 +47,11 @@ public class AutoTest extends LinearOpMode {
 //        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, AutoHub.distance, AutoHub.power, RevisedKinematics.ArmType.HOLD);
 //        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, AutoHub.distance, 0, AutoHub.power, RevisedKinematics.ArmType.HOLD);
 
-//        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.3, RevisedKinematics.ArmType.HOLD);
+        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.3, RevisedKinematics.ArmType.HOLD);
 //        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 60, 0, 0.3, RevisedKinematics.ArmType.MID);
-
+//        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.5, RevisedKinematics.ArmType.HOLD);
+//        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, -45, 0.5, RevisedKinematics.ArmType.HOLD);
+        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 30, 0, 0.5, RevisedKinematics.ArmType.HOLD);
         dispatch.Move(RevisedKinematics.DriveType.TURN, 0, 0, 90, 0.5, RevisedKinematics.ArmType.HOLD);
         /*
         working movement types:
