@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.swerve.auto.Math;
 
 import org.firstinspires.ftc.teamcode.swerve.common.constantsPKG.Constants;
-import org.firstinspires.ftc.teamcode.swerve.common.kinematics.SwervePod;
 
 public class LinearMath { //Note: snap() is used in the auto class separately. This class is used assuming that the wheels are already pointing the way we want it to.
     Constants constants = new Constants();
@@ -16,10 +15,10 @@ public class LinearMath { //Note: snap() is used in the auto class separately. T
     public LinearMath(){
     }
 
-    public void setPos(double x, double y, double target, double current){
+    public void setPos(double x, double y, double theta){
         this.x = x;
         this.y = y;
-        this.theta = SwervePod.changeAngle(target, current);
+        this.theta = theta;
 
         targetClicks = (int)(getDistance() * constants.CLICKS_PER_INCH);
         targetDistance = getDistance();

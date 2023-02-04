@@ -152,8 +152,6 @@ public class AutoHub implements Runnable{
 
     double powerR = 0;
     double powerL = 0;
-    double timeOutS = 0;
-    ElapsedTime runTime = new ElapsedTime();
     public void Move(RevisedKinematics.DriveType movementType, double x, double y, double finalAngle, double speed, RevisedKinematics.ArmType armMovementType){
         UpdateTelemetry();
 
@@ -162,7 +160,7 @@ public class AutoHub implements Runnable{
         posSystem.calculatePos();
 
         //2) Determine the distance from our current pos & the target pos.
-        timeOutS = kinematics.setPosAuto(x, y, finalAngle, speed, movementType);
+        kinematics.setPosAuto(x, y, finalAngle, speed, movementType);
         reset.resetAuto(false);
         kinematics.armLogicAuto(armMovementType, getArmClicks()); //determine targets/power for the arm
         kinematics.logicAuto();
@@ -200,9 +198,7 @@ public class AutoHub implements Runnable{
 
         boolean armTargetMet = kinematics.isArmTargetMet();
         //3) Tell the robot to travel that distance we just determined.
-
-        runTime.reset();
-        while (linearOpMode.opModeIsActive() && (targetNotMet || !armTargetMet) && runTime.seconds() <= timeOutS + 3){ //have a time based something in case our target is never met.
+        while (linearOpMode.opModeIsActive() && (targetNotMet || !armTargetMet)){ //have a time based something in case our target is never met.
             posSystem.calculatePos();
             kinematics.armLogicAuto(armMovementType, getArmClicks()); //determine targets/power for the arm
             // see how long program takes without calling armLogicAuto
@@ -230,10 +226,10 @@ public class AutoHub implements Runnable{
             robot.topR.setTargetPosition(targetTopR);
             robot.botR.setTargetPosition(targetBotR);
 
-            robot.topL.setVelocity(motorPower[0] * constants.MAX_VELOCITY_DT);
-            robot.botL.setVelocity(motorPower[1] * constants.MAX_VELOCITY_DT);
-            robot.topR.setVelocity(motorPower[2] * constants.MAX_VELOCITY_DT);
-            robot.botR.setVelocity(motorPower[3] * constants.MAX_VELOCITY_DT);
+            robot.topL.setPower(motorPower[0]);
+            robot.botL.setPower(motorPower[1]);
+            robot.topR.setPower(motorPower[2]);
+            robot.botR.setPower(motorPower[3]);
 
             robot.at.setPower(armOutput[0]);
             robot.abl.setPower(armOutput[1]);
@@ -243,8 +239,8 @@ public class AutoHub implements Runnable{
                     Math.abs(robot.botL.getCurrentPosition() - targetBotL) > constants.clickToleranceAuto ||
                     Math.abs(robot.topR.getCurrentPosition() - targetTopR) > constants.clickToleranceAuto ||
                     Math.abs(robot.botR.getCurrentPosition() - targetBotR) > constants.clickToleranceAuto);
-//            armTargetMet = kinematics.isArmTargetMet();
-            armTargetMet = false;
+            armTargetMet = kinematics.isArmTargetMet();
+//            armTargetMet = false;
 
             UpdateTelemetry();
 
@@ -450,7 +446,7 @@ public class AutoHub implements Runnable{
 
         packet.put("Error abr", kinematics.abrPID.getError());
         packet.put("Target abr", kinematics.abrPID.getTarget());
-        packet.put("Timeout", timeOutS);
+
 
         packet.put("delta time", deltaMS);
 //        packet.put("Right W", posSystem.getRightWheelW());

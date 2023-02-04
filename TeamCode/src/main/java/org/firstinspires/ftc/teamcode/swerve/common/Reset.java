@@ -59,8 +59,8 @@ public class Reset {
         rotateL %= constants.CLICKS_PER_PURPLE_REV;
         rotateR %= constants.CLICKS_PER_PURPLE_REV;
 
-        int topLTarget = (int)((robot.topL.getCurrentPosition() + rotateL));
-        int botLTarget = (int)((robot.botL.getCurrentPosition() + rotateL));
+        int topLTarget = (int)((robot.topL.getCurrentPosition() - rotateL));
+        int botLTarget = (int)((robot.botL.getCurrentPosition() - rotateL));
         int topRTarget = (int)((robot.topR.getCurrentPosition() - rotateR));
         int botRTarget = (int)((robot.botR.getCurrentPosition() - rotateR));
 
@@ -95,8 +95,8 @@ public class Reset {
         rotateL %= constants.CLICKS_PER_PURPLE_REV;
         rotateR %= constants.CLICKS_PER_PURPLE_REV;
 
-        int topLTarget = (int)((robot.topL.getCurrentPosition() + rotateL));
-        int botLTarget = (int)((robot.botL.getCurrentPosition() + rotateL));
+        int topLTarget = (int)((robot.topL.getCurrentPosition() - rotateL));
+        int botLTarget = (int)((robot.botL.getCurrentPosition() - rotateL));
         int topRTarget = (int)((robot.topR.getCurrentPosition() - rotateR));
         int botRTarget = (int)((robot.botR.getCurrentPosition() - rotateR));
 
