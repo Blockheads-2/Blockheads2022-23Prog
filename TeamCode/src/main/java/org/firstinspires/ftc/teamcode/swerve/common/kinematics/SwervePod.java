@@ -104,6 +104,7 @@ public class SwervePod {
 
     public void forceSetRotClicks(int clicks){
         rotClicksTarget = clicks;
+        turnAmount = rotClicksTarget * constants.DEGREES_PER_CLICK;
     }
 
     //for spin power and spin clicks
@@ -184,11 +185,11 @@ public class SwervePod {
 
         if (initPole){
             direction = initDirection;
-//            optimizedCurrentW = fieldCentricCurrentW;
+            optimizedCurrentW = fieldCentricCurrentW;
 //            robotCentricCurrentW = clamp(optimizedCurrentW - currentR);
         } else{
             direction = -initDirection;
-//            optimizedCurrentW = clamp(fieldCentricCurrentW + 180);
+            optimizedCurrentW = clamp(fieldCentricCurrentW + 180);
 //            this.currentW = clamp(this.currentW + 180);
 //            robotCentricCurrentW = clamp(optimizedCurrentW - currentR);
         }

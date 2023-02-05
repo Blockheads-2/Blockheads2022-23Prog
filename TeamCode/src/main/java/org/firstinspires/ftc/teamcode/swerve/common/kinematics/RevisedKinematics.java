@@ -113,11 +113,17 @@ public class RevisedKinematics {
         //determining targets, and how much we want to turn
         target = joystickTracker.getAngle(lx, ly);
 
+        if (lx != 0 || ly != 0){
+            PodL.setRotClicks(target);
+            PodR.setRotClicks(target);
+        } else {
+            PodL.forceSetRotClicks(0);
+            PodR.forceSetRotClicks(0);
+        }
+
         boolean shouldTurn = (lx == 0 && ly == 0) && (rx != 0); //possible problem: the robot will "jitter" if its turning and then becomes not eligible for turning (may have to increase tolerance?)
         boolean shouldSpline = (lx != 0 || ly != 0) && (rx != 0);
-
         boolean eligibleForTurning = posSystem.eligibleForTurning(PodL.getPole(), PodR.getPole());
-
         boolean specialSpliningCondition = posSystem.specialSpliningCondition(PodL.getPole(), PodR.getPole());
 
         //determining spin clicks and spin power
@@ -125,13 +131,6 @@ public class RevisedKinematics {
 
         type = PodL.setSpinClicksAndPower(power, rt, shouldTurn, eligibleForTurning, shouldSpline, specialSpliningCondition, rx, posSystem.getMotorClicks());
         type = PodR.setSpinClicksAndPower(power, rt, shouldTurn, eligibleForTurning, shouldSpline, specialSpliningCondition, rx, posSystem.getMotorClicks());
-
-        if (lx != 0 || ly != 0){
-            PodL.setRotClicks(target);
-            PodR.setRotClicks(target);
-        } else {
-            PodL.forceSetRotClicks(0);
-        }
 
 //        PodL.setThrottleUsingPodLReference(PodR, shouldTurn, shouldSpline);
 
@@ -149,7 +148,7 @@ public class RevisedKinematics {
             }
         }
 
-        //determining "firstMovement" actions, if it is the robot's "firstMovement."
+        //determining "firstMovement" actions, if it is the ?//'/robot's "firstMovement."
         firstMovement();
 
         outputL = PodL.getOutput();
@@ -157,7 +156,10 @@ public class RevisedKinematics {
     }
 
     public void firstMovement(){
-        if (joystickTracker.getChange() > 90 || noMovementRequests()) firstMovement = true;
+        if (joystickTracker.getAbsoluteChange() > 90 || noMovementRequests()) firstMovement = true;
+        telemetry.addData("Joystick change > 90 ? ", joystickTracker.getAbsoluteChange());
+        telemetry.addData("No movement requests?", noMovementRequests());
+
 
         if (!PodL.onlyRotate(firstMovement) && !PodR.onlyRotate(firstMovement)) firstMovement = false;
 
