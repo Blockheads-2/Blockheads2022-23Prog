@@ -216,11 +216,7 @@ public class SwervePod {
         setCurrents(currentW, currentR);
 
         this.driveType = driveType;
-
-        if (this.driveType == RevisedKinematics.DriveType.LINEAR ||
-                this.driveType == RevisedKinematics.DriveType.CONSTANT_SPLINE ||
-                this.driveType == RevisedKinematics.DriveType.SNAP) finalAngle = currentW;
-        else this.finalAngle = finalAngle;
+        this.finalAngle = finalAngle;
         //target position
         this.speed = speed;
 
@@ -338,6 +334,20 @@ public class SwervePod {
 //        setPowerAuto();
     }
 
+    public void turn(double finalAngle, double speed){
+        robotCentricSetRotClicks(0);
+
+        int direction = (initPole ? initDirection : -initDirection) * (side == Side.RIGHT ? -1 : 1);
+
+        distance = SwervePod.changeAngle(finalAngle, currentR) * 5;
+        spinClicksTarget = distance * constants.CLICKS_PER_INCH;
+        direction *= (spinClicksTarget < 0 ? -1 : 1);
+        spinClicksTarget = Math.abs(spinClicksTarget);
+
+        throttle = 1.0;
+        power = speed;
+    }
+
     public static double changeAngle(double target, double current){
         double target2 = (target < 0 ? target + 360 : target);
         double current2 = (current < 0 ? current + 360 : current);
@@ -405,7 +415,7 @@ public class SwervePod {
 
         throttle = Math.abs(throttle);
 //        power *= throttle;
-        spinClicksTarget = spinClicksTarget * direction * throttle;
+        spinClicksTarget = Math.abs(spinClicksTarget) * direction * throttle;
 
         output[0] = spinClicksTarget;
         output[1] = rotClicksTarget;

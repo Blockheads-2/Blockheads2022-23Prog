@@ -43,8 +43,8 @@ public class RevisedKinematics {
     double lt;
 
     //output
-    double[] outputL = new double[4];
-    double[] outputR = new double[4];
+    double[] outputL = new double[3];
+    double[] outputR = new double[3];
 
     //current orientation
     GlobalPosSystem posSystem;
@@ -194,6 +194,20 @@ public class RevisedKinematics {
         PodL.autoLogic(posSystem.getLeftWheelW(),  posSystem.getPositionArr()[4], posSystem.getDistanceTravelledL(), posSystem.getMotorClicks());
         //for some reason, we negate the negative clicks for the left topL encoder
         PodR.autoLogic(posSystem.getRightWheelW(), posSystem.getPositionArr()[4], posSystem.getDistanceTravelledR(), posSystem.getMotorClicks());
+
+        outputL = PodL.getOutputAuto();
+        outputR = PodR.getOutputAuto();
+    }
+
+    public void turn(double finalAngle, double speed){
+        this.finalAngle = finalAngle;
+
+        posSystem.calculatePos();
+        PodL.setCurrents(posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
+        PodR.setCurrents(posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);
+
+        PodL.turn(finalAngle, speed);
+        PodR.turn(finalAngle, speed);
 
         outputL = PodL.getOutputAuto();
         outputR = PodR.getOutputAuto();

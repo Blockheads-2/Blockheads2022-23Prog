@@ -163,8 +163,8 @@ public class AutoHub implements Runnable{
         posSystem.calculatePos();
 
         //2) Determine the distance from our current pos & the target pos.
-//        timeoutS = kinematics.setPosAuto(x, y, finalAngle, speed, movementType);
-        timeoutS = 100;
+        timeoutS = kinematics.setPosAuto(x, y, finalAngle, speed, movementType);
+//        timeoutS = 100;
         reset.resetAuto(false);
         kinematics.armLogicAuto(armMovementType, getArmClicks()); //determine targets/power for the arm
         kinematics.setPosAuto(x, y, finalAngle, speed, movementType);
@@ -275,6 +275,79 @@ public class AutoHub implements Runnable{
         robot.topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+    }
+
+
+
+    public void Turn(double finalAngle, double speed){
+        //1) Calculate our current position
+        posSystem.resetXY(); // <-- Must have!
+        posSystem.calculatePos();
+
+        reset.resetAuto(false);
+
+        int targetTopL = robot.topL.getCurrentPosition() + targetClicks[0];
+        int targetBotL = robot.botL.getCurrentPosition() + targetClicks[1];
+        int targetTopR = robot.topR.getCurrentPosition() + targetClicks[2];
+        int targetBotR = robot.botR.getCurrentPosition() + targetClicks[3];
+
+        robot.topL.setTargetPosition(targetTopL);
+        robot.botL.setTargetPosition(targetBotL);
+        robot.topR.setTargetPosition(targetTopR);
+        robot.botR.setTargetPosition(targetBotR);
+
+        robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        while (Math.abs(SwervePod.changeAngle(finalAngle, posSystem.getPositionArr()[4])) < constants.degreeTOLERANCE && linearOpMode.opModeIsActive()){
+            kinematics.turn(finalAngle, speed);
+
+            targetClicks = kinematics.getClicks();
+            motorPower = kinematics.getPower();
+
+            powerL = motorPower[0];
+            powerR = motorPower[2];
+
+            targetTopL = robot.topL.getCurrentPosition() + targetClicks[0];
+            targetBotL = robot.botL.getCurrentPosition() + targetClicks[1];
+            targetTopR = robot.topR.getCurrentPosition() + targetClicks[2];
+            targetBotR = robot.botR.getCurrentPosition() + targetClicks[3];
+
+            robot.topL.setTargetPosition(targetTopL);
+            robot.botL.setTargetPosition(targetBotL);
+            robot.topR.setTargetPosition(targetTopR);
+            robot.botR.setTargetPosition(targetBotR);
+
+            robot.topL.setPower(motorPower[0]);
+            robot.botL.setPower(motorPower[1]);
+            robot.topR.setPower(motorPower[2]);
+            robot.botR.setPower(motorPower[3]);
+
+            UpdateTelemetry();
+            deltaMS = loopTime.milliseconds() - prevMS;
+            prevMS = loopTime.milliseconds();
+        }
+
+        if (kinematics.getDriveType() != RevisedKinematics.DriveType.SNAP){
+            while(!reset.finishedReset() && linearOpMode.opModeIsActive()){
+                reset.resetAuto(true);
+                linearOpMode.telemetry.addData("RESET", true);
+                deltaMS = loopTime.milliseconds() - prevMS;
+                prevMS = loopTime.milliseconds();
+            }
+        } else {
+            robot.topL.setTargetPosition(robot.topL.getCurrentPosition());
+            robot.botL.setTargetPosition(robot.botL.getCurrentPosition());
+            robot.topR.setTargetPosition(robot.topR.getCurrentPosition());
+            robot.botR.setTargetPosition(robot.botR.getCurrentPosition());
+        }
+        reset.resetAuto(false);
+        robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     double[] armClicks = new double[5];
