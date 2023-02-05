@@ -179,8 +179,8 @@ public class RevisedKinematics {
         PodL.setCurrents(posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
         PodR.setCurrents(posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);
 
-        double timeOutL = PodL.setPosAuto(x, y, finalAngle, speed, driveType, false, posSystem.getMotorClicks(), posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
-        double timeOutR = PodR.setPosAuto(x, y, finalAngle, speed, driveType,true, posSystem.getMotorClicks(), posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);
+        double timeOutL = PodL.setPosAuto(x, y, finalAngle, speed, driveType, posSystem.getMotorClicks(), posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
+        double timeOutR = PodR.setPosAuto(x, y, finalAngle, speed, driveType, posSystem.getMotorClicks(), posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);
         return Math.max(timeOutL, timeOutR);
     }
 

@@ -41,8 +41,9 @@ public class AutoHub implements Runnable{
     public static double kp = 0;
     public static double ki = 0;
     public static double kd = 0;
-    public static double power = 0;
+    public static double power = 0.5;
     public static double distance = 0;
+    public static double finalAngleDashboard = 0;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
     ElapsedTime loopTime = new ElapsedTime();
@@ -162,9 +163,11 @@ public class AutoHub implements Runnable{
         posSystem.calculatePos();
 
         //2) Determine the distance from our current pos & the target pos.
-        timeoutS = kinematics.setPosAuto(x, y, finalAngle, speed, movementType);
+//        timeoutS = kinematics.setPosAuto(x, y, finalAngle, speed, movementType);
+        timeoutS = 100;
         reset.resetAuto(false);
         kinematics.armLogicAuto(armMovementType, getArmClicks()); //determine targets/power for the arm
+        kinematics.setPosAuto(x, y, finalAngle, speed, movementType);
         kinematics.logicAuto();
 
         targetNotMet = true;
@@ -309,59 +312,6 @@ public class AutoHub implements Runnable{
         }
     }
 
-//    public void Turn(double turnAmount, double speed){ //needs to be integrated into RevisedKinematics
-//        posSystem.calculatePos();
-//        double initCurrentL = posSystem.getLeftWheelW();
-//        double initCurrentR = posSystem.getRightWheelW();
-//
-//        reset.resetAuto(false);
-//
-//        double initAngle = kinematics.clamp(posSystem.getPositionArr()[4]);
-//
-//        turnMath.setPos(turnAmount, posSystem.getMotorClicks()[0], posSystem.getMotorClicks()[2], (turnAmount < 0 ? -1 : 1));
-//
-//        turnPID.setTargets(0.03, 0, 0.03);
-//
-//        int direction = (turnAmount <= 0 ? -1 : 1);
-//
-//        double target = kinematics.clamp(initAngle + turnAmount);
-//        int distanceR = turnMath.getTargetClicks();
-//        int distanceL = turnMath.getTargetClicks();
-//
-//        //keep wheels parallel:
-//        //...
-//
-//        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + (distanceL * direction * (int)constants.initDirectionLeft));
-//        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - (distanceL * direction * (int)constants.initDirectionLeft));
-//        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + (distanceR * direction * (int)constants.initDirectionRight));
-//        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() - (distanceR * direction * (int)constants.initDirectionRight));
-//
-//        while (Math.abs(target - posSystem.getPositionArr()[4]) >= constants.degreeTOLERANCE && linearOpMode.opModeIsActive()){
-//            posSystem.calculatePos();
-//
-//            double power = turnPID.update(turnMath.getAngleRemaining(posSystem.getPositionArr()[4]));
-//
-//            robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//
-//            robot.topL.setPower(power * speed);
-//            robot.botL.setPower(power * speed);
-//            robot.topR.setPower(power * speed);
-//            robot.botR.setPower(power * speed);
-//
-//            UpdateTelemetry();
-//        }
-//
-//        while(!reset.finishedReset() && linearOpMode.opModeIsActive()){
-//            UpdateTelemetry();
-//            reset.resetAuto(true);
-//        }
-//        reset.resetAuto(false);
-//
-//    }
-
     public void resetToZero(){
         robot.at.setTargetPosition(0);
         robot.abl.setTargetPosition(0);
@@ -406,6 +356,9 @@ public class AutoHub implements Runnable{
 
         linearOpMode.telemetry.addData("DistanceL", podL.getDistance());
         linearOpMode.telemetry.addData("DistanceR", podR.getDistance());
+        linearOpMode.telemetry.addData("Distance Ran R", posSystem.distanceTravelledR);
+        linearOpMode.telemetry.addData("Distance Ran L", posSystem.distanceTravelledL);
+
         linearOpMode.telemetry.addData("TurnAmountL", podL.getTurnAmount());
         linearOpMode.telemetry.addData("TurnAmountR", podR.getTurnAmount());
 

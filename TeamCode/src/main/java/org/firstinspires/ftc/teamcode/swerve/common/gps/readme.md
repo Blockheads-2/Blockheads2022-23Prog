@@ -1,11 +1,12 @@
 ## GPS
 
-The array `positionArr` has 4 indices
+The array `positionArr` has 5 indices
 
 [
 x position,
 y position,
-wheel angle,
+wheel angle left,
+wheel angle right
 robot angle
 ]
 

@@ -212,16 +212,17 @@ public class SwervePod {
         this.throttle = throttle;
     }
 
-    public double setPosAuto(double x, double y, double finalAngle, double speed, RevisedKinematics.DriveType driveType, boolean right, int[] posClicks, double currentW, double currentR){
+    public double setPosAuto(double x, double y, double finalAngle, double speed, RevisedKinematics.DriveType driveType, int[] posClicks, double currentW, double currentR){
         setCurrents(currentW, currentR);
 
         this.driveType = driveType;
 
-        if (this.driveType != RevisedKinematics.DriveType.SNAP) finalAngle = currentW;
-
+        if (this.driveType == RevisedKinematics.DriveType.LINEAR ||
+                this.driveType == RevisedKinematics.DriveType.CONSTANT_SPLINE ||
+                this.driveType == RevisedKinematics.DriveType.SNAP) finalAngle = currentW;
+        else this.finalAngle = finalAngle;
         //target position
         this.speed = speed;
-        this.finalAngle = finalAngle;
 
         direction = (initPole ? initDirection : -initDirection);
 
@@ -230,12 +231,13 @@ public class SwervePod {
             distance = Math.abs(linearMath.getDistance());
         }
         else if (driveType == RevisedKinematics.DriveType.VARIABLE_SPLINE){
-            splineMath.setPos(x, y, finalAngle, right);
-            distance = Math.abs(splineMath.getBiggerDistance());
+            splineMath.setPos(x, y, finalAngle, (side == Side.RIGHT));
+            distance = (side == Side.LEFT ? Math.abs(splineMath.getDistance()[0]) : Math.abs(splineMath.getDistance()[1]));
         }
         else if (driveType == RevisedKinematics.DriveType.TURN){
-            turnMath.setPos(finalAngle, currentR, direction, right);
+            turnMath.setPos(finalAngle, currentR, (side == Side.RIGHT));
             distance = Math.abs(turnMath.getDistance());
+//            direction *= (side == Side.RIGHT ? -1 : 1);
         }
 
         if (driveType == RevisedKinematics.DriveType.SNAP) setPID(constants.kpRotation, constants.kiRotation, constants.kdRotation);
@@ -302,15 +304,17 @@ public class SwervePod {
 
             case TURN:
                 robotCentricSetRotClicks(0);
+                direction = (initPole ? initDirection : -initDirection);
 
+                turnMath.setPos(this.finalAngle, currentR, (side == Side.RIGHT));
+                telemetry.addData("Target distance", turnMath.getTargetDistance());
                 distance = turnMath.distanceRemaining(distanceRan);
                 packet.put("Target Distance", turnMath.getDistance());
-
+                throttle = 1;
 
                 power = Math.abs(pid.update(distance)) * speed;
-                direction = (initPole ? initDirection : -initDirection);
-                if (finalAngle < 0 && side == Side.LEFT) direction *= -1;
-                else if (finalAngle >= 0 && side == Side.RIGHT) direction *= -1;
+//                if (finalAngle < 0 && side == Side.LEFT) direction *= -1;
+//                else if (finalAngle >= 0 && side == Side.RIGHT) direction *= -1;
 
                 break;
 
@@ -401,7 +405,7 @@ public class SwervePod {
 
         throttle = Math.abs(throttle);
 //        power *= throttle;
-        spinClicksTarget = Math.abs(spinClicksTarget) * direction * throttle;
+        spinClicksTarget = spinClicksTarget * direction * throttle;
 
         output[0] = spinClicksTarget;
         output[1] = rotClicksTarget;

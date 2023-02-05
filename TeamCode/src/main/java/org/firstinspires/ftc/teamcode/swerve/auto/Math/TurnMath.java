@@ -8,15 +8,16 @@ public class TurnMath {
 
     private double theta;
 
-    private double targetDistance;
+    private double targetDistance = 0;
 
-    public void setPos(double target, double current, int currentDirection, boolean rightPod){
+    public void setPos(double target, double current, boolean right){
         this.theta = SwervePod.changeAngle(target, current);
-        targetDistance = getDistance() * currentDirection * (rightPod ? -1 : 1);
+        this.theta = Math.toRadians(this.theta);
+        targetDistance = getDistance() * (right ? -1 : 1);
     }
 
     public double getDistance(){
-        double arcLength = Math.toRadians(theta) * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER;
+        double arcLength = this.theta * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER;
 
         return arcLength;
     }
@@ -27,5 +28,9 @@ public class TurnMath {
 
     public double getAngleRemaining(double currR){
         return SwervePod.changeAngle(this.theta, currR);
+    }
+
+    public double getTargetDistance(){
+        return targetDistance;
     }
 }
