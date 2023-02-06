@@ -47,11 +47,11 @@ public class AutoTest extends LinearOpMode {
 //        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.5, RevisedKinematics.ArmType.HOLD);
 //        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 20, 0, 0.5, RevisedKinematics.ArmType.HOLD);
 
-        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.5, RevisedKinematics.ArmType.HOLD);
-        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 30, 0, 0.5, RevisedKinematics.ArmType.MID);
+//        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.3, RevisedKinematics.ArmType.HOLD);
+//        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 30, 0, 0.3, RevisedKinematics.ArmType.HOLD);
 
 //        dispatch.Move(RevisedKinematics.DriveType.TURN, 0, 0, AutoHub.finalAngleDashboard, AutoHub.power, RevisedKinematics.ArmType.HOLD);
-        dispatch.Turn(90, 0.5);
+        dispatch.Turn(AutoHub.finalAngleDashboard, 0.3);
         /*
         working movement types:
         - SNAP

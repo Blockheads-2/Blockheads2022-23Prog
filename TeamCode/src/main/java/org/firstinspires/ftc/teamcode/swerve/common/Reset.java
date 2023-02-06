@@ -29,8 +29,8 @@ public class Reset {
 
         snapLeftWheelPID = new SnapSwerveModulePID();
         snapRightWheelPID = new SnapSwerveModulePID();
-        snapLeftWheelPID.setTargets(constants.kp, constants.ki, constants.kd);
-        snapRightWheelPID.setTargets(constants.kp, constants.ki, constants.kd);
+        snapLeftWheelPID.setTargets(constants.kpRotation, constants.kiRotation, constants.kdRotation);
+        snapRightWheelPID.setTargets(constants.kpRotation, constants.kiRotation, constants.kdRotation);
     }
 
     public void reset(boolean shouldReset){

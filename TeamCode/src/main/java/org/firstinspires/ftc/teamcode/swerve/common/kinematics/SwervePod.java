@@ -216,7 +216,9 @@ public class SwervePod {
         setCurrents(currentW, currentR);
 
         this.driveType = driveType;
-        this.finalAngle = finalAngle;
+        if (this.driveType == RevisedKinematics.DriveType.SNAP || this.driveType == RevisedKinematics.DriveType.CONSTANT_SPLINE) this.finalAngle = finalAngle;
+        else this.finalAngle = currentW;
+
         //target position
         this.speed = speed;
 
@@ -254,8 +256,7 @@ public class SwervePod {
         this.power = power;
     }
 
-    public void autoLogic(double currentW, double currentR, double distanceRan, int[] posClicks){
-        setCurrents(currentW, currentR);
+    public void autoLogic(double distanceRan, int[] posClicks){
 
         if (driveType != RevisedKinematics.DriveType.TURN && driveType != RevisedKinematics.DriveType.VARIABLE_SPLINE) nonRightStickCurrentW = currentW;
 
@@ -337,15 +338,14 @@ public class SwervePod {
     public void turn(double finalAngle, double speed){
         robotCentricSetRotClicks(0);
 
-        int direction = (initPole ? initDirection : -initDirection) * (side == Side.RIGHT ? -1 : 1);
+        distance = Math.toRadians(SwervePod.changeAngle(finalAngle, currentR))* constants.DISTANCE_BETWEEN_MODULE_AND_CENTER;
 
-        distance = SwervePod.changeAngle(finalAngle, currentR) * 5;
-        spinClicksTarget = distance * constants.CLICKS_PER_INCH;
-        direction *= (spinClicksTarget < 0 ? -1 : 1);
-        spinClicksTarget = Math.abs(spinClicksTarget);
+        direction = (initPole ? initDirection : -initDirection) * (side == Side.RIGHT ? -1 : 1) * (distance < 0 ? -1 : 1);
+
+        spinClicksTarget = Math.abs(distance) * constants.CLICKS_PER_INCH;
 
         throttle = 1.0;
-        power = speed;
+        power = pid.update(distance) * speed;
     }
 
     public static double changeAngle(double target, double current){

@@ -84,8 +84,6 @@ public class FinalBaseDrive extends OpMode{
     ArmPID abrPID = new ArmPID();
     ArmPID ablPID = new ArmPID();
 
-    //for resetting the robot's wheels' orientation
-    ElapsedTime resetTimer = new ElapsedTime();
     /** The relativeLayout field is used to aid in providing interesting visual feedback
      * in this sample application; you probably *don't* need this when you use a color sensor on your
      * robot. Note that you won't see anything change on the Driver Station, only on the Robot Controller. */
@@ -104,14 +102,21 @@ public class FinalBaseDrive extends OpMode{
         reset = new Reset(robot, posSystem);
         kinematics.grabTelemetry(telemetry);
 
+//        moveArmToInit();
+
+        telemetry.addData("Say", "Hello Driver");
+
+//        gpsUpdateThread = new Thread(posSystem);
+//        gpsUpdateThread.start();
+    }
+
+    public void moveArmToInit(){
         robot.at.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.at.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.abl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.abl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.abr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.abr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        telemetry.addData("Say", "Hello Driver");
 
         robot.abl.setTargetPosition(constants.INIT_ARMBASE_POS);
         robot.abr.setTargetPosition(constants.INIT_ARMBASE_POS);
@@ -120,9 +125,6 @@ public class FinalBaseDrive extends OpMode{
         robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-//        gpsUpdateThread = new Thread(posSystem);
-//        gpsUpdateThread.start();
     }
 
     @Override

@@ -54,10 +54,10 @@ public class SnapSwerveModulePID {
         this.kp = kp;
         this.ki = ki;
         this.kd = kd;
+        resetValues();
     }
 
     public void resetValues(){
-
         timer.reset();
         prevError = 0;
         prevTime = 0;

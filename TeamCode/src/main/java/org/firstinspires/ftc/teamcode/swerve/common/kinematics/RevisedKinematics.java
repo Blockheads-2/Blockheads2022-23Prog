@@ -191,12 +191,17 @@ public class RevisedKinematics {
 //        posSystem.setOptimizedCurrentW(PodR.optimizedCurrentW, PodL.optimizedCurrentW);
 
         //4) determining distance travel amount and power based on that
-        PodL.autoLogic(posSystem.getLeftWheelW(),  posSystem.getPositionArr()[4], posSystem.getDistanceTravelledL(), posSystem.getMotorClicks());
+        PodL.autoLogic(posSystem.getDistanceTravelledL(), posSystem.getMotorClicks());
         //for some reason, we negate the negative clicks for the left topL encoder
-        PodR.autoLogic(posSystem.getRightWheelW(), posSystem.getPositionArr()[4], posSystem.getDistanceTravelledR(), posSystem.getMotorClicks());
+        PodR.autoLogic(posSystem.getDistanceTravelledR(), posSystem.getMotorClicks());
 
         outputL = PodL.getOutputAuto();
         outputR = PodR.getOutputAuto();
+    }
+
+    public void setTurnPID(double kp, double ki, double kd){
+        PodR.setPID(kp, ki, kd);
+        PodL.setPID(kp, ki, kd);
     }
 
     public void turn(double finalAngle, double speed){
