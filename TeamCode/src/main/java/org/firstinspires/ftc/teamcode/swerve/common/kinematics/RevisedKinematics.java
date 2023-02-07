@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.swerve.common.kinematics;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.swerve.auto.opmodes.AutoHub;
-import org.firstinspires.ftc.teamcode.swerve.common.Accelerator;
 import org.firstinspires.ftc.teamcode.swerve.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.swerve.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.swerve.common.pid.ArmPID;
@@ -49,7 +48,6 @@ public class RevisedKinematics {
     //current orientation
     GlobalPosSystem posSystem;
 
-    Accelerator accelerator;
     TrackJoystick joystickTracker;
 
     public boolean firstMovement = true;
@@ -78,7 +76,6 @@ public class RevisedKinematics {
     public RevisedKinematics(GlobalPosSystem posSystem, SwervePod podlL, SwervePod podR){
         this.posSystem = posSystem;
 
-        accelerator = new Accelerator();
         joystickTracker = new TrackJoystick();
 
         this.PodL = podlL;
@@ -117,7 +114,7 @@ public class RevisedKinematics {
             PodL.setRotClicks(target);
             PodR.setRotClicks(target);
         } else {
-            PodL.forceSetRotClicks(0);
+            PodL.forceSetRotClicks(0); //have to change anything with InitPole?
             PodR.forceSetRotClicks(0);
         }
 

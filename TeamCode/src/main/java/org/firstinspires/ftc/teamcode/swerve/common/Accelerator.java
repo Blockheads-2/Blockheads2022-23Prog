@@ -7,7 +7,8 @@ import org.firstinspires.ftc.teamcode.swerve.common.constantsPKG.Constants;
 public class Accelerator {
     ElapsedTime accelerationTimer;
     Constants constants = new Constants();
-    private boolean actuallyAccelerate = false;
+    public boolean actuallyAccelerate = false; //public for telemetry purposes
+    public double accelerationFactor = 1; //for telemetry purposes
     private double accelTime = constants.accelTime; //the higher this number is, the longer it takes to send 100% of the calculated power.
 
     public Accelerator(){
@@ -22,20 +23,37 @@ public class Accelerator {
         accelTime = factor;
     }
 
+    public double getAccelerationFactor(double value, double turnAmount){ //teleop
+        double accelerationFactor = 1;
 
-    public double update(double power, double turnAmountLeft) {
-        if (actuallyAccelerate && Math.abs(turnAmountLeft) > constants.degreeTOLERANCE) {
-            if (power == 0) {
-                accelerationTimer.reset();
-                return 0.0;
-            }
-
-            double accelerationFactor = (Math.pow(accelerationTimer.seconds(), 0.5) / accelTime) + 0.3;
-            power *= accelerationFactor;
+        if (value == 0) {
+            accelerationTimer.reset();
+            return 0.0;
         }
-        if (power > constants.POWER_LIMITER) power = constants.POWER_LIMITER;
-        else if (power < -constants.POWER_LIMITER) power = -constants.POWER_LIMITER;
 
-        return power;
+        if (actuallyAccelerate && Math.abs(turnAmount) < constants.degreeTOLERANCE) {
+            accelerationFactor = (Math.pow(accelerationTimer.seconds(), 0.5) / accelTime) + 0.3;
+            if (accelerationFactor > 1) accelerationFactor = 1;
+            else if (accelerationFactor < -1) accelerationFactor = -1;
+        }
+
+        this.accelerationFactor = accelerationFactor;
+        return accelerationFactor;
+    }
+
+    public double getAccelerationFactor(){ //auto
+        double accelerationFactor = 1;
+        if (actuallyAccelerate) {
+            accelerationFactor = (Math.pow(accelerationTimer.seconds(), 0.5) / accelTime) + 0.3;
+            if (accelerationFactor > 1) accelerationFactor = 1;
+            else if (accelerationFactor < -1) accelerationFactor = -1;
+        }
+
+        this.accelerationFactor = accelerationFactor;
+        return accelerationFactor;
+    }
+
+    public void resetAccelerationAuto(){
+        accelerationTimer.reset();
     }
 }

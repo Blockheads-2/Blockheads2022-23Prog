@@ -58,12 +58,13 @@ public class SwervePod {
 
     private double[] output = new double[3];
 
-    public SwervePod(int spinDirection, Side side, Accelerator accelerator){
+    public SwervePod(int spinDirection, Side side){
         pid = new SnapSwerveModulePID();
         this.direction = spinDirection;
         this.initDirection = spinDirection;
         this.side = side;
-        this.accelerator = accelerator;
+        this.accelerator = new Accelerator();
+
         this.controlHeader = controlHeader;
     }
 
@@ -215,6 +216,10 @@ public class SwervePod {
     public double setPosAuto(double x, double y, double finalAngle, double speed, RevisedKinematics.DriveType driveType, int[] posClicks, double currentW, double currentR){
         setCurrents(currentW, currentR);
 
+        this.accelerator.actuallyAccelerate(true);
+        this.accelerator.setAccelFactor(constants.accelTimeAuto);
+        this.accelerator.resetAccelerationAuto();
+
         this.driveType = driveType;
         if (this.driveType == RevisedKinematics.DriveType.SNAP || this.driveType == RevisedKinematics.DriveType.CONSTANT_SPLINE) this.finalAngle = finalAngle;
         else this.finalAngle = currentW;
@@ -257,6 +262,8 @@ public class SwervePod {
     }
 
     public void autoLogic(double distanceRan, int[] posClicks){
+        telemetry.addData("acceleration?", accelerator.actuallyAccelerate);
+        telemetry.addData("Acceleration factor", accelerator.accelerationFactor);
 
         if (driveType != RevisedKinematics.DriveType.TURN && driveType != RevisedKinematics.DriveType.VARIABLE_SPLINE) nonRightStickCurrentW = currentW;
 
@@ -391,7 +398,8 @@ public class SwervePod {
     }
 
     public double[] getOutput(){
-        power = accelerator.update(Math.abs(power) * constants.POWER_LIMITER * direction, turnAmount);
+        power *= accelerator.getAccelerationFactor(Math.abs(power) * constants.POWER_LIMITER * direction, turnAmount);
+        spinClicksTarget *= accelerator.getAccelerationFactor(spinClicksTarget* direction, turnAmount);
 
         if (power > constants.POWER_LIMITER) power = constants.POWER_LIMITER;
         else if (power < -constants.POWER_LIMITER) power = -constants.POWER_LIMITER;
@@ -408,7 +416,8 @@ public class SwervePod {
     }
 
     public double[] getOutputAuto(){
-        power = accelerator.update(Math.abs(power) * constants.POWER_LIMITER * direction, turnAmount);
+        power *= accelerator.getAccelerationFactor();
+        spinClicksTarget *= accelerator.getAccelerationFactor();
 
         if (power > constants.POWER_LIMITER) power = constants.POWER_LIMITER;
         else if (power < -constants.POWER_LIMITER) power = -constants.POWER_LIMITER;

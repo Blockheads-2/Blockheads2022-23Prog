@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.swerve.common.Accelerator;
 import org.firstinspires.ftc.teamcode.swerve.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.swerve.common.Reset;
 import org.firstinspires.ftc.teamcode.swerve.common.gps.GlobalPosSystem;
@@ -39,10 +38,8 @@ public class FinalBaseDrive extends OpMode{
     Constants constants = new Constants();
     Reset reset;
 
-    Accelerator accelerator = new Accelerator();
-
-    SwervePod PodL = new SwervePod(constants.initDirectionLeft, SwervePod.Side.LEFT, accelerator);
-    SwervePod PodR = new SwervePod(constants.initDirectionRight, SwervePod.Side.RIGHT, accelerator);
+    SwervePod PodL = new SwervePod(constants.initDirectionLeft, SwervePod.Side.LEFT);
+    SwervePod PodR = new SwervePod(constants.initDirectionRight, SwervePod.Side.RIGHT);
 
     double[] outputR = new double[4];
     double[] outputL = new double[4];
@@ -95,8 +92,6 @@ public class FinalBaseDrive extends OpMode{
 
         posSystem = new GlobalPosSystem(robot);
 
-        accelerator.actuallyAccelerate(true);
-
         kinematics = new RevisedKinematics(posSystem, PodL, PodR);
         posSystem.grabKinematics(kinematics);
         reset = new Reset(robot, posSystem);
@@ -130,31 +125,31 @@ public class FinalBaseDrive extends OpMode{
     @Override
     public void init_loop() { //Loop between "init" and "start"
 
-        robot.abl.setPower(0.7);
-        robot.abr.setPower(0.7);
-        robot.at.setPower(0.7);
+//        robot.abl.setPower(0.7);
+//        robot.abr.setPower(0.7);
+//        robot.at.setPower(0.7);
 
     }
 
     @Override
     public void start() { //When "start" is pressed
-        robot.at.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.at.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.abl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.abl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.abr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.abr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        robot.at.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        robot.at.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        robot.abl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        robot.abl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        robot.abr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        robot.abr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        robot.abl.setTargetPosition(robot.abl.getCurrentPosition());
-        robot.abr.setTargetPosition(robot.abr.getCurrentPosition());
-        robot.abr.setTargetPosition(robot.at.getCurrentPosition());
-        robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        robot.abl.setTargetPosition(robot.abl.getCurrentPosition());
+//        robot.abr.setTargetPosition(robot.abr.getCurrentPosition());
+//        robot.abr.setTargetPosition(robot.at.getCurrentPosition());
+//        robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        robot.abl.setPower(0.7);
-        robot.abr.setPower(0.7);
-        robot.at.setPower(0.7);
+//        robot.abl.setPower(0.7);
+//        robot.abr.setPower(0.7);
+//        robot.at.setPower(0.7);
 
         robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -168,7 +163,7 @@ public class FinalBaseDrive extends OpMode{
     @Override
     public void loop() { //Loop between "start" and "stop"
         UpdatePlayer1();
-        UpdatePlayer2();
+//        UpdatePlayer2();
         UpdateButton();
         UpdateTelemetry();
     }

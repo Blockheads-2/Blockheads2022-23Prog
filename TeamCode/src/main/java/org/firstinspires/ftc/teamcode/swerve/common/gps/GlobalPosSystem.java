@@ -195,8 +195,8 @@ public class GlobalPosSystem {
         if (!initPoleL) robotCentricCurrentL = clamp(positionArr[2] + 180);
         if (!initPoleR) robotCentricCurrentR = clamp(positionArr[3] + 180);
 
-        return ((Math.abs(robotCentricCurrentL - 90) <= 15 && Math.abs(robotCentricCurrentR - 90) <= 15) ||
-                (Math.abs(robotCentricCurrentL + 90) <= 15 && Math.abs(robotCentricCurrentR + 90) <= 15));
+        return ((Math.abs(robotCentricCurrentL - 90) <= 20 && Math.abs(robotCentricCurrentR - 90) <= 20) ||
+                (Math.abs(robotCentricCurrentL + 90) <= 20 && Math.abs(robotCentricCurrentR + 90) <= 20));
     }
 
     public boolean isAlligned(double optimizedCurrentWL, double optimizedCurrentWR){

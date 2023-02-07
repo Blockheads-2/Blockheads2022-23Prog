@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.swerve.common.Accelerator;
 import org.firstinspires.ftc.teamcode.swerve.common.Reset;
 import org.firstinspires.ftc.teamcode.swerve.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.swerve.common.HardwareDrive;
@@ -33,7 +32,6 @@ public class AutoHub implements Runnable{
     RevisedKinematics kinematics;
     Reset reset;
 
-    Accelerator accelerator = new Accelerator();
     SwervePod podR;
     SwervePod podL;
     HeaderControlPID controlHeader;
@@ -71,10 +69,9 @@ public class AutoHub implements Runnable{
         robot.init(hardwareMap);
         posSystem = new GlobalPosSystem(robot);
 
-        accelerator.actuallyAccelerate(true);
-        accelerator.setAccelFactor(constants.accelTimeAuto);
-        podR = new SwervePod(constants.initDirectionRight, SwervePod.Side.RIGHT, accelerator);
-        podL = new SwervePod(constants.initDirectionLeft, SwervePod.Side.LEFT, accelerator);
+
+        podR = new SwervePod(constants.initDirectionRight, SwervePod.Side.RIGHT);
+        podL = new SwervePod(constants.initDirectionLeft, SwervePod.Side.LEFT);
 
         kinematics = new RevisedKinematics(posSystem, podL, podR);
         posSystem.grabKinematics(kinematics);
@@ -286,6 +283,7 @@ public class AutoHub implements Runnable{
 
 
 
+    ElapsedTime turnTimer = new ElapsedTime();
     public void Turn(double finalAngle, double speed){
         //1) Calculate our current position
         posSystem.resetXY(); // <-- Must have!
@@ -311,7 +309,8 @@ public class AutoHub implements Runnable{
         robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        while (Math.abs(SwervePod.changeAngle(finalAngle, posSystem.getPositionArr()[4])) > constants.degreeTOLERANCE && linearOpMode.opModeIsActive()){
+        boolean turn = true;
+        while (turn && linearOpMode.opModeIsActive()){
 //        while (linearOpMode.opModeIsActive()){
             kinematics.turn(finalAngle, speed);
 
@@ -340,11 +339,17 @@ public class AutoHub implements Runnable{
             deltaMS = loopTime.milliseconds() - prevMS;
             prevMS = loopTime.milliseconds();
 
+
             if (Math.abs(SwervePod.changeAngle(finalAngle, posSystem.getPositionArr()[4])) < constants.degreeTOLERANCE){
-                robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                robot.topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                if (turnTimer.seconds() > 2.5){
+                    robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    robot.topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    turn = false;
+                }
+            } else {
+                turnTimer.reset();
             }
         }
 
