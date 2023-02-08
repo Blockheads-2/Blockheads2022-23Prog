@@ -35,7 +35,6 @@ public class SwervePod {
     private double optimizedCurrentW = 0;
     private double fieldCentricCurrentW = 0;
     public double controlHeaderReference = 0;
-    private double nonRightStickCurrentW = 0;
     private boolean initPole = true;
 
     private double throttle = 0;
@@ -64,6 +63,7 @@ public class SwervePod {
         this.initDirection = spinDirection;
         this.side = side;
         this.accelerator = new Accelerator();
+        this.controlHeader = new HeaderControlPID();
     }
 
     public void grabTelemetry(Telemetry t){
@@ -74,11 +74,6 @@ public class SwervePod {
     public void grabDashboard(TelemetryPacket t){
         packet = t;
     }
-
-    public void setHeaderController(HeaderControlPID controlHeader){
-        this.controlHeader = controlHeader;
-    }
-
 
     public void setPID(double kp, double ki, double kd){
         pid.setTargets(kp, ki, kd);
@@ -107,7 +102,7 @@ public class SwervePod {
     }
 
     //for spin power and spin clicks
-    public RevisedKinematics.DriveType setSpinClicksAndPower(double powerFactor, double trigger, boolean turn, boolean eligibleForTurning, boolean spline, boolean specialSpliningCondition, double rightStickX, int[] pos){ //teleop
+    public RevisedKinematics.DriveType setSpinClicksAndPower(double powerFactor, double trigger, boolean turn, boolean eligibleForTurning, boolean spline, boolean specialSpliningCondition, double rightStickX, double distanceTravelledL, double distanceTravelledR){ //teleop
         this.power = powerFactor;
         this.spinClicksTarget = (power * (constants.SPIN_CLICK_FACTOR * (1.0 + (trigger))));
         this.throttle = 1.0;
@@ -128,8 +123,8 @@ public class SwervePod {
                 power = 1.0;
                 driveType = RevisedKinematics.DriveType.NOT_INITIALIZED;
             }
-            controlHeader.reset(pos);
-            controlHeaderReference = currentR;
+//            controlHeader.reset(distanceTravelledL, distanceTravelledR);
+//            controlHeaderReference = currentR;
 
 //            driveType = RevisedKinematics.DriveType.TURN;
             return driveType;
@@ -143,17 +138,15 @@ public class SwervePod {
             if (rightStickX < 0 && side == Side.LEFT) this.throttle = throttle;
             else if (rightStickX >= 0 && side == Side.RIGHT) this.throttle = throttle;
 
-//            if (SwervePod.changeAngle(controlHeaderReference, currentR) > 30) controlHeaderReference = currentR;
-            controlHeaderReference = currentR;
-            controlHeader.reset(pos);
+//            controlHeaderReference = currentR;
+//            controlHeader.reset(distanceTravelledL, distanceTravelledR);
 
             driveType = RevisedKinematics.DriveType.VARIABLE_SPLINE;
             return driveType;
         } else {
-//            nonRightStickCurrentW = optimizedCurrentW;
             direction = (initPole ? initDirection : -initDirection);
-            controlHeader.calculateThrottle(pos, currentR, controlHeaderReference);
-            throttle = controlHeader.getThrottle(side);
+//            controlHeader.calculateThrottle(distanceTravelledL, distanceTravelledR, currentR, controlHeaderReference);
+//            throttle = controlHeader.getThrottle(side);
             if (side == Side.RIGHT) spinClicksTarget *= constants.RIGHT_SIDE_LIMITER; //move this so it only affects it when the robot is translating, not turning.
         }
 
@@ -210,7 +203,7 @@ public class SwervePod {
         this.throttle = throttle;
     }
 
-    public double setPosAuto(double x, double y, double finalAngle, double speed, RevisedKinematics.DriveType driveType, int[] posClicks, double currentW, double currentR){
+    public double setPosAuto(double x, double y, double finalAngle, double speed, RevisedKinematics.DriveType driveType, double distanceTravelledL, double distanceTravelledR, double currentW, double currentR){
         setCurrents(currentW, currentR);
 
         this.accelerator.actuallyAccelerate(true);
@@ -219,7 +212,7 @@ public class SwervePod {
 
         this.driveType = driveType;
         if (this.driveType == RevisedKinematics.DriveType.SNAP || this.driveType == RevisedKinematics.DriveType.CONSTANT_SPLINE) this.finalAngle = finalAngle;
-        else this.finalAngle = currentW;
+        else this.finalAngle = (initPole ? currentW : clamp(currentW + 180));
 
         //target position
         this.speed = speed;
@@ -229,6 +222,7 @@ public class SwervePod {
         if (driveType == RevisedKinematics.DriveType.LINEAR){
             linearMath.setPos(x, y, finalAngle);
             distance = Math.abs(linearMath.getDistance());
+//            this.controlHeaderReference = this.currentR;
         }
         else if (driveType == RevisedKinematics.DriveType.VARIABLE_SPLINE){
             splineMath.setPos(x, y, finalAngle, (side == Side.RIGHT));
@@ -237,7 +231,6 @@ public class SwervePod {
         else if (driveType == RevisedKinematics.DriveType.TURN){
             turnMath.setPos(finalAngle, currentR, (side == Side.RIGHT));
             distance = Math.abs(turnMath.getDistance());
-//            direction *= (side == Side.RIGHT ? -1 : 1);
         }
 
         if (driveType == RevisedKinematics.DriveType.SNAP) setPID(constants.kpRotation, constants.kiRotation, constants.kdRotation);
@@ -245,7 +238,7 @@ public class SwervePod {
 
         packet.put("Target Distance", linearMath.getDistance());
 
-        controlHeader.reset(posClicks);
+//        controlHeader.reset(distanceTravelledL, distanceTravelledR);
 
         double powerSpin = Math.abs(pid.update(distance)) * speed;
         double powerRotate = Math.abs(pid.update(turnAmount)) * speed;
@@ -258,11 +251,9 @@ public class SwervePod {
         this.power = power;
     }
 
-    public void autoLogic(double distanceRan, int[] posClicks){
+    public void autoLogic(double distanceRan, double distanceTravelledL, double distanceTravelledR){
         telemetry.addData("acceleration?", accelerator.actuallyAccelerate);
         telemetry.addData("Acceleration factor", accelerator.accelerationFactor);
-
-        if (driveType != RevisedKinematics.DriveType.TURN && driveType != RevisedKinematics.DriveType.VARIABLE_SPLINE) nonRightStickCurrentW = currentW;
 
         //determining distance left for rotating and spinning the module
         switch(driveType){
@@ -271,7 +262,6 @@ public class SwervePod {
             case LINEAR:
                 setRotClicks(finalAngle);
 
-//                nonRightStickCurrentW = optimizedCurrentW;
                 distance = linearMath.distanceRemaining(distanceRan);
                 telemetry.addData("distance remaining" + (side == Side.RIGHT ? "R" : "L"), distance);
                 telemetry.addData("Target pos" + (side == Side.RIGHT ? "R" : "L"), linearMath.getTargetDistance());
@@ -279,9 +269,14 @@ public class SwervePod {
 
                 power = Math.abs(pid.update(distance)) * speed; //probably needs a way to keep the power alive to take into account power directed toward rotating the module.
                 throttle = 1.0;
-//                controlHeader.calculateThrottle(posClicks, currentR, currentR);
+//                controlHeader.calculateThrottle(distanceTravelledL, distanceTravelledR, currentR, controlHeaderReference);
 //                throttle = controlHeader.getThrottle(side);
                 direction = (initPole ? initDirection : -initDirection) * (distance < 0 ? -1 : 1);
+
+                if (side == Side.RIGHT) {
+                    distance *= constants.RIGHT_SIDE_LIMITER_AUTO;
+                    power *= constants.RIGHT_SIDE_LIMITER_AUTO;
+                }
 
                 break;
 

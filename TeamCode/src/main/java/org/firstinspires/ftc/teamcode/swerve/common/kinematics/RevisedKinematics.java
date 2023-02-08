@@ -14,8 +14,6 @@ public class RevisedKinematics {
     SwervePod PodL;
     SwervePod PodR;
 
-    HeaderControlPID controlHeader;
-
     Telemetry telemetry;
 
     double targetX;
@@ -80,8 +78,6 @@ public class RevisedKinematics {
 
         this.PodL = podlL;
         this.PodR = podR;
-
-        controlHeader = new HeaderControlPID(posSystem.getMotorClicks());
     }
 
     public void grabTelemetry(Telemetry t){
@@ -126,8 +122,8 @@ public class RevisedKinematics {
         //determining spin clicks and spin power
         double power = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
 
-        type = PodL.setSpinClicksAndPower(power, rt, shouldTurn, eligibleForTurning, shouldSpline, specialSpliningCondition, rx, posSystem.getMotorClicks());
-        type = PodR.setSpinClicksAndPower(power, rt, shouldTurn, eligibleForTurning, shouldSpline, specialSpliningCondition, rx, posSystem.getMotorClicks());
+        type = PodL.setSpinClicksAndPower(power, rt, shouldTurn, eligibleForTurning, shouldSpline, specialSpliningCondition, rx, posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledR());
+        type = PodR.setSpinClicksAndPower(power, rt, shouldTurn, eligibleForTurning, shouldSpline, specialSpliningCondition, rx, posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledR());
 
 //        PodL.setThrottleUsingPodLReference(PodR, shouldTurn, shouldSpline);
 
@@ -176,8 +172,8 @@ public class RevisedKinematics {
         PodL.setCurrents(posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
         PodR.setCurrents(posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);
 
-        double timeOutL = PodL.setPosAuto(x, y, finalAngle, speed, driveType, posSystem.getMotorClicks(), posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
-        double timeOutR = PodR.setPosAuto(x, y, finalAngle, speed, driveType, posSystem.getMotorClicks(), posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);
+        double timeOutL = PodL.setPosAuto(x, y, finalAngle, speed, driveType, posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledR(), posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
+        double timeOutR = PodR.setPosAuto(x, y, finalAngle, speed, driveType, posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledR(), posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);
         return Math.max(timeOutL, timeOutR);
     }
 
@@ -188,9 +184,9 @@ public class RevisedKinematics {
 //        posSystem.setOptimizedCurrentW(PodR.optimizedCurrentW, PodL.optimizedCurrentW);
 
         //4) determining distance travel amount and power based on that
-        PodL.autoLogic(posSystem.getDistanceTravelledL(), posSystem.getMotorClicks());
+        PodL.autoLogic(posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledR());
         //for some reason, we negate the negative clicks for the left topL encoder
-        PodR.autoLogic(posSystem.getDistanceTravelledR(), posSystem.getMotorClicks());
+        PodR.autoLogic(posSystem.getDistanceTravelledR(), posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledR());
 
         outputL = PodL.getOutputAuto();
         outputR = PodR.getOutputAuto();

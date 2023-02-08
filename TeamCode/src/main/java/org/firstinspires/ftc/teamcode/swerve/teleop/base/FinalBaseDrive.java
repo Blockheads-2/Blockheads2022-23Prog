@@ -41,9 +41,6 @@ public class FinalBaseDrive extends OpMode{
     SwervePod PodL = new SwervePod(constants.initDirectionLeft, SwervePod.Side.LEFT);
     SwervePod PodR = new SwervePod(constants.initDirectionRight, SwervePod.Side.RIGHT);
 
-    double[] outputR = new double[4];
-    double[] outputL = new double[4];
-
     private enum TelemetryData{
         LEFT,
         RIGHT
@@ -156,8 +153,6 @@ public class FinalBaseDrive extends OpMode{
         robot.setRunMode(DcMotor.RunMode.RUN_TO_POSITION); //leave it in RUN_TO_POSITION for the entirety
 
         loopTime.reset();
-        PodL.setHeaderController(new HeaderControlPID(posSystem.getMotorClicks()));
-        PodR.setHeaderController(new HeaderControlPID(posSystem.getMotorClicks()));
     }
 
     @Override

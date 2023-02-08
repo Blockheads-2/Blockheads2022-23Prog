@@ -218,6 +218,10 @@ public class GlobalPosSystem {
 
     public void resetHeader(){
         positionArr[4] = 0;
+
+        currentOrientation = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        lastOrientation = currentOrientation;
+        currAngle = 0;
     }
 
     public void hardResetGPS(){

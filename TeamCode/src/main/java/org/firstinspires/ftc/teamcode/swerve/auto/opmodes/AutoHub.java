@@ -34,7 +34,6 @@ public class AutoHub implements Runnable{
 
     SwervePod podR;
     SwervePod podL;
-    HeaderControlPID controlHeader;
 
     public static double kp = 0;
     public static double ki = 0;
@@ -77,9 +76,6 @@ public class AutoHub implements Runnable{
         posSystem.grabKinematics(kinematics);
         kinematics.grabTelemetry(linearOpMode.telemetry);
         reset = new Reset(robot, posSystem);
-        controlHeader = new HeaderControlPID(posSystem.getMotorClicks());
-        podR.setHeaderController(controlHeader);
-        podL.setHeaderController(controlHeader);
 
         // Get a reference to the RelativeLayout so we can later change the background
         // color of the Robot Controller app to match the hue detected by the RGB sensor.
@@ -438,8 +434,9 @@ public class AutoHub implements Runnable{
         linearOpMode.telemetry.addData("R reference point", podR.controlHeaderReference);
         linearOpMode.telemetry.addData("R", posSystem.getPositionArr()[4]);
 
-        linearOpMode.telemetry.addData("Spin Direction (Left)", podL.getSpinDirection());
-        linearOpMode.telemetry.addData("Spin Direction (Right)", podR.getSpinDirection());
+
+        linearOpMode.telemetry.addData("InitPole L", podL.getPole());
+        linearOpMode.telemetry.addData("InitPole R", podR.getPole());
 //
         linearOpMode.telemetry.addData("target", kinematics.finalAngle);
         linearOpMode.telemetry.addData("Turn Amount (Left)", podL.getTurnAmount());

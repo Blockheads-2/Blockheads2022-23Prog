@@ -43,7 +43,7 @@ public class LinearMath { //Note: snap() is used in the auto class separately. T
     }
 
     public double distanceRemaining(double distanceRan){
-        return targetDistance - distanceRan;
+        return targetDistance - Math.abs(distanceRan);
     }
 
     public double getRunTime(double rate){

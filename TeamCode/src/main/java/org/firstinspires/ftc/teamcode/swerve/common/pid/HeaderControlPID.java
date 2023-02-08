@@ -15,48 +15,25 @@ public class HeaderControlPID {
     public double prevError = 0;
     public double biggerArc = 0;
 
-    private int[] prevClicksPos = new int[4];
     private double prevTranslateR = 0;
     private double prevTranslateL = 0;
 
     public double target = 0;
 
-    public HeaderControlPID(int[] clicksPos){
-        prevClicksPos = clicksPos;
+    public HeaderControlPID(){
     }
 
-    public void reset(int[] clicksPos){
-        //right
-        int topR = clicksPos[2] - prevClicksPos[2]; //change in top right
-        int botR = clicksPos[3] - prevClicksPos[3]; //change in bottom right
-        double translateClicksR = (topR - botR) / 2.0;
-
-        //left
-        int topL = clicksPos[0] - prevClicksPos[0]; //change in top left
-        int botL = clicksPos[1] - prevClicksPos[1]; //change in bottom left
-        double translateClicksL = (topL - botL) / 2.0;
-
-        prevClicksPos = clicksPos;
-        prevTranslateL = translateClicksL;
-        prevTranslateR = translateClicksR;
+    public void reset(double distanceL, double distanceR){
+        prevTranslateL = distanceL;
+        prevTranslateR = distanceR;
         throttle = 1.0;
         error = 0;
         prevError = 0;
     }
 
-    public void calculateThrottle(int[] clicksPos, double currentR, double targetTheta){
-        //right
-        int topR = clicksPos[2] - prevClicksPos[2]; //change in top right
-        int botR = clicksPos[3] - prevClicksPos[3]; //change in bottom right
-        double translateClicksR = (topR - botR) / 2.0;
-
-        //left
-        int topL = clicksPos[0] - prevClicksPos[0]; //change in top left
-        int botL = clicksPos[1] - prevClicksPos[1]; //change in bottom left
-        double translateClicksL = (topL - botL) / 2.0;
-
-        double deltaLeft = translateClicksL - prevTranslateL;
-        double deltaRight = translateClicksR - prevTranslateR;  //does it matter if it's negative or not?
+    public void calculateThrottle(double distanceL, double distanceR, double currentR, double targetTheta){
+        double deltaLeft = distanceL - prevTranslateL;
+        double deltaRight = distanceR - prevTranslateR;  //does it matter if it's negative or not?
         biggerArc = (Math.abs(deltaLeft) > Math.abs(deltaRight) ? deltaLeft : deltaRight);
 
         if (deltaLeft == deltaRight) {
@@ -70,48 +47,12 @@ public class HeaderControlPID {
 
         throttle = 1.0 - ((2.0 * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER * Math.abs(error)) / Math.abs(biggerArc));
 
+        if (throttle > 1) throttle = 1;
+        else if (throttle < 0) throttle = 0;
+
         if ((prevError < 0 ? -1 : 1) != (error < 0 ? -1 : 1)){ //if the error changes signs, then that means that the bigger arc has changed sides.
-            prevClicksPos = clicksPos;
-            prevTranslateL = translateClicksL;
-            prevTranslateR = translateClicksR;
-        }
-    }
-
-    public void calculateThrottleDemoFuncTestLater(int[] clicksPos, double currentR, double targetTheta, boolean reset){
-        //right
-        int topR = clicksPos[2] - prevClicksPos[2]; //change in top right
-        int botR = clicksPos[3] - prevClicksPos[3]; //change in bottom right
-        double translateClicksR = (topR - botR) / 2.0;
-
-        //left
-        int topL = clicksPos[0] - prevClicksPos[0]; //change in top left
-        int botL = clicksPos[1] - prevClicksPos[1]; //change in bottom left
-        double translateClicksL = (topL - botL) / 2.0;
-
-        double deltaLeft = translateClicksL - prevTranslateL;
-        double deltaRight = translateClicksR - prevTranslateR;  //does it matter if it's negative or not?
-        biggerArc = (Math.abs(deltaLeft) > Math.abs(deltaRight) ? deltaLeft : deltaRight);
-
-        if (reset){
-            prevClicksPos = clicksPos;
-            prevTranslateL = translateClicksL;
-            prevTranslateR = translateClicksR;
-            throttle = 1.0;
-            return;
-        }else if (deltaLeft == deltaRight) {
-            throttle = 1.0;
-            return;
-        } else if (biggerArc == deltaLeft) throttleSide = SwervePod.Side.LEFT;
-        else throttleSide = SwervePod.Side.RIGHT;
-
-        error = Math.abs(SwervePod.changeAngle(targetTheta, currentR));
-
-        throttle = 1.0 - ((2.0 * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER * error) / biggerArc);
-
-        if (Math.abs(error) < constants.degreeTOLERANCE){
-            prevClicksPos = clicksPos;
-            prevTranslateL = translateClicksL;
-            prevTranslateR = translateClicksR;
+            prevTranslateL = distanceL;
+            prevTranslateR = distanceL;
         }
     }
 
