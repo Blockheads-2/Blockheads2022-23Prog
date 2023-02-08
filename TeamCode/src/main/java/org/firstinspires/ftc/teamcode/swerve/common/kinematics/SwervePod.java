@@ -64,8 +64,6 @@ public class SwervePod {
         this.initDirection = spinDirection;
         this.side = side;
         this.accelerator = new Accelerator();
-
-        this.controlHeader = controlHeader;
     }
 
     public void grabTelemetry(Telemetry t){
@@ -130,8 +128,8 @@ public class SwervePod {
                 power = 1.0;
                 driveType = RevisedKinematics.DriveType.NOT_INITIALIZED;
             }
-//            controlHeader.calculateThrottle(pos, currentR, controlHeaderReference, true);
-//            controlHeaderReference = currentR;
+            controlHeader.reset(pos);
+            controlHeaderReference = currentR;
 
 //            driveType = RevisedKinematics.DriveType.TURN;
             return driveType;
@@ -146,17 +144,16 @@ public class SwervePod {
             else if (rightStickX >= 0 && side == Side.RIGHT) this.throttle = throttle;
 
 //            if (SwervePod.changeAngle(controlHeaderReference, currentR) > 30) controlHeaderReference = currentR;
-//            controlHeaderReference = currentR;
-//            controlHeader.calculateThrottle(pos, currentR, controlHeaderReference, true);
+            controlHeaderReference = currentR;
+            controlHeader.reset(pos);
 
             driveType = RevisedKinematics.DriveType.VARIABLE_SPLINE;
             return driveType;
         } else {
 //            nonRightStickCurrentW = optimizedCurrentW;
             direction = (initPole ? initDirection : -initDirection);
-//            if (SwervePod.changeAngle(controlHeaderReference, currentR) > 30) controlHeaderReference = currentR;
-//            controlHeader.calculateThrottle(pos, currentR, controlHeaderReference, false);
-//            throttle = controlHeader.getThrottle(side);
+            controlHeader.calculateThrottle(pos, currentR, controlHeaderReference);
+            throttle = controlHeader.getThrottle(side);
             if (side == Side.RIGHT) spinClicksTarget *= constants.RIGHT_SIDE_LIMITER; //move this so it only affects it when the robot is translating, not turning.
         }
 
@@ -329,6 +326,7 @@ public class SwervePod {
                 throttle = 1.0;
                 rotClicksTarget = 0;
                 direction = (initPole ? initDirection : -initDirection);
+                accelerator.resetAccelerationAuto();
                 break;
         }
 
@@ -345,14 +343,21 @@ public class SwervePod {
     public void turn(double finalAngle, double speed){
         robotCentricSetRotClicks(0);
 
-        distance = Math.toRadians(SwervePod.changeAngle(finalAngle, currentR))* constants.DISTANCE_BETWEEN_MODULE_AND_CENTER;
+        double turnAmountLeft = SwervePod.changeAngle(finalAngle, currentR);
+        distance = Math.toRadians(turnAmountLeft) * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER;
 
         direction = (initPole ? initDirection : -initDirection) * (side == Side.RIGHT ? -1 : 1) * (distance < 0 ? -1 : 1);
 
+//        double growthFactorForTurning = turnLogarithmicFunction(turnAmountLeft);
         spinClicksTarget = Math.abs(distance) * constants.CLICKS_PER_INCH;
+//        spinClicksTarget *= growthFactorForTurning;
 
         throttle = 1.0;
         power = pid.update(distance) * speed;
+    }
+
+    public double turnLogarithmicFunction(double turnAmountLeft){
+        return (1.0 / (1 + Math.pow(Math.E, -turnAmountLeft+3.5))) + 1;
     }
 
     public static double changeAngle(double target, double current){
@@ -431,6 +436,10 @@ public class SwervePod {
         output[2] = power;
 
         return output;
+    }
+
+    public Accelerator getAccelerator(){
+        return accelerator;
     }
 
     public int getSpinDirection(){

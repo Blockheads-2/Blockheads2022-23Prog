@@ -251,6 +251,7 @@ public class AutoHub implements Runnable{
                     Math.abs(robot.topR.getCurrentPosition() - targetTopR) > constants.clickToleranceAuto ||
                     Math.abs(robot.botR.getCurrentPosition() - targetBotR) > constants.clickToleranceAuto);
             armTargetMet = kinematics.isArmTargetMet();
+
 //            armTargetMet = false;
 
             UpdateTelemetry();
@@ -258,6 +259,9 @@ public class AutoHub implements Runnable{
             deltaMS = loopTime.milliseconds() - prevMS;
             prevMS = loopTime.milliseconds();
         }
+
+        podL.getAccelerator().resetAccelerationAuto();
+        podL.getAccelerator().resetAccelerationAuto();
 
         if (kinematics.getDriveType() != RevisedKinematics.DriveType.SNAP){
             while(!reset.finishedReset() && linearOpMode.opModeIsActive()){
@@ -342,10 +346,7 @@ public class AutoHub implements Runnable{
 
             if (Math.abs(SwervePod.changeAngle(finalAngle, posSystem.getPositionArr()[4])) < constants.degreeTOLERANCE){
                 if (turnTimer.seconds() > 2.5){
-                    robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                    robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                    robot.topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                    robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
                     turn = false;
                 }
             } else {
@@ -353,19 +354,18 @@ public class AutoHub implements Runnable{
             }
         }
 
-        if (kinematics.getDriveType() != RevisedKinematics.DriveType.SNAP){
-            while(!reset.finishedReset() && linearOpMode.opModeIsActive()){
-                reset.resetAuto(true);
-                linearOpMode.telemetry.addData("RESET", true);
-                deltaMS = loopTime.milliseconds() - prevMS;
-                prevMS = loopTime.milliseconds();
-            }
-        } else {
-            robot.topL.setTargetPosition(robot.topL.getCurrentPosition());
-            robot.botL.setTargetPosition(robot.botL.getCurrentPosition());
-            robot.topR.setTargetPosition(robot.topR.getCurrentPosition());
-            robot.botR.setTargetPosition(robot.botR.getCurrentPosition());
+        robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        while(!reset.finishedReset() && linearOpMode.opModeIsActive()){
+            reset.resetAuto(true);
+            linearOpMode.telemetry.addData("RESET", true);
+            deltaMS = loopTime.milliseconds() - prevMS;
+            prevMS = loopTime.milliseconds();
         }
+
         reset.resetAuto(false);
 
         robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

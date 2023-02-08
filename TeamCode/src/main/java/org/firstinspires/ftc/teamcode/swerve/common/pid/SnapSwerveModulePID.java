@@ -44,9 +44,9 @@ public class SnapSwerveModulePID {
         prevError = error;
         prevTime = timer.milliseconds();
 
-        double motorPower = Math.tanh(kp * error + ki * accumulatedError - kd * slope);
-//        if (Math.abs(motorPower) <= 0.05) motorPower = 0;
-
+        double motorPower = (Math.tanh(kp * error + ki * accumulatedError - kd * slope) * 0.9) + (Math.signum(error) * 0.1);;
+        //multiply by 0.9 because robot is heavy (heavy + friction = wheels slide while turning = inaccurate). The 0.9 somewhat compensates for that
+        //0.1 * Math.signum(error) gives the robot a little kick towards the direction of the error
         return motorPower;
     }
 
