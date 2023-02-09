@@ -41,6 +41,7 @@ public class AutoHub implements Runnable{
     public static double power = 0.5;
     public static double distance = 0;
     public static double finalAngleDashboard = 0;
+    public static double finalSnapAngle = 0;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
     ElapsedTime loopTime = new ElapsedTime();
@@ -242,6 +243,7 @@ public class AutoHub implements Runnable{
             robot.abl.setPower(armOutput[1]);
             robot.abr.setPower(armOutput[2]);
 
+            //perhaps set a timer for this one like turning
             targetNotMet = (Math.abs(robot.topL.getCurrentPosition() - targetTopL) > constants.clickToleranceAuto ||
                     Math.abs(robot.botL.getCurrentPosition() - targetBotL) > constants.clickToleranceAuto ||
                     Math.abs(robot.topR.getCurrentPosition() - targetTopR) > constants.clickToleranceAuto ||
@@ -291,7 +293,7 @@ public class AutoHub implements Runnable{
 
         reset.resetAuto(false);
 
-        kinematics.setTurnPID(kp, ki, kd);
+        kinematics.setTurnPID(constants.kpTurning, constants.kiTurning, constants.kdTurning);
         kinematics.turn(finalAngle, speed);
 
         int targetTopL = robot.topL.getCurrentPosition() + targetClicks[0];

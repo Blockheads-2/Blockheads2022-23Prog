@@ -79,6 +79,11 @@ public class SwervePod {
         pid.setTargets(kp, ki, kd);
     }
 
+    public void setPID(double kp, double ki, double kd, boolean snap){
+        pid.setTargets(kp, ki, kd);
+        pid.setSnap(snap);
+    }
+
     public void setCurrents(double currentW, double currentR){
         this.currentW = currentW;
         this.currentR = currentR;
@@ -233,8 +238,9 @@ public class SwervePod {
             distance = Math.abs(turnMath.getDistance());
         }
 
-        if (driveType == RevisedKinematics.DriveType.SNAP) setPID(constants.kpRotation, constants.kiRotation, constants.kdRotation);
-        else setPID(constants.kpTranlation, constants.kiTranslation, constants.kdTranslation);
+        if (driveType == RevisedKinematics.DriveType.SNAP) setPID(constants.kpRotation, constants.kiRotation, constants.kdRotation, true);
+        else if (driveType == RevisedKinematics.DriveType.TURN) setPID(constants.kpTranlation, constants.kiTurning, constants.kdTurning, false);
+        else setPID(constants.kpTranlation, constants.kiTranslation, constants.kdTranslation, false);
 
         packet.put("Target Distance", linearMath.getDistance());
 
