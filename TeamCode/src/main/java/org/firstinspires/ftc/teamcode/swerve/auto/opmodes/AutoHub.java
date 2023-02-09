@@ -166,10 +166,9 @@ public class AutoHub implements Runnable{
 
         //2) Determine the distance from our current pos & the target pos.
         timeoutS = kinematics.setPosAuto(x, y, finalAngle, speed, movementType);
-//        timeoutS = 100;
+        //        timeoutS = 100;
         reset.resetAuto(false);
         kinematics.armLogicAuto(armMovementType, getArmClicks()); //determine targets/power for the arm
-        kinematics.setPosAuto(x, y, finalAngle, speed, movementType);
         kinematics.logicAuto();
 
         targetNotMet = true;
@@ -207,7 +206,7 @@ public class AutoHub implements Runnable{
         //3) Tell the robot to travel that distance we just determined.
 
         runTime.reset();
-        while (linearOpMode.opModeIsActive() && (targetNotMet || !armTargetMet) && runTime.seconds() < timeoutS + 2){ //have a time based something in case our target is never met.
+        while (linearOpMode.opModeIsActive() && (targetNotMet || !armTargetMet) && runTime.seconds() < timeoutS + constants.autoStopConditionTime + 2){ //have a time based something in case our target is never met.
             posSystem.calculatePos();
             kinematics.armLogicAuto(armMovementType, getArmClicks()); //determine targets/power for the arm
             // see how long program takes without calling armLogicAuto
