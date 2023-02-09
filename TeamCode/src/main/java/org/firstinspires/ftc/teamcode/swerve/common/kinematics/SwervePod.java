@@ -394,7 +394,10 @@ public class SwervePod {
 
     public boolean onlyRotate(boolean firstMovement){
         if (firstMovement){
-            return (Math.abs(turnAmount) >= constants.degreeTOLERANCE);
+            if (Math.abs(turnAmount) >= constants.degreeTOLERANCE){
+                if (Math.abs(rotClicksTarget) > Math.abs(spinClicksTarget)) power = 1.0;
+                return true;
+            } else return false;
         }
         return false;
     }
