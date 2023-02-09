@@ -70,6 +70,8 @@ public class Constants {
     public int initDirectionRight = 1;
     public int initDirectionLeft = -1;
 
+    public double autoStopConditionTime = 1.0;
+
 
     /* starting:
         base: 0

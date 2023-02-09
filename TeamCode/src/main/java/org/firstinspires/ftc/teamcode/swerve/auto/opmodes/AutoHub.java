@@ -48,6 +48,7 @@ public class AutoHub implements Runnable{
     double prevMS = 0;
     double deltaMS = 0;
 
+    ElapsedTime stopConditionTimer = new ElapsedTime();
 
     TurnMath turnMath = new TurnMath();
     SnapSwerveModulePID turnPID = new SnapSwerveModulePID(); //although it says Snap, it works for turning as well.
@@ -250,6 +251,13 @@ public class AutoHub implements Runnable{
                     Math.abs(robot.botR.getCurrentPosition() - targetBotR) > constants.clickToleranceAuto);
             armTargetMet = kinematics.isArmTargetMet();
 
+            if (!targetNotMet && stopConditionTimer.seconds() > constants.autoStopConditionTime){
+                targetNotMet = false;
+            } else {
+                stopConditionTimer.reset();
+                targetNotMet = true;
+            }
+
 //            armTargetMet = false;
 
             UpdateTelemetry();
@@ -285,7 +293,6 @@ public class AutoHub implements Runnable{
 
 
 
-    ElapsedTime turnTimer = new ElapsedTime();
     public void Turn(double finalAngle, double speed){
         //1) Calculate our current position
         posSystem.resetXY(); // <-- Must have!
@@ -343,12 +350,12 @@ public class AutoHub implements Runnable{
 
 
             if (Math.abs(SwervePod.changeAngle(finalAngle, posSystem.getPositionArr()[4])) < constants.degreeTOLERANCE){
-                if (turnTimer.seconds() > 2.5){
+                if (stopConditionTimer.seconds() > 2.0){
 
                     turn = false;
                 }
             } else {
-                turnTimer.reset();
+                stopConditionTimer.reset();
             }
         }
 
