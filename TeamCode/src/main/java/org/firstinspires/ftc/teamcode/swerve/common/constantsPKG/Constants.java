@@ -100,16 +100,16 @@ public class Constants {
     public double armServoHigh = 0.408;
 
     //Stack Positions(1=top;2=2nd from top;3=middle;4=2nd from bottom;5=bottom)
-    public static int bottomMotor1 = 700;
-    public static int topMotor1 = 35;
-    public static int bottomMotor2 = 700;
-    public static int topMotor2 = 35;
-    public static int bottomMotor3 = 350;
-    public static int topMotor3 = 80;
-    public static int bottomMotor4 = 350;
-    public static int topMotor4 = 90;
-    public static int bottomMotor5 = 275;
-    public static int topMotor5 = 100;
+    public int bottomMotor1 = 700;
+    public int topMotor1 = 35;
+    public int bottomMotor2 = 700;
+    public int topMotor2 = 35;
+    public int bottomMotor3 = 350;
+    public int topMotor3 = 80;
+    public int bottomMotor4 = 350;
+    public int topMotor4 = 90;
+    public int bottomMotor5 = 275;
+    public int topMotor5 = 100;
 
     public double kpRotation = 16;
     public double kiRotation = 1;

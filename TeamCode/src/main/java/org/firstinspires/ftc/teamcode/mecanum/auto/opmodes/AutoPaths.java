@@ -26,8 +26,6 @@ public class AutoPaths extends LinearOpMode{
     HardwareDrive robot = new HardwareDrive();
     Constants constants = new Constants();
 
-
-
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
     static final double FEET_PER_METER = 3.28084;

@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.swerve.common.Button;
 import org.firstinspires.ftc.teamcode.swerve.common.Reset;
 import org.firstinspires.ftc.teamcode.swerve.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.swerve.common.HardwareDrive;
@@ -380,7 +381,6 @@ public class AutoHub implements Runnable{
         return armClicks;
     }
 
-
     public void run(){
         while (linearOpMode.opModeIsActive()){
             if (kinematics.isArmTargetMet()){
@@ -418,6 +418,9 @@ public class AutoHub implements Runnable{
         robot.abr.setPower(1);
     }
 
+    public void clawAngle(double servoVal){
+        robot.armServo.setPosition(servoVal);
+    }
     public void UpdateTelemetry(){
         linearOpMode.telemetry.addData("KP", kp);
         linearOpMode.telemetry.addData("KI", ki);

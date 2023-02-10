@@ -392,21 +392,21 @@ public class FinalBaseDrive extends OpMode{
                 stackClawPos = 1;
             }
             if (stackClawPos == 1) {
-                setArmPos(Constants.topMotor1, Constants.bottomMotor1);
+                setArmPos(constants.topMotor1, constants.bottomMotor1);
             }
             else if (stackClawPos == 2) {
-                setArmPos(Constants.topMotor2, Constants.bottomMotor2);
+                setArmPos(constants.topMotor2, constants.bottomMotor2);
             }
             else if (stackClawPos == 3) {
-                setArmPos(Constants.topMotor3, Constants.bottomMotor3);
+                setArmPos(constants.topMotor3, constants.bottomMotor3);
                 robot.armServo.setPosition(0.1514);
             }
             else if (stackClawPos == 4) {
-                setArmPos(Constants.topMotor4, Constants.bottomMotor4);
+                setArmPos(constants.topMotor4, constants.bottomMotor4);
                 robot.armServo.setPosition(0.1514);
             }
             else if (stackClawPos == 5) {
-                setArmPos(Constants.topMotor5, Constants.bottomMotor5);
+                setArmPos(constants.topMotor5, constants.bottomMotor5);
             }
         }
         if (rightBumpy.is(Button.State.TAP)){
@@ -415,19 +415,19 @@ public class FinalBaseDrive extends OpMode{
                 stackClawPos = 5;
             }
             if (stackClawPos == 1) {
-                setArmPos(Constants.topMotor1, Constants.bottomMotor1);
+                setArmPos(constants.topMotor1, constants.bottomMotor1);
             }
             else if (stackClawPos == 2) {
-                setArmPos(Constants.topMotor2, Constants.bottomMotor2);
+                setArmPos(constants.topMotor2, constants.bottomMotor2);
             }
             else if (stackClawPos == 3) {
-                setArmPos(Constants.topMotor3, Constants.bottomMotor3);
+                setArmPos(constants.topMotor3, constants.bottomMotor3);
             }
             else if (stackClawPos == 4) {
-                setArmPos(Constants.topMotor4, Constants.bottomMotor4);
+                setArmPos(constants.topMotor4, constants.bottomMotor4);
             }
             else if (stackClawPos == 5) {
-                setArmPos(Constants.topMotor5, Constants.bottomMotor5);
+                setArmPos(constants.topMotor5, constants.bottomMotor5);
             }
         }
 

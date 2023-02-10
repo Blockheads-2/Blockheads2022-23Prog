@@ -154,7 +154,7 @@ public class autoTemplateThingy extends LinearOpMode{
             }
             case 1: {
                 dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.4, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, -30, 0, 0.4, RevisedKinematics.ArmType.HOLD);
+                dispatch.Move(RevisedKinematics.DriveType.STOP, 0, -30, 0, 0.4, RevisedKinematics.ArmType.HOLD);
 
                 break;
             }
