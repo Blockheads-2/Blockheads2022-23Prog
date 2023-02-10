@@ -289,9 +289,10 @@ public class SwervePod {
             case VARIABLE_SPLINE: //using gps for variable_spline may be incredibly unreliable.  Though the nature of clicks (they are integers) gives us an inaccurate account (but this fear depends on the fact that the code loops really really quickly).
                 robotCentricSetRotClicks(0);
 
-                direction = (initPole ? initDirection : -initDirection);
                 distance = splineMath.distanceRemaining(distanceRan);
-                //throttle needs work for this mode
+                direction = (initPole ? initDirection : -initDirection) * (distance < 0 ? -1 : 1);
+                power = Math.abs(pid.update(distance)) * speed;
+                throttle = splineMath.getThrottle();
                 break;
 
             case SNAP:

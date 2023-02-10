@@ -15,6 +15,7 @@ public class SplineMath {
     private double turnAmount; //amount robot header should turn (for table-spinning)
     private double distanceR;
     private double distanceL;
+    private boolean right;
 
     private int targetClicks;
 
@@ -29,7 +30,7 @@ public class SplineMath {
         turnAmount = theta;
 
         calculateDistance();
-
+        this.right = right;
         if (right) targetClicks =  (int)(distanceR * constants.CLICKS_PER_INCH);
         else targetClicks = (int)(distanceL * constants.CLICKS_PER_INCH);
 
@@ -72,6 +73,14 @@ public class SplineMath {
 
     public double distanceRemaining(double distanceRan){
         return targetClicks - (distanceRan * constants.CLICKS_PER_INCH);
+    }
+
+    public double getThrottle(){
+        if (right){
+            return distanceR > distanceL ? 1 : Math.abs(distanceR / distanceL);
+        } else{
+            return distanceL > distanceR ? 1 : Math.abs(distanceL / distanceR);
+        }
     }
 
     public int[] getClicks(){
