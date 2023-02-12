@@ -118,6 +118,7 @@ public class RevisedKinematics {
         boolean shouldSpline = (lx != 0 || ly != 0) && (rx != 0);
         boolean eligibleForTurning = posSystem.eligibleForTurning(PodL.getPole(), PodR.getPole());
         boolean specialSpliningCondition = posSystem.specialSpliningCondition(PodL.getPole(), PodR.getPole());
+        telemetry.addData("Special Splining Condition?", specialSpliningCondition);
 
         //determining spin clicks and spin power
         double power = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));

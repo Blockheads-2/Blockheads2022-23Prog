@@ -206,7 +206,7 @@ public class AutoHub implements Runnable{
         //3) Tell the robot to travel that distance we just determined.
 
         runTime.reset();
-        while (linearOpMode.opModeIsActive() && (targetNotMet || !armTargetMet) && runTime.seconds() < timeoutS + constants.autoStopConditionTime + 2){ //have a time based something in case our target is never met.
+        while (linearOpMode.opModeIsActive() && (targetNotMet || !armTargetMet) && runTime.seconds() < timeoutS + constants.autoStopConditionTime + 3){ //have a time based something in case our target is never met.
             posSystem.calculatePos();
             kinematics.armLogicAuto(armMovementType, getArmClicks()); //determine targets/power for the arm
             // see how long program takes without calling armLogicAuto
@@ -244,10 +244,10 @@ public class AutoHub implements Runnable{
             robot.abr.setPower(armOutput[2]);
 
             //perhaps set a timer for this one like turning
-            targetNotMet = (Math.abs(robot.topL.getCurrentPosition() - targetTopL) > constants.clickToleranceAuto ||
-                    Math.abs(robot.botL.getCurrentPosition() - targetBotL) > constants.clickToleranceAuto ||
-                    Math.abs(robot.topR.getCurrentPosition() - targetTopR) > constants.clickToleranceAuto ||
-                    Math.abs(robot.botR.getCurrentPosition() - targetBotR) > constants.clickToleranceAuto);
+            targetNotMet = (Math.abs(robot.topL.getCurrentPosition() - targetTopL) > constants.degreeTOLERANCE ||
+                    Math.abs(robot.botL.getCurrentPosition() - targetBotL) > constants.degreeTOLERANCE ||
+                    Math.abs(robot.topR.getCurrentPosition() - targetTopR) > constants.degreeTOLERANCE ||
+                    Math.abs(robot.botR.getCurrentPosition() - targetBotR) > constants.degreeTOLERANCE);
             armTargetMet = kinematics.isArmTargetMet();
 
             if (!targetNotMet && stopConditionTimer.seconds() > constants.autoStopConditionTime){

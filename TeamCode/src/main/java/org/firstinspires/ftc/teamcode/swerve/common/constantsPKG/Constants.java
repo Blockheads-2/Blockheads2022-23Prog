@@ -27,7 +27,7 @@ public class Constants {
     public double MAX_VELOCITY_DT = 2400.0; // unit is clicks/sec
     public double clickTOLERANCE = 10; //number of clicks or degrees the robot can be off by
 //    public double clickToleranceAuto = 12; //~1/3rd worth of error for translation.  ~2 degrees worth of error for rotation.
-    public double clickToleranceAuto = 5; //for testing with dashboard
+    public double clickToleranceAuto = 10; //for testing with dashboard
     public double degreeTOLERANCE = 5;
     public double allignmentTolerance = 13;
 
