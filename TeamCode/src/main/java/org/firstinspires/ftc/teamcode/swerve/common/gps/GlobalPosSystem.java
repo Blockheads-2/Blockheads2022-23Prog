@@ -33,6 +33,13 @@ public class GlobalPosSystem {
     double currAngle = 0;
 
     private boolean updateGPS = true;
+    
+    public enum WheelOrientation{
+        FRONT,
+        BACK,
+    }
+    private WheelOrientation wheelOrientationR;
+    private WheelOrientation wheelOrientationL;
 
     public GlobalPosSystem(HardwareDrive robot) {
         this.robot = robot;
@@ -137,6 +144,20 @@ public class GlobalPosSystem {
         positionArr[1] += (hypotenuse * Math.cos(baseAngle));
     }
 
+    public WheelOrientation[] getWheelOrientation(boolean initPoleL){
+        double optimizedCurrentWL = positionArr[2];
+//        double optimizedCurrentWR = positionArr[3];
+        if (!initPoleL) optimizedCurrentWL = clamp(positionArr[2] + 180); //direction wheel is moving in
+//        if (!initPoleR) optimizedCurrentWR = clamp(positionArr[3] + 180);
+
+        double newRobotHeader = clamp(positionArr[4] - clamp(90 - optimizedCurrentWL));
+
+        wheelOrientationL = (Math.abs(newRobotHeader) <= 90 ? WheelOrientation.BACK : WheelOrientation.FRONT);
+        wheelOrientationR = (Math.abs(newRobotHeader) <= 90 ? WheelOrientation.FRONT : WheelOrientation.BACK);
+
+        return new WheelOrientation[]{wheelOrientationL, wheelOrientationR};
+    }
+
     public void update ( double x, double y, double leftWheelW, double rightWheelW, double robotR){
         //update
         positionArr[0] += (x);
@@ -195,8 +216,8 @@ public class GlobalPosSystem {
         if (!initPoleL) robotCentricCurrentL = clamp(positionArr[2] + 180);
         if (!initPoleR) robotCentricCurrentR = clamp(positionArr[3] + 180);
 
-        return ((Math.abs(robotCentricCurrentL - 90) <= 35 && Math.abs(robotCentricCurrentR - 90) <= 35) ||
-                (Math.abs(robotCentricCurrentL + 90) <= 35 && Math.abs(robotCentricCurrentR + 90) <= 35));
+        return ((Math.abs(robotCentricCurrentL - 90) <= 35 && Math.abs(robotCentricCurrentR - 90) <= constants.pointedWheels) ||
+                (Math.abs(robotCentricCurrentL + 90) <= 35 && Math.abs(robotCentricCurrentR + 90) <= constants.pointedWheels));
     }
 
     public boolean isAlligned(double optimizedCurrentWL, double optimizedCurrentWR){

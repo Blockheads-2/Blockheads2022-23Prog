@@ -31,6 +31,8 @@ public class Constants {
     public double degreeTOLERANCE = 5;
     public double allignmentTolerance = 13;
 
+    public double pointedWheels = 35;
+
 
     //control hub to arm: 16 cm
 
