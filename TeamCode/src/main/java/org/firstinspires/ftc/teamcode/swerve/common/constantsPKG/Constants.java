@@ -11,7 +11,7 @@ public class Constants {
     public double RPM = 1150 * LOAD_ON; //690.  Not very accurate so don't rely on this number.
     public double RPS = RPM / 60.0; //11.5 ish motor revolutions per second, with load
     public double POWER_LIMITER = 1.0; //0.8 : 100
-    public double RIGHT_SIDE_LIMITER= 0.9; //right side is a heavier than left side.  Heavier = faster.
+    public double RIGHT_SIDE_LIMITER = 0.8; //right side is a heavier than left side.  Heavier = faster cuz more normal force.
     public double RIGHT_SIDE_LIMITER_AUTO = 0.9; //0.7
     public int SPIN_CLICK_FACTOR = 140;
 
