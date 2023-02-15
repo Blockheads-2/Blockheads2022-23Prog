@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.swerve.auto.opmodes;
 import android.view.View;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.swerve.common.kinematics.RevisedKinematics
 import java.util.ArrayList;
 
 @Autonomous(name = "autoTemplateThingy thingy", group = "Routes")
+//@Disabled
 public class autoTemplateThingy extends LinearOpMode{
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;

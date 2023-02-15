@@ -94,7 +94,7 @@ public class FinalBaseDrive extends OpMode{
         reset = new Reset(robot, posSystem);
         kinematics.grabTelemetry(telemetry);
 
-//        moveArmToInit();
+        moveArmToInit();
 
         telemetry.addData("Say", "Hello Driver");
 
@@ -122,31 +122,31 @@ public class FinalBaseDrive extends OpMode{
     @Override
     public void init_loop() { //Loop between "init" and "start"
 
-//        robot.abl.setPower(0.7);
-//        robot.abr.setPower(0.7);
-//        robot.at.setPower(0.7);
+        robot.abl.setPower(0.7);
+        robot.abr.setPower(0.7);
+        robot.at.setPower(0.7);
 
     }
 
     @Override
     public void start() { //When "start" is pressed
-//        robot.at.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        robot.at.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        robot.abl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        robot.abl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        robot.abr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        robot.abr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.at.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.at.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.abl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.abl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.abr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.abr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-//        robot.abl.setTargetPosition(robot.abl.getCurrentPosition());
-//        robot.abr.setTargetPosition(robot.abr.getCurrentPosition());
-//        robot.abr.setTargetPosition(robot.at.getCurrentPosition());
-//        robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.abl.setTargetPosition(robot.abl.getCurrentPosition());
+        robot.abr.setTargetPosition(robot.abr.getCurrentPosition());
+        robot.abr.setTargetPosition(robot.at.getCurrentPosition());
+        robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-//        robot.abl.setPower(0.7);
-//        robot.abr.setPower(0.7);
-//        robot.at.setPower(0.7);
+        robot.abl.setPower(0.7);
+        robot.abr.setPower(0.7);
+        robot.at.setPower(0.7);
 
         robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);

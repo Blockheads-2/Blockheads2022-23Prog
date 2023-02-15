@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.swerve.auto.opmodes.testing;
+package org.firstinspires.ftc.teamcode.swerve.auto.opmodes;
 
 import android.view.View;
 
@@ -19,8 +19,9 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous (name = "Auto Test", group = "Drive")
-public class AutoTest extends LinearOpMode {
+@Autonomous (name = "Left Auto", group = "Drive")
+//@Disabled
+public class LeftAuto  extends LinearOpMode {
 
     OpenCvCamera camera;
     Constants constants = new Constants();
@@ -135,18 +136,6 @@ public class AutoTest extends LinearOpMode {
 
         waitForStart();
 
-//        Thread rigidArmThread = new Thread(dispatch);   // Using the constructor Thread(Runnable r)
-//        rigidArmThread.start();
-
-//        Thread gpsUpdateThread = new Thread(posSystem);
-//        gpsUpdateThread.start();
-
-//        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 90, 0, 0.3, RevisedKinematics.ArmType.HOLD);
-
-//        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 27, 0, 0.1, RevisedKinematics.ArmType.HOLD);
-//        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.5, RevisedKinematics.ArmType.HOLD);
-//        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 20, 0, 0.5, RevisedKinematics.ArmType.HOLD);
-        //Right side (we would have a separate opmode for left)
         switch (aprilTagId) {
             case 0: {
                 dispatch.Move(RevisedKinematics.DriveType.STOP,0,0,0,0,RevisedKinematics.ArmType.GRAB);
@@ -155,13 +144,16 @@ public class AutoTest extends LinearOpMode {
                 dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 0, 0.3, RevisedKinematics.ArmType.HOLD);
                 dispatch.Turn(90,0.7);
                 dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 36, 0, 0.3, RevisedKinematics.ArmType.MID);
-                dispatch.Turn(-45,0.7);
+                dispatch.Turn(45,0.7);
                 dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,12,0, 0.3, RevisedKinematics.ArmType.HOLD);
                 dispatch.Move(RevisedKinematics.DriveType.STOP, 0,0,0, 0.3, RevisedKinematics.ArmType.DROP);
                 dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,-12,0, 0.3, RevisedKinematics.ArmType.HOLD);
                 dispatch.Move(RevisedKinematics.DriveType.STOP, 0,0,0, 0.3, RevisedKinematics.ArmType.GROUND);
-                dispatch.Turn(45,0.7);
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 24, -90, 0.3, RevisedKinematics.ArmType.HOLD);
+                dispatch.Turn(-45,0.7);
+                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, -90, 0.3, RevisedKinematics.ArmType.HOLD);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,24,0, 0.3, RevisedKinematics.ArmType.HOLD);
+                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.3, RevisedKinematics.ArmType.HOLD);
+
             }
             case 1: {
                 dispatch.Move(RevisedKinematics.DriveType.STOP,0,0,0,0,RevisedKinematics.ArmType.GRAB);
@@ -170,12 +162,12 @@ public class AutoTest extends LinearOpMode {
                 dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 0, 0.3, RevisedKinematics.ArmType.HOLD);
                 dispatch.Turn(90,0.7);
                 dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 36, 0, 0.3, RevisedKinematics.ArmType.MID);
-                dispatch.Turn(-45,0.7);
+                dispatch.Turn(45,0.7);
                 dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,12,0, 0.3, RevisedKinematics.ArmType.HOLD);
                 dispatch.Move(RevisedKinematics.DriveType.STOP, 0,0,0, 0.3, RevisedKinematics.ArmType.DROP);
                 dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,-12,0, 0.3, RevisedKinematics.ArmType.HOLD);
                 dispatch.Move(RevisedKinematics.DriveType.STOP, 0,0,0, 0.3, RevisedKinematics.ArmType.GROUND);
-                dispatch.Turn(45,0.7);
+                dispatch.Turn(-45,0.7);
 
             }
             case 2: {
@@ -185,34 +177,20 @@ public class AutoTest extends LinearOpMode {
                 dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 0, 0.3, RevisedKinematics.ArmType.HOLD);
                 dispatch.Turn(90,0.7);
                 dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 36, 0, 0.3, RevisedKinematics.ArmType.MID);
-                dispatch.Turn(-45,0.7);
+                dispatch.Turn(45,0.7);
                 dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,12,0, 0.3, RevisedKinematics.ArmType.HOLD);
                 dispatch.Move(RevisedKinematics.DriveType.STOP, 0,0,0, 0.3, RevisedKinematics.ArmType.DROP);
                 dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,-12,0, 0.3, RevisedKinematics.ArmType.HOLD);
                 dispatch.Move(RevisedKinematics.DriveType.STOP, 0,0,0, 0.3, RevisedKinematics.ArmType.GROUND);
-                dispatch.Turn(45,0.7);
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 24, 90, 0.3, RevisedKinematics.ArmType.HOLD);
+                dispatch.Turn(-45,0.7);
+                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.3, RevisedKinematics.ArmType.HOLD);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,24,0, 0.3, RevisedKinematics.ArmType.HOLD);
+                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, -90, 0.3, RevisedKinematics.ArmType.HOLD);
+
+
 
 
             }
         }
-        //dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, AutoHub.finalAngleDashboard, 0.3, RevisedKinematics.ArmType.HOLD);
-        //dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, AutoHub.distance, 0, 0.3, RevisedKinematics.ArmType.HOLD);
-//        dispatch.Move(RevisedKinematics.DriveType.TURN, 0, 0, AutoHub.finalAngleDashboard, AutoHub.power, RevisedKinematics.ArmType.HOLD);
-        //dispatch.Turn(AutoHub.finalAngleDashboard, AutoHub.power);
-        /*
-        working movement types:
-        - SNAP
-        - LINEAR
-        - STOP
-        - Arm movements
-         */
-
-//        dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0, RevisedKinematics.ArmType.LOW);
-//        dispatch.Turn(90, 0.7);
-
-//        rigidArmThread.interrupt();
-//        gpsUpdateThread.interrupt();
-
     }
 }
