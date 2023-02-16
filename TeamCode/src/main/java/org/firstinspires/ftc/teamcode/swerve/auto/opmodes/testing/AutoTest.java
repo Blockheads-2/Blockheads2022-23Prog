@@ -68,23 +68,19 @@ public class AutoTest extends LinearOpMode {
         telemetry.addData("Status", "Waiting on Camera");
         telemetry.update();
 
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened()
-            {
-                camera.startStreaming(1280,720, OpenCvCameraRotation.UPRIGHT);
+            public void onOpened() {
+                camera.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
-            public void onError(int errorCode)
-            {
+            public void onError(int errorCode) {
 
             }
         });
 
-        while (!opModeIsActive())
-        {
+        while (!opModeIsActive()) {
             // Calling getDetectionsUpdate() will only return an object if there was a new frame
             // processed since the last time we called it. Otherwise, it will return null. This
             // enables us to only run logic when there has been a new frame, as opposed to the
@@ -92,36 +88,30 @@ public class AutoTest extends LinearOpMode {
             ArrayList<AprilTagDetection> detections = aprilTagDetectionPipeline.getDetectionsUpdate();
 
             // If there's been a new frame...
-            if(detections != null)
-            {
+            if (detections != null) {
                 telemetry.addData("FPS", camera.getFps());
                 telemetry.addData("Overhead ms", camera.getOverheadTimeMs());
                 telemetry.addData("Pipeline ms", camera.getPipelineTimeMs());
 
                 // If we don't see any tags
-                if(detections.size() == 0)
-                {
+                if (detections.size() == 0) {
                     numFramesWithoutDetection++;
 
                     // If we haven't seen a tag for a few frames, lower the decimation
                     // so we can hopefully pick one up if we're e.g. far back
-                    if(numFramesWithoutDetection >= THRESHOLD_NUM_FRAMES_NO_DETECTION_BEFORE_LOW_DECIMATION)
-                    {
+                    if (numFramesWithoutDetection >= THRESHOLD_NUM_FRAMES_NO_DETECTION_BEFORE_LOW_DECIMATION) {
                         aprilTagDetectionPipeline.setDecimation(DECIMATION_LOW);
                     }
                 }
                 // We do see tags!
-                else
-                {
+                else {
                     numFramesWithoutDetection = 0;
                     // If the target is within 1 meter, turn on high decimation to
                     // increase the frame rate
-                    if(detections.get(0).pose.z < THRESHOLD_HIGH_DECIMATION_RANGE_METERS)
-                    {
+                    if (detections.get(0).pose.z < THRESHOLD_HIGH_DECIMATION_RANGE_METERS) {
                         aprilTagDetectionPipeline.setDecimation(DECIMATION_HIGH);
                     }
-                    for(AprilTagDetection detection : detections)
-                    {
+                    for (AprilTagDetection detection : detections) {
                         aprilTagId = detection.id;
                         telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
                     }
@@ -130,13 +120,15 @@ public class AutoTest extends LinearOpMode {
             }
 
             sleep(20);
-        }
-        dispatch.resetArmEncoderPos();
+            while (!opModeIsActive()) { //checks if play hasn't been pressed (in init stage)
+                dispatch.moveToInit();
+            }
+            dispatch.resetArmEncoderPos();
 
-        waitForStart();
+            waitForStart();
 
-//        Thread rigidArmThread = new Thread(dispatch);   // Using the constructor Thread(Runnable r)
-//        rigidArmThread.start();
+            Thread rigidArmThread = new Thread(dispatch);   // Using the constructor Thread(Runnable r)
+            rigidArmThread.start();
 
 //        Thread gpsUpdateThread = new Thread(posSystem);
 //        gpsUpdateThread.start();
@@ -146,60 +138,56 @@ public class AutoTest extends LinearOpMode {
 //        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 27, 0, 0.1, RevisedKinematics.ArmType.HOLD);
 //        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.5, RevisedKinematics.ArmType.HOLD);
 //        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 20, 0, 0.5, RevisedKinematics.ArmType.HOLD);
-        //Right side (we would have a separate opmode for left)
-        switch (aprilTagId) {
-            case 0: {
-                dispatch.Move(RevisedKinematics.DriveType.STOP,0,0,0,0,RevisedKinematics.ArmType.GRAB);
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.3, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 5, 0, 0.3, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 0, 0.3, RevisedKinematics.ArmType.HOLD);
-                dispatch.Turn(90,0.7);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 36, 0, 0.3, RevisedKinematics.ArmType.MID);
-                dispatch.Turn(-45,0.7);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,12,0, 0.3, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.STOP, 0,0,0, 0.3, RevisedKinematics.ArmType.DROP);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,-12,0, 0.3, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.STOP, 0,0,0, 0.3, RevisedKinematics.ArmType.GROUND);
-                dispatch.Turn(45,0.7);
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 24, -90, 0.3, RevisedKinematics.ArmType.HOLD);
-            }
-            case 1: {
-                dispatch.Move(RevisedKinematics.DriveType.STOP,0,0,0,0,RevisedKinematics.ArmType.GRAB);
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.3, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 5, 0, 0.3, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 0, 0.3, RevisedKinematics.ArmType.HOLD);
-                dispatch.Turn(90,0.7);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 36, 0, 0.3, RevisedKinematics.ArmType.MID);
-                dispatch.Turn(-45,0.7);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,12,0, 0.3, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.STOP, 0,0,0, 0.3, RevisedKinematics.ArmType.DROP);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,-12,0, 0.3, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.STOP, 0,0,0, 0.3, RevisedKinematics.ArmType.GROUND);
-                dispatch.Turn(45,0.7);
+            //Right side (we would have a separate opmode for left)
+            switch (aprilTagId) {
+                case 0: {
+                    dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0, RevisedKinematics.ArmType.HOLD, 0, 0);
+                    dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.3, RevisedKinematics.ArmType.HOLD, 0, 0);
+                    dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 5, 0, 0.3, RevisedKinematics.ArmType.HOLD, 0, 0);
+                    dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 0, 0.3, RevisedKinematics.ArmType.HOLD, 0, 0);
+                    dispatch.Turn(90, 0.7);
+                    dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 36, 0, 0.3, RevisedKinematics.ArmType.MID, 0, 0);
+                    dispatch.Turn(-45, 0.7);
+                    dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 12, 0, 0.3, RevisedKinematics.ArmType.HOLD, 0, 0);
+                    dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0.3, RevisedKinematics.ArmType.HOLD, 0, 0);
+                    dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, -12, 0, 0.3, RevisedKinematics.ArmType.HOLD, 0, 0);
+                    dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0.3, RevisedKinematics.ArmType.GROUND, 0, 0);
+                    dispatch.Turn(45, 0.7);
+                    dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 24, -90, 0.3, RevisedKinematics.ArmType.HOLD, 0, 0);
+                }
+                case 1: {
+                    dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0, RevisedKinematics.ArmType.HOLD, 0, 0);
+                    dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.3, RevisedKinematics.ArmType.HOLD, 0, 0);
+                    dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 5, 0, 0.3, RevisedKinematics.ArmType.HOLD, 0, 0);
+                    dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 0, 0.3, RevisedKinematics.ArmType.HOLD, 0, 0);
+                    dispatch.Turn(90, 0.7);
+                    dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 36, 0, 0.3, RevisedKinematics.ArmType.MID, 0, 0);
+                    dispatch.Turn(-45, 0.7);
+                    dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 12, 0, 0.3, RevisedKinematics.ArmType.HOLD, 0, 0);
+                    dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0.3, RevisedKinematics.ArmType.HOLD, 0, 0);
+                    dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, -12, 0, 0.3, RevisedKinematics.ArmType.HOLD, 0, 0);
+                    dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0.3, RevisedKinematics.ArmType.GROUND, 0, 0);
+                    dispatch.Turn(45, 0.7);
 
-            }
-            case 2: {
-                dispatch.Move(RevisedKinematics.DriveType.STOP,0,0,0,0,RevisedKinematics.ArmType.GRAB);
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.3, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 5, 0, 0.3, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 0, 0.3, RevisedKinematics.ArmType.HOLD);
-                dispatch.Turn(90,0.7);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 36, 0, 0.3, RevisedKinematics.ArmType.MID);
-                dispatch.Turn(-45,0.7);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,12,0, 0.3, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.STOP, 0,0,0, 0.3, RevisedKinematics.ArmType.DROP);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,-12,0, 0.3, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.STOP, 0,0,0, 0.3, RevisedKinematics.ArmType.GROUND);
-                dispatch.Turn(45,0.7);
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 24, 90, 0.3, RevisedKinematics.ArmType.HOLD);
+                }
+                case 2: {
+                    dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0, RevisedKinematics.ArmType.HOLD, 0, 0);
+                    dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.3, RevisedKinematics.ArmType.HOLD, 0, 0);
+                    dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 5, 0, 0.3, RevisedKinematics.ArmType.HOLD, 0, 0);
+                    dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 0, 0.3, RevisedKinematics.ArmType.HOLD, 0, 0);
+                    dispatch.Turn(90, 0.7);
+                    dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 36, 0, 0.3, RevisedKinematics.ArmType.MID, 0, 0);
+                    dispatch.Turn(-45, 0.7);
+                    dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 12, 0, 0.3, RevisedKinematics.ArmType.HOLD, 0, 0);
+                    dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0.3, RevisedKinematics.ArmType.HOLD, 0, 0);
+                    dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, -12, 0, 0.3, RevisedKinematics.ArmType.HOLD, 0, 0);
+                    dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0.3, RevisedKinematics.ArmType.GROUND, 0, 0);
+                    dispatch.Turn(45, 0.7);
+                    dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 24, 90, 0.3, RevisedKinematics.ArmType.HOLD, 0, 0);
 
 
+                }
             }
-        }
-        //dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, AutoHub.finalAngleDashboard, 0.3, RevisedKinematics.ArmType.HOLD);
-        //dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, AutoHub.distance, 0, 0.3, RevisedKinematics.ArmType.HOLD);
-//        dispatch.Move(RevisedKinematics.DriveType.TURN, 0, 0, AutoHub.finalAngleDashboard, AutoHub.power, RevisedKinematics.ArmType.HOLD);
-        //dispatch.Turn(AutoHub.finalAngleDashboard, AutoHub.power);
         /*
         working movement types:
         - SNAP
@@ -211,8 +199,10 @@ public class AutoTest extends LinearOpMode {
 //        dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0, RevisedKinematics.ArmType.LOW);
 //        dispatch.Turn(90, 0.7);
 
-//        rigidArmThread.interrupt();
+            dispatch.resetToZero();
+            rigidArmThread.interrupt();
 //        gpsUpdateThread.interrupt();
 
+        }
     }
 }

@@ -57,9 +57,8 @@ public class RevisedKinematics {
         MID,
         LOW,
         GROUND,
-        GRAB,
-        DROP,
-        HOLD
+        HOLD,
+        RESET
     }
 
     ArmType armType = ArmType.HOLD;
@@ -114,10 +113,12 @@ public class RevisedKinematics {
             PodR.forceSetRotClicks(0);
         }
 
+        posSystem.calculateWheelOrientation(PodL, PodR);
         boolean shouldTurn = (lx == 0 && ly == 0) && (rx != 0); //possible problem: the robot will "jitter" if its turning and then becomes not eligible for turning (may have to increase tolerance?)
         boolean shouldSpline = (lx != 0 || ly != 0) && (rx != 0);
         boolean eligibleForTurning = posSystem.eligibleForTurning(PodL.getPole(), PodR.getPole());
         boolean specialSpliningCondition = posSystem.specialSpliningCondition(PodL.getPole(), PodR.getPole());
+        telemetry.addData("Special Splining Condition?", specialSpliningCondition);
 
         //determining spin clicks and spin power
         double power = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
@@ -211,14 +212,12 @@ public class RevisedKinematics {
         outputR = PodR.getOutputAuto();
     }
 
-    public void armLogicAuto(ArmType aType, double[] armClicks){
+    public void armLogicAuto(ArmType aType, double[] armClicks, double clawAngle, double claw){
         boolean lowerArmCycle = false;
         boolean lowerAllTheWay = false;
         double atTargetPos = 0;
         double ablTargetPos = 0;
         double abrTargetPos = 0;
-        double clawAngle = 0;
-        double clawClamp = 0;
 
         double atPower = 0;
         double ablPower = 0;
@@ -228,13 +227,17 @@ public class RevisedKinematics {
 
         this.armType = aType;
 
+        if (clawAngle > 1) clawAngle = 1;
+        else if (clawAngle < 0) clawAngle = 0;
+
+        if (claw > 1) claw = 1;
+        else if (claw < 0) claw = 0;
+
         switch (armType){
             case HIGH:
                 atTargetPos = constants.topMotorHigh;
                 ablTargetPos = constants.bottomMotorHigh;
                 abrTargetPos = constants.bottomMotorHigh;
-                clawAngle = constants.armServoHigh;
-                clawClamp = armClicks[4];
 
                 usePID = false;
 
@@ -244,21 +247,15 @@ public class RevisedKinematics {
                 atTargetPos = constants.topMotorMid;
                 ablTargetPos = constants.bottomMotorMid;
                 abrTargetPos = constants.bottomMotorMid;
-                clawAngle = constants.armServoMid;
-                clawClamp = armClicks[4];
                 usePID = false;
                 break;
 
             case LOW:
-                clawClamp = armClicks[4];
-
                 lowerArmCycle = (armClicks[0] >= constants.topMotorLow + constants.degreeTOLERANCE &&
                         armClicks[1] >= constants.bottomMotorLow + constants.degreeTOLERANCE &&
                         armClicks[2] >= constants.bottomMotorLow + constants.degreeTOLERANCE);
 
                 if (lowerArmCycle){
-                    clawAngle = constants.armServoLow;
-
                     atTargetPos = constants.topMotorLow;
 
                     int initPos = 0;
@@ -274,7 +271,6 @@ public class RevisedKinematics {
                 break;
 
             case GROUND:
-                clawClamp = armClicks[4];
 
                 lowerArmCycle = (armClicks[0] >= constants.topMotorLow + constants.degreeTOLERANCE &&
                         armClicks[1] >= constants.bottomMotorLow + constants.degreeTOLERANCE &&
@@ -284,7 +280,6 @@ public class RevisedKinematics {
                         armClicks[2] >= constants.bottomMotorBottom + constants.degreeTOLERANCE);
 
                 if (lowerArmCycle){
-                    clawAngle = constants.armServoLow;
 
                     atTargetPos = constants.topMotorLow;
 
@@ -299,7 +294,6 @@ public class RevisedKinematics {
                 }
 
                 if (!lowerArmCycle && lowerAllTheWay){
-                    clawAngle = constants.armServoBottom;
                     atTargetPos = constants.topMotorBottom;
                     ablTargetPos = constants.bottomMotorBottom;
                     abrTargetPos = constants.bottomMotorBottom;
@@ -308,29 +302,18 @@ public class RevisedKinematics {
                 usePID = false;
                 break;
 
-            case GRAB:
-                clawClamp = constants.closeClaw;
-                clawAngle = armClicks[3];
-
-                usePID = false;
-                break;
-
-            case DROP:
-                clawClamp = constants.openClaw;
-                clawAngle = armClicks[3];
-
-                usePID = false;
-                break;
-
             case HOLD:
                 atTargetPos = armClicks[0];
                 ablTargetPos = armClicks[1];
                 abrTargetPos = armClicks[2];
-                clawClamp = armClicks[4];
-                clawAngle = armClicks[3];
 
                 usePID = false;
                 break;
+
+            case RESET:
+                atTargetPos = 0;
+                ablTargetPos = 0;
+                abrTargetPos = 0;
         }
 
         if (usePID) {
@@ -349,17 +332,17 @@ public class RevisedKinematics {
 
         if (armType == ArmType.LOW){
             targetMet = (lowerArmCycle &&
-                    Math.abs(armClicks[4] - clawClamp) <= 0.04 &&
+                    Math.abs(armClicks[4] - claw) <= 0.04 &&
                     Math.abs(armClicks[3] - clawAngle) <= 0.04);
         } else if (armType == ArmType.GROUND){
             targetMet = (lowerArmCycle && lowerAllTheWay &&
-                    Math.abs(armClicks[4] - clawClamp) <= 0.04 &&
+                    Math.abs(armClicks[4] - claw) <= 0.04 &&
                     Math.abs(armClicks[3] - clawAngle) <= 0.04);
         } else {
             targetMet = (Math.abs(armClicks[0] - atTargetPos) < constants.clickTOLERANCE &&
                     Math.abs(armClicks[1] - ablTargetPos) < constants.clickTOLERANCE &&
                     Math.abs(armClicks[2] - abrTargetPos) < constants.clickTOLERANCE &&
-                    Math.abs(armClicks[4] - clawClamp) <= 0.04 &&
+                    Math.abs(armClicks[4] - claw) <= 0.04 &&
                     Math.abs(armClicks[3] - clawAngle) <= 0.04);
         }
 
@@ -369,7 +352,7 @@ public class RevisedKinematics {
         armOutput[3] = atTargetPos;
         armOutput[4] = ablTargetPos;
         armOutput[5] = abrTargetPos;
-        armOutput[6] = clawClamp;
+        armOutput[6] = claw;
         armOutput[7] = clawAngle;
     }
 

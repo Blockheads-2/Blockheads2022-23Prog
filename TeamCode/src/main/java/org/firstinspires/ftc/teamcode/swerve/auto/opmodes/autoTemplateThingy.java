@@ -147,24 +147,23 @@ public class autoTemplateThingy extends LinearOpMode{
 
         switch (aprilTagId) {
             case 0: {
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.4, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, -28, 0, 0.4, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 0, 0.4, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 27, 0, 0.4, RevisedKinematics.ArmType.HOLD);
+                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.4, RevisedKinematics.ArmType.HOLD, 0, 0);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, -28, 0, 0.4, RevisedKinematics.ArmType.HOLD, 0, 0);
+                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 0, 0.4, RevisedKinematics.ArmType.HOLD, 0, 0);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 27, 0, 0.4, RevisedKinematics.ArmType.HOLD, 0, 0);
 
                 break;
             }
             case 1: {
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.4, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.STOP, 0, -30, 0, 0.4, RevisedKinematics.ArmType.HOLD);
-
+                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.4, RevisedKinematics.ArmType.HOLD, 0, 0);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, -30, 0, 0.4, RevisedKinematics.ArmType.HOLD, 0, 0);
                 break;
             }
             case 2: {
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 80, 0.4, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, -30, 0, 0.4, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 170, 0.4, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 27, 0, 0.4, RevisedKinematics.ArmType.HOLD);
+                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 80, 0.4, RevisedKinematics.ArmType.HOLD, 0, 0);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, -30, 0, 0.4, RevisedKinematics.ArmType.HOLD, 0, 0);
+                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 170, 0.4, RevisedKinematics.ArmType.HOLD, 0, 0);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 27, 0, 0.4, RevisedKinematics.ArmType.HOLD, 0, 0);
                 break;
             }
         }

@@ -42,12 +42,14 @@ public class AutoHub implements Runnable{
     public static double power = 0.5;
     public static double distance = 0;
     public static double finalAngleDashboard = 0;
+    public static double finalSnapAngle = 0;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
     ElapsedTime loopTime = new ElapsedTime();
     double prevMS = 0;
     double deltaMS = 0;
 
+    ElapsedTime stopConditionTimer = new ElapsedTime();
 
     TurnMath turnMath = new TurnMath();
     SnapSwerveModulePID turnPID = new SnapSwerveModulePID(); //although it says Snap, it works for turning as well.
@@ -156,7 +158,7 @@ public class AutoHub implements Runnable{
     double powerL = 0;
     ElapsedTime runTime = new ElapsedTime();
     double timeoutS = 0;
-    public void Move(RevisedKinematics.DriveType movementType, double x, double y, double finalAngle, double speed, RevisedKinematics.ArmType armMovementType){
+    public void Move(RevisedKinematics.DriveType movementType, double x, double y, double finalAngle, double speed, RevisedKinematics.ArmType armMovementType, double clawAngle, double claw){
         UpdateTelemetry();
 
         //1) Calculate our current position
@@ -165,10 +167,9 @@ public class AutoHub implements Runnable{
 
         //2) Determine the distance from our current pos & the target pos.
         timeoutS = kinematics.setPosAuto(x, y, finalAngle, speed, movementType);
-//        timeoutS = 100;
+        //        timeoutS = 100;
         reset.resetAuto(false);
-        kinematics.armLogicAuto(armMovementType, getArmClicks()); //determine targets/power for the arm
-        kinematics.setPosAuto(x, y, finalAngle, speed, movementType);
+        kinematics.armLogicAuto(armMovementType, getArmClicks(), clawAngle, claw); //determine targets/power for the arm
         kinematics.logicAuto();
 
         targetNotMet = true;
@@ -206,9 +207,9 @@ public class AutoHub implements Runnable{
         //3) Tell the robot to travel that distance we just determined.
 
         runTime.reset();
-        while (linearOpMode.opModeIsActive() && (targetNotMet || !armTargetMet) && runTime.seconds() < timeoutS + 2){ //have a time based something in case our target is never met.
+        while (linearOpMode.opModeIsActive() && (targetNotMet || !armTargetMet) && runTime.seconds() < timeoutS + constants.autoStopConditionTime + 3){ //have a time based something in case our target is never met.
             posSystem.calculatePos();
-            kinematics.armLogicAuto(armMovementType, getArmClicks()); //determine targets/power for the arm
+            kinematics.armLogicAuto(armMovementType, getArmClicks(), clawAngle, claw); //determine targets/power for the arm
             // see how long program takes without calling armLogicAuto
 
             kinematics.logicAuto();
@@ -243,11 +244,22 @@ public class AutoHub implements Runnable{
             robot.abl.setPower(armOutput[1]);
             robot.abr.setPower(armOutput[2]);
 
-            targetNotMet = (Math.abs(robot.topL.getCurrentPosition() - targetTopL) > constants.clickToleranceAuto ||
-                    Math.abs(robot.botL.getCurrentPosition() - targetBotL) > constants.clickToleranceAuto ||
-                    Math.abs(robot.topR.getCurrentPosition() - targetTopR) > constants.clickToleranceAuto ||
-                    Math.abs(robot.botR.getCurrentPosition() - targetBotR) > constants.clickToleranceAuto);
+//            robot.claw.setPosition(armOutput[6]);
+//            robot.armServo.setPosition(armOutput[7]);
+
+            //perhaps set a timer for this one like turning
+            targetNotMet = (Math.abs(robot.topL.getCurrentPosition() - targetTopL) > constants.degreeTOLERANCE ||
+                    Math.abs(robot.botL.getCurrentPosition() - targetBotL) > constants.degreeTOLERANCE ||
+                    Math.abs(robot.topR.getCurrentPosition() - targetTopR) > constants.degreeTOLERANCE ||
+                    Math.abs(robot.botR.getCurrentPosition() - targetBotR) > constants.degreeTOLERANCE);
             armTargetMet = kinematics.isArmTargetMet();
+
+            if (!targetNotMet && stopConditionTimer.seconds() > constants.autoStopConditionTime){
+                targetNotMet = false;
+            } else {
+                stopConditionTimer.reset();
+                targetNotMet = true;
+            }
 
 //            armTargetMet = false;
 
@@ -284,7 +296,6 @@ public class AutoHub implements Runnable{
 
 
 
-    ElapsedTime turnTimer = new ElapsedTime();
     public void Turn(double finalAngle, double speed){
         //1) Calculate our current position
         posSystem.resetXY(); // <-- Must have!
@@ -292,7 +303,7 @@ public class AutoHub implements Runnable{
 
         reset.resetAuto(false);
 
-        kinematics.setTurnPID(kp, ki, kd);
+        kinematics.setTurnPID(constants.kpTurning, constants.kiTurning, constants.kdTurning);
         kinematics.turn(finalAngle, speed);
 
         int targetTopL = robot.topL.getCurrentPosition() + targetClicks[0];
@@ -342,12 +353,12 @@ public class AutoHub implements Runnable{
 
 
             if (Math.abs(SwervePod.changeAngle(finalAngle, posSystem.getPositionArr()[4])) < constants.degreeTOLERANCE){
-                if (turnTimer.seconds() > 2.5){
+                if (stopConditionTimer.seconds() > 2.0){
 
                     turn = false;
                 }
             } else {
-                turnTimer.reset();
+                stopConditionTimer.reset();
             }
         }
 

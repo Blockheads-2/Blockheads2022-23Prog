@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.swerve.auto.opmodes.AutoHub;
 import org.firstinspires.ftc.teamcode.swerve.auto.opmodes.testing.AutoTest;
 import org.firstinspires.ftc.teamcode.swerve.common.Accelerator;
 import org.firstinspires.ftc.teamcode.swerve.common.constantsPKG.Constants;
+import org.firstinspires.ftc.teamcode.swerve.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.swerve.common.pid.HeaderControlPID;
 import org.firstinspires.ftc.teamcode.swerve.common.pid.SnapSwerveModulePID;
 import org.firstinspires.ftc.teamcode.swerve.auto.Math.LinearMath;
@@ -28,6 +29,8 @@ public class SwervePod {
         LEFT
     }
     Side side;
+
+    GlobalPosSystem.WheelOrientation wheelOrientation;
 
     //teleop
     private double currentW = 0;
@@ -77,6 +80,11 @@ public class SwervePod {
 
     public void setPID(double kp, double ki, double kd){
         pid.setTargets(kp, ki, kd);
+    }
+
+    public void setPID(double kp, double ki, double kd, boolean snap){
+        pid.setTargets(kp, ki, kd);
+        pid.setSnap(snap);
     }
 
     public void setCurrents(double currentW, double currentR){
@@ -130,7 +138,7 @@ public class SwervePod {
             return driveType;
         } else if (spline){
 //            if (specialSpliningCondition){
-//                double offset = clamp(turnAmount + (rightStickX < 0 ? -8 : 8));
+//                double offset = clamp(turnAmount + (this.wheelOrientation == GlobalPosSystem.WheelOrientation.FRONT ? (rightStickX < 0 ? -10 : 10) : 0));
 //                forceSetRotClicks((int)(offset * constants.CLICKS_PER_DEGREE));
 //            }
 
@@ -233,8 +241,9 @@ public class SwervePod {
             distance = Math.abs(turnMath.getDistance());
         }
 
-        if (driveType == RevisedKinematics.DriveType.SNAP) setPID(constants.kpRotation, constants.kiRotation, constants.kdRotation);
-        else setPID(constants.kpTranlation, constants.kiTranslation, constants.kdTranslation);
+        if (driveType == RevisedKinematics.DriveType.SNAP) setPID(constants.kpRotation, constants.kiRotation, constants.kdRotation, true);
+        else if (driveType == RevisedKinematics.DriveType.TURN) setPID(constants.kpTranlation, constants.kiTurning, constants.kdTurning, false);
+        else setPID(constants.kpTranlation, constants.kiTranslation, constants.kdTranslation, false);
 
         packet.put("Target Distance", linearMath.getDistance());
 
@@ -271,6 +280,8 @@ public class SwervePod {
                 throttle = 1.0;
 //                controlHeader.calculateThrottle(distanceTravelledL, distanceTravelledR, currentR, controlHeaderReference);
 //                throttle = controlHeader.getThrottle(side);
+                telemetry.addData("Header error", controlHeader.error);
+
                 direction = (initPole ? initDirection : -initDirection) * (distance < 0 ? -1 : 1);
 
                 if (side == Side.RIGHT) {
@@ -283,9 +294,10 @@ public class SwervePod {
             case VARIABLE_SPLINE: //using gps for variable_spline may be incredibly unreliable.  Though the nature of clicks (they are integers) gives us an inaccurate account (but this fear depends on the fact that the code loops really really quickly).
                 robotCentricSetRotClicks(0);
 
-                direction = (initPole ? initDirection : -initDirection);
                 distance = splineMath.distanceRemaining(distanceRan);
-                //throttle needs work for this mode
+                direction = (initPole ? initDirection : -initDirection) * (distance < 0 ? -1 : 1);
+                power = Math.abs(pid.update(distance)) * speed;
+                throttle = splineMath.getThrottle();
                 break;
 
             case SNAP:
@@ -326,13 +338,6 @@ public class SwervePod {
         }
 
         spinClicksTarget = distance * constants.CLICKS_PER_INCH;
-//        if (side == Side.RIGHT && (driveType == RevisedKinematics.DriveType.LINEAR ||
-//                driveType == RevisedKinematics.DriveType.TURN ||
-//                driveType == RevisedKinematics.DriveType.CONSTANT_SPLINE ||
-//                driveType == RevisedKinematics.DriveType.VARIABLE_SPLINE)) {
-//            spinClicksTarget *= constants.RIGHT_SIDE_LIMITER;
-//        }
-//        setPowerAuto();
     }
 
     public void turn(double finalAngle, double speed){
@@ -388,9 +393,16 @@ public class SwervePod {
 
     public boolean onlyRotate(boolean firstMovement){
         if (firstMovement){
-            return (Math.abs(turnAmount) >= constants.degreeTOLERANCE);
+            if (Math.abs(turnAmount) >= constants.degreeTOLERANCE){
+                if (Math.abs(rotClicksTarget) > Math.abs(spinClicksTarget)) power = 1.0;
+                return true;
+            } else return false;
         }
         return false;
+    }
+
+    public void setWheelOrientation(GlobalPosSystem.WheelOrientation orientation){
+        this.wheelOrientation = orientation;
     }
 
     public RevisedKinematics.DriveType getDriveType(){

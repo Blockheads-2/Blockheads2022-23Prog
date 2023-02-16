@@ -33,6 +33,12 @@ public class GlobalPosSystem {
     double currAngle = 0;
 
     private boolean updateGPS = true;
+    
+    public enum WheelOrientation{
+        FRONT,
+        BACK,
+    }
+    private WheelOrientation[] wheelOrientation = new WheelOrientation[2];
 
     public GlobalPosSystem(HardwareDrive robot) {
         this.robot = robot;
@@ -137,6 +143,25 @@ public class GlobalPosSystem {
         positionArr[1] += (hypotenuse * Math.cos(baseAngle));
     }
 
+    public void calculateWheelOrientation(SwervePod podL, SwervePod podR){
+        double optimizedCurrentWL = positionArr[2];
+//        double optimizedCurrentWR = positionArr[3];
+        if (!podL.getPole()) optimizedCurrentWL = clamp(positionArr[2] + 180); //direction wheel is moving in
+//        if (!initPoleR) optimizedCurrentWR = clamp(positionArr[3] + 180);
+
+        double newRobotHeader = clamp(positionArr[4] - clamp(90 - optimizedCurrentWL));
+
+        wheelOrientation[0] = (Math.abs(newRobotHeader) <= 90 ? WheelOrientation.BACK : WheelOrientation.FRONT); //left
+        wheelOrientation[1] = (Math.abs(newRobotHeader) <= 90 ? WheelOrientation.FRONT : WheelOrientation.BACK); //right
+
+        podL.setWheelOrientation(wheelOrientation[0]);
+        podR.setWheelOrientation(wheelOrientation[1]);
+    }
+
+    public WheelOrientation[] getWheelOrientation(){
+        return wheelOrientation;
+    }
+
     public void update ( double x, double y, double leftWheelW, double rightWheelW, double robotR){
         //update
         positionArr[0] += (x);
@@ -195,8 +220,8 @@ public class GlobalPosSystem {
         if (!initPoleL) robotCentricCurrentL = clamp(positionArr[2] + 180);
         if (!initPoleR) robotCentricCurrentR = clamp(positionArr[3] + 180);
 
-        return ((Math.abs(robotCentricCurrentL - 90) <= 20 && Math.abs(robotCentricCurrentR - 90) <= 20) ||
-                (Math.abs(robotCentricCurrentL + 90) <= 20 && Math.abs(robotCentricCurrentR + 90) <= 20));
+        return ((Math.abs(robotCentricCurrentL - 90) <= 35 && Math.abs(robotCentricCurrentR - 90) <= constants.pointedWheels) ||
+                (Math.abs(robotCentricCurrentL + 90) <= 35 && Math.abs(robotCentricCurrentR + 90) <= constants.pointedWheels));
     }
 
     public boolean isAlligned(double optimizedCurrentWL, double optimizedCurrentWR){
