@@ -62,7 +62,7 @@ public class LeftAuto  extends LinearOpMode {
         dispatch = new AutoHub(this);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cameraMonitorViewId"), cameraMonitorViewId);
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
         camera.setPipeline(aprilTagDetectionPipeline);
 
@@ -74,7 +74,7 @@ public class LeftAuto  extends LinearOpMode {
             @Override
             public void onOpened()
             {
-                camera.startStreaming(1280,720, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(1280,720, OpenCvCameraRotation.UPSIDE_DOWN);
             }
 
             @Override
@@ -83,6 +83,7 @@ public class LeftAuto  extends LinearOpMode {
 
             }
         });
+        dispatch.Move(RevisedKinematics.DriveType.STOP,0,0,0,0,RevisedKinematics.ArmType.GRAB);
 
         while (!opModeIsActive())
         {
