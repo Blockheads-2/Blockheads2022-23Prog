@@ -35,8 +35,8 @@ public class AutoTest extends LinearOpMode {
 
         waitForStart();
 
-//        Thread rigidArmThread = new Thread(dispatch);   // Using the constructor Thread(Runnable r)
-//        rigidArmThread.start();
+        Thread rigidArmThread = new Thread(dispatch);   // Using the constructor Thread(Runnable r)
+        rigidArmThread.start();
 
 //        Thread gpsUpdateThread = new Thread(posSystem);
 //        gpsUpdateThread.start();
@@ -47,8 +47,8 @@ public class AutoTest extends LinearOpMode {
 //        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.5, RevisedKinematics.ArmType.HOLD);
 //        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 20, 0, 0.5, RevisedKinematics.ArmType.HOLD);
 
-        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, AutoHub.finalSnapAngle, AutoHub.power, RevisedKinematics.ArmType.HOLD);
-        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, AutoHub.distance, 0, AutoHub.power, RevisedKinematics.ArmType.HOLD);
+        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, AutoHub.finalSnapAngle, AutoHub.power, RevisedKinematics.ArmType.HOLD, 0 ,0);
+        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, AutoHub.distance, 0, AutoHub.power, RevisedKinematics.ArmType.HOLD, 0 ,0);
         dispatch.Turn(AutoHub.finalAngleDashboard, AutoHub.power);
         /*
         working movement types:
@@ -61,7 +61,8 @@ public class AutoTest extends LinearOpMode {
 //        dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0, RevisedKinematics.ArmType.LOW);
 //        dispatch.Turn(90, 0.7);
 
-//        rigidArmThread.interrupt();
+        dispatch.resetToZero();
+        rigidArmThread.interrupt();
 //        gpsUpdateThread.interrupt();
 
     }

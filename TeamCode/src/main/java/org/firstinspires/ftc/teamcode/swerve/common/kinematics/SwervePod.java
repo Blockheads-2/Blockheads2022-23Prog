@@ -338,13 +338,6 @@ public class SwervePod {
         }
 
         spinClicksTarget = distance * constants.CLICKS_PER_INCH;
-//        if (side == Side.RIGHT && (driveType == RevisedKinematics.DriveType.LINEAR ||
-//                driveType == RevisedKinematics.DriveType.TURN ||
-//                driveType == RevisedKinematics.DriveType.CONSTANT_SPLINE ||
-//                driveType == RevisedKinematics.DriveType.VARIABLE_SPLINE)) {
-//            spinClicksTarget *= constants.RIGHT_SIDE_LIMITER;
-//        }
-//        setPowerAuto();
     }
 
     public void turn(double finalAngle, double speed){

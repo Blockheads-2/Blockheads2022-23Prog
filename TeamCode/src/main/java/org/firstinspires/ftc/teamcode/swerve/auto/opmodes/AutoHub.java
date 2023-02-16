@@ -157,7 +157,7 @@ public class AutoHub implements Runnable{
     double powerL = 0;
     ElapsedTime runTime = new ElapsedTime();
     double timeoutS = 0;
-    public void Move(RevisedKinematics.DriveType movementType, double x, double y, double finalAngle, double speed, RevisedKinematics.ArmType armMovementType){
+    public void Move(RevisedKinematics.DriveType movementType, double x, double y, double finalAngle, double speed, RevisedKinematics.ArmType armMovementType, double clawAngle, double claw){
         UpdateTelemetry();
 
         //1) Calculate our current position
@@ -168,7 +168,7 @@ public class AutoHub implements Runnable{
         timeoutS = kinematics.setPosAuto(x, y, finalAngle, speed, movementType);
         //        timeoutS = 100;
         reset.resetAuto(false);
-        kinematics.armLogicAuto(armMovementType, getArmClicks()); //determine targets/power for the arm
+        kinematics.armLogicAuto(armMovementType, getArmClicks(), clawAngle, claw); //determine targets/power for the arm
         kinematics.logicAuto();
 
         targetNotMet = true;
@@ -208,7 +208,7 @@ public class AutoHub implements Runnable{
         runTime.reset();
         while (linearOpMode.opModeIsActive() && (targetNotMet || !armTargetMet) && runTime.seconds() < timeoutS + constants.autoStopConditionTime + 3){ //have a time based something in case our target is never met.
             posSystem.calculatePos();
-            kinematics.armLogicAuto(armMovementType, getArmClicks()); //determine targets/power for the arm
+            kinematics.armLogicAuto(armMovementType, getArmClicks(), clawAngle, claw); //determine targets/power for the arm
             // see how long program takes without calling armLogicAuto
 
             kinematics.logicAuto();
@@ -242,6 +242,9 @@ public class AutoHub implements Runnable{
             robot.at.setPower(armOutput[0]);
             robot.abl.setPower(armOutput[1]);
             robot.abr.setPower(armOutput[2]);
+
+//            robot.claw.setPosition(armOutput[6]);
+//            robot.armServo.setPosition(armOutput[7]);
 
             //perhaps set a timer for this one like turning
             targetNotMet = (Math.abs(robot.topL.getCurrentPosition() - targetTopL) > constants.degreeTOLERANCE ||
