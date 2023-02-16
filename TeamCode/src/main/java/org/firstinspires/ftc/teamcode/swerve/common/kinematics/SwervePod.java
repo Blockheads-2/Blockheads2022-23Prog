@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.swerve.auto.opmodes.AutoHub;
 import org.firstinspires.ftc.teamcode.swerve.auto.opmodes.testing.AutoTest;
 import org.firstinspires.ftc.teamcode.swerve.common.Accelerator;
 import org.firstinspires.ftc.teamcode.swerve.common.constantsPKG.Constants;
+import org.firstinspires.ftc.teamcode.swerve.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.swerve.common.pid.HeaderControlPID;
 import org.firstinspires.ftc.teamcode.swerve.common.pid.SnapSwerveModulePID;
 import org.firstinspires.ftc.teamcode.swerve.auto.Math.LinearMath;
@@ -28,6 +29,8 @@ public class SwervePod {
         LEFT
     }
     Side side;
+
+    GlobalPosSystem.WheelOrientation wheelOrientation;
 
     //teleop
     private double currentW = 0;
@@ -135,7 +138,7 @@ public class SwervePod {
             return driveType;
         } else if (spline){
 //            if (specialSpliningCondition){
-//                double offset = clamp(turnAmount + (rightStickX < 0 ? -8 : 8));
+//                double offset = clamp(turnAmount + (this.wheelOrientation == GlobalPosSystem.WheelOrientation.FRONT ? (rightStickX < 0 ? -10 : 10) : 0));
 //                forceSetRotClicks((int)(offset * constants.CLICKS_PER_DEGREE));
 //            }
 
@@ -227,7 +230,7 @@ public class SwervePod {
         if (driveType == RevisedKinematics.DriveType.LINEAR){
             linearMath.setPos(x, y, finalAngle);
             distance = Math.abs(linearMath.getDistance());
-            this.controlHeaderReference = this.currentR;
+//            this.controlHeaderReference = this.currentR;
         }
         else if (driveType == RevisedKinematics.DriveType.VARIABLE_SPLINE){
             splineMath.setPos(x, y, finalAngle, (side == Side.RIGHT));
@@ -244,7 +247,7 @@ public class SwervePod {
 
         packet.put("Target Distance", linearMath.getDistance());
 
-        controlHeader.reset(distanceTravelledL, distanceTravelledR);
+//        controlHeader.reset(distanceTravelledL, distanceTravelledR);
 
         double powerSpin = Math.abs(pid.update(distance)) * speed;
         double powerRotate = Math.abs(pid.update(turnAmount)) * speed;
@@ -275,8 +278,8 @@ public class SwervePod {
 
                 power = Math.abs(pid.update(distance)) * speed; //probably needs a way to keep the power alive to take into account power directed toward rotating the module.
                 throttle = 1.0;
-                controlHeader.calculateThrottle(distanceTravelledL, distanceTravelledR, currentR, controlHeaderReference);
-                throttle = controlHeader.getThrottle(side);
+//                controlHeader.calculateThrottle(distanceTravelledL, distanceTravelledR, currentR, controlHeaderReference);
+//                throttle = controlHeader.getThrottle(side);
                 telemetry.addData("Header error", controlHeader.error);
 
                 direction = (initPole ? initDirection : -initDirection) * (distance < 0 ? -1 : 1);
@@ -403,6 +406,10 @@ public class SwervePod {
             } else return false;
         }
         return false;
+    }
+
+    public void setWheelOrientation(GlobalPosSystem.WheelOrientation orientation){
+        this.wheelOrientation = orientation;
     }
 
     public RevisedKinematics.DriveType getDriveType(){
