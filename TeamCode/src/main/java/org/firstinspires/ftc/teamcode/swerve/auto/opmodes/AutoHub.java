@@ -134,6 +134,13 @@ public class AutoHub implements Runnable{
     }
 
     public void moveToInit(){
+        robot.claw.setPosition(constants.closeClaw);
+
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
         robot.abl.setTargetPosition(constants.INIT_ARMBASE_POS);
         robot.abr.setTargetPosition(constants.INIT_ARMBASE_POS);
@@ -143,6 +150,8 @@ public class AutoHub implements Runnable{
 
         robot.abl.setPower(0.6);
         robot.abr.setPower(0.6);
+
+        robot.armServo.setPosition(0.3);
     }
 
     public void resetArmEncoderPos(){
@@ -190,8 +199,8 @@ public class AutoHub implements Runnable{
         robot.at.setTargetPosition((int)armOutput[3]);
         robot.abl.setTargetPosition((int)armOutput[4]);
         robot.abr.setTargetPosition((int)armOutput[5]);
-        robot.armServo.setPosition(armOutput[6]);
-        robot.claw.setPosition(armOutput[7]);
+        robot.armServo.setPosition(armOutput[7]);
+        robot.claw.setPosition(armOutput[6]);
 
 
         robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);

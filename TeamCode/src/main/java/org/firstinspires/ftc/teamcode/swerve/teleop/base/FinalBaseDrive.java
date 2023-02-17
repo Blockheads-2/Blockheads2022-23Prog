@@ -158,7 +158,7 @@ public class FinalBaseDrive extends OpMode{
     @Override
     public void loop() { //Loop between "start" and "stop"
         UpdatePlayer1();
-//        UpdatePlayer2();
+        UpdatePlayer2();
         UpdateButton();
         UpdateTelemetry();
     }
@@ -189,7 +189,7 @@ public class FinalBaseDrive extends OpMode{
 
 //        telemetry.addData("Arm top pos", robot.at.getCurrentPosition());
 //        telemetry.addData("Arm bot pos", robot.abl.getCurrentPosition());
-//        telemetry.addData("Arm servo pos", robot.armServo.getPosition());
+        telemetry.addData("Arm servo pos", robot.armServo.getPosition());
 
 //        telemetry.addData("Splining Special Condition", posSystem.specialSpliningCondition(PodL.getPole(), PodR.getPole()));
         telemetry.addData("Wheel Orientation L", posSystem.getWheelOrientation());

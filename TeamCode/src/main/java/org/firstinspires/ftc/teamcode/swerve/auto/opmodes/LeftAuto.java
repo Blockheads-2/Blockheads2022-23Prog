@@ -83,10 +83,12 @@ public class LeftAuto  extends LinearOpMode {
 
             }
         });
-        dispatch.Move(RevisedKinematics.DriveType.STOP,0,0,0,0,RevisedKinematics.ArmType.GRAB);
+
 
         while (!opModeIsActive())
         {
+            dispatch.moveToInit();
+
             // Calling getDetectionsUpdate() will only return an object if there was a new frame
             // processed since the last time we called it. Otherwise, it will return null. This
             // enables us to only run logic when there has been a new frame, as opposed to the
@@ -137,56 +139,29 @@ public class LeftAuto  extends LinearOpMode {
 
         waitForStart();
 
+        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
+        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 41, 0, 0.6, RevisedKinematics.ArmType.MID, 0.5, constants.closeClaw);
+        dispatch.Turn(135,0.7);
+        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,9,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
+        dispatch.Move(RevisedKinematics.DriveType.STOP, 0,0,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.openClaw);
+        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,-20,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
+        dispatch.Move(RevisedKinematics.DriveType.STOP, 0,0,0, 0.6, RevisedKinematics.ArmType.GROUND, 0.5, constants.closeClaw);
+        dispatch.Turn(0,0.7);
         switch (aprilTagId) {
             case 0: {
-                dispatch.Move(RevisedKinematics.DriveType.STOP,0,0,0,0,RevisedKinematics.ArmType.GRAB);
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.3, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 5, 0, 0.3, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 0, 0.3, RevisedKinematics.ArmType.HOLD);
+                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,36,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
                 dispatch.Turn(90,0.7);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 36, 0, 0.3, RevisedKinematics.ArmType.MID);
-                dispatch.Turn(45,0.7);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,12,0, 0.3, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.STOP, 0,0,0, 0.3, RevisedKinematics.ArmType.DROP);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,-12,0, 0.3, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.STOP, 0,0,0, 0.3, RevisedKinematics.ArmType.GROUND);
-                dispatch.Turn(-45,0.7);
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, -90, 0.3, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,24,0, 0.3, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.3, RevisedKinematics.ArmType.HOLD);
 
             }
             case 1: {
-                dispatch.Move(RevisedKinematics.DriveType.STOP,0,0,0,0,RevisedKinematics.ArmType.GRAB);
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.3, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 5, 0, 0.3, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 0, 0.3, RevisedKinematics.ArmType.HOLD);
+                //nothing else
                 dispatch.Turn(90,0.7);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 36, 0, 0.3, RevisedKinematics.ArmType.MID);
-                dispatch.Turn(45,0.7);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,12,0, 0.3, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.STOP, 0,0,0, 0.3, RevisedKinematics.ArmType.DROP);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,-12,0, 0.3, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.STOP, 0,0,0, 0.3, RevisedKinematics.ArmType.GROUND);
-                dispatch.Turn(-45,0.7);
-
             }
             case 2: {
-                dispatch.Move(RevisedKinematics.DriveType.STOP,0,0,0,0,RevisedKinematics.ArmType.GRAB);
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.3, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 5, 0, 0.3, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 0, 0.3, RevisedKinematics.ArmType.HOLD);
+                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,-36,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
                 dispatch.Turn(90,0.7);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 36, 0, 0.3, RevisedKinematics.ArmType.MID);
-                dispatch.Turn(45,0.7);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,12,0, 0.3, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.STOP, 0,0,0, 0.3, RevisedKinematics.ArmType.DROP);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,-12,0, 0.3, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.STOP, 0,0,0, 0.3, RevisedKinematics.ArmType.GROUND);
-                dispatch.Turn(-45,0.7);
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.3, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,24,0, 0.3, RevisedKinematics.ArmType.HOLD);
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, -90, 0.3, RevisedKinematics.ArmType.HOLD);
 
 
 

@@ -139,7 +139,7 @@ public class Constants {
     public int topSoftStop = 840;
 
     //Claw Position
-    public double clawUp = 0.5;
+    public double clawUp = 0.2;
     public double clawDown = 0.8;
     public double openClaw = 0;
     public double closeClaw = 0.9;
