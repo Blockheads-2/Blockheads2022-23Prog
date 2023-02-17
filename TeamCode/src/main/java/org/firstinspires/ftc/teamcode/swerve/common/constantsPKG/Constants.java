@@ -72,7 +72,7 @@ public class Constants {
     public int initDirectionRight = 1;
     public int initDirectionLeft = -1;
 
-    public double autoStopConditionTime = 1.0;
+    public double autoStopConditionTime = 0.5;
 
 
     /* starting:

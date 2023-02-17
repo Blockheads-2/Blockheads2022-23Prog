@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.checkerframework.checker.lock.qual.Holding;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.swerve.common.Button;
 import org.firstinspires.ftc.teamcode.swerve.common.Reset;
@@ -216,7 +217,7 @@ public class AutoHub implements Runnable{
         //3) Tell the robot to travel that distance we just determined.
 
         runTime.reset();
-        while (linearOpMode.opModeIsActive() && (targetNotMet || !armTargetMet) && runTime.seconds() < timeoutS + constants.autoStopConditionTime + 3){ //have a time based something in case our target is never met.
+        while (linearOpMode.opModeIsActive() && (targetNotMet || !armTargetMet) && runTime.seconds() < timeoutS + constants.autoStopConditionTime + 1){ //have a time based something in case our target is never met.
             posSystem.calculatePos();
             kinematics.armLogicAuto(armMovementType, getArmClicks(), clawAngle, claw); //determine targets/power for the arm
             // see how long program takes without calling armLogicAuto
@@ -281,20 +282,38 @@ public class AutoHub implements Runnable{
         podL.getAccelerator().resetAccelerationAuto();
         podL.getAccelerator().resetAccelerationAuto();
 
+        stopConditionTimer.reset();
         if (kinematics.getDriveType() != RevisedKinematics.DriveType.SNAP){
-            while(!reset.finishedReset() && linearOpMode.opModeIsActive()){
-                reset.resetAuto(true);
-                linearOpMode.telemetry.addData("RESET", true);
-                deltaMS = loopTime.milliseconds() - prevMS;
-                prevMS = loopTime.milliseconds();
+            while (linearOpMode.opModeIsActive() && (targetNotMet)){
+                podL.setResetValues();
+                podR.setResetValues();
+
+                targetClicks = kinematics.getClicks();
+                motorPower = kinematics.getPower();
+
+                robot.topL.setTargetPosition(targetTopL);
+                robot.botL.setTargetPosition(targetBotL);
+                robot.topR.setTargetPosition(targetTopR);
+                robot.botR.setTargetPosition(targetBotR);
+
+                robot.topL.setPower(motorPower[0]);
+                robot.botL.setPower(motorPower[1]);
+                robot.topR.setPower(motorPower[2]);
+                robot.botR.setPower(motorPower[3]);
+
+                targetNotMet = (Math.abs(robot.topL.getCurrentPosition() - targetTopL) > constants.degreeTOLERANCE ||
+                        Math.abs(robot.botL.getCurrentPosition() - targetBotL) > constants.degreeTOLERANCE ||
+                        Math.abs(robot.topR.getCurrentPosition() - targetTopR) > constants.degreeTOLERANCE ||
+                        Math.abs(robot.botR.getCurrentPosition() - targetBotR) > constants.degreeTOLERANCE);
+
+                if (!targetNotMet && stopConditionTimer.seconds() > constants.autoStopConditionTime){
+                    targetNotMet = false;
+                } else {
+                    stopConditionTimer.reset();
+                    targetNotMet = true;
+                }
             }
-        } else {
-            robot.topL.setTargetPosition(robot.topL.getCurrentPosition());
-            robot.botL.setTargetPosition(robot.botL.getCurrentPosition());
-            robot.topR.setTargetPosition(robot.topR.getCurrentPosition());
-            robot.botR.setTargetPosition(robot.botR.getCurrentPosition());
         }
-        reset.resetAuto(false);
 
         robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

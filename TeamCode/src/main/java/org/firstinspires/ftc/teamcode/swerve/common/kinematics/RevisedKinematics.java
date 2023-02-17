@@ -27,7 +27,8 @@ public class RevisedKinematics {
         TURN,
         CONSTANT_SPLINE,
         VARIABLE_SPLINE,
-        NOT_INITIALIZED
+        NOT_INITIALIZED,
+        RESET
     }
     public DriveType type = DriveType.NOT_INITIALIZED;
 

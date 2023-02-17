@@ -335,9 +335,19 @@ public class SwervePod {
                 direction = (initPole ? initDirection : -initDirection);
                 accelerator.resetAccelerationAuto();
                 break;
+
         }
 
         spinClicksTarget = distance * constants.CLICKS_PER_INCH;
+    }
+
+    public void setResetValues(){
+        robotCentricSetRotClicks(0);
+        setSpinClicks(0);
+        power = 1;
+        throttle = 1;
+        direction = (initPole ? initDirection : -initDirection);
+        driveType = RevisedKinematics.DriveType.RESET;
     }
 
     public void turn(double finalAngle, double speed){
@@ -428,7 +438,7 @@ public class SwervePod {
     }
 
     public double[] getOutputAuto(){
-        if (driveType != RevisedKinematics.DriveType.SNAP) {
+        if (driveType != RevisedKinematics.DriveType.SNAP && driveType != RevisedKinematics.DriveType.RESET) {
             power *= accelerator.getAccelerationFactor();
             spinClicksTarget *= accelerator.getAccelerationFactor();
         }
