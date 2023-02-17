@@ -289,6 +289,14 @@ public class AutoHub implements Runnable{
                 targetClicks = kinematics.getClicks();
                 motorPower = kinematics.getPower();
 
+                powerL = motorPower[0];
+                powerR = motorPower[2];
+
+                targetTopL = robot.topL.getCurrentPosition() + targetClicks[0];
+                targetBotL = robot.botL.getCurrentPosition() + targetClicks[1];
+                targetTopR = robot.topR.getCurrentPosition() + targetClicks[2];
+                targetBotR = robot.botR.getCurrentPosition() + targetClicks[3];
+
                 robot.topL.setTargetPosition(targetTopL);
                 robot.botL.setTargetPosition(targetBotL);
                 robot.topR.setTargetPosition(targetTopR);
