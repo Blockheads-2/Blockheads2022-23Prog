@@ -428,8 +428,10 @@ public class SwervePod {
     }
 
     public double[] getOutputAuto(){
-        power *= accelerator.getAccelerationFactor();
-        spinClicksTarget *= accelerator.getAccelerationFactor();
+        if (driveType != RevisedKinematics.DriveType.SNAP) {
+            power *= accelerator.getAccelerationFactor();
+            spinClicksTarget *= accelerator.getAccelerationFactor();
+        }
 
         if (power > constants.POWER_LIMITER) power = constants.POWER_LIMITER;
         else if (power < -constants.POWER_LIMITER) power = -constants.POWER_LIMITER;
