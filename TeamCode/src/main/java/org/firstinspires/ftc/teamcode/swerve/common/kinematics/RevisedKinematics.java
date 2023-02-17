@@ -186,9 +186,25 @@ public class RevisedKinematics {
 //        posSystem.setOptimizedCurrentW(PodR.optimizedCurrentW, PodL.optimizedCurrentW);
 
         //4) determining distance travel amount and power based on that
-        PodL.autoLogic(posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledR());
+        PodL.autoLogic(posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledR(), posSystem.specialSpliningCondition(PodL.getPole(), PodR.getPole()));
         //for some reason, we negate the negative clicks for the left topL encoder
-        PodR.autoLogic(posSystem.getDistanceTravelledR(), posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledR());
+        PodR.autoLogic(posSystem.getDistanceTravelledR(), posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledR(), posSystem.specialSpliningCondition(PodL.getPole(), PodR.getPole()));
+
+        outputL = PodL.getOutputAuto();
+        outputR = PodR.getOutputAuto();
+    }
+
+    public void resetAuto(){
+        PodL.setCurrents(posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
+        PodR.setCurrents(posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);
+
+//        posSystem.setOptimizedCurrentW(PodR.optimizedCurrentW, PodL.optimizedCurrentW);
+
+        //4) determining distance travel amount and power based on that
+        PodL.setResetValues();
+        //for some reason, we negate the negative clicks for the left topL encoder
+        PodR.setResetValues();
+        this.type = DriveType.RESET;
 
         outputL = PodL.getOutputAuto();
         outputR = PodR.getOutputAuto();
@@ -208,6 +224,8 @@ public class RevisedKinematics {
 
         PodL.turn(finalAngle, speed);
         PodR.turn(finalAngle, speed);
+
+        this.type = DriveType.RESET;
 
         outputL = PodL.getOutputAuto();
         outputR = PodR.getOutputAuto();

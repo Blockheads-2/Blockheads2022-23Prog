@@ -37,12 +37,12 @@ public class AutoHub implements Runnable{
     SwervePod podR;
     SwervePod podL;
 
-    public static double kp = 0;
-    public static double ki = 0;
-    public static double kd = 0;
-    public static double power = 0.5;
+    public static double powerRotate = 1;
+    public static double powerTranslate = 0.3;
+    public static double powerTurn = 0.3;
     public static double distance = 0;
-    public static double finalAngleDashboard = 0;
+    public static double distance2 = 0;
+    public static double finalTurnAngle = 0;
     public static double finalSnapAngle = 0;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
@@ -217,7 +217,7 @@ public class AutoHub implements Runnable{
         //3) Tell the robot to travel that distance we just determined.
 
         runTime.reset();
-        while (linearOpMode.opModeIsActive() && (targetNotMet || !armTargetMet) && runTime.seconds() < timeoutS + constants.autoStopConditionTime + 1){ //have a time based something in case our target is never met.
+        while (linearOpMode.opModeIsActive() && (targetNotMet || !armTargetMet) && runTime.seconds() < timeoutS + constants.autoStopConditionTime + 2){ //have a time based something in case our target is never met.
             posSystem.calculatePos();
             kinematics.armLogicAuto(armMovementType, getArmClicks(), clawAngle, claw); //determine targets/power for the arm
             // see how long program takes without calling armLogicAuto
@@ -264,8 +264,8 @@ public class AutoHub implements Runnable{
                     Math.abs(robot.botR.getCurrentPosition() - targetBotR) > constants.degreeTOLERANCE);
             armTargetMet = kinematics.isArmTargetMet();
 
-            if (!targetNotMet && stopConditionTimer.seconds() > constants.autoStopConditionTime){
-                targetNotMet = false;
+            if (!targetNotMet){
+                if (stopConditionTimer.seconds() > constants.autoStopConditionTime) targetNotMet = false;
             } else {
                 stopConditionTimer.reset();
                 targetNotMet = true;
@@ -277,20 +277,28 @@ public class AutoHub implements Runnable{
             prevMS = loopTime.milliseconds();
         }
 
+        reset();
+    }
+
+    public void reset(){
         podL.getAccelerator().resetAccelerationAuto();
         podR.getAccelerator().resetAccelerationAuto();
 
         stopConditionTimer.reset();
+        targetNotMet = true;
+
+        int targetTopL = 0;
+        int targetBotL = 0;
+        int targetTopR = 0;
+        int targetBotR = 0;
+
+
         if (kinematics.getDriveType() != RevisedKinematics.DriveType.SNAP){
             while (linearOpMode.opModeIsActive() && (targetNotMet)){
-                podL.setResetValues();
-                podR.setResetValues();
-
+                posSystem.calculatePos();
+                kinematics.resetAuto();
                 targetClicks = kinematics.getClicks();
                 motorPower = kinematics.getPower();
-
-                powerL = motorPower[0];
-                powerR = motorPower[2];
 
                 targetTopL = robot.topL.getCurrentPosition() + targetClicks[0];
                 targetBotL = robot.botL.getCurrentPosition() + targetClicks[1];
@@ -312,8 +320,8 @@ public class AutoHub implements Runnable{
                         Math.abs(robot.topR.getCurrentPosition() - targetTopR) > constants.degreeTOLERANCE ||
                         Math.abs(robot.botR.getCurrentPosition() - targetBotR) > constants.degreeTOLERANCE);
 
-                if (!targetNotMet && stopConditionTimer.seconds() > constants.autoStopConditionTime){
-                    targetNotMet = false;
+                if (!targetNotMet){
+                    if (stopConditionTimer.seconds() > constants.autoStopConditionTime) targetNotMet = false;
                 } else {
                     stopConditionTimer.reset();
                     targetNotMet = true;
@@ -325,7 +333,6 @@ public class AutoHub implements Runnable{
         robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
     }
 
 
@@ -396,24 +403,7 @@ public class AutoHub implements Runnable{
             }
         }
 
-        robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        while(!reset.finishedReset() && linearOpMode.opModeIsActive()){
-            reset.resetAuto(true);
-            linearOpMode.telemetry.addData("RESET", true);
-            deltaMS = loopTime.milliseconds() - prevMS;
-            prevMS = loopTime.milliseconds();
-        }
-
-        reset.resetAuto(false);
-
-        robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        reset();
     }
 
     double[] armClicks = new double[5];
@@ -452,15 +442,15 @@ public class AutoHub implements Runnable{
 
     public void resetToZero(){
         robot.at.setTargetPosition(0);
-        robot.abl.setTargetPosition(-constants.INIT_ARMBASE_POS);
-        robot.abr.setTargetPosition(-constants.INIT_ARMBASE_POS);
+        robot.abl.setTargetPosition(-constants.INIT_ARMBASE_POS + 20);
+        robot.abr.setTargetPosition(-constants.INIT_ARMBASE_POS + 20);
 
         robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.at.setPower(0.4);
-        robot.abl.setPower(1);
-        robot.abr.setPower(1);
+        robot.abl.setPower(0.4);
+        robot.abr.setPower(0.4);
 
         robot.armServo.setPosition(constants.clawDown);
         robot.claw.setPosition(constants.openClaw);
@@ -470,9 +460,6 @@ public class AutoHub implements Runnable{
         robot.armServo.setPosition(servoVal);
     }
     public void UpdateTelemetry(){
-        linearOpMode.telemetry.addData("KP", kp);
-        linearOpMode.telemetry.addData("KI", ki);
-        linearOpMode.telemetry.addData("KD", kd);
         linearOpMode.telemetry.addData("Wheel target met?", !targetNotMet);
         linearOpMode.telemetry.addData("Arm target met?", kinematics.isArmTargetMet());
 
@@ -538,6 +525,9 @@ public class AutoHub implements Runnable{
         packet.put("Error L", podL.getPID().getError());
 //        packet.put("Distance Travelled R", posSystem.getDistanceTravelledR());
         packet.put("Distance Travelled L", posSystem.getDistanceTravelledL());
+        packet.put("Distance Remaining (L)", podL.getDistance());
+        packet.put("Distance Remaining (R)", podR.getDistance());
+
         packet.put("Left W",  posSystem.getLeftWheelW());
         packet.put("Robot Header", posSystem.getPositionArr()[4]);
 
@@ -552,7 +542,11 @@ public class AutoHub implements Runnable{
         packet.put("TimeOut", timeoutS);
 
 
-        packet.put("delta time", deltaMS);
+        packet.put("delta time", deltaMS / 1000.0);
+        packet.put("InitPole R", podR.getPole());
+        packet.put("InitPole L", podL.getPole());
+        packet.put("Drive Type", kinematics.getDriveType());
+
 //        packet.put("Right W", posSystem.getRightWheelW());
         dashboard.sendTelemetryPacket(packet);
 

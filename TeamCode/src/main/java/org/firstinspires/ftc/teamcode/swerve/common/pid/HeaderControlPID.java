@@ -56,12 +56,14 @@ public class HeaderControlPID {
         }
     }
 
-    public double getThrottle(SwervePod.Side side){
-        throttle = Math.abs(throttle);
-        if (throttle > 1) throttle = 1;
+    public double getThrottle(SwervePod.Side side, boolean specialSpliningCondition){
+        if (!specialSpliningCondition){
+            throttle = Math.abs(throttle);
+            if (throttle > 1) throttle = 1;
 
-        if (this.throttleSide == side) return Math.abs(throttle);
-        else return 1.0;
+            if (this.throttleSide == side) return Math.abs(throttle);
+            else return 1.0;
+        } else return 1.0;
     }
 
     public SwervePod.Side getThrottleSide(){

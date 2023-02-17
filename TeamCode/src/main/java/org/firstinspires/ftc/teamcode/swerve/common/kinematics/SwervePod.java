@@ -230,7 +230,7 @@ public class SwervePod {
         if (driveType == RevisedKinematics.DriveType.LINEAR){
             linearMath.setPos(x, y, finalAngle);
             distance = Math.abs(linearMath.getDistance());
-            this.controlHeaderReference = this.currentR;
+//            this.controlHeaderReference = this.currentR;
         }
         else if (driveType == RevisedKinematics.DriveType.VARIABLE_SPLINE){
             splineMath.setPos(x, y, finalAngle, (side == Side.RIGHT));
@@ -247,7 +247,7 @@ public class SwervePod {
 
         packet.put("Target Distance", linearMath.getDistance());
 
-        controlHeader.reset(distanceTravelledL, distanceTravelledR);
+//        controlHeader.reset(distanceTravelledL, distanceTravelledR);
 
         double powerSpin = Math.abs(pid.update(distance)) * speed;
         double powerRotate = Math.abs(pid.update(turnAmount)) * speed;
@@ -260,7 +260,7 @@ public class SwervePod {
         this.power = power;
     }
 
-    public void autoLogic(double distanceRan, double distanceTravelledL, double distanceTravelledR){
+    public void autoLogic(double distanceRan, double distanceTravelledL, double distanceTravelledR, boolean specialSpliningCondition){
         telemetry.addData("acceleration?", accelerator.actuallyAccelerate);
         telemetry.addData("Acceleration factor", accelerator.accelerationFactor);
 
@@ -269,7 +269,7 @@ public class SwervePod {
             case CONSTANT_SPLINE:
 
             case LINEAR:
-                setRotClicks(finalAngle);
+                robotCentricSetRotClicks(finalAngle);
 
                 distance = linearMath.distanceRemaining(distanceRan);
                 telemetry.addData("distance remaining" + (side == Side.RIGHT ? "R" : "L"), distance);
@@ -278,8 +278,8 @@ public class SwervePod {
 
                 power = Math.abs(pid.update(distance)) * speed; //probably needs a way to keep the power alive to take into account power directed toward rotating the module.
                 throttle = 1.0;
-                controlHeader.calculateThrottle(distanceTravelledL, distanceTravelledR, currentR, controlHeaderReference);
-                throttle = controlHeader.getThrottle(side);
+//                controlHeader.calculateThrottle(distanceTravelledL, distanceTravelledR, currentR, controlHeaderReference);
+//                throttle = controlHeader.getThrottle(side, specialSpliningCondition);
                 telemetry.addData("Header error", controlHeader.error);
 
                 direction = (initPole ? initDirection : -initDirection) * (distance < 0 ? -1 : 1);
@@ -344,7 +344,7 @@ public class SwervePod {
     public void setResetValues(){
         robotCentricSetRotClicks(0);
         setSpinClicks(0);
-        power = 1;
+        power = 0.8;
         throttle = 1;
         direction = (initPole ? initDirection : -initDirection);
         driveType = RevisedKinematics.DriveType.RESET;
@@ -364,6 +364,8 @@ public class SwervePod {
 
         throttle = 1.0;
         power = pid.update(distance) * speed;
+
+        driveType = RevisedKinematics.DriveType.TURN;
     }
 
     public double turnLogarithmicFunction(double turnAmountLeft){
