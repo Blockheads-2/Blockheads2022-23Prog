@@ -271,8 +271,6 @@ public class AutoHub implements Runnable{
                 targetNotMet = true;
             }
 
-//            armTargetMet = false;
-
             UpdateTelemetry();
 
             deltaMS = loopTime.milliseconds() - prevMS;
@@ -280,7 +278,7 @@ public class AutoHub implements Runnable{
         }
 
         podL.getAccelerator().resetAccelerationAuto();
-        podL.getAccelerator().resetAccelerationAuto();
+        podR.getAccelerator().resetAccelerationAuto();
 
         stopConditionTimer.reset();
         if (kinematics.getDriveType() != RevisedKinematics.DriveType.SNAP){
@@ -446,8 +444,8 @@ public class AutoHub implements Runnable{
 
     public void resetToZero(){
         robot.at.setTargetPosition(0);
-        robot.abl.setTargetPosition(0);
-        robot.abr.setTargetPosition(0);
+        robot.abl.setTargetPosition(-constants.INIT_ARMBASE_POS);
+        robot.abr.setTargetPosition(-constants.INIT_ARMBASE_POS);
 
         robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -455,6 +453,9 @@ public class AutoHub implements Runnable{
         robot.at.setPower(0.4);
         robot.abl.setPower(1);
         robot.abr.setPower(1);
+
+        robot.armServo.setPosition(constants.clawDown);
+        robot.claw.setPosition(constants.openClaw);
     }
 
     public void clawAngle(double servoVal){
