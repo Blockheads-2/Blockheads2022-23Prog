@@ -138,9 +138,12 @@ public class SwervePod {
             return driveType;
         } else if (spline){
 //            if (specialSpliningCondition){
-//                double offset = clamp(turnAmount + (this.wheelOrientation == GlobalPosSystem.WheelOrientation.FRONT ? (rightStickX < 0 ? -10 : 10) : 0));
-//                forceSetRotClicks((int)(offset * constants.CLICKS_PER_DEGREE));
+//                int offset = (int)((rightStickX < 0 ? -15 : 15) * constants.CLICKS_PER_DEGREE);
+//                int currentWClicks = (int)(this.fieldCentricCurrentW * constants.CLICKS_PER_DEGREE);
+//                if (this.wheelOrientation == GlobalPosSystem.WheelOrientation.FRONT) forceSetRotClicks(currentWClicks + offset);
+//                 else forceSetRotClicks(currentWClicks - offset);
 //            }
+//            this.spinClicksTarget = (power * constants.SPIN_CLICK_FACTOR * 2);
 
             double throttle = 1.0 - Math.sin(Math.abs(rightStickX));
             if (rightStickX < 0 && side == Side.LEFT) this.throttle = throttle;

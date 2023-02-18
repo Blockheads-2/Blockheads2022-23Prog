@@ -192,8 +192,8 @@ public class FinalBaseDrive extends OpMode{
         telemetry.addData("Arm servo pos", robot.armServo.getPosition());
 
 //        telemetry.addData("Splining Special Condition", posSystem.specialSpliningCondition(PodL.getPole(), PodR.getPole()));
-        telemetry.addData("Wheel Orientation L", posSystem.getWheelOrientation());
-        telemetry.addData("Wheel Orientation R", posSystem.getWheelOrientation());
+        telemetry.addData("Wheel Orientation L", posSystem.getWheelOrientation()[0]);
+        telemetry.addData("Wheel Orientation R", posSystem.getWheelOrientation()[1]);
         telemetry.addData("IsAlligned", posSystem.isAlligned(PodL.getPole(), PodR.getPole()));
         telemetry.addData("Eligible for turning", posSystem.eligibleForTurning(PodL.getPole(), PodR.getPole()));
         telemetry.addData("First movement", kinematics.firstMovement);
