@@ -147,22 +147,22 @@ public class LeftAuto  extends LinearOpMode {
 
         switch (aprilTagId) {
             case 0: {
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 180, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,8,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
                 dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, -90, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,8,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
+                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
                 dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,36,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
-                dispatch.Turn(90,0.3);
+                dispatch.Turn(0,0.3);
             }
             case 1: {
                 //nothing else
-                dispatch.Turn(90,0.3);
+                dispatch.Turn(0,0.3);
             }
             case 2: {
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 180, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
+                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, -90, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
                 dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,8,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
+                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
                 dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,36,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
-                dispatch.Turn(90,0.3);
+                dispatch.Turn(0,0.3);
             }
         }
     }

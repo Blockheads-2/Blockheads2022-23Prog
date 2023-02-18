@@ -320,6 +320,10 @@ public class FinalBaseDrive extends OpMode{
     }
 
     void ArmPresets(){
+        robot.at.setPower(0.4);
+        robot.abl.setPower(1);
+        robot.abr.setPower(1);
+
         if (bottomButton.is(Button.State.TAP)){
             lowerArmCycle = true;
             lowerAllTheWay = true;
@@ -341,9 +345,7 @@ public class FinalBaseDrive extends OpMode{
             robot.abr.setTargetPosition(constants.bottomMotorMid);
             robot.at.setTargetPosition(constants.topMotorMid);
 
-            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
 
             clawAngle = constants.armServoMid;
             //robot.armServo.setPosition(constants.armServoMid);
@@ -353,10 +355,6 @@ public class FinalBaseDrive extends OpMode{
             robot.at.setPower(ablPID.update(robot.at.getCurrentPosition()));
 
              */
-            robot.at.setPower(0.4);
-            robot.abl.setPower(1);
-            robot.abr.setPower(1);
-
         }
 
         if (highButton.is(Button.State.TAP)){
@@ -368,10 +366,6 @@ public class FinalBaseDrive extends OpMode{
             robot.abr.setTargetPosition(constants.bottomMotorHigh);
             robot.at.setTargetPosition(constants.topMotorHigh);
 
-            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
             clawAngle = constants.armServoHigh;
             //robot.armServo.setPosition(constants.armServoHigh);
 
@@ -380,10 +374,6 @@ public class FinalBaseDrive extends OpMode{
             robot.at.setPower(ablPID.update(robot.at.getCurrentPosition()));
 
              */
-            robot.at.setPower(0.4);
-            robot.abl.setPower(1);
-            robot.abr.setPower(1);
-
         }
     }
 
