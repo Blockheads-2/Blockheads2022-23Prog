@@ -12,7 +12,7 @@ public class Constants {
     public double RPS = RPM / 60.0; //11.5 ish motor revolutions per second, with load
     public double POWER_LIMITER = 1.0; //0.8 : 100
     public double RIGHT_SIDE_LIMITER = 0.8; //right side is a heavier than left side.  Heavier = faster cuz more normal force.
-    public double RIGHT_SIDE_LIMITER_AUTO = 0.9; //0.7
+    public double RIGHT_SIDE_LIMITER_AUTO = 0.7; //0.7
     public int SPIN_CLICK_FACTOR = 140;
 
     //30~70 clicks per loop at a spin click factor of 140.
@@ -28,7 +28,7 @@ public class Constants {
     public double clickTOLERANCE = 10; //number of clicks or degrees the robot can be off by
 //    public double clickToleranceAuto = 12; //~1/3rd worth of error for translation.  ~2 degrees worth of error for rotation.
     public double clickToleranceAuto = 10; //for testing with dashboard
-    public double degreeTOLERANCE = 5;
+    public double degreeTOLERANCE = 3;
     public double allignmentTolerance = 13;
 
     public double pointedWheels = 35;

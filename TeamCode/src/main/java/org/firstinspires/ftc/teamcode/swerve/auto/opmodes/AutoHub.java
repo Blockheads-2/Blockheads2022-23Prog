@@ -217,7 +217,7 @@ public class AutoHub implements Runnable{
         //3) Tell the robot to travel that distance we just determined.
 
         runTime.reset();
-        while (linearOpMode.opModeIsActive() && (targetNotMet || !armTargetMet) && runTime.seconds() < timeoutS + constants.autoStopConditionTime + 2){ //have a time based something in case our target is never met.
+        while (linearOpMode.opModeIsActive() && (targetNotMet || !armTargetMet) && runTime.seconds() < timeoutS + constants.autoStopConditionTime + 1.5){ //have a time based something in case our target is never met.
             posSystem.calculatePos();
             kinematics.armLogicAuto(armMovementType, getArmClicks(), clawAngle, claw); //determine targets/power for the arm
             // see how long program takes without calling armLogicAuto
@@ -442,18 +442,24 @@ public class AutoHub implements Runnable{
 
     public void resetToZero(){
         robot.at.setTargetPosition(0);
-        robot.abl.setTargetPosition(-constants.INIT_ARMBASE_POS + 20);
-        robot.abr.setTargetPosition(-constants.INIT_ARMBASE_POS + 20);
+        robot.abl.setTargetPosition(-constants.INIT_ARMBASE_POS + 10);
+        robot.abr.setTargetPosition(-constants.INIT_ARMBASE_POS + 10);
 
         robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.at.setPower(0.4);
-        robot.abl.setPower(0.4);
-        robot.abr.setPower(0.4);
+        robot.at.setPower(0.5);
+        robot.abl.setPower(0.5);
+        robot.abr.setPower(0.5);
 
         robot.armServo.setPosition(constants.clawDown);
         robot.claw.setPosition(constants.openClaw);
+    }
+
+    public void resetGPS(){
+        posSystem.resetXY();
+        posSystem.resetHeader();
+        posSystem.hardResetGPS();
     }
 
     public void clawAngle(double servoVal){
