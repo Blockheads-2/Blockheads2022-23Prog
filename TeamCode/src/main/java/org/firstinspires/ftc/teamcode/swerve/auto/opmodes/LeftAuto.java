@@ -143,8 +143,8 @@ public class LeftAuto  extends LinearOpMode {
 //        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.6, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
 //        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 10, 0, 0.5, RevisedKinematics.ArmType.MID, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
 //        dispatch.fastTurn(90, 0.4);
-        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, AutoHub.distance, 0, 0.5, RevisedKinematics.ArmType.MID, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
-        dispatch.Turn(AutoHub.finalTurnAngle, 0.4);
+        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 30, 0, 0.5, RevisedKinematics.ArmType.MID, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
+        dispatch.Turn(45, 0.4);
         dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0, RevisedKinematics.ArmType.HOLD, constants.armServoLow, dispatch.getArmClicks()[4]);
         dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0, RevisedKinematics.ArmType.HOLD, constants.armServoLow, constants.openClaw);
 

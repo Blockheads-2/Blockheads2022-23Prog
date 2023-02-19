@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 @Autonomous (name = "Right Auto", group = "Drive")
 //@Disabled
-public class RightAuto extends LinearOpMode {
+public class RightAuto  extends LinearOpMode {
 
     OpenCvCamera camera;
     Constants constants = new Constants();
@@ -83,9 +83,12 @@ public class RightAuto extends LinearOpMode {
 
             }
         });
-        dispatch.Move(RevisedKinematics.DriveType.STOP,0,0,0,0,RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
+
+
         while (!opModeIsActive())
         {
+            dispatch.moveToInit();
+
             // Calling getDetectionsUpdate() will only return an object if there was a new frame
             // processed since the last time we called it. Otherwise, it will return null. This
             // enables us to only run logic when there has been a new frame, as opposed to the
@@ -137,36 +140,40 @@ public class RightAuto extends LinearOpMode {
 
         waitForStart();
 
-        dispatch.Move(RevisedKinematics.DriveType.STOP,0,0,0,0,RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
-        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.3, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
-        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 5, 0, 0.3, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
-        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 0, 0.3, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
-        dispatch.Turn(90,0.7);
-        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 36, 0, 0.3, RevisedKinematics.ArmType.MID, 0.5, constants.closeClaw);
-        dispatch.Turn(45,0.7);
-        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,12,0, 0.3, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
-        dispatch.Move(RevisedKinematics.DriveType.STOP, 0,0,0, 0.3, RevisedKinematics.ArmType.HOLD, 0.5, constants.openClaw);
-        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,-12,0, 0.3, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
-        dispatch.Move(RevisedKinematics.DriveType.STOP, 0,0,0, 0.3, RevisedKinematics.ArmType.GROUND, 0.5, constants.closeClaw);
-        dispatch.Turn(0,0.7);
+//        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.6, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
+//        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 10, 0, 0.5, RevisedKinematics.ArmType.MID, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
+//        dispatch.fastTurn(90, 0.4);
+        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 30, 0, 0.5, RevisedKinematics.ArmType.MID, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
+        dispatch.Turn(-45, 0.4);
+        dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0, RevisedKinematics.ArmType.HOLD, constants.armServoLow, dispatch.getArmClicks()[4]);
+        dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0, RevisedKinematics.ArmType.HOLD, constants.armServoLow, constants.openClaw);
 
         switch (aprilTagId) {
             case 0: {
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 0, 0.3, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,24,0, 0.3, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
-                dispatch.Turn(90,0.7);
+                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 180, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,6,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
+
+                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, -90, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,27,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
+
+                break;
             }
             case 1: {
-                //nothing else
-
+                //nothing
+                break;
             }
             case 2: {
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 0, 0.3, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,-24,0, 0.3, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
-                dispatch.Turn(90,0.7);
+                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 180, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,6,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
 
+                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,30,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
 
+                break;
             }
         }
+
+        dispatch.resetToZero();
+        dispatch.resetGPS();
     }
 }
