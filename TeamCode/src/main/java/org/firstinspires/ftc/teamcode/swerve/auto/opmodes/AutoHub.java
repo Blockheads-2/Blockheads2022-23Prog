@@ -44,6 +44,10 @@ public class AutoHub implements Runnable{
     public static double distance2 = 0;
     public static double finalTurnAngle = 0;
     public static double finalSnapAngle = 0;
+
+    public static double kp = 0;
+    public static double ki = 0;
+    public static double kd = 0;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
     ElapsedTime loopTime = new ElapsedTime();
@@ -217,7 +221,7 @@ public class AutoHub implements Runnable{
         //3) Tell the robot to travel that distance we just determined.
 
         runTime.reset();
-        while (linearOpMode.opModeIsActive() && (targetNotMet || !armTargetMet) && runTime.seconds() < timeoutS + constants.autoStopConditionTime + 1.5){ //have a time based something in case our target is never met.
+        while (linearOpMode.opModeIsActive() && (targetNotMet || !armTargetMet) && runTime.seconds() < timeoutS + constants.autoStopConditionTime + 0.7){ //have a time based something in case our target is never met.
             posSystem.calculatePos();
             kinematics.armLogicAuto(armMovementType, getArmClicks(), clawAngle, claw); //determine targets/power for the arm
             // see how long program takes without calling armLogicAuto
@@ -310,6 +314,8 @@ public class AutoHub implements Runnable{
                 robot.topR.setTargetPosition(targetTopR);
                 robot.botR.setTargetPosition(targetBotR);
 
+                robot.setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
+
                 robot.topL.setPower(motorPower[0]);
                 robot.botL.setPower(motorPower[1]);
                 robot.topR.setPower(motorPower[2]);
@@ -344,7 +350,9 @@ public class AutoHub implements Runnable{
 
         reset.resetAuto(false);
 
-        kinematics.setTurnPID(constants.kpTurning, constants.kiTurning, constants.kdTurning);
+//        kinematics.setTurnPID(constants.kpTurning, constants.kiTurning, constants.kdTurning);
+        kinematics.setTurnPID(AutoHub.kp, AutoHub.ki, AutoHub.kd);
+
         kinematics.turn(finalAngle, speed);
 
         int targetTopL = robot.topL.getCurrentPosition() + targetClicks[0];
@@ -364,7 +372,6 @@ public class AutoHub implements Runnable{
 
         boolean turn = true;
         while (turn && linearOpMode.opModeIsActive()){
-//        while (linearOpMode.opModeIsActive()){
             kinematics.turn(finalAngle, speed);
 
             targetClicks = kinematics.getClicks();
@@ -392,15 +399,101 @@ public class AutoHub implements Runnable{
             deltaMS = loopTime.milliseconds() - prevMS;
             prevMS = loopTime.milliseconds();
 
-
             if (Math.abs(SwervePod.changeAngle(finalAngle, posSystem.getPositionArr()[4])) < constants.degreeTOLERANCE){
-                if (stopConditionTimer.seconds() > 2.0){
-
+                if (stopConditionTimer.seconds() > 1.0){
                     turn = false;
                 }
             } else {
                 stopConditionTimer.reset();
             }
+
+        }
+
+        reset();
+    }
+
+    public void openClaw(){
+
+    }
+
+    public void fastTurn(double finalAngle, double speed){
+        //1) Calculate our current position
+        posSystem.resetXY(); // <-- Must have!
+        posSystem.calculatePos();
+
+        reset.resetAuto(false);
+
+//        kinematics.setTurnPID(constants.kpTurning, constants.kiTurning, constants.kdTurning);
+        kinematics.setTurnPID(AutoHub.kp, AutoHub.ki, AutoHub.kd);
+
+        kinematics.turn(finalAngle, speed);
+
+        int targetTopL = robot.topL.getCurrentPosition() + targetClicks[0];
+        int targetBotL = robot.botL.getCurrentPosition() + targetClicks[1];
+        int targetTopR = robot.topR.getCurrentPosition() + targetClicks[2];
+        int targetBotR = robot.botR.getCurrentPosition() + targetClicks[3];
+
+        robot.topL.setTargetPosition(targetTopL);
+        robot.botL.setTargetPosition(targetBotL);
+        robot.topR.setTargetPosition(targetTopR);
+        robot.botR.setTargetPosition(targetBotR);
+
+        robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        boolean turn = true;
+        while (turn && linearOpMode.opModeIsActive()){
+            kinematics.turn(finalAngle, speed);
+
+            if (Math.abs(SwervePod.changeAngle(finalAngle, posSystem.getPositionArr()[4])) < 9){
+                turn = false;
+                robot.topL.setPower(0);
+                robot.botL.setPower(0);
+                robot.topR.setPower(0);
+                robot.botR.setPower(0);
+                robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                robot.topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                stopConditionTimer.reset();
+
+                break;
+            }
+
+            targetClicks = kinematics.getClicks();
+            motorPower = kinematics.getPower();
+
+            powerL = motorPower[0];
+            powerR = motorPower[2];
+
+            targetTopL = robot.topL.getCurrentPosition() + targetClicks[0];
+            targetBotL = robot.botL.getCurrentPosition() + targetClicks[1];
+            targetTopR = robot.topR.getCurrentPosition() + targetClicks[2];
+            targetBotR = robot.botR.getCurrentPosition() + targetClicks[3];
+
+            robot.topL.setTargetPosition(targetTopL);
+            robot.botL.setTargetPosition(targetBotL);
+            robot.topR.setTargetPosition(targetTopR);
+            robot.botR.setTargetPosition(targetBotR);
+
+            robot.topL.setPower(motorPower[0]);
+            robot.botL.setPower(motorPower[1]);
+            robot.topR.setPower(motorPower[2]);
+            robot.botR.setPower(motorPower[3]);
+
+            UpdateTelemetry();
+            deltaMS = loopTime.milliseconds() - prevMS;
+            prevMS = loopTime.milliseconds();
+
+        }
+
+        if (stopConditionTimer.seconds() < 1.0){
+            robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
         reset();

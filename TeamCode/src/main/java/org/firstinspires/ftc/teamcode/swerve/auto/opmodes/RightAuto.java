@@ -133,6 +133,7 @@ public class RightAuto extends LinearOpMode {
             sleep(20);
         }
         dispatch.resetArmEncoderPos();
+        dispatch.resetGPS();
 
         waitForStart();
 

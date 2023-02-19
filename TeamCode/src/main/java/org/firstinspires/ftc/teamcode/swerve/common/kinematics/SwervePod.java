@@ -223,6 +223,7 @@ public class SwervePod {
 
         this.driveType = driveType;
         if (this.driveType == RevisedKinematics.DriveType.SNAP || this.driveType == RevisedKinematics.DriveType.CONSTANT_SPLINE) this.finalAngle = finalAngle;
+        else if (this.driveType == RevisedKinematics.DriveType.LINEAR) finalAngle = (initPole ? fieldCentricCurrentW : clamp(fieldCentricCurrentW + 180));
         else this.finalAngle = (initPole ? currentW : clamp(currentW + 180));
 
         //target position
@@ -245,7 +246,7 @@ public class SwervePod {
         }
 
         if (driveType == RevisedKinematics.DriveType.SNAP) setPID(constants.kpRotation, constants.kiRotation, constants.kdRotation, true);
-        else if (driveType == RevisedKinematics.DriveType.TURN) setPID(constants.kpTranlation, constants.kiTurning, constants.kdTurning, false);
+        else if (driveType == RevisedKinematics.DriveType.TURN) setPID(constants.kpTurning, constants.kiTurning, constants.kdTurning, true);
         else setPID(constants.kpTranlation, constants.kiTranslation, constants.kdTranslation, false);
 
         packet.put("Target Distance", linearMath.getDistance());
@@ -272,7 +273,7 @@ public class SwervePod {
             case CONSTANT_SPLINE:
 
             case LINEAR:
-                robotCentricSetRotClicks(finalAngle);
+                setRotClicks(finalAngle);
 
                 distance = linearMath.distanceRemaining(distanceRan);
                 telemetry.addData("distance remaining" + (side == Side.RIGHT ? "R" : "L"), distance);

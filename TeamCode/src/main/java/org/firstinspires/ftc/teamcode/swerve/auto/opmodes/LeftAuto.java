@@ -136,33 +136,40 @@ public class LeftAuto  extends LinearOpMode {
             sleep(20);
         }
         dispatch.resetArmEncoderPos();
+        dispatch.resetGPS();
 
         waitForStart();
 
-        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.6, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
-        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 28, 0, 0.5, RevisedKinematics.ArmType.MID, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
-        dispatch.Turn(135, 0.3);
-        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 6, 0, 0.5, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
-        dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0, RevisedKinematics.ArmType.HOLD, constants.armServoMid, constants.openClaw);
+//        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.6, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
+//        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 10, 0, 0.5, RevisedKinematics.ArmType.MID, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
+//        dispatch.fastTurn(90, 0.4);
+        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, AutoHub.distance, 0, 0.5, RevisedKinematics.ArmType.MID, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
+        dispatch.Turn(AutoHub.finalTurnAngle, 0.4);
+        dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0, RevisedKinematics.ArmType.HOLD, constants.armServoLow, dispatch.getArmClicks()[4]);
+        dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0, RevisedKinematics.ArmType.HOLD, constants.armServoLow, constants.openClaw);
 
         switch (aprilTagId) {
             case 0: {
+                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 180, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,6,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
+
                 dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, -90, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,4,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,27,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
-                dispatch.Turn(90,0.3);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,30,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
+
+                break;
             }
             case 1: {
-                //nothing else
-                dispatch.Turn(90,0.3);
+                //nothing
+                break;
             }
             case 2: {
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, -90, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,4,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
+                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 180, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,6,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
+
+                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
                 dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,27,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
-                dispatch.Turn(90,0.3);
+
+                break;
             }
         }
 
