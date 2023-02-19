@@ -119,7 +119,7 @@ public class GlobalPosSystem {
         double currentAngleL = positionArr[2];
 
 //        double splineOrientation = 0.0;
-        double baseAngle = (currentAngleL + currentAngleR) / 2.0;
+        double baseAngle = clamp(currentAngleL + currentAngleR) / 2.0;
         baseAngle = Math.toRadians(baseAngle);
         double hypotenuse = (translationalInchesL + translationalInchesR) / 2.0;
 

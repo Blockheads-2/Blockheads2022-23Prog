@@ -23,7 +23,7 @@ public class Constants {
 
     public double CLICKS_PER_BLUE_REV = 537.7; //clicks per rev of motors
     public double WHEEL_DIAMETER = 92 / 25.4; //3.622 inches
-    public double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER; //11.378 inches
+    public double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER; //11.37899 inches
     public double MAX_VELOCITY_DT = 2400.0; // unit is clicks/sec
     public double clickTOLERANCE = 10; //number of clicks or degrees the robot can be off by
 //    public double clickToleranceAuto = 12; //~1/3rd worth of error for translation.  ~2 degrees worth of error for rotation.
@@ -57,7 +57,7 @@ public class Constants {
     //Swerve constants
         //module translation
     public double BLUE_REV_PER_GREEN = 17.0 / 16.0; //assuming other gear isn't messing stuff up, 17 revolutions of the input shaft = 16 revolutions of the wheel
-    public double CLICKS_PER_INCH = (BLUE_REV_PER_GREEN * CLICKS_PER_BLUE_REV * (1.0 / WHEEL_CIRCUMFERENCE)) * (2.0/3.0); //~33.474 clicks per inch
+    public double CLICKS_PER_INCH = (BLUE_REV_PER_GREEN * CLICKS_PER_BLUE_REV * (1.0 / WHEEL_CIRCUMFERENCE)) * (2.0/3.0); //~33.474 clicks per inch with x1.5.  ~50.207 clicks/inch w/o.
     public double INCHES_PER_CLICK = 1.0 / CLICKS_PER_INCH; //~0.029 inches per click
 
         //module rotation

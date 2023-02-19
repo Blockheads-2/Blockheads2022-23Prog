@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.swerve.common.kinematics.RevisedKinematics
 import java.util.ArrayList;
 
 @Autonomous(name = "autoTemplateThingy thingy", group = "Routes")
-//@Disabled
+@Disabled
 public class autoTemplateThingy extends LinearOpMode{
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
