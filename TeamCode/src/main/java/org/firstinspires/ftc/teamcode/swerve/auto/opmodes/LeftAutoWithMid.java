@@ -4,6 +4,7 @@ import android.view.View;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -19,9 +20,9 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous (name = "Right Auto", group = "Drive")
-//@Disabled
-public class RightAuto  extends LinearOpMode {
+@Autonomous (name = "Left Auto With Mid", group = "Drive")
+@Disabled
+public class LeftAutoWithMid  extends LinearOpMode {
 
     OpenCvCamera camera;
     Constants constants = new Constants();
@@ -140,13 +141,23 @@ public class RightAuto  extends LinearOpMode {
 
         waitForStart();
 
+//        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.6, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
+//        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 10, 0, 0.5, RevisedKinematics.ArmType.MID, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
+//        dispatch.fastTurn(90, 0.4);
 
-        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 27, 0, 0.5, RevisedKinematics.ArmType.MID, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
+        //30 or 32
+        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 30, 0, 0.5, RevisedKinematics.ArmType.MID, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
+        dispatch.Turn(45, 0.4);
+        dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0, RevisedKinematics.ArmType.HOLD, constants.armServoLow, dispatch.getArmClicks()[4]);
+        dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0, RevisedKinematics.ArmType.HOLD, constants.armServoLow, constants.openClaw);
 
         switch (aprilTagId) {
             case 0: {
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, -90, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,27,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
+                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 180, 0.6, RevisedKinematics.ArmType.HOLD, constants.armServoLow, constants.openClaw);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,5,0, 0.6, RevisedKinematics.ArmType.HOLD, constants.armServoLow, constants.openClaw);
+
+                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, -90, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.openClaw);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,30,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.openClaw);
 
                 break;
             }
@@ -155,14 +166,18 @@ public class RightAuto  extends LinearOpMode {
                 break;
             }
             case 2: {
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,30,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
+                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 180, 0.6, RevisedKinematics.ArmType.HOLD, constants.armServoLow, constants.openClaw);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,5,0, 0.6, RevisedKinematics.ArmType.HOLD, constants.armServoLow, constants.openClaw);
+
+                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.openClaw);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,27,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.openClaw);
 
                 break;
             }
         }
 
         dispatch.resetToZero();
+        dispatch.fullReset();
         dispatch.resetGPS();
     }
 }

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.swerve.common;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.swerve.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.swerve.common.gps.GlobalPosSystem;
@@ -87,6 +88,7 @@ public class Reset {
         }
     }
 
+    ElapsedTime stopTimer = new ElapsedTime();
     private void updateResetAuto(){
         globalPosSystem.calculatePos();
         int rotateL = -(int)(globalPosSystem.getLeftWheelW() * constants.CLICKS_PER_DEGREE); //total rotation of left module
@@ -121,10 +123,19 @@ public class Reset {
             robot.topL.setPower(powerL);
             robot.botR.setPower(powerR);
             robot.topR.setPower(powerR);
-            resetDone = (Math.abs(robot.topL.getCurrentPosition() - topLTarget) < constants.degreeTOLERANCE &&
-                    Math.abs(robot.botL.getCurrentPosition() - botLTarget) < constants.degreeTOLERANCE &&
-                    Math.abs(robot.topR.getCurrentPosition() - topRTarget) < constants.degreeTOLERANCE &&
-                    Math.abs(robot.botR.getCurrentPosition() - botRTarget) < constants.degreeTOLERANCE);
+            resetDone = (Math.abs(robot.topL.getCurrentPosition() - topLTarget) < 2 &&
+                    Math.abs(robot.botL.getCurrentPosition() - botLTarget) < 2 &&
+                    Math.abs(robot.topR.getCurrentPosition() - topRTarget) < 2 &&
+                    Math.abs(robot.botR.getCurrentPosition() - botRTarget) < 2);
+
+            if (resetDone){
+                if (stopTimer.seconds() > 1.5){
+                    resetDone = true;
+                } else resetDone = false;
+            } else {
+                stopTimer.reset();
+                resetDone = false;
+            }
         }
     }
 
