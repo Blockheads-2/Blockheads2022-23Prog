@@ -140,20 +140,20 @@ public class LeftAuto  extends LinearOpMode {
 
         waitForStart();
 
-        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 27, 0, 0.5, RevisedKinematics.ArmType.MID, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
-
         switch (aprilTagId) {
             case 0: {
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 27, 0, 0.5, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
                 dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, -90, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.openClaw);
                 dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,30,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.openClaw);
 
                 break;
             }
             case 1: {
-                //nothing
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 31, 0, 0.5, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
                 break;
             }
             case 2: {
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 27, 0, 0.5, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
                 dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.openClaw);
                 dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,27,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.openClaw);
 

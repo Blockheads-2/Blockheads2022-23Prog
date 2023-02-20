@@ -139,7 +139,7 @@ public class AutoHub implements Runnable{
     }
 
     public void moveToInit(){
-        robot.claw.setPosition(constants.closeClaw);
+        robot.claw.setPosition(constants.openClaw);
 
         try {
             Thread.sleep(200);

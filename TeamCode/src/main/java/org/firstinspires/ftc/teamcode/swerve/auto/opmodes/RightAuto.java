@@ -141,20 +141,23 @@ public class RightAuto  extends LinearOpMode {
         waitForStart();
 
 
-        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 27, 0, 0.5, RevisedKinematics.ArmType.MID, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
 
         switch (aprilTagId) {
             case 0: {
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 27, 0, 0.5, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
                 dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, -90, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
                 dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,27,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
 
                 break;
             }
             case 1: {
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 31, 0, 0.5, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
+
                 //nothing
                 break;
             }
             case 2: {
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 27, 0, 0.5, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
                 dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
                 dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,30,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
 
@@ -163,6 +166,7 @@ public class RightAuto  extends LinearOpMode {
         }
 
         dispatch.resetToZero();
+        dispatch.fullReset();
         dispatch.resetGPS();
     }
 }
