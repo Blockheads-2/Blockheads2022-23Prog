@@ -75,6 +75,10 @@ public class TrackJoystick {
         else if (gap < 100) gap = 100;
     }
 
+    public static double getPower(double x, double y){
+        return 0;
+    }
+
     public double getGapTime(){
         return gap;
     }
