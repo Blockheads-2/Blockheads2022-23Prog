@@ -181,7 +181,7 @@ public class FinalBaseDrive extends OpMode{
     }
 
     void UpdateTelemetry(){
-        telemetry.addData("Conventional Joystick Power", Math.sqrt(Math.pow(gamepad1.left_stick_x, 2) + Math.pow(gamepad1.left_stick_y, 2)));
+        telemetry.addData("Conventional Joystick Power", Math.sqrt(Math.pow(gamepad1.left_stick_x, 2) + Math.pow(-gamepad1.left_stick_y, 2)));
         telemetry.addData("Init Pole L?", PodL.getPole());
         telemetry.addData("Init Pole R?", PodR.getPole());
 
@@ -200,7 +200,7 @@ public class FinalBaseDrive extends OpMode{
         telemetry.addData("botR AVERAGE velocity", avgVelBotR / loopCount); //ticks per second
         telemetry.addData("avg difference between top velocities", avgDifferenceBetweenTops / loopCount); //ticks per second
         telemetry.addData("avg difference between bottom velocities", avgDifferenceBetweenBottoms / loopCount); //ticks per second
-        
+
         telemetry.addData("Drive Type", kinematics.getDriveType());
 
         telemetry.addData("Delta time loop (sec)", deltaMS / 1000.0);
