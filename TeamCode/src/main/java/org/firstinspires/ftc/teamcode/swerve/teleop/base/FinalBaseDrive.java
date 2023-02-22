@@ -181,7 +181,7 @@ public class FinalBaseDrive extends OpMode{
     }
 
     void UpdateTelemetry(){
-        telemetry.addData("Conventional Joystick Power", Math.sqrt(Math.pow(gamepad1.left_stick_x, 2) + Math.pow(-gamepad1.left_stick_y, 2)));
+        telemetry.addData("Conventional Joystick Power (Left joystick)", Math.sqrt(Math.pow(gamepad1.left_stick_x, 2) + Math.pow(-gamepad1.left_stick_y, 2)));
         telemetry.addData("Init Pole L?", PodL.getPole());
         telemetry.addData("Init Pole R?", PodR.getPole());
 
@@ -191,15 +191,15 @@ public class FinalBaseDrive extends OpMode{
         telemetry.addData("Optimized Right W", PodR.getOptimizedCurrentW());
         telemetry.addData("R", posSystem.getPositionArr()[4]);
 
-        telemetry.addData("Throttle (Left)", PodL.getThrottle());
-        telemetry.addData("Throttle (Right)", PodR.getThrottle());
+//        telemetry.addData("Throttle (Left)", PodL.getThrottle());
+//        telemetry.addData("Throttle (Right)", PodR.getThrottle());
 
         telemetry.addData("topL AVERAGE velocity", avgVelTopL / loopCount); //ticks per second
         telemetry.addData("botL AVERAGE velocity", avgVelBotL / loopCount); //ticks per second
         telemetry.addData("topR AVERAGE velocity", avgVelTopR / loopCount); //ticks per second
         telemetry.addData("botR AVERAGE velocity", avgVelBotR / loopCount); //ticks per second
-        telemetry.addData("avg difference between top velocities", avgDifferenceBetweenTops / loopCount); //ticks per second
-        telemetry.addData("avg difference between bottom velocities", avgDifferenceBetweenBottoms / loopCount); //ticks per second
+        telemetry.addData("avg ratio between top velocities (Left : Right)", avgDifferenceBetweenTops / loopCount); //ticks per second
+        telemetry.addData("avg ratio between bottom velocities (Left : Right)", avgDifferenceBetweenBottoms / loopCount); //ticks per second
 
         telemetry.addData("Drive Type", kinematics.getDriveType());
 
@@ -247,8 +247,8 @@ public class FinalBaseDrive extends OpMode{
         avgVelTopR += robot.topR.getVelocity();
         avgVelBotR += robot.botR.getVelocity();
 
-        avgDifferenceBetweenTops += (avgVelTopL / loopCount) - (avgVelTopR / loopCount);
-        avgDifferenceBetweenBottoms += (avgVelBotL / loopCount) - (avgVelBotR / loopCount);
+        avgDifferenceBetweenTops += (avgVelTopL / loopCount) / (avgVelTopR / loopCount); //ratio of LEFT : RIGHT
+        avgDifferenceBetweenBottoms += (avgVelBotL / loopCount) / (avgVelBotR / loopCount); //ratio of LEFT : RIGHT
     }
 
     void ArmPresets(){
