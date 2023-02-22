@@ -11,16 +11,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.checkerframework.checker.lock.qual.Holding;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.swerve.common.Button;
 import org.firstinspires.ftc.teamcode.swerve.common.Reset;
 import org.firstinspires.ftc.teamcode.swerve.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.swerve.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.swerve.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.swerve.common.kinematics.RevisedKinematics;
 import org.firstinspires.ftc.teamcode.swerve.common.kinematics.SwervePod;
-import org.firstinspires.ftc.teamcode.swerve.common.pid.HeaderControlPID;
 import org.firstinspires.ftc.teamcode.swerve.common.pid.SnapSwerveModulePID;
 import org.firstinspires.ftc.teamcode.swerve.auto.Math.TurnMath;
 
@@ -125,11 +121,11 @@ public class AutoHub implements Runnable{
 
         loopTime.reset();
 
-        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.setWheelRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setWheelRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.setWheelRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setWheelRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.at.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.at.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.abl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -177,6 +173,7 @@ public class AutoHub implements Runnable{
 
         //1) Calculate our current position
         posSystem.resetXY(); // <-- Must have!
+        posSystem.setPoles(podL.getPole(), podR.getPole());
         posSystem.calculatePos();
 
         //2) Determine the distance from our current pos & the target pos.
@@ -224,6 +221,7 @@ public class AutoHub implements Runnable{
 
         double extraTime = (movementType == RevisedKinematics.DriveType.SNAP ? 1.5 : 0.7);
         while (linearOpMode.opModeIsActive() && (targetNotMet || !armTargetMet) && runTime.seconds() < timeoutS + constants.autoStopConditionTime + extraTime){ //have a time based something in case our target is never met.
+            posSystem.setPoles(podL.getPole(), podR.getPole());
             posSystem.calculatePos();
             kinematics.armLogicAuto(armMovementType, getArmClicks(), clawAngle, claw); //determine targets/power for the arm
             // see how long program takes without calling armLogicAuto
@@ -301,6 +299,7 @@ public class AutoHub implements Runnable{
 
         if (kinematics.getDriveType() != RevisedKinematics.DriveType.SNAP){
             while (linearOpMode.opModeIsActive() && (targetNotMet)){
+                posSystem.setPoles(podL.getPole(), podR.getPole());
                 posSystem.calculatePos();
                 kinematics.resetAuto();
                 targetClicks = kinematics.getClicks();
@@ -316,7 +315,7 @@ public class AutoHub implements Runnable{
                 robot.topR.setTargetPosition(targetTopR);
                 robot.botR.setTargetPosition(targetBotR);
 
-                robot.setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.setWheelRunMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                 robot.topL.setPower(motorPower[0]);
                 robot.botL.setPower(motorPower[1]);
@@ -359,6 +358,7 @@ public class AutoHub implements Runnable{
     public void Turn(double finalAngle, double speed){
         //1) Calculate our current position
         posSystem.resetXY(); // <-- Must have!
+        posSystem.setPoles(podL.getPole(), podR.getPole());
         posSystem.calculatePos();
 
         reset.resetAuto(false);
@@ -432,6 +432,7 @@ public class AutoHub implements Runnable{
     public void fastTurn(double finalAngle, double speed){
         //1) Calculate our current position
         posSystem.resetXY(); // <-- Must have!
+        posSystem.setPoles(podL.getPole(), podR.getPole());
         posSystem.calculatePos();
 
         reset.resetAuto(false);

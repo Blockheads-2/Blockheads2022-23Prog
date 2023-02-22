@@ -18,7 +18,6 @@ import org.firstinspires.ftc.teamcode.swerve.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.swerve.common.kinematics.RevisedKinematics;
 import org.firstinspires.ftc.teamcode.swerve.common.kinematics.SwervePod;
 import org.firstinspires.ftc.teamcode.swerve.common.pid.ArmPID;
-import org.firstinspires.ftc.teamcode.swerve.common.pid.HeaderControlPID;
 
 @TeleOp(name="Final BaseDrive", group="Drive")
 //@Disabled
@@ -150,9 +149,9 @@ public class FinalBaseDrive extends OpMode{
         robot.abr.setPower(0.7);
         robot.at.setPower(0.7);
 
-        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.setRunMode(DcMotor.RunMode.RUN_TO_POSITION); //leave it in RUN_TO_POSITION for the entirety
+        robot.setWheelRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setWheelRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.setWheelRunMode(DcMotor.RunMode.RUN_TO_POSITION); //leave it in RUN_TO_POSITION for the entirety
 
         loopTime.reset();
     }
@@ -202,6 +201,13 @@ public class FinalBaseDrive extends OpMode{
         telemetry.addData("avg ratio between bottom velocities (Left : Right)", avgDifferenceBetweenBottoms / loopCount); //ticks per second
 
         telemetry.addData("Drive Type", kinematics.getDriveType());
+
+        telemetry.addData("PIDF Coefficients topL", robot.topL.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
+        telemetry.addData("PIDF Coefficients botL", robot.botL.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
+        telemetry.addData("PIDF Coefficients topR", robot.topR.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
+        telemetry.addData("PIDF Coefficients botR", robot.botR.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
+        telemetry.addData("TopL Target Pos Tolerance", robot.topL.getTargetPositionTolerance());
+        telemetry.addData("TopR Target Pos Tolerance", robot.topR.getTargetPositionTolerance());
 
         telemetry.addData("Delta time loop (sec)", deltaMS / 1000.0);
 

@@ -11,8 +11,6 @@ import org.firstinspires.ftc.teamcode.swerve.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.swerve.common.kinematics.RevisedKinematics;
 import org.firstinspires.ftc.teamcode.swerve.common.kinematics.SwervePod;
 
-import java.util.HashMap;
-
 public class GlobalPosSystem {
 
     Constants constants = new Constants();
@@ -31,6 +29,9 @@ public class GlobalPosSystem {
     Orientation lastOrientation;
     Orientation currentOrientation;
     double currAngle = 0;
+
+    private boolean initPoleL = true;
+    private boolean initPoleR = true;
 
     private boolean updateGPS = true;
     
@@ -68,6 +69,11 @@ public class GlobalPosSystem {
 //        positionArr[2] = clamp(positionArr[2] +  positionArr[4]);
 //        positionArr[3] = clamp(positionArr[3] + positionArr[4]);
         calculateRobot();
+    }
+
+    public void setPoles(boolean initPoleL, boolean initPoleR){
+        this.initPoleL = initPoleL;
+        this.initPoleR = initPoleR;
     }
 
     public void calculateWheel(){
@@ -108,7 +114,7 @@ public class GlobalPosSystem {
         double translationalInchesR = (topR - botR) / 2.0;
         translationalInchesR *= constants.INCHES_PER_CLICK * constants.initDirectionRight;
         distanceTravelledR += translationalInchesR;
-        double currentAngleR = positionArr[3];
+        double currentAngleR = (initPoleR ? positionArr[3] : conventionalClamp(positionArr[3] + 180));
 
         //left
         int topL = motorClicksPos[0] - prevMotorClicks[0]; //change in top left
@@ -116,10 +122,11 @@ public class GlobalPosSystem {
         double translationalInchesL = (topL - botL) / 2.0;
         translationalInchesL *= constants.INCHES_PER_CLICK * constants.initDirectionLeft;
         distanceTravelledL += translationalInchesL;
-        double currentAngleL = positionArr[2];
+        double currentAngleL = (initPoleL ? positionArr[2] : conventionalClamp(positionArr[2] + 180));
 
-//        double splineOrientation = 0.0;
-        double baseAngle = clamp(currentAngleL + currentAngleR) / 2.0;
+        double currentR = toConventional(positionArr[4]);
+        double baseAngle = conventionalClamp((currentAngleL + currentAngleR) / 2);
+        baseAngle = conventionalClamp(currentR + baseAngle);
         baseAngle = Math.toRadians(baseAngle);
         double hypotenuse = (translationalInchesL + translationalInchesR) / 2.0;
 
@@ -257,8 +264,8 @@ public class GlobalPosSystem {
         positionArr[2]=0;
         positionArr[3]=0;
 
-        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.setWheelRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setWheelRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         motorClicksPos[0] = robot.topL.getCurrentPosition();
         motorClicksPos[1] = robot.botL.getCurrentPosition();
@@ -313,6 +320,29 @@ public class GlobalPosSystem {
         } else if (degrees > 180){
             degrees = -180 + (Math.abs(degrees) - 180);
         }
+        return degrees;
+    }
+
+    public static double conventionalClamp(double degrees){
+        if (Math.abs(degrees) >= 360) degrees %= 360;
+
+        if (degrees < 0){
+            degrees = 360 - Math.abs(degrees);
+        }
+
+        return degrees;
+    }
+
+    public static double toConventional(double degrees){
+        if (Math.abs(degrees) >= 360) degrees %= 360;
+
+        if (degrees >= 0) {
+            degrees += 90;
+            degrees = 180 - degrees;
+        } else if (degrees < 0){
+            degrees = Math.abs(degrees) + 90;
+        }
+
         return degrees;
     }
 

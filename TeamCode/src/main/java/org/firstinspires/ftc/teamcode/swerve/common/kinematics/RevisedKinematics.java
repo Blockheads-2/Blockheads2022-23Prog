@@ -96,6 +96,7 @@ public class RevisedKinematics {
         this.lt = lt;
 
         //telling the pods where it is
+        posSystem.setPoles(PodL.getPole(), PodR.getPole());
         posSystem.calculatePos();
         PodL.setCurrents(posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
         PodR.setCurrents(posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);
@@ -218,6 +219,7 @@ public class RevisedKinematics {
     public void turn(double finalAngle, double speed){
         this.finalAngle = finalAngle;
 
+        posSystem.setPoles(PodL.getPole(), PodR.getPole());
         posSystem.calculatePos();
         PodL.setCurrents(posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
         PodR.setCurrents(posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);

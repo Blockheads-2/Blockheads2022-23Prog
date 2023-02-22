@@ -45,8 +45,8 @@ public class TestControllerOpMode extends OpMode{
 
     @Override
     public void init_loop() { //Loop between "init" and "start"
-        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.setWheelRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setWheelRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     @Override

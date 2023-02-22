@@ -137,8 +137,8 @@ public class HardwareDrive
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
-        setRunMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        setRunMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        setWheelRunMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        setWheelRunMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
     }
 
     public void setMotorPower(double power){
@@ -161,7 +161,7 @@ public class HardwareDrive
         }
     }
 
-    public void setRunMode(DcMotorEx.RunMode runState){
+    public void setWheelRunMode(DcMotorEx.RunMode runState){
         botL.setMode(runState);
         topL.setMode(runState);
         topR.setMode(runState);
