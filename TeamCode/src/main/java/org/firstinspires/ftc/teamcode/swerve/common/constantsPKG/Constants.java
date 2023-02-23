@@ -149,4 +149,12 @@ public class Constants {
     public double DISTANCE_BETWEEN_MODULE_AND_CENTER = 3.405512; //3.405512
     public double horizontalDistanceOdo = 6.25;
     public double midDistanceOdo = 3.0;
+
+
+    //Arm Movement David
+    public double m1IA = 164.2;
+    public double m2IA = 6.088534;
+    public double m1ACPC = 0.0681676;
+    public double m2ACPC = 0.163297;
+
 }
