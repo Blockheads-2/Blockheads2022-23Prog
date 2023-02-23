@@ -197,8 +197,8 @@ public class FinalBaseDrive extends OpMode{
         telemetry.addData("botL AVERAGE velocity", avgVelBotL / loopCount); //ticks per second
         telemetry.addData("topR AVERAGE velocity", avgVelTopR / loopCount); //ticks per second
         telemetry.addData("botR AVERAGE velocity", avgVelBotR / loopCount); //ticks per second
-        telemetry.addData("avg ratio between top velocities (Left : Right)", avgDifferenceBetweenTops / loopCount); //ticks per second
-        telemetry.addData("avg ratio between bottom velocities (Left : Right)", avgDifferenceBetweenBottoms / loopCount); //ticks per second
+        telemetry.addData("avg ratio between top velocities (Left : Right)", (avgVelTopL / loopCount) / (avgVelTopR / loopCount)); //ticks per second
+        telemetry.addData("avg ratio between bottom velocities (Left : Right)", (avgVelBotL / loopCount) / (avgVelBotR / loopCount)); //ticks per second
 
         telemetry.addData("Drive Type", kinematics.getDriveType());
 
@@ -252,9 +252,6 @@ public class FinalBaseDrive extends OpMode{
         avgVelBotL += robot.botL.getVelocity();
         avgVelTopR += robot.topR.getVelocity();
         avgVelBotR += robot.botR.getVelocity();
-
-        avgDifferenceBetweenTops += (avgVelTopL / loopCount) / (avgVelTopR / loopCount); //ratio of LEFT : RIGHT
-        avgDifferenceBetweenBottoms += (avgVelBotL / loopCount) / (avgVelBotR / loopCount); //ratio of LEFT : RIGHT
     }
 
     void ArmPresets(){
