@@ -549,10 +549,7 @@ public class DavidTeleOp extends OpMode{
 
         double currentHeight = 420 * Math.sin(angle1) + 406 * Math.sin(angle2);
 
-        if (y > 0)
-            currentPositionAB += 200;
-        if (y < 0)
-            currentPositionAB -= 200;
+        currentPositionAB += 200 * y;
 
         robot.abl.setTargetPosition(currentPositionAB);
         robot.abr.setTargetPosition(currentPositionAB);
@@ -560,8 +557,8 @@ public class DavidTeleOp extends OpMode{
         robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        robot.abl.setPower(y);
-        robot.abr.setPower(y);
+        robot.abl.setPower(1);
+        robot.abr.setPower(1);
 
         //Calculations for Top Arm
         double newAngle1 = constants.m1IA + currentPositionAB * constants.m1ACPC;
@@ -571,7 +568,7 @@ public class DavidTeleOp extends OpMode{
 
         robot.at.setTargetPosition(currentPositionAT + (int)numClicksAdded);
         robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.at.setPower(y * 30 / 76);
+        robot.at.setPower((30.0/76.0));
     }
 
     void raiseArm (){
