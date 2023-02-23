@@ -10,7 +10,7 @@ public class Constants {
     public double LOAD_ON = 0.6; //assumption
     public double RPM = 1150 * LOAD_ON; //690.  Not very accurate so don't rely on this number.
     public double RPS = RPM / 60.0; //11.5 ish motor revolutions per second, with load
-    public double POWER_LIMITER = 1.0; //0.8 : 100
+    public double POWER_LIMITER = 0.8; //0.8 : 100
     public double RIGHT_SIDE_LIMITER = 0.8; //right side is a heavier than left side.  Heavier = faster cuz more normal force.
     public double RIGHT_SIDE_LIMITER_AUTO = 0.7; //0.7
     public int SPIN_CLICK_FACTOR = 140;
@@ -18,7 +18,7 @@ public class Constants {
     //30~70 clicks per loop at a spin click factor of 140.
     //95 clicks per loop, 30 clicks per second at a spin factor of 300 (right trigger used)
 
-    public double accelTime = 1.5; //outputs 100% of the calculated power within ~1 second
+    public double accelTime = 2; //outputs 100% of the calculated power within ~1 second
     public double accelTimeAuto = 2; //outputs 100% of the calculated power within ~2.5 seconds
 
     public double CLICKS_PER_BLUE_REV = 537.7; //clicks per rev of motors

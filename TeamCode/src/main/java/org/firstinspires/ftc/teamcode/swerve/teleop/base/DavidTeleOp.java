@@ -94,7 +94,7 @@ public class DavidTeleOp extends OpMode{
         reset = new Reset(robot, posSystem);
         kinematics.grabTelemetry(telemetry);
 
-        moveArmToInit();
+//        moveArmToInit();
 
         telemetry.addData("Say", "Hello Driver");
 
@@ -173,8 +173,8 @@ public class DavidTeleOp extends OpMode{
 
     void UpdatePlayer2(){
         ClawControl();
-        ArmPresets();
-        UltraMegaArmPresets();
+//        ArmPresets();
+//        UltraMegaArmPresets();
         horizontalArm();
     }
 
