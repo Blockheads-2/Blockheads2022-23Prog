@@ -510,7 +510,7 @@ public class DavidTeleOp extends OpMode{
         int currentPositionAT = robot.at.getCurrentPosition();
 
         double angle1 = constants.m1IA + currentPositionAB * constants.m1ACPC;
-        double angle2 = constants.m2IA + currentPositionAB * constants.m2ACPC;
+        double angle2 = (constants.m2IA + currentPositionAB * constants.m2ACPC) - 90 - (90 - angle1);
 
         double currentHeight = 420 * Math.sin(angle1) + 406 * Math.sin(angle2);
 
