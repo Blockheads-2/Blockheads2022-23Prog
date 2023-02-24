@@ -152,9 +152,10 @@ public class Constants {
 
 
     //Arm Movement David
-    public double m1IA = 164.2;
+    public double m1IA = 136.932953;
     public double m2IA = 6.088534;
     public double m1ACPC = 0.0681676;
     public double m2ACPC = 0.163297;
+    public double maxClicks = 1065;
 
 }
