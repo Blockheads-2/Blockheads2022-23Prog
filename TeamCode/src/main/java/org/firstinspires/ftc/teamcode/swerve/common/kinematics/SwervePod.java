@@ -37,6 +37,7 @@ public class SwervePod {
     private double currentR = 0;
     private double optimizedCurrentW = 0;
     private double fieldCentricCurrentW = 0;
+    private double robotCentricCurrentW = 0;
     public double controlHeaderReference = 0;
     private boolean initPole = true;
 
@@ -48,6 +49,8 @@ public class SwervePod {
     private double power = 0;
     public double spinClicksTarget = 0;
     public double rotClicksTarget = 0;
+
+    public boolean slantedCycle = false;
 
     //auto
     private double distance = 0;
@@ -91,6 +94,7 @@ public class SwervePod {
         this.currentW = currentW;
         this.currentR = currentR;
         this.fieldCentricCurrentW = clamp(this.currentW + this.currentR);
+        this.robotCentricCurrentW = currentW;
 //        this.currentW = clamp(this.currentW + this.currentR);
     }
 
@@ -137,17 +141,25 @@ public class SwervePod {
 //            driveType = RevisedKinematics.DriveType.TURN;
             return driveType;
         } else if (spline){
-//            if (specialSpliningCondition){
-//                int offset = (int)((rightStickX < 0 ? -15 : 15) * constants.CLICKS_PER_DEGREE);
-//                int currentWClicks = (int)(this.fieldCentricCurrentW * constants.CLICKS_PER_DEGREE);
-//                if (this.wheelOrientation == GlobalPosSystem.WheelOrientation.FRONT) forceSetRotClicks(currentWClicks + offset);
-//                 else forceSetRotClicks(currentWClicks - offset);
-//            }
-//            this.spinClicksTarget = (power * constants.SPIN_CLICK_FACTOR * 2);
+            this.spinClicksTarget = (power * constants.SPIN_CLICK_FACTOR * 2);
 
             double throttle = 1.0 - Math.sin(Math.abs(rightStickX));
             if (rightStickX < 0 && side == Side.LEFT) this.throttle = throttle;
             else if (rightStickX >= 0 && side == Side.RIGHT) this.throttle = throttle;
+
+            if (specialSpliningCondition){
+                int offset = rightStickX < 0 ? -constants.slantedOrientation : constants.slantedOrientation;
+                double target = closerAngle(this.robotCentricCurrentW, 90, -90);
+                target = this.wheelOrientation == GlobalPosSystem.WheelOrientation.FRONT ? target + offset : target - offset;
+                target = clamp(target);
+                robotCentricSetRotClicks(target);
+
+                slantedCycle = true;
+
+                this.throttle = 1;
+            } else {
+                slantedCycle = false;
+            }
 
 //            controlHeaderReference = currentR;
 //            controlHeader.reset(distanceTravelledL, distanceTravelledR);
@@ -188,19 +200,28 @@ public class SwervePod {
         if (initPole){
             direction = initDirection;
             optimizedCurrentW = fieldCentricCurrentW;
-//            robotCentricCurrentW = clamp(optimizedCurrentW - currentR);
+            robotCentricCurrentW = this.currentW;
         } else{
             direction = -initDirection;
             optimizedCurrentW = clamp(fieldCentricCurrentW + 180);
-//            this.currentW = clamp(this.currentW + 180);
-//            robotCentricCurrentW = clamp(optimizedCurrentW - currentR);
+            robotCentricCurrentW = clamp(this.currentW + 180);
         }
 
         return turnAmount;
     }
 
+    public double closerAngle(double current, double t1, double t2){
+        double firstDelta = changeAngle(t1, current);
+        double secondDelta = changeAngle(t2, current);
+        return Math.abs(firstDelta) >= Math.abs(secondDelta) ? t1 : t2;
+    }
+
     public boolean getPole(){
         return initPole;
+    }
+
+    public boolean getSlantedCycle(){
+        return slantedCycle;
     }
 
     public double getOptimizedCurrentW(){return optimizedCurrentW;} //can get rid of optimizedCurrentW and robotCentricW if initPole() thing works
@@ -264,7 +285,7 @@ public class SwervePod {
         this.power = power;
     }
 
-    public void autoLogic(double distanceRan, double distanceTravelledL, double distanceTravelledR, boolean specialSpliningCondition){
+    public void autoLogic(double distanceRan, double distanceTravelledL, double distanceTravelledR){
         telemetry.addData("acceleration?", accelerator.actuallyAccelerate);
         telemetry.addData("Acceleration factor", accelerator.accelerationFactor);
 
@@ -436,6 +457,8 @@ public class SwervePod {
 //        power *= throttle;
         spinClicksTarget = Math.abs(spinClicksTarget) * direction * throttle;
 
+        if (Math.abs(rotClicksTarget) > Math.abs(spinClicksTarget)) power = 1;
+
         output[0] = spinClicksTarget;
         output[1] = rotClicksTarget;
         output[2] = power;
@@ -486,4 +509,5 @@ public class SwervePod {
     public double getThrottle(){
         return throttle;
     }
+
 }

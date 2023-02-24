@@ -31,7 +31,6 @@ public class Constants {
     public double degreeTOLERANCE = 3;
     public double allignmentTolerance = 13;
 
-    public double pointedWheels = 35;
 
 
     //control hub to arm: 16 cm
@@ -73,6 +72,9 @@ public class Constants {
     public int initDirectionLeft = -1;
 
     public double autoStopConditionTime = 0.5;
+
+    public int pointedWheelsTolerance = 35;
+    public int slantedOrientation = pointedWheelsTolerance - 20;
 
 
     /* starting:

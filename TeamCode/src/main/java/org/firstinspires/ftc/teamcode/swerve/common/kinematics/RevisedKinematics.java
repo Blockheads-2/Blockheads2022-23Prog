@@ -119,7 +119,7 @@ public class RevisedKinematics {
         boolean shouldTurn = (lx == 0 && ly == 0) && (rx != 0); //possible problem: the robot will "jitter" if its turning and then becomes not eligible for turning (may have to increase tolerance?)
         boolean shouldSpline = (lx != 0 || ly != 0) && (rx != 0);
         boolean eligibleForTurning = posSystem.eligibleForTurning(PodL.getPole(), PodR.getPole());
-        boolean specialSpliningCondition = posSystem.specialSpliningCondition(PodL.getPole(), PodR.getPole());
+        boolean specialSpliningCondition = posSystem.specialSpliningCondition(PodL.getPole(), PodR.getPole(), PodL.getSlantedCycle());
         telemetry.addData("Special Splining Condition?", specialSpliningCondition);
 
         //determining spin clicks and spin power
@@ -187,9 +187,9 @@ public class RevisedKinematics {
 //        posSystem.setOptimizedCurrentW(PodR.optimizedCurrentW, PodL.optimizedCurrentW);
 
         //4) determining distance travel amount and power based on that
-        PodL.autoLogic(posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledR(), posSystem.specialSpliningCondition(PodL.getPole(), PodR.getPole()));
+        PodL.autoLogic(posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledR());
         //for some reason, we negate the negative clicks for the left topL encoder
-        PodR.autoLogic(posSystem.getDistanceTravelledR(), posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledR(), posSystem.specialSpliningCondition(PodL.getPole(), PodR.getPole()));
+        PodR.autoLogic(posSystem.getDistanceTravelledR(), posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledR());
 
         outputL = PodL.getOutputAuto();
         outputR = PodR.getOutputAuto();

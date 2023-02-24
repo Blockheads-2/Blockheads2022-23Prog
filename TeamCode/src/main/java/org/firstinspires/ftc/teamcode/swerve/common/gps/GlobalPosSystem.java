@@ -221,17 +221,29 @@ public class GlobalPosSystem {
                 isAlligned(initPoleL, initPoleR));
     }
 
-    public boolean specialSpliningCondition(boolean initPoleL, boolean initPoleR){
+    public boolean specialSpliningCondition(boolean initPoleL, boolean initPoleR, boolean specialSpliningCycle){
         double robotCentricCurrentL = positionArr[2];
         double robotCentricCurrentR = positionArr[3];
         if (!initPoleL) robotCentricCurrentL = clamp(positionArr[2] + 180);
         if (!initPoleR) robotCentricCurrentR = clamp(positionArr[3] + 180);
 
-        return ((Math.abs(robotCentricCurrentL - 90) <= 35 && Math.abs(robotCentricCurrentR - 90) <= constants.pointedWheels) ||
-                (Math.abs(robotCentricCurrentL + 90) <= 35 && Math.abs(robotCentricCurrentR + 90) <= constants.pointedWheels));
+        if (specialSpliningCycle){ //"unslanting" the slanted orientation
+            double theoreticalCurrentL = clamp(0 - positionArr[4]);
+            double theoreticalCurrentR = clamp(0 - positionArr[4]);
+
+            return specialSpliningCondition(theoreticalCurrentL, theoreticalCurrentR); //if the unslanted position is still a special splining condition, then keep returning true.  Otherwise, return false.
+        } else {
+            return ((Math.abs(robotCentricCurrentL - 90) <= constants.pointedWheelsTolerance && Math.abs(robotCentricCurrentR - 90) <= constants.pointedWheelsTolerance) ||
+                    (Math.abs(robotCentricCurrentL + 90) <= constants.pointedWheelsTolerance && Math.abs(robotCentricCurrentR + 90) <= constants.pointedWheelsTolerance));
+        }
     }
 
-    public boolean isAlligned(double optimizedCurrentWL, double optimizedCurrentWR){
+    public boolean specialSpliningCondition(double currL, double currR) {
+        return ((Math.abs(currL - 90) <= constants.pointedWheelsTolerance && Math.abs(currR - 90) <= constants.pointedWheelsTolerance) ||
+                (Math.abs(currL + 90) <= constants.pointedWheelsTolerance && Math.abs(currR + 90) <= constants.pointedWheelsTolerance));
+    }
+
+        public boolean isAlligned(double optimizedCurrentWL, double optimizedCurrentWR){
         double error = SwervePod.changeAngle(optimizedCurrentWL, optimizedCurrentWR);
 
         return (Math.abs(error) <= constants.allignmentTolerance);
@@ -241,11 +253,6 @@ public class GlobalPosSystem {
         return (Math.abs(robotCentricCurrentL) <= constants.allignmentTolerance &&
                 Math.abs(robotCentricCurrentR) <= constants.allignmentTolerance &&
                 isAlligned(optimizedCurrentWL, optimizedCurrentWR));
-    }
-
-    public boolean specialSpliningCondition(double robotCentricCurrentL, double robotCentricCurrentR){
-        return ((Math.abs(robotCentricCurrentL - 90) <= 15 && Math.abs(robotCentricCurrentR - 90) <= 15) ||
-                (Math.abs(robotCentricCurrentL + 90) <= 15 && Math.abs(robotCentricCurrentR + 90) <= 15));
     }
 
     public void resetHeader(){
