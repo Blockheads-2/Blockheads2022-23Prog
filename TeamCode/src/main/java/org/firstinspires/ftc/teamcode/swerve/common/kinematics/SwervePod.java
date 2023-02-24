@@ -144,8 +144,13 @@ public class SwervePod {
             this.spinClicksTarget = (power * constants.SPIN_CLICK_FACTOR * 2);
 
             double throttle = 1.0 - Math.sin(Math.abs(rightStickX));
-            if (rightStickX < 0 && side == Side.LEFT) this.throttle = throttle;
-            else if (rightStickX >= 0 && side == Side.RIGHT) this.throttle = throttle;
+            if (Math.abs(currentR) <= 90){
+                if (rightStickX < 0 && side == Side.LEFT) this.throttle = throttle;
+                else if (rightStickX >= 0 && side == Side.RIGHT) this.throttle = throttle;
+            } else {
+                if (rightStickX < 0 && side == Side.RIGHT) this.throttle = throttle;
+                else if (rightStickX >= 0 && side == Side.LEFT) this.throttle = throttle;
+            }
 
             if (specialSpliningCondition){
                 int offset = rightStickX < 0 ? -constants.slantedOrientation : constants.slantedOrientation;
