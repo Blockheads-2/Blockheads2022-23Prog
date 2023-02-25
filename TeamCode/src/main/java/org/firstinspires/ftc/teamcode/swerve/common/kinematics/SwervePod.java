@@ -152,19 +152,19 @@ public class SwervePod {
                 else if (rightStickX >= 0 && side == Side.LEFT) this.throttle = throttle;
             }
 
-            if (specialSpliningCondition){
-                int offset = rightStickX < 0 ? -constants.slantedOrientation : constants.slantedOrientation;
-                double target = closerAngle(this.robotCentricCurrentW, 90, -90);
-                target = this.wheelOrientation == GlobalPosSystem.WheelOrientation.FRONT ? target + offset : target - offset;
-                target = clamp(target);
-                robotCentricSetRotClicks(target);
-
-                slantedCycle = true;
-
-                this.throttle = 1;
-            } else {
-                slantedCycle = false;
-            }
+//            if (specialSpliningCondition){
+//                int offset = rightStickX < 0 ? -constants.slantedOrientation : constants.slantedOrientation;
+//                double target = closerAngle(this.robotCentricCurrentW, 90, -90);
+//                target = this.wheelOrientation == GlobalPosSystem.WheelOrientation.FRONT ? target + offset : target - offset;
+//                target = clamp(target);
+//                robotCentricSetRotClicks(target);
+//
+//                slantedCycle = true;
+//
+//                this.throttle = 1;
+//            } else {
+//                slantedCycle = false;
+//            }
 
 //            controlHeaderReference = currentR;
 //            controlHeader.reset(distanceTravelledL, distanceTravelledR);

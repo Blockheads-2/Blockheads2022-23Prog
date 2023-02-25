@@ -9,6 +9,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.swerve.common.Reset;
@@ -41,9 +42,15 @@ public class AutoHub implements Runnable{
     public static double finalTurnAngle = 0;
     public static double finalSnapAngle = 0;
 
-    public static double kp = 0;
+    public static double kp = 0.03;
     public static double ki = 0;
     public static double kd = 0;
+
+    public static double internalKP = 10;
+    public static double internalKI = 0.049988;
+    public static double internalKD = 0;
+    public static double internalKF = 0;
+
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
     ElapsedTime loopTime = new ElapsedTime();
@@ -123,6 +130,18 @@ public class AutoHub implements Runnable{
 
         robot.setWheelRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.setWheelRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        PIDFCoefficients coef = new PIDFCoefficients(internalKP, internalKI, internalKD, internalKF);
+        robot.topL.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, coef);
+        robot.botL.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, coef);
+        robot.topR.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, coef);
+        robot.botR.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, coef);
+
+        robot.topL.setPositionPIDFCoefficients(internalKP);
+        robot.botL.setPositionPIDFCoefficients(internalKP);
+        robot.topR.setPositionPIDFCoefficients(internalKP);
+        robot.botR.setPositionPIDFCoefficients(internalKP);
+
 
         robot.setWheelRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.setWheelRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -392,6 +411,7 @@ public class AutoHub implements Runnable{
 
             powerL = motorPower[0];
             powerR = motorPower[2];
+
 
             targetTopL = robot.topL.getCurrentPosition() + targetClicks[0];
             targetBotL = robot.botL.getCurrentPosition() + targetClicks[1];
