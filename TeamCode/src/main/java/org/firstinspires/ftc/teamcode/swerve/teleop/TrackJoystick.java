@@ -2,6 +2,10 @@ package org.firstinspires.ftc.teamcode.swerve.teleop;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.swerve.common.kinematics.SwervePod;
+
+import java.util.stream.IntStream;
+
 public class TrackJoystick {
     ElapsedTime timer = new ElapsedTime();
     double prevTime = 0;
@@ -16,13 +20,14 @@ public class TrackJoystick {
     }
 
     public void trackJoystickL(double lx, double ly){
+        currentJoystickL = Math.toDegrees(Math.atan2(lx, ly));
+        if (lx == 0 && ly == 0) currentJoystickL = 0;
+        else if (lx==0 && ly < 0) currentJoystickL=180;
+
         if(timer.milliseconds() - prevTime > gap){
             prevJoystickL = currentJoystickL;
             prevTime = timer.milliseconds();
         }
-        currentJoystickL = Math.toDegrees(Math.atan2(lx, ly));
-        if (lx == 0 && ly == 0) currentJoystickL = 0;
-        else if (lx==0 && ly < 0) currentJoystickL=180;
     }
 
     public double getCurrentJoystickL(){
@@ -34,33 +39,34 @@ public class TrackJoystick {
     }
 
     public double getChange(){
-        double curr2 = (currentJoystickL < 0 ? currentJoystickL + 360 : currentJoystickL);
-        double prev2 = (prevJoystickL < 0 ? prevJoystickL + 360 : prevJoystickL);
+        return SwervePod.changeAngle(currentJoystickL, prevJoystickL);
 
-        double turnAmount = currentJoystickL - prevJoystickL;
-        double turnAmount2 = curr2 - prev2;
-
-        if (Math.abs(turnAmount) < Math.abs(turnAmount2)){
-            return turnAmount;
-
-        } else{
-            return turnAmount2;
-        }
     }
 
     public double getAbsoluteChange(){
-        double curr2 = (currentJoystickL < 0 ? currentJoystickL + 360 : currentJoystickL);
-        double prev2 = (prevJoystickL < 0 ? prevJoystickL + 360 : prevJoystickL);
+        return Math.abs(SwervePod.changeAngle(currentJoystickL, prevJoystickL));
+    }
 
-        double turnAmount = currentJoystickL - prevJoystickL;
-        double turnAmount2 = curr2 - prev2;
-
-        if (Math.abs(turnAmount) < Math.abs(turnAmount2)){
-            return Math.abs(turnAmount);
-
-        } else{
-            return Math.abs(turnAmount2);
+    public double getAngle(double x, double y){
+        double target = Math.toDegrees(Math.atan2(x, y));
+        if (target >= 0) {
+            for (int i = 0; i < 2; i++) {
+                if (target >= ((i * 90) - 10) && target <= ((i * 90) + 10)) {
+                    target = i * 90;
+                }
+            }
         }
+        else if (target < 0){
+            for (int i = 0; i > -2; i--) {
+                if (target >= ((i * 90) - 10) && target <= ((i * 90) + 10)) {
+                    target = i * 90;
+                }
+            }
+        }
+        if (x == 0 && y == 0) target = 0;
+        else if (x==0 && y < 0) target=180;
+
+        return target;
     }
 
     public void changeGapTime(int ms){

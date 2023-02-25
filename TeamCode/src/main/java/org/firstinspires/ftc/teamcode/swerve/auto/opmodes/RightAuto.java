@@ -1,30 +1,32 @@
-package org.firstinspires.ftc.teamcode.mecanum.auto.opmodes;
+package org.firstinspires.ftc.teamcode.swerve.auto.opmodes;
 
+import android.view.View;
+
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.swerve.common.AprilTagDetectionPipeline;
+import org.firstinspires.ftc.teamcode.swerve.common.constantsPKG.Constants;
+import org.firstinspires.ftc.teamcode.swerve.common.gps.GlobalPosSystem;
+import org.firstinspires.ftc.teamcode.swerve.common.kinematics.RevisedKinematics;
+import org.firstinspires.ftc.teamcode.swerve.auto.opmodes.AutoHub;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.firstinspires.ftc.teamcode.mecanum.auto.AutoHub;
-
-import org.firstinspires.ftc.teamcode.swerve.common.HardwareDrive;
-import org.firstinspires.ftc.teamcode.mecanum.common.Constants;
-
 
 import java.util.ArrayList;
 
-@Autonomous(name = "Auto Paths", group = "Routes")
+@Autonomous (name = "Right Auto", group = "Drive")
 //@Disabled
-public class AutoPaths extends LinearOpMode{
+public class RightAuto  extends LinearOpMode {
 
     OpenCvCamera camera;
-    AutoHub dispatch;
-    HardwareDrive robot = new HardwareDrive();
     Constants constants = new Constants();
+    AutoHub dispatch;
+    GlobalPosSystem posSystem;
 
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -39,6 +41,9 @@ public class AutoPaths extends LinearOpMode{
     double cx = 402.145;
     double cy = 221.506;
 
+    boolean open = true;
+    boolean close = false;
+
     // UNITS ARE METERS
     double tagsize = 0.045;
 
@@ -50,21 +55,26 @@ public class AutoPaths extends LinearOpMode{
     final int THRESHOLD_NUM_FRAMES_NO_DETECTION_BEFORE_LOW_DECIMATION = 4;
     int aprilTagId;
 
-    @Override
-    public void runOpMode()
-    {
-        dispatch = new AutoHub(this);
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cameraMonitorViewId"), cameraMonitorViewId);
-        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+    View relativeLayout;
 
+    @Override
+    public void runOpMode() throws InterruptedException {
+        dispatch = new AutoHub(this);
+
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
         camera.setPipeline(aprilTagDetectionPipeline);
+
+        telemetry.addData("Status", "Waiting on Camera");
+        telemetry.update();
+
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
             {
-                camera.startStreaming(1280,720, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(1280,720, OpenCvCameraRotation.UPSIDE_DOWN);
             }
 
             @Override
@@ -77,6 +87,8 @@ public class AutoPaths extends LinearOpMode{
 
         while (!opModeIsActive())
         {
+            dispatch.moveToInit();
+
             // Calling getDetectionsUpdate() will only return an object if there was a new frame
             // processed since the last time we called it. Otherwise, it will return null. This
             // enables us to only run logic when there has been a new frame, as opposed to the
@@ -106,64 +118,55 @@ public class AutoPaths extends LinearOpMode{
                 else
                 {
                     numFramesWithoutDetection = 0;
-
                     // If the target is within 1 meter, turn on high decimation to
                     // increase the frame rate
                     if(detections.get(0).pose.z < THRESHOLD_HIGH_DECIMATION_RANGE_METERS)
                     {
                         aprilTagDetectionPipeline.setDecimation(DECIMATION_HIGH);
                     }
-
                     for(AprilTagDetection detection : detections)
                     {
                         aprilTagId = detection.id;
-
                         telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
-//                        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
-//                        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
-//                        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
-//                        telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
-//                        telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
-//                        telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
-
                     }
-
-
                 }
-
                 telemetry.update();
             }
 
             sleep(20);
         }
+        dispatch.resetArmEncoderPos();
+        dispatch.resetGPS();
 
         waitForStart();
-        //telemetry.setMsTransmissionInterval(50);
+
+
+
         switch (aprilTagId) {
             case 0: {
-                //stick code for one dot here
-                dispatch.constantHeading(0.5,0,3,0.001,0,0.0003);
-                //dispatch.turnAbsPID(-90, 2);
-                dispatch.constantHeading(0.5,-24,0,0.001,0,0.0003);
-                //dispatch.turnAbsPID(90,2);
-                dispatch.constantHeading(0.5,0,24,0.001,0,0.0003);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 27, 0, 0.5, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
+                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, -90, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,27,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
+
                 break;
             }
             case 1: {
-                //stick code for two dots here
-                dispatch.constantHeading(0.5,0,27,0.001,0,0.0003);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 31, 0, 0.5, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
+
+                //nothing
                 break;
             }
             case 2: {
-                //stick code for three dots here
-                dispatch.constantHeading(0.5,0,3,0.001,0,0.0003);
-                //dispatch.turnAbsPID(-90, 2);
-                dispatch.constantHeading(0.5,24,0,0.001,0,0.0003);
-                //dispatch.turnAbsPID(90,2);
-                dispatch.constantHeading(0.5,0,24,0.001,0,0.0003);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 27, 0, 0.5, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
+                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,30,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.closeClaw);
+
                 break;
             }
         }
-    }
 
+        dispatch.resetToZero();
+        dispatch.fullReset();
+        dispatch.resetGPS();
+    }
 }

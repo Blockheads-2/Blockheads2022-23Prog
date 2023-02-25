@@ -2,49 +2,87 @@ package org.firstinspires.ftc.teamcode.swerve.auto.opmodes.testing;
 
 import android.view.View;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.common.HardwareDrive;
-import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
-import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
-import org.firstinspires.ftc.teamcode.common.kinematics.drive.AutoKinematics;
-import org.firstinspires.ftc.teamcode.swerve.auto.opmodes.AutoHubJR;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.swerve.common.AprilTagDetectionPipeline;
+import org.firstinspires.ftc.teamcode.swerve.common.constantsPKG.Constants;
+import org.firstinspires.ftc.teamcode.swerve.common.gps.GlobalPosSystem;
+import org.firstinspires.ftc.teamcode.swerve.common.kinematics.RevisedKinematics;
+import org.firstinspires.ftc.teamcode.swerve.auto.opmodes.AutoHub;
+import org.opencv.objdetect.HOGDescriptor;
+import org.openftc.apriltag.AprilTagDetection;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+
+import java.util.ArrayList;
 
 @Autonomous (name = "Auto Test", group = "Drive")
+@Disabled
 public class AutoTest extends LinearOpMode {
 
-    HardwareDrive robot = new HardwareDrive();
-    HardwareMap hardwareMap;
+    OpenCvCamera camera;
     Constants constants = new Constants();
+    AutoHub dispatch;
     GlobalPosSystem posSystem;
-    AutoHubJR dispatch;
 
     View relativeLayout;
 
-
     @Override
     public void runOpMode() throws InterruptedException {
+        dispatch = new AutoHub(this);
+        sleep(20);
 
-        robot.init(hardwareMap);
-        posSystem = new GlobalPosSystem(robot);
-        dispatch = new AutoHubJR(this);
+        if (!opModeIsActive()) dispatch.moveToInit();
 
-        robot.topL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.botL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.topR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.botR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        while (!opModeIsActive()) { //checks if play hasn't been pressed (in init stage)
 
-        robot.topL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.botL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.topR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.botR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+        dispatch.resetArmEncoderPos();
 
         waitForStart();
 
-        dispatch.Move(AutoKinematics.DriveType.LINEAR, 10, 10, 0, 1);
+        dispatch.resetToZero();
+
+//        Thread rigidArmThread = new Thread(dispatch);   // Using the constructor Thread(Runnable r)
+//        rigidArmThread.start();
+
+//        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 40, 0, 0.5, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
+
+//
+//        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, AutoHub.finalSnapAngle, AutoHub.powerRotate, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
+//        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, AutoHub.distance, 0, AutoHub.powerTranslate, RevisedKinematics.ArmType.MID, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
+//        dispatch.fastTurn(AutoHub.finalTurnAngle, AutoHub.powerTurn);
+//
+        dispatch.Turn(45, 0.4);
+//        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, AutoHub.distance2, 0, AutoHub.powerTranslate, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
+//        dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0, RevisedKinematics.ArmType.HOLD, constants.armServoMid, constants.openClaw);
+
+//        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.6, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
+//        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 30, 0, 0.6, RevisedKinematics.ArmType.MID, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
+//        dispatch.Turn(135, 0.3);
+//        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 6, 0, 0.6, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
+//        dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0, RevisedKinematics.ArmType.HOLD, constants.armServoMid, constants.openClaw);
+
+        /*
+        working movement types:
+        - SNAP
+        - LINEAR
+        - STOP
+        - Arm movements
+         */
+
+//        dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0, RevisedKinematics.ArmType.LOW);
+//        dispatch.Turn(90, 0.7);
+
+        dispatch.resetToZero();
+//        rigidArmThread.interrupt();
+//        gpsUpdateThread.interrupt();
+
+        }
     }
-}
+
