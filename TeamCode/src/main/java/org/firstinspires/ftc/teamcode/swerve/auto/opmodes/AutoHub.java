@@ -39,7 +39,7 @@ public class AutoHub implements Runnable{
     public static double powerTurn = 0.3;
     public static double distance = 0;
     public static double distance2 = 0;
-    public static double finalTurnAngle = 0;
+    public static double finalTurnAngle = 90;
     public static double finalSnapAngle = 0;
 
     public static double kp = 0.03;
