@@ -83,6 +83,12 @@ public class Constants {
     //Arm Constants!!
     public int INIT_ARMBASE_POS = 400;
 
+    //Far Intake
+    public int bottomMotorFar = 1080;
+    public int topMotorFar = 420;
+    public double armServoFar = 0.107;
+
+
     //Bottom
     public int bottomMotorBottom = 700;
     public int topMotorBottom = 35;
@@ -152,10 +158,10 @@ public class Constants {
 
 
     //Arm Movement David
-    public double m1IA = 136.932953;
-    public double m2IA = 6.088534;
-    public double m1ACPC = 0.0681676;
-    public double m2ACPC = 0.163297;
+    public double bottomMotorAnglePerClick = 0.0681676;
+    public double topMotorAnglePerClick = 0.163297;
+    public double bottomMotorInitialAngle = 164.199993 - INIT_ARMBASE_POS*bottomMotorAnglePerClick;
+    public double topMotorInitialAngle = 6.088534;
     public double maxClicks = 1065;
 
 }

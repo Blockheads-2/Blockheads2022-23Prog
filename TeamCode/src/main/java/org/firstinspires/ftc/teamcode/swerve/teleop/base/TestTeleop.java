@@ -19,8 +19,9 @@ import org.firstinspires.ftc.teamcode.swerve.common.kinematics.RevisedKinematics
 import org.firstinspires.ftc.teamcode.swerve.common.kinematics.SwervePod;
 import org.firstinspires.ftc.teamcode.swerve.common.pid.ArmPID;
 import org.firstinspires.ftc.teamcode.swerve.common.pid.HeaderControlPID;
+import java.lang.Math;
 
-@TeleOp(name="Test Teleop", group="Drive")
+@TeleOp(name="AAAAAA Test Teleop", group="Drive")
 //@Disabled
 public class TestTeleop extends OpMode{
     /* Declare OpMode members. */
@@ -35,6 +36,11 @@ public class TestTeleop extends OpMode{
     double prevMS = 0;
     double deltaMS = 0;
     int armPos = 0;
+    int armPos2 = 0;
+
+
+    double xvalue = -17.51;
+    double yvalue = -42.59;
 
     Constants constants = new Constants();
     Reset reset;
@@ -87,6 +93,8 @@ public class TestTeleop extends OpMode{
     @Override
     public void init() { //When "init" is clicked
         robot.init(hardwareMap);
+        double angleTarget = robot.armServo.getPosition();
+        robot.armServo.setPosition(angleTarget);
 
         posSystem = new GlobalPosSystem(robot);
 
@@ -174,96 +182,22 @@ public class TestTeleop extends OpMode{
 
     void UpdatePlayer2(){
         ClawControl();
-        //ArmPresets();
+        ArmPresets();
         //UltraMegaArmPresets();
-        armPosTesting();
+//        armPosTesting();
+        triangle();
     }
 
     void UpdateTelemetry(){
 //        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-//        telemetry.addData("Leftstick X", gamepad1.left_stick_x);
-//        telemetry.addData("Leftstick Y", -gamepad1.left_stick_y);
-//        telemetry.addData("Rightstick X", gamepad1.right_stick_x);
-//        telemetry.addData("Rightstick Y", -gamepad1.right_stick_y);
-//        telemetry.addData("right trigger", gamepad1.right_trigger);
-//        telemetry.addData("left trigger", -gamepad1.left_trigger);
+        telemetry.addData("Leftstick Y", -gamepad1.left_stick_y);
+        telemetry.addData("Rightstick Y", -gamepad1.right_stick_y);
 
         telemetry.addData("Arm top pos", robot.at.getCurrentPosition());
-//        telemetry.addData("Arm bot pos", robot.abl.getCurrentPosition());
-//        telemetry.addData("Arm servo pos", robot.armServo.getPosition());
+        telemetry.addData("Arm bot pos", robot.abl.getCurrentPosition());
+        telemetry.addData("Arm servo pos", robot.armServo.getPosition());
 
-//        telemetry.addData("Splining Special Condition", posSystem.specialSpliningCondition(PodL.getPole(), PodR.getPole()));
-//        telemetry.addData("Wheel Orientation L", posSystem.getWheelOrientation()[0]);
-//        telemetry.addData("Wheel Orientation R", posSystem.getWheelOrientation()[1]);
-//        telemetry.addData("IsAlligned", posSystem.isAlligned(PodL.getPole(), PodR.getPole()));
-//        telemetry.addData("Eligible for turning", posSystem.eligibleForTurning(PodL.getPole(), PodR.getPole()));
-//        telemetry.addData("First movement", kinematics.firstMovement);
-//        telemetry.addData("Drive Type", kinematics.getDriveType());
-//        telemetry.addData("Spin Direction L", PodL.getSpinDirection());
-//        telemetry.addData("Spin Direction R", PodR.getSpinDirection());
-//
-//        telemetry.addData("Init Pole L?", PodL.getPole());
-//        telemetry.addData("Init Pole R?", PodR.getPole());
-//
-//        telemetry.addData("X pos", posSystem.getPositionArr()[0]);
-//        telemetry.addData("Y pos", posSystem.getPositionArr()[1]);
-//        telemetry.addData("Distance travelled Right", posSystem.distanceTravelledR);
-//        telemetry.addData("Distance travelled Left", posSystem.distanceTravelledL);
-//
-//        telemetry.addData("Left W",  posSystem.getLeftWheelW());
-//        telemetry.addData("Right W", posSystem.getRightWheelW());
-//        telemetry.addData("Optimized Left W", PodL.getOptimizedCurrentW());
-//        telemetry.addData("Optimized Right W", PodR.getOptimizedCurrentW());
-//        telemetry.addData("robotic centric L", PodL.getRobotCentricCurrentW());
-//        telemetry.addData("robotic centric R", PodR.getRobotCentricCurrentW());
-//
-////        telemetry.addData("Non left wheel Left W", PodL.nonRightStickCurrentW);
-////        telemetry.addData("Non right wheel Right W", PodR.nonRightStickCurrentW);
-////        telemetry.addData("R reference point", PodR.controlHeaderReference);
-        telemetry.addData("R", posSystem.getPositionArr()[4]);
-////
-//        telemetry.addData("target", kinematics.target);
-//        telemetry.addData("Turn Amount (Left)", PodL.getTurnAmount());
-//        telemetry.addData("Turn Amount (Right)", PodR.getTurnAmount());
-//        telemetry.addData("Throttle (Left)", PodL.getThrottle());
-//        telemetry.addData("Throttle (Right)", PodR.getThrottle());
-////        telemetry.addData("error L", PodL.controlHeader.error);
-////        telemetry.addData("error R", PodR.controlHeader.error);
-////        telemetry.addData("error L arc", PodL.controlHeader.biggerArc);
-////        telemetry.addData("error R arc", PodR.controlHeader.biggerArc);
-//
-//        telemetry.addData("topL clicks", robot.topL.getCurrentPosition());
-//        telemetry.addData("botL clicks", robot.botL.getCurrentPosition());
-//        telemetry.addData("topR clicks", robot.topR.getCurrentPosition());
-//        telemetry.addData("botR clicks", robot.botR.getCurrentPosition());
-//
-//
-//        telemetry.addData("Left Spin Clicks Target", PodL.getOutput()[0]);
-//        telemetry.addData("Left Rotate Clicks target",  PodL.getOutput()[1]);
-//        telemetry.addData("Right Spin clicks target", PodR.getOutput()[0]);
-//        telemetry.addData("Right Rotate clicks target",  PodR.getOutput()[1]);
-//        telemetry.addData("topL velocity", robot.topL.getVelocity()); //ticks per second
-//        telemetry.addData("botL velocity", robot.botL.getVelocity()); //ticks per second
-//        telemetry.addData("topR velocity", robot.topR.getVelocity());
-//        telemetry.addData("botR velocity", robot.botR.getVelocity());
-
-
-        telemetry.addData("Power TopL", robot.topL.getPower());
-        telemetry.addData("Power BotL", robot.botL.getPower());
-        telemetry.addData("Power TopR", robot.topR.getPower());
-        telemetry.addData("Power BotR", robot.botR.getPower());
-        telemetry.addData("Clicks Target TopL", robot.topL.getTargetPosition() - robot.topL.getCurrentPosition());
-        telemetry.addData("Clicks Target BotL",robot.botL.getTargetPosition() - robot.botL.getCurrentPosition());
-        telemetry.addData("Clicks Target TopR", robot.topR.getTargetPosition() - robot.topR.getCurrentPosition());
-        telemetry.addData("Clicks Target BotR",robot.botR.getTargetPosition() - robot.botR.getCurrentPosition());
-
-        telemetry.addData("Drive Type", kinematics.getDriveType());
-        telemetry.addData("Current Stack", stackClawPos);
-
-        telemetry.addData("Arm bottom position", robot.abl.getTargetPosition());
-
-        telemetry.addData("Delta time loop (sec)", deltaMS / 1000.0);
 
         telemetry.update();
     }
@@ -329,10 +263,12 @@ public class TestTeleop extends OpMode{
         if (bottomButton.is(Button.State.TAP)){
             lowerArmCycle = true;
             lowerAllTheWay = true;
+            updateArmPos();
         }
 
         if (lowButton.is(Button.State.TAP)){
             lowerArmCycle = true;
+            updateArmPos();
         }
 
         lowerArm();
@@ -350,6 +286,8 @@ public class TestTeleop extends OpMode{
 
 
             clawAngle = constants.armServoMid;
+            updateArmPos();
+
             //robot.armServo.setPosition(constants.armServoMid);
 
             /*robot.abl.setPower(ablPID.update(robot.abl.getCurrentPosition()));
@@ -369,6 +307,8 @@ public class TestTeleop extends OpMode{
             robot.at.setTargetPosition(constants.topMotorHigh);
 
             clawAngle = constants.armServoHigh;
+            updateArmPos();
+
             //robot.armServo.setPosition(constants.armServoHigh);
 
             /*robot.abl.setPower(ablPID.update(robot.abl.getCurrentPosition()));
@@ -377,54 +317,6 @@ public class TestTeleop extends OpMode{
 
              */
         }
-    }
-
-    void UltraMegaArmPresets(){
-        if (leftBumpy.is(Button.State.TAP)){
-            stackClawPos--;
-            if (stackClawPos<1){
-                stackClawPos = 1;
-            }
-            if (stackClawPos == 1) {
-                setArmPos(constants.topMotor1, constants.bottomMotor1);
-            }
-            else if (stackClawPos == 2) {
-                setArmPos(constants.topMotor2, constants.bottomMotor2);
-            }
-            else if (stackClawPos == 3) {
-                setArmPos(constants.topMotor3, constants.bottomMotor3);
-                robot.armServo.setPosition(0.1514);
-            }
-            else if (stackClawPos == 4) {
-                setArmPos(constants.topMotor4, constants.bottomMotor4);
-                robot.armServo.setPosition(0.1514);
-            }
-            else if (stackClawPos == 5) {
-                setArmPos(constants.topMotor5, constants.bottomMotor5);
-            }
-        }
-        if (rightBumpy.is(Button.State.TAP)){
-            stackClawPos++;
-            if (stackClawPos>5){
-                stackClawPos = 5;
-            }
-            if (stackClawPos == 1) {
-                setArmPos(constants.topMotor1, constants.bottomMotor1);
-            }
-            else if (stackClawPos == 2) {
-                setArmPos(constants.topMotor2, constants.bottomMotor2);
-            }
-            else if (stackClawPos == 3) {
-                setArmPos(constants.topMotor3, constants.bottomMotor3);
-            }
-            else if (stackClawPos == 4) {
-                setArmPos(constants.topMotor4, constants.bottomMotor4);
-            }
-            else if (stackClawPos == 5) {
-                setArmPos(constants.topMotor5, constants.bottomMotor5);
-            }
-        }
-
     }
 
     void setArmPos(int topMotorPos, int bottomMotorPos){
@@ -548,14 +440,85 @@ public class TestTeleop extends OpMode{
             armPos = armPos - 10;
         }
         if (midButton.is(Button.State.HELD)) {
-            armPos = armPos + 1;
+            armPos2 = armPos2 + 10;
         }
         if (lowButton.is(Button.State.HELD)) {
-            armPos = armPos - 1;
+            armPos2 = armPos2 - 10;
         }
-        setArmPos(armPos, 0);
+        setArmPos(armPos, armPos2);
     }
 
+    void triangle(){
+        while (gamepad2.left_stick_y != 0){
+            xvalue += 20*(-gamepad2.left_stick_y);
+        }
+        while (gamepad2.right_stick_y != 0){
+            yvalue += 20*(-gamepad2.right_stick_y);
+        }
+
+        double z = Math.sqrt((xvalue*xvalue)+(yvalue*yvalue));
+
+        if (z>826){
+            double tempx = xvalue;
+            double tempy = yvalue;
+            xvalue = 826*(Math.acos(Math.tan(tempx/tempy)));
+            yvalue = 826*(Math.asin(Math.tan(tempx/tempy)));
+        }
+
+        if (z<75){
+            xvalue = 150;
+            yvalue = 150;
+        }
+
+        if (xvalue < 0){
+            xvalue = 0;
+        }
+        if (yvalue < 0){
+            yvalue = 0;
+        }
+
+        z = Math.sqrt((xvalue*xvalue)+(yvalue*yvalue));
+
+        double topmotorangle = Math.acos(((420*420)+(406*406)-(z*z))/(2*(420)*(406)));
+        double bottommotorangle = Math.acos(((z*z)+(406*406)-(420*420))/(2*(z)*(406)));
+        double finalbottomarmangle = 180-(bottommotorangle + Math.sin(yvalue/z));
+
+        int topmotorclicks = (int)(topmotorangle/constants.topMotorAnglePerClick)-37;
+        int bottommotorclicks = (int)(finalbottomarmangle/constants.bottomMotorAnglePerClick)-632;
+        telemetry.addData("Bottom Target Angle", bottommotorclicks);
+        telemetry.addData("Top Target Angle", topmotorangle);
+        telemetry.addData("z", z);
+        telemetry.addData("x", xvalue);
+        telemetry.addData("y", yvalue);
+
+
+
+        if ((yvalue > 0) && (xvalue > 0) && (gamepad2.left_stick_y != 0) && (gamepad2.right_stick_y != 0)){
+            robot.at.setTargetPosition(topmotorclicks);
+            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.at.setPower((30.0 / 76.0));
+
+            robot.abl.setTargetPosition(bottommotorclicks);
+            robot.abr.setTargetPosition(bottommotorclicks);
+            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abl.setPower(1);
+            robot.abr.setPower(1);
+        }
+
+
+    }
+
+    void updateArmPos(){
+        double topArm = robot.at.getCurrentPosition();
+        double bottomArm = robot.abl.getCurrentPosition();
+
+        double topArmAngle = (topArm*constants.topMotorAnglePerClick) + 6.088534;
+        double bottomArmAngle  = (bottomArm*constants.bottomMotorAnglePerClick) * 43.067047;
+
+        xvalue = 420*Math.cos(bottomArmAngle) - 406*Math.cos(-bottomArmAngle-topArmAngle);
+        yvalue = 420*Math.sin(bottomArmAngle) - 406*Math.sin(-bottomArmAngle-topArmAngle);
+    }
     /*
      * Code to run ONCE after the driver hits STOP
      */
