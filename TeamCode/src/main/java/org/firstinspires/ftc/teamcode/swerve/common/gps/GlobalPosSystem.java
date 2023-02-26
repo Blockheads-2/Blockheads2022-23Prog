@@ -41,6 +41,7 @@ public class GlobalPosSystem {
     }
     private WheelOrientation[] wheelOrientation = new WheelOrientation[2];
 
+
     public GlobalPosSystem(HardwareDrive robot) {
         this.robot = robot;
 
@@ -167,6 +168,53 @@ public class GlobalPosSystem {
 
     public WheelOrientation[] getWheelOrientation(){
         return wheelOrientation;
+    }
+
+    int loopCount = 0;
+    double avgVelTopL = 0;
+    double avgVelBotL = 0;
+    double avgVelTopR = 0;
+    double avgVelBotR = 0;
+    double sumTopL = 0;
+    double sumBotL = 0;
+    double sumTopR = 0;
+    double sumBotR = 0;
+
+    double[] avgDiffBetweenMotors = new double[2]; //left, right
+    public void calculateThrottleDifference(boolean reset){
+        if (reset){
+            loopCount = 0;
+            avgDiffBetweenMotors[0] = 0;
+            avgDiffBetweenMotors[1] = 0;
+            avgVelTopL=0;
+            avgVelBotL=0;
+            avgVelTopR=0;
+            avgVelBotR=0;
+            sumTopL = 0;
+            sumBotL = 0;
+            sumTopR = 0;
+            sumBotR = 0;
+            avgDiffBetweenMotors[0] = 1;
+            avgDiffBetweenMotors[1] = 1;
+            return;
+        }
+        loopCount++;
+        sumTopL += Math.abs(robot.topL.getVelocity());
+        sumBotL += Math.abs(robot.botL.getVelocity());
+        sumTopR += Math.abs(robot.topR.getVelocity());
+        sumBotR += Math.abs(robot.botR.getVelocity());
+
+        avgVelTopL = sumTopL / loopCount;
+        avgVelBotL = sumBotL / loopCount;
+        avgVelTopR = sumTopR / loopCount;
+        avgVelBotR = sumBotR / loopCount;
+
+        avgDiffBetweenMotors[0] = avgVelTopL / avgVelTopR;
+        avgDiffBetweenMotors[1] = avgVelBotL / avgVelBotR;
+    }
+
+    public double[] getAvgDiffBetweenMotors(){
+        return avgDiffBetweenMotors;
     }
 
     public void update ( double x, double y, double leftWheelW, double rightWheelW, double robotR){

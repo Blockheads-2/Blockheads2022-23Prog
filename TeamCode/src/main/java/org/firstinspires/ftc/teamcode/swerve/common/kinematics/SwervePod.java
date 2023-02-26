@@ -172,6 +172,7 @@ public class SwervePod {
             driveType = RevisedKinematics.DriveType.VARIABLE_SPLINE;
             return driveType;
         } else {
+
             direction = (initPole ? initDirection : -initDirection);
 //            controlHeader.calculateThrottle(distanceTravelledL, distanceTravelledR, currentR, controlHeaderReference);
 //            throttle = controlHeader.getThrottle(side);
@@ -186,6 +187,24 @@ public class SwervePod {
         driveType = RevisedKinematics.DriveType.LINEAR;
         return driveType;
     }
+
+    public double headerCorrectionTop(double topLToTopR){
+        if (side == Side.RIGHT){
+            return 1;
+        } else { //correcting left to match right, so no need to change the left side.
+            return (Math.abs(topLToTopR) > 1 ? 1.0 - (Math.abs(topLToTopR - 1.0)) : 1.0 + (1.0 - Math.abs(topLToTopR)));
+        }
+    }
+
+    //Left : Right --> 120 %
+    //Left : Right --> 90 %
+
+    public double headerCorrectionBottom(double botLToBotR){
+        if (side == Side.RIGHT){
+            return 1;
+        } else { //correcting left to match right, so no need to change the left side.
+            return (Math.abs(botLToBotR) > 1 ? 1.0 - (Math.abs(botLToBotR - 1.0)) : 1.0 + (1.0 - Math.abs(botLToBotR)));
+        }    }
 
     public double wheelOptimization(double target, double currentW){
         double target2 = (target < 0 ? target + 360 : target);

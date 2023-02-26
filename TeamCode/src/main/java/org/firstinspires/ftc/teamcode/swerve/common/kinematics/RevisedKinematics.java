@@ -128,12 +128,14 @@ public class RevisedKinematics {
         type = PodL.setSpinClicksAndPower(power, rt, shouldTurn, eligibleForTurning, shouldSpline, specialSpliningCondition, rx, posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledR());
         type = PodR.setSpinClicksAndPower(power, rt, shouldTurn, eligibleForTurning, shouldSpline, specialSpliningCondition, rx, posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledR());
 
-//        PodL.setThrottleUsingPodLReference(PodR, shouldTurn, shouldSpline);
+        //calculating the throttle difference between the wheels.  Uses these values to then keep the wheels running at the same speed later on.
+        posSystem.calculateThrottleDifference(type == DriveType.LINEAR);
 
         //resetting modules when:
         // - the driver has not given controller input AND the wheels aren't alligned,
         // - the wheels aren't alligned with 0 degrees AND the driver is trying to turn.
         if (type == DriveType.STOP){
+            posSystem.calculateThrottleDifference(true);
             if (!posSystem.isAlligned(PodL.getPole(), PodR.getPole())){
                 PodL.setRotClicks(0);
                 PodR.setRotClicks(0);
@@ -433,10 +435,15 @@ public class RevisedKinematics {
 //        int avgClicks = (int)((leftClicks + rightClicks) / 2.0);
 
         int[] clicks = new int[4];
-        clicks[0] = (int)(outputL[0] - outputL[1]); //left
-        clicks[1] = (int)(-outputL[0] - outputL[1]); //left
-        clicks[2] = (int)(outputR[0] + outputR[1]); //right
-        clicks[3] = (int)(-outputR[0] + outputR[1]); //right
+        telemetry.addData("Header Correction Throttle top motors left:",  PodL.headerCorrectionTop(posSystem.getAvgDiffBetweenMotors()[0]));
+        telemetry.addData("Header Correction Throttle bottom motors left:",  PodL.headerCorrectionBottom(posSystem.getAvgDiffBetweenMotors()[1]));
+        telemetry.addData("Header Correction Throttle top motors right:",  PodR.headerCorrectionTop(posSystem.getAvgDiffBetweenMotors()[0]));
+        telemetry.addData("Header Correction Throttle bottom motors right:",  PodR.headerCorrectionBottom(posSystem.getAvgDiffBetweenMotors()[1]));
+
+        clicks[0] = (int)((outputL[0] * PodL.headerCorrectionTop(posSystem.getAvgDiffBetweenMotors()[0])) - outputL[1]); //left
+        clicks[1] = (int)(-(outputL[0] * PodL.headerCorrectionBottom(posSystem.getAvgDiffBetweenMotors()[1])) - outputL[1]); //left
+        clicks[2] = (int)((outputR[0] * PodR.headerCorrectionTop(posSystem.getAvgDiffBetweenMotors()[0])) + outputR[1]); //right
+        clicks[3] = (int)(-(outputR[0] * PodR.headerCorrectionBottom(posSystem.getAvgDiffBetweenMotors()[1])) + outputR[1]); //right
         return clicks;
     }
 
