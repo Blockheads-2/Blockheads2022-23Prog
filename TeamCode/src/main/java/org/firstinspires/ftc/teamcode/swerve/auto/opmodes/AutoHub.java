@@ -156,7 +156,7 @@ public class AutoHub implements Runnable{
         robot.abl.setPower(0.6);
         robot.abr.setPower(0.6);
 
-        robot.armServo.setPosition(0.3);
+        robot.armServo.setPosition(0);
     }
 
     public void resetArmEncoderPos(){
