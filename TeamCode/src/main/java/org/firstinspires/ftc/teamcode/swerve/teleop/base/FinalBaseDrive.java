@@ -33,6 +33,14 @@ public class FinalBaseDrive extends OpMode{
     double prevMS = 0;
     double deltaMS = 0;
 
+
+    double xvalue = 40;
+    double yvalue = 40;
+
+    double topSegLength = 416; //406
+    double botSegLength = 420; //420
+
+
     Constants constants = new Constants();
     Reset reset;
 
@@ -59,7 +67,7 @@ public class FinalBaseDrive extends OpMode{
     Button lowButton = new Button();
     Button midButton = new Button();
     Button highButton = new Button();
-
+    Button longButton = new Button();
     Button zeroButton = new Button();
     Button leftBumpy = new Button();
     Button rightBumpy = new Button();
@@ -172,7 +180,8 @@ public class FinalBaseDrive extends OpMode{
     void UpdatePlayer2(){
         ClawControl();
         ArmPresets();
-        UltraMegaArmPresets();
+//        if ((gamepad2.left_stick_y != 0) || (gamepad2.right_stick_y != 0))
+//            triangle();
     }
 
     void UpdateTelemetry(){
@@ -275,6 +284,7 @@ public class FinalBaseDrive extends OpMode{
         lowButton.update(gamepad2.dpad_right);
         midButton.update(gamepad2.dpad_left);
         highButton.update(gamepad2.dpad_up);
+        longButton.update(gamepad2.y);
         zeroButton.update(gamepad2.b);
         leftBumpy.update(gamepad2.left_bumper);
         rightBumpy.update(gamepad2.right_bumper);
@@ -366,6 +376,26 @@ public class FinalBaseDrive extends OpMode{
 
             clawAngle = constants.armServoHigh;
             //robot.armServo.setPosition(constants.armServoHigh);
+
+            /*robot.abl.setPower(ablPID.update(robot.abl.getCurrentPosition()));
+            robot.abr.setPower(abrPID.update(robot.abr.getCurrentPosition()));
+            robot.at.setPower(ablPID.update(robot.at.getCurrentPosition()));
+
+             */
+        }
+        if (longButton.is(Button.State.TAP)){
+            atPID.setTargets(constants.topMotorFar, 0.4, 0, 0.2);
+            ablPID.setTargets(constants.bottomMotorFar, 0.4, 0, 0.2);
+            abrPID.setTargets(constants.bottomMotorFar, 0.4, 0, 0.2);
+
+            robot.abl.setTargetPosition(constants.bottomMotorFar);
+            robot.abr.setTargetPosition(constants.bottomMotorFar);
+            robot.at.setTargetPosition(constants.topMotorFar);
+
+
+
+            clawAngle = constants.armServoFar;
+            //robot.armServo.setPosition(constants.armServoMid);
 
             /*robot.abl.setPower(ablPID.update(robot.abl.getCurrentPosition()));
             robot.abr.setPower(abrPID.update(robot.abr.getCurrentPosition()));
@@ -534,6 +564,80 @@ public class FinalBaseDrive extends OpMode{
 
 
         robot.armServo.setPosition(clawAngle);
+    }
+
+    void triangle(){
+        double z = Math.sqrt((xvalue*xvalue)+(yvalue*yvalue));
+
+        if (z>800){
+            double tempx = xvalue;
+            double tempy = yvalue;
+            xvalue = 800*(Math.cos(Math.atan(tempx/tempy)));
+            yvalue = 800*(Math.sin(Math.atan(tempx/tempy)));
+        }
+
+        if (z<75){
+            xvalue = 150;
+            yvalue = 150;
+        }
+
+        if (xvalue < 0){
+            xvalue = 0;
+        }
+        if (yvalue < 150){
+            yvalue = 150;
+        }
+
+        z = Math.sqrt((xvalue*xvalue)+(yvalue*yvalue));
+
+        double topMotorAngle = Math.toDegrees(Math.acos(((botSegLength*botSegLength)+(topSegLength*topSegLength)-(z*z))/(2*(botSegLength)*(topSegLength))));
+        double bottomMotorAngle = Math.toDegrees(Math.acos(((z*z)+(topSegLength*topSegLength)-(botSegLength*botSegLength))/(2*(z)*(topSegLength))));
+        double finalBottomarmangle = 180-(bottomMotorAngle + Math.toDegrees(Math.asin(yvalue/z)));
+        double servoAngleChange = (180 - (topMotorAngle-finalBottomarmangle))-90;
+
+        double servoUnits = 0.6-(servoAngleChange/constants.anglePerUnit);
+        int topMotorClicks = (int)(topMotorAngle/constants.topMotorAnglePerClick)-37;
+        int bottomMotorClicks = (int)(finalBottomarmangle/constants.bottomMotorAnglePerClick)-632;
+        telemetry.addData("Bottom Target Clicks", bottomMotorClicks);
+        telemetry.addData("Top Target Clicks", topMotorClicks);
+        telemetry.addData("Bottom Target Angle", finalBottomarmangle);
+        telemetry.addData("Top Target Angle", topMotorAngle);
+        telemetry.addData("Top Arm Relative to the Robot", 180 - (topMotorAngle-finalBottomarmangle));
+        telemetry.addData("Servo Target Angle", servoAngleChange);
+        telemetry.addData("Servo Target Units", servoUnits);
+
+        telemetry.addData("z", z);
+        telemetry.addData("x", xvalue);
+        telemetry.addData("y", yvalue);
+
+
+
+        if ((yvalue > 0) && (xvalue > 0)){
+            robot.at.setTargetPosition(topMotorClicks);
+            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.at.setPower((60/76.0));
+
+            robot.abl.setTargetPosition(bottomMotorClicks);
+            robot.abr.setTargetPosition(bottomMotorClicks);
+            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abl.setPower(0.7);
+            robot.abr.setPower(0.7);
+            robot.armServo.setPosition(servoUnits);
+        }
+
+
+    }
+
+    void updateArmPos(){
+        double topArm = robot.at.getCurrentPosition();
+        double bottomArm = robot.abl.getCurrentPosition();
+
+        double topArmAngle = (topArm*constants.topMotorAnglePerClick) + 6.088534;
+        double bottomArmAngle  = (bottomArm*constants.bottomMotorAnglePerClick) + 43.067047;
+
+        xvalue = botSegLength*Math.cos(bottomArmAngle) - topSegLength*Math.cos(-bottomArmAngle-topArmAngle);
+        yvalue = botSegLength*Math.sin(bottomArmAngle) - topSegLength*Math.sin(-bottomArmAngle-topArmAngle);
     }
 
 

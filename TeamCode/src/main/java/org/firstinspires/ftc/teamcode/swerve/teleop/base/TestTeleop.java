@@ -39,8 +39,11 @@ public class TestTeleop extends OpMode{
     int armPos2 = 0;
 
 
-    double xvalue = -17.51;
-    double yvalue = -42.59;
+    double xvalue = 40;
+    double yvalue = 40;
+
+    double topSegLength = 416; //406
+    double botSegLength = 420; //420
 
     Constants constants = new Constants();
     Reset reset;
@@ -182,9 +185,10 @@ public class TestTeleop extends OpMode{
 
     void UpdatePlayer2(){
         ClawControl();
-        ArmPresets();
-        //UltraMegaArmPresets();
+//        ArmPresets();
 //        armPosTesting();
+        xvalue += 50*(-gamepad2.left_stick_y);
+        yvalue += 50*(-gamepad2.right_stick_y);
         triangle();
     }
 
@@ -449,20 +453,13 @@ public class TestTeleop extends OpMode{
     }
 
     void triangle(){
-        while (gamepad2.left_stick_y != 0){
-            xvalue += 20*(-gamepad2.left_stick_y);
-        }
-        while (gamepad2.right_stick_y != 0){
-            yvalue += 20*(-gamepad2.right_stick_y);
-        }
-
         double z = Math.sqrt((xvalue*xvalue)+(yvalue*yvalue));
 
-        if (z>826){
+        if (z>800){
             double tempx = xvalue;
             double tempy = yvalue;
-            xvalue = 826*(Math.acos(Math.tan(tempx/tempy)));
-            yvalue = 826*(Math.asin(Math.tan(tempx/tempy)));
+            xvalue = 800*(Math.cos(Math.atan(tempx/tempy)));
+            yvalue = 800*(Math.sin(Math.atan(tempx/tempy)));
         }
 
         if (z<75){
@@ -473,37 +470,46 @@ public class TestTeleop extends OpMode{
         if (xvalue < 0){
             xvalue = 0;
         }
-        if (yvalue < 0){
-            yvalue = 0;
+        if (yvalue < 150){
+            yvalue = 150;
         }
 
         z = Math.sqrt((xvalue*xvalue)+(yvalue*yvalue));
 
-        double topmotorangle = Math.acos(((420*420)+(406*406)-(z*z))/(2*(420)*(406)));
-        double bottommotorangle = Math.acos(((z*z)+(406*406)-(420*420))/(2*(z)*(406)));
-        double finalbottomarmangle = 180-(bottommotorangle + Math.sin(yvalue/z));
+        double topMotorAngle = Math.toDegrees(Math.acos(((botSegLength*botSegLength)+(topSegLength*topSegLength)-(z*z))/(2*(botSegLength)*(topSegLength))));
+        double bottomMotorAngle = Math.toDegrees(Math.acos(((z*z)+(topSegLength*topSegLength)-(botSegLength*botSegLength))/(2*(z)*(topSegLength))));
+        double finalBottomarmangle = 180-(bottomMotorAngle + Math.toDegrees(Math.asin(yvalue/z)));
+        double servoAngleChange = (180 - (topMotorAngle-finalBottomarmangle))-90;
 
-        int topmotorclicks = (int)(topmotorangle/constants.topMotorAnglePerClick)-37;
-        int bottommotorclicks = (int)(finalbottomarmangle/constants.bottomMotorAnglePerClick)-632;
-        telemetry.addData("Bottom Target Angle", bottommotorclicks);
-        telemetry.addData("Top Target Angle", topmotorangle);
+        double servoUnits = 0.6-(servoAngleChange/constants.anglePerUnit);
+        int topMotorClicks = (int)(topMotorAngle/constants.topMotorAnglePerClick)-37;
+        int bottomMotorClicks = (int)(finalBottomarmangle/constants.bottomMotorAnglePerClick)-632;
+        telemetry.addData("Bottom Target Clicks", bottomMotorClicks);
+        telemetry.addData("Top Target Clicks", topMotorClicks);
+        telemetry.addData("Bottom Target Angle", finalBottomarmangle);
+        telemetry.addData("Top Target Angle", topMotorAngle);
+        telemetry.addData("Top Arm Relative to the Robot", 180 - (topMotorAngle-finalBottomarmangle));
+        telemetry.addData("Servo Target Angle", servoAngleChange);
+        telemetry.addData("Servo Target Units", servoUnits);
+
         telemetry.addData("z", z);
         telemetry.addData("x", xvalue);
         telemetry.addData("y", yvalue);
 
 
 
-        if ((yvalue > 0) && (xvalue > 0) && (gamepad2.left_stick_y != 0) && (gamepad2.right_stick_y != 0)){
-            robot.at.setTargetPosition(topmotorclicks);
+        if ((yvalue > 0) && (xvalue > 0)){
+            robot.at.setTargetPosition(topMotorClicks);
             robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.at.setPower((30.0 / 76.0));
+            robot.at.setPower((60/76.0));
 
-            robot.abl.setTargetPosition(bottommotorclicks);
-            robot.abr.setTargetPosition(bottommotorclicks);
+            robot.abl.setTargetPosition(bottomMotorClicks);
+            robot.abr.setTargetPosition(bottomMotorClicks);
             robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.abl.setPower(1);
-            robot.abr.setPower(1);
+            robot.abl.setPower(0.7);
+            robot.abr.setPower(0.7);
+            robot.armServo.setPosition(servoUnits);
         }
 
 
@@ -516,8 +522,8 @@ public class TestTeleop extends OpMode{
         double topArmAngle = (topArm*constants.topMotorAnglePerClick) + 6.088534;
         double bottomArmAngle  = (bottomArm*constants.bottomMotorAnglePerClick) * 43.067047;
 
-        xvalue = 420*Math.cos(bottomArmAngle) - 406*Math.cos(-bottomArmAngle-topArmAngle);
-        yvalue = 420*Math.sin(bottomArmAngle) - 406*Math.sin(-bottomArmAngle-topArmAngle);
+        xvalue = botSegLength*Math.cos(bottomArmAngle) - topSegLength*Math.cos(-bottomArmAngle-topArmAngle);
+        yvalue = botSegLength*Math.sin(bottomArmAngle) - topSegLength*Math.sin(-bottomArmAngle-topArmAngle);
     }
     /*
      * Code to run ONCE after the driver hits STOP
