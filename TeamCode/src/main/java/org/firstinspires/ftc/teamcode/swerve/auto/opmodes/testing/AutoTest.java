@@ -22,7 +22,6 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
 @Autonomous (name = "Auto Test", group = "Drive")
-@Disabled
 public class AutoTest extends LinearOpMode {
 
     OpenCvCamera camera;
@@ -37,12 +36,12 @@ public class AutoTest extends LinearOpMode {
         dispatch = new AutoHub(this);
         sleep(20);
 
-        if (!opModeIsActive()) dispatch.moveToInit();
+//        if (!opModeIsActive()) dispatch.moveToInit();
 
         while (!opModeIsActive()) { //checks if play hasn't been pressed (in init stage)
 
         }
-        dispatch.resetArmEncoderPos();
+//        dispatch.resetArmEncoderPos();
 
         waitForStart();
 
@@ -55,10 +54,11 @@ public class AutoTest extends LinearOpMode {
 
 //
 //        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, AutoHub.finalSnapAngle, AutoHub.powerRotate, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
-//        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, AutoHub.distance, 0, AutoHub.powerTranslate, RevisedKinematics.ArmType.MID, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
+        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, AutoHub.distance, 0, AutoHub.powerTranslate, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
 //        dispatch.fastTurn(AutoHub.finalTurnAngle, AutoHub.powerTurn);
 //
-        dispatch.Turn(AutoHub.finalTurnAngle, AutoHub.powerTurn);
+//        dispatch.Turn(AutoHub.finalTurnAngle, AutoHub.powerTurn);
+
 //        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, AutoHub.distance2, 0, AutoHub.powerTranslate, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
 //        dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0, RevisedKinematics.ArmType.HOLD, constants.armServoMid, constants.openClaw);
 
@@ -79,7 +79,7 @@ public class AutoTest extends LinearOpMode {
 //        dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0, RevisedKinematics.ArmType.LOW);
 //        dispatch.Turn(90, 0.7);
 
-        dispatch.resetToZero();
+//        dispatch.resetToZero();
 //        rigidArmThread.interrupt();
 //        gpsUpdateThread.interrupt();
 
