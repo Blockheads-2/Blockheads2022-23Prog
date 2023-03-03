@@ -151,4 +151,10 @@ public class Constants {
     public double DISTANCE_BETWEEN_MODULE_AND_CENTER = 3.405512; //3.405512
     public double horizontalDistanceOdo = 6.25;
     public double midDistanceOdo = 3.0;
+
+    //Camera constants
+    public int WIDTH;
+    public int HEIGHT;
+    public double[] LOW_HSV_YELLOW;
+    public double[] HIGH_HSV_YELLOW;
 }
