@@ -12,7 +12,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@Autonomous(name = "Pole Detection Test", group = "Drive")
+@Autonomous(name = "Camera Streaming", group = "Drive")
 public class StreamCamera {
     private OpenCvWebcam webcam;
     private CameraMasterJR opencv = null;
