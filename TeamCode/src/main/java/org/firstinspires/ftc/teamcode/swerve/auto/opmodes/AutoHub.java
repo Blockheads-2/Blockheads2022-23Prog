@@ -133,17 +133,7 @@ public class AutoHub implements Runnable{
         robot.setWheelRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.setWheelRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        PIDFCoefficients coef = new PIDFCoefficients(internalKP, internalKI, internalKD, internalKF);
-        robot.topL.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, coef);
-        robot.botL.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, coef);
-        robot.topR.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, coef);
-        robot.botR.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, coef);
-
-        robot.topL.setPositionPIDFCoefficients(internalKP);
-        robot.botL.setPositionPIDFCoefficients(internalKP);
-        robot.topR.setPositionPIDFCoefficients(internalKP);
-        robot.botR.setPositionPIDFCoefficients(internalKP);
-
+        robot.setInternalPIDFCoef(internalKP, internalKI, internalKD, internalKF);
 
         robot.setWheelRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.setWheelRunMode(DcMotor.RunMode.RUN_USING_ENCODER);

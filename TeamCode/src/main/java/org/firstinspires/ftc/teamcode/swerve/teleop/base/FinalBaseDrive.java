@@ -4,6 +4,7 @@ import android.view.View;
 
 //import com.acmerobotics.dashboard.FtcDashboard;
 //import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.teamcode.swerve.common.kinematics.SwervePod;
 import org.firstinspires.ftc.teamcode.swerve.common.pid.ArmPID;
 
 @TeleOp(name="Final BaseDrive", group="Drive")
+@Config
 //@Disabled
 public class FinalBaseDrive extends OpMode{
     /* Declare OpMode members. */
@@ -85,6 +87,11 @@ public class FinalBaseDrive extends OpMode{
     double avgDifferenceBetweenTops = 0;
     double avgDifferenceBetweenBottoms = 0;
 
+    public static double internalKP = 10;
+    public static double internalKI = 0.049988;
+    public static double internalKD = 0;
+    public static double internalKF = 0;
+
     @Override
     public void init() { //When "init" is clicked
         robot.init(hardwareMap);
@@ -95,6 +102,8 @@ public class FinalBaseDrive extends OpMode{
         posSystem.grabKinematics(kinematics);
         reset = new Reset(robot, posSystem);
         kinematics.grabTelemetry(telemetry);
+
+        robot.setInternalPIDFCoef(internalKP, internalKI, internalKD, internalKF);
 
         moveArmToInit();
 

@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode.swerve.common;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -167,6 +168,19 @@ public class HardwareDrive
         topR.setMode(runState);
         botR.setMode(runState);
         //make sure to not add arm here
+    }
+
+    public void setInternalPIDFCoef(double kp, double ki, double kd, double kf){
+        PIDFCoefficients coef = new PIDFCoefficients(kp, ki, kd, kf);
+        topL.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, coef);
+        botL.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, coef);
+        topR.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, coef);
+        botR.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, coef);
+
+        topL.setPositionPIDFCoefficients(kp);
+        botL.setPositionPIDFCoefficients(kp);
+        topR.setPositionPIDFCoefficients(kp);
+        botR.setPositionPIDFCoefficients(kp);
     }
 
     public boolean wheelsAreBusy(){
