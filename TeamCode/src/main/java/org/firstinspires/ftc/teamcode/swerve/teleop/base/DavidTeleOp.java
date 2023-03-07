@@ -4,6 +4,7 @@ import android.view.View;
 
 //import com.acmerobotics.dashboard.FtcDashboard;
 //import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -21,7 +22,7 @@ import org.firstinspires.ftc.teamcode.swerve.common.pid.ArmPID;
 import org.firstinspires.ftc.teamcode.swerve.common.pid.HeaderControlPID;
 
 @TeleOp(name="David TeleOp", group="Drive")
-//@Disabled
+@Disabled
 public class DavidTeleOp extends OpMode{
     /* Declare OpMode members. */
     HardwareDrive robot = new HardwareDrive();

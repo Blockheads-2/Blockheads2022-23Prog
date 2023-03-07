@@ -31,7 +31,9 @@ package org.firstinspires.ftc.teamcode.swerve.common;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.SwitchableLight;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -81,6 +83,9 @@ public class HardwareDrive
     //imu
     public BNO055IMU imu;
 
+    //sensors
+    public NormalizedColorSensor colorSensor;
+
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
     private ElapsedTime period  = new ElapsedTime();
@@ -109,6 +114,10 @@ public class HardwareDrive
         claw = hwMap.get(Servo.class, "claw");
         armServo = hwMap.get(Servo.class, "arm_servo");
 
+        //sensor!
+        colorSensor = hwMap.get(NormalizedColorSensor.class, "claw_color");
+
+
         //IMU initiation
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
@@ -120,6 +129,9 @@ public class HardwareDrive
 
         imu = hwMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+
+        if (colorSensor instanceof SwitchableLight)
+            ((SwitchableLight)colorSensor).enableLight(false);
 
 
         //Set Motor Directions

@@ -4,6 +4,7 @@ import android.view.View;
 
 //import com.acmerobotics.dashboard.FtcDashboard;
 //import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -22,7 +23,7 @@ import org.firstinspires.ftc.teamcode.swerve.common.pid.HeaderControlPID;
 import java.lang.Math;
 
 @TeleOp(name="AAAAAA Test Teleop", group="Drive")
-//@Disabled
+@Disabled
 public class TestTeleop extends OpMode{
     /* Declare OpMode members. */
     HardwareDrive robot = new HardwareDrive();
@@ -458,8 +459,8 @@ public class TestTeleop extends OpMode{
         if (z>800){
             double tempx = xvalue;
             double tempy = yvalue;
-            xvalue = 800*(Math.cos(Math.atan(tempx/tempy)));
-            yvalue = 800*(Math.sin(Math.atan(tempx/tempy)));
+            xvalue = 800*(Math.sin(Math.atan(tempx/tempy)));
+            yvalue = 800*(Math.cos(Math.atan(tempx/tempy)));
         }
 
         if (z<75){

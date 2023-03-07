@@ -50,6 +50,10 @@ public class AutoHub implements Runnable{
     public static double kd = 0;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
+    double topSegLength = 406; //406
+    double botSegLength = 420; //420
+    double servoUnits = 0;
+
     ElapsedTime loopTime = new ElapsedTime();
     double prevMS = 0;
     double deltaMS = 0;
@@ -354,8 +358,6 @@ public class AutoHub implements Runnable{
         posSystem.hardResetGPS();
     }
 
-
-
     public void Turn(double finalAngle, double speed){
         //1) Calculate our current position
         posSystem.resetXY(); // <-- Must have!
@@ -423,10 +425,6 @@ public class AutoHub implements Runnable{
         }
 
         reset();
-    }
-
-    public void openClaw(){
-
     }
 
     public void fastTurn(double finalAngle, double speed){
@@ -568,9 +566,6 @@ public class AutoHub implements Runnable{
         posSystem.hardResetGPS();
     }
 
-    public void clawAngle(double servoVal){
-        robot.armServo.setPosition(servoVal);
-    }
     public void UpdateTelemetry(){
         linearOpMode.telemetry.addData("Wheel target met?", !targetNotMet);
         linearOpMode.telemetry.addData("Arm target met?", kinematics.isArmTargetMet());
@@ -663,5 +658,78 @@ public class AutoHub implements Runnable{
         dashboard.sendTelemetryPacket(packet);
 
         linearOpMode.telemetry.update();
+    }
+
+    void triangle(double xvalue, double yvalue, double clawAngle){
+        double z = Math.sqrt((xvalue*xvalue)+(yvalue*yvalue));
+
+        if (z>810){
+            double tempx = xvalue;
+            double tempy = yvalue;
+            xvalue = 810*(Math.sin(Math.atan(tempx/tempy)));
+            yvalue = 810*(Math.cos(Math.atan(tempx/tempy)));
+        }
+
+        if (z<40){
+            xvalue = 30;
+            yvalue = 30;
+        }
+
+//        if (xvalue < -30){
+//            xvalue = -30;
+//        }
+        if (yvalue < 0){
+            yvalue = 0;
+        }
+
+        z = Math.sqrt((xvalue*xvalue)+(yvalue*yvalue));
+
+        double topMotorAngle = Math.toDegrees(Math.acos(((botSegLength*botSegLength)+(topSegLength*topSegLength)-(z*z))/(2*(botSegLength)*(topSegLength))));
+        double bottomMotorAngle = Math.toDegrees(Math.acos(((z*z)+(topSegLength*topSegLength)-(botSegLength*botSegLength))/(2*(z)*(topSegLength))));
+        double finalBottomarmangle = 180-(bottomMotorAngle + Math.toDegrees(Math.asin(yvalue/z)));
+        double servoAngleChange = (180 - (topMotorAngle-finalBottomarmangle-constants.offset))-90;
+
+        servoUnits = 0.6-(servoAngleChange/constants.anglePerUnit) + clawAngle;
+        int topMotorClicks = (int)((topMotorAngle/constants.topMotorAnglePerClick)-(constants.topMotorInitialAngle/constants.topMotorAnglePerClick));
+        int bottomMotorClicks = (int)((finalBottomarmangle/constants.bottomMotorAnglePerClick)-(constants.bottomMotorInitialAngle/constants.bottomMotorAnglePerClick));
+
+        if (servoUnits < 0.0){
+            servoUnits = 0.1;
+        }
+        if (servoUnits > 1.0){
+            servoUnits = 0.9;
+        }
+
+        if (xvalue>=0){
+            robot.at.setTargetPosition(topMotorClicks);
+            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.at.setPower((30/76.0));
+
+            robot.abl.setTargetPosition(bottomMotorClicks);
+            robot.abr.setTargetPosition(bottomMotorClicks);
+            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abl.setPower(0.7);
+            robot.abr.setPower(0.7);
+            robot.armServo.setPosition(servoUnits);
+        }
+
+
+        if ((xvalue < 0) && (topMotorAngle > 150)){
+            double addnumber = 0.85 * Math.abs(xvalue);
+            robot.at.setTargetPosition(920);
+            robot.at.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.at.setPower((30/76.0));
+
+            robot.abl.setTargetPosition(520 - (int)addnumber);
+            robot.abr.setTargetPosition(520 - (int)addnumber);
+            robot.abl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.abl.setPower(0.7);
+            robot.abr.setPower(0.7);
+            robot.armServo.setPosition(servoUnits);
+        }
+
+
     }
 }

@@ -159,7 +159,8 @@ public class Constants {
     //Triangle
     public double bottomMotorAnglePerClick = 0.0681676;
     public double topMotorAnglePerClick = 0.163297;
-    public double bottomMotorInitialAngle = 164.199993 - INIT_ARMBASE_POS*bottomMotorAnglePerClick;
+    public double offset = 0;
+    public double bottomMotorInitialAngle = 15.8 + INIT_ARMBASE_POS*bottomMotorAnglePerClick + offset; //15.8
     public double topMotorInitialAngle = 6.088534;
     public double maxClicks = 1065;
     public double armServoParallel = 0.3636;
