@@ -16,7 +16,9 @@ import org.firstinspires.ftc.teamcode.swerve.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.swerve.common.kinematics.RevisedKinematics;
 import org.firstinspires.ftc.teamcode.swerve.common.kinematics.SwervePod;
 import org.firstinspires.ftc.teamcode.swerve.common.pid.ArmPID;
+import java.util.concurrent.TimeUnit;
 import org.firstinspires.ftc.teamcode.swerve.common.pid.HeaderControlPID;
+
 
 @TeleOp(name="Final BaseDrive", group="Drive")
 //@Disabled
@@ -224,6 +226,18 @@ public class FinalBaseDrive extends OpMode{
             clawClose = true;
         }
         if (funnyMacro.is(Button.State.TAP)){
+            //Mid Position
+            xvalue = 165;
+            yvalue = 538;
+            clawAngle = 0;
+            triangle();
+            try {
+                TimeUnit.MILLISECONDS.sleep(850);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+            //Goofy Intake Position
             xvalue = 435;
             yvalue = 0;
             clawAngle = 0.85;
@@ -232,27 +246,56 @@ public class FinalBaseDrive extends OpMode{
             xvalue += 30*(-gamepad2.left_stick_y);
             yvalue += 30*(-gamepad2.right_stick_y);
             triangle();
+            try {
+                TimeUnit.MILLISECONDS.sleep(850);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
 
-            xvalue=352;
+            //Move Claw Forward
+            xvalue = 375;
             yvalue = 0;
             xvalue += 30*(-gamepad2.left_stick_y);
             yvalue += 30*(-gamepad2.right_stick_y);
             triangle();
-            clawClose = false;
+            try {
+                TimeUnit.MILLISECONDS.sleep(500);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            robot.claw.setPosition(constants.closeClaw);
+            try {
+                TimeUnit.MILLISECONDS.sleep(250);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
 
+            //Mid Position
+            xvalue = 165;
+            yvalue = 538;
+            clawAngle = 0;
+            triangle();
+            try {
+                TimeUnit.MILLISECONDS.sleep(750);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+            //Goofy High
             xvalue = -346;
             yvalue = 732;
             clawAngle = -0.27;
-            xvalue += 30*(-gamepad2.left_stick_y);
-            yvalue += 30*(-gamepad2.right_stick_y);
-            triangle();
-            clawClose = true;
         }
 
         xvalue += 30*(-gamepad2.left_stick_y);
         yvalue += 30*(-gamepad2.right_stick_y);
         triangle();
-
+        try {
+            TimeUnit.MILLISECONDS.sleep(500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        robot.claw.setPosition(constants.openClaw);
     }
 
     void UpdateTelemetry(){
