@@ -88,7 +88,7 @@ public class FinalBaseDrive extends OpMode{
     double avgDifferenceBetweenBottoms = 0;
 
     public static double internalKP = 10;
-    public static double internalKI = 0.049988;
+    public static double internalKI = 0;
     public static double internalKD = 0;
     public static double internalKF = 0;
 
