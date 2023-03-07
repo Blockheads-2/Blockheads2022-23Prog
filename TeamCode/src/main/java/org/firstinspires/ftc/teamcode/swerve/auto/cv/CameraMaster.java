@@ -71,4 +71,5 @@ public class CameraMaster extends OpenCvPipeline {
     public double getJunctionDistance() {
         return junctionDistanceAttr; // this is in inches
     }
+    public double getAngle(){return Math.atan2(junctionPointAttr.x, junctionPointAttr.y);}
 }

@@ -87,10 +87,14 @@ public class FinalBaseDrive extends OpMode{
     double avgDifferenceBetweenTops = 0;
     double avgDifferenceBetweenBottoms = 0;
 
-    public static double internalKP = 10;
-    public static double internalKI = 0.049988;
-    public static double internalKD = 0;
-    public static double internalKF = 0;
+    public static double internalKPL = 10;
+    public static double internalKIL = 0;
+    public static double internalKDL = 0;
+    public static double internalKFL = 0;
+    public static double internalKPR = 10;
+    public static double internalKIR = 0;
+    public static double internalKDR = 0;
+    public static double internalKFR = 0;
 
     @Override
     public void init() { //When "init" is clicked
@@ -103,7 +107,7 @@ public class FinalBaseDrive extends OpMode{
         reset = new Reset(robot, posSystem);
         kinematics.grabTelemetry(telemetry);
 
-        robot.setInternalPIDFCoef(internalKP, internalKI, internalKD, internalKF);
+        robot.setInternalPIDFCoef(internalKPR, internalKIR, internalKDR, internalKFR, internalKPL, internalKIL, internalKDL, internalKFL);
 
         moveArmToInit();
 

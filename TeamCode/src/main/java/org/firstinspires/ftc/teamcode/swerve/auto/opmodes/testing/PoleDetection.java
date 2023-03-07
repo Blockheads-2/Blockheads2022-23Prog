@@ -1,16 +1,17 @@
 package org.firstinspires.ftc.teamcode.swerve.auto.opmodes.testing;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.mecanum.common.Constants;
 import org.firstinspires.ftc.teamcode.swerve.auto.cv.CameraMaster;
+import org.firstinspires.ftc.teamcode.swerve.common.constantsPKG.Constants;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
-@Autonomous(name = "Pole Detection Test", group = "New")
+@Autonomous(name = "Pole Detection Test", group = "Drive")
 public class PoleDetection extends LinearOpMode {
 
     OpenCvCamera phoneCam;
@@ -25,7 +26,8 @@ public class PoleDetection extends LinearOpMode {
         phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                phoneCam.startStreaming(1280, 720, OpenCvCameraRotation.SIDEWAYS_RIGHT);
+                phoneCam.startStreaming(constants.WIDTH, constants.HEIGHT, OpenCvCameraRotation.SIDEWAYS_LEFT);
+//                FtcDashboard.getInstance().startCameraStream(phoneCam, 5);
             }
 
             @Override
@@ -39,14 +41,17 @@ public class PoleDetection extends LinearOpMode {
 
         }
 
-
-        telemetry.addData("Pole Position X", detector.getJunctionPoint().x);
-        telemetry.addData("Pole Position Y", detector.getJunctionPoint().y);
-        telemetry.addData("Number of Contours:", detector.getNumOfContours());
-        telemetry.addData("Distance to Pole", detector.getJunctionDistance());
-        telemetry.update();
-
         waitForStart();
+
+        while (opModeIsActive()){
+            telemetry.addData("Pole Position X", detector.getJunctionPoint().x);
+            telemetry.addData("Pole Position Y", detector.getJunctionPoint().y);
+            telemetry.addData("Number of Contours:", detector.getNumOfContours());
+            telemetry.addData("Distance to Pole", detector.getJunctionDistance());
+            telemetry.addData("Angle", detector.getAngle());
+            telemetry.update();
+        }
+
 
     }
 }

@@ -170,17 +170,19 @@ public class HardwareDrive
         //make sure to not add arm here
     }
 
-    public void setInternalPIDFCoef(double kp, double ki, double kd, double kf){
-        PIDFCoefficients coef = new PIDFCoefficients(kp, ki, kd, kf);
-        topL.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, coef);
-        botL.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, coef);
-        topR.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, coef);
-        botR.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, coef);
+    public void setInternalPIDFCoef(double kpR, double kiR, double kdR, double kfR, double kpL, double kiL, double kdL, double kfL){
+        PIDFCoefficients coefR = new PIDFCoefficients(kpR, kiR, kdR, kfR);
+        PIDFCoefficients coefL = new PIDFCoefficients(kpL, kiL, kdL, kfL);
 
-        topL.setPositionPIDFCoefficients(kp);
-        botL.setPositionPIDFCoefficients(kp);
-        topR.setPositionPIDFCoefficients(kp);
-        botR.setPositionPIDFCoefficients(kp);
+        topL.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, coefL);
+        botL.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, coefL);
+        topR.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, coefR);
+        botR.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, coefR);
+
+        topL.setPositionPIDFCoefficients(kpL);
+        botL.setPositionPIDFCoefficients(kpL);
+        topR.setPositionPIDFCoefficients(kpR);
+        botR.setPositionPIDFCoefficients(kpR);
     }
 
     public boolean wheelsAreBusy(){
