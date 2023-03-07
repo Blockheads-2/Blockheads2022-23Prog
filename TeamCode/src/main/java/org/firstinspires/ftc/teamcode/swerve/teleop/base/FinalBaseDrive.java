@@ -220,17 +220,14 @@ public class FinalBaseDrive extends OpMode{
             yvalue = 732;
             clawAngle = -0.27;
         }
-        if (funnyIntake.is(Button.State.TAP)){
-            xvalue = 435;
-            yvalue = 0;
-            clawAngle = 0.85;
-            robot.claw.setPosition(constants.openClaw);
-            clawClose = true;
-        }
-        if (funnyMacro.is(Button.State.TAP)){
-            macrorunning = !macrorunning;
-        }
-        if (macrorunning){
+//        if (funnyIntake.is(Button.State.TAP)){
+//            xvalue = 435;
+//            yvalue = 0;
+//            clawAngle = 0.85;
+//            robot.claw.setPosition(constants.openClaw);
+//            clawClose = true;
+//        }
+        if (funnyMacro.is(Button.State.HELD)){
             //Mid Position
             xvalue = 165;
             yvalue = 538;
