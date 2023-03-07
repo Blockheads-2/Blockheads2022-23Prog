@@ -204,7 +204,8 @@ public class SwervePod {
             return 1;
         } else { //correcting left to match right, so no need to change the left side.
             return (Math.abs(botLToBotR) > 1 ? 1.0 - (Math.abs(botLToBotR - 1.0)) : 1.0 + (1.0 - Math.abs(botLToBotR)));
-        }    }
+        }
+    }
 
     public double wheelOptimization(double target, double currentW){
         double target2 = (target < 0 ? target + 360 : target);
@@ -460,6 +461,10 @@ public class SwervePod {
             } else return false;
         }
         return false;
+    }
+
+    public boolean rotPriority(){
+        return (Math.abs(rotClicksTarget) >= Math.abs(spinClicksTarget));
     }
 
     public void setWheelOrientation(GlobalPosSystem.WheelOrientation orientation){

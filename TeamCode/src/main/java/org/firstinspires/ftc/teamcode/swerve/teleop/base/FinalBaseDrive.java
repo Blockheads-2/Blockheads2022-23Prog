@@ -243,6 +243,13 @@ public class FinalBaseDrive extends OpMode{
         kinematics.logic(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, -gamepad1.right_stick_y, gamepad1.right_trigger, -gamepad1.left_trigger); //wheelAllignment is one loop late.
 
         targetClicks = kinematics.getClicks();
+
+//        if (PodL.rotPriority() || PodR.rotPriority()){
+//            robot.setInternalPIDFCoef(15, 0, 0, 0);
+//        } else {
+//            robot.setInternalPIDFCoef(10, 0, 0, 0);
+//        }
+        
         robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + (int)(targetClicks[0]));
         robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + (int)(targetClicks[1]));
         robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + (int)(targetClicks[2]));
