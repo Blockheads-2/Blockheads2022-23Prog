@@ -35,11 +35,11 @@ public class GlobalPosSystem {
 
     private boolean updateGPS = true;
     
-    public enum WheelOrientation{
-        FRONT,
-        BACK,
-    }
-    private WheelOrientation[] wheelOrientation = new WheelOrientation[2];
+//    public enum WheelOrientation{
+//        FRONT,
+//        BACK,
+//    }
+//    private WheelOrientation[] wheelOrientation = new WheelOrientation[2];
 
 
     public GlobalPosSystem(HardwareDrive robot) {
@@ -151,24 +151,24 @@ public class GlobalPosSystem {
         positionArr[1] += (hypotenuse * Math.cos(baseAngle));
     }
 
-    public void calculateWheelOrientation(SwervePod podL, SwervePod podR){
-        double optimizedCurrentWL = positionArr[2];
-//        double optimizedCurrentWR = positionArr[3];
-        if (!podL.getPole()) optimizedCurrentWL = clamp(positionArr[2] + 180); //direction wheel is moving in
-//        if (!initPoleR) optimizedCurrentWR = clamp(positionArr[3] + 180);
+//    public void calculateWheelOrientation(SwervePod podL, SwervePod podR){
+//        double optimizedCurrentWL = positionArr[2];
+////        double optimizedCurrentWR = positionArr[3];
+//        if (!podL.getPole()) optimizedCurrentWL = clamp(positionArr[2] + 180); //direction wheel is moving in
+////        if (!initPoleR) optimizedCurrentWR = clamp(positionArr[3] + 180);
+//
+//        double newRobotHeader = clamp(positionArr[4] - clamp(90 - optimizedCurrentWL));
+//
+//        wheelOrientation[0] = (Math.abs(newRobotHeader) <= 90 ? WheelOrientation.BACK : WheelOrientation.FRONT); //left
+//        wheelOrientation[1] = (Math.abs(newRobotHeader) <= 90 ? WheelOrientation.FRONT : WheelOrientation.BACK); //right
+//
+//        podL.setWheelOrientation(wheelOrientation[0]);
+//        podR.setWheelOrientation(wheelOrientation[1]);
+//    }
 
-        double newRobotHeader = clamp(positionArr[4] - clamp(90 - optimizedCurrentWL));
-
-        wheelOrientation[0] = (Math.abs(newRobotHeader) <= 90 ? WheelOrientation.BACK : WheelOrientation.FRONT); //left
-        wheelOrientation[1] = (Math.abs(newRobotHeader) <= 90 ? WheelOrientation.FRONT : WheelOrientation.BACK); //right
-
-        podL.setWheelOrientation(wheelOrientation[0]);
-        podR.setWheelOrientation(wheelOrientation[1]);
-    }
-
-    public WheelOrientation[] getWheelOrientation(){
-        return wheelOrientation;
-    }
+//    public WheelOrientation[] getWheelOrientation(){
+//        return wheelOrientation;
+//    }
 
     int loopCount = 0;
     double avgVelTopL = 0;
