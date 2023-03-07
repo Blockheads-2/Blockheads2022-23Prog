@@ -75,6 +75,7 @@ public class FinalBaseDrive extends OpMode{
     Button rightBumpy = new Button();
     Button funnyHigh = new Button();
     Button funnyIntake = new Button();
+    Button funnyMacro = new Button();
 
     boolean clawClose = false;
     boolean clawUp = false;
@@ -221,8 +222,33 @@ public class FinalBaseDrive extends OpMode{
             clawAngle = 0.85;
             robot.claw.setPosition(constants.openClaw);
             clawClose = true;
-
         }
+        if (funnyMacro.is(Button.State.TAP)){
+            xvalue = 435;
+            yvalue = 0;
+            clawAngle = 0.85;
+            robot.claw.setPosition(constants.openClaw);
+            clawClose = true;
+            xvalue += 30*(-gamepad2.left_stick_y);
+            yvalue += 30*(-gamepad2.right_stick_y);
+            triangle();
+
+            xvalue=352;
+            yvalue = 0;
+            xvalue += 30*(-gamepad2.left_stick_y);
+            yvalue += 30*(-gamepad2.right_stick_y);
+            triangle();
+            clawClose = false;
+
+            xvalue = -346;
+            yvalue = 732;
+            clawAngle = -0.27;
+            xvalue += 30*(-gamepad2.left_stick_y);
+            yvalue += 30*(-gamepad2.right_stick_y);
+            triangle();
+            clawClose = true;
+        }
+
         xvalue += 30*(-gamepad2.left_stick_y);
         yvalue += 30*(-gamepad2.right_stick_y);
         triangle();
@@ -335,6 +361,7 @@ public class FinalBaseDrive extends OpMode{
         rightBumpy.update(gamepad2.right_bumper);
         funnyHigh.update(gamepad2.b);
         funnyIntake.update(gamepad2.a);
+        funnyMacro.update(gamepad2.right_stick_button);
     }
 
     void DriveTrainPowerEncoder(){
