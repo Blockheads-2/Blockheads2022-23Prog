@@ -29,7 +29,7 @@ public class Constants {
 //    public double clickToleranceAuto = 12; //~1/3rd worth of error for translation.  ~2 degrees worth of error for rotation.
     public double clickToleranceAuto = 10; //for testing with dashboard
     public double degreeTOLERANCE = 3;
-    public double allignmentTolerance = 13;
+    public double allignmentTolerance = 5;
 
 
 
