@@ -44,6 +44,8 @@ public class FinalBaseDrive extends OpMode{
 
     double servoUnits = 0;
 
+    boolean macrorunning = false;
+
 
     Constants constants = new Constants();
     Reset reset;
@@ -226,13 +228,16 @@ public class FinalBaseDrive extends OpMode{
             clawClose = true;
         }
         if (funnyMacro.is(Button.State.TAP)){
+            macrorunning = !macrorunning;
+        }
+        if (macrorunning){
             //Mid Position
             xvalue = 165;
             yvalue = 538;
             clawAngle = 0;
             triangle();
             try {
-                TimeUnit.MILLISECONDS.sleep(850);
+                TimeUnit.MILLISECONDS.sleep(800);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -247,7 +252,7 @@ public class FinalBaseDrive extends OpMode{
             yvalue += 30*(-gamepad2.right_stick_y);
             triangle();
             try {
-                TimeUnit.MILLISECONDS.sleep(850);
+                TimeUnit.MILLISECONDS.sleep(800);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -259,13 +264,13 @@ public class FinalBaseDrive extends OpMode{
             yvalue += 30*(-gamepad2.right_stick_y);
             triangle();
             try {
-                TimeUnit.MILLISECONDS.sleep(500);
+                TimeUnit.MILLISECONDS.sleep(400);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
             robot.claw.setPosition(constants.closeClaw);
             try {
-                TimeUnit.MILLISECONDS.sleep(250);
+                TimeUnit.MILLISECONDS.sleep(350);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -276,7 +281,7 @@ public class FinalBaseDrive extends OpMode{
             clawAngle = 0;
             triangle();
             try {
-                TimeUnit.MILLISECONDS.sleep(750);
+                TimeUnit.MILLISECONDS.sleep(600);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -296,6 +301,11 @@ public class FinalBaseDrive extends OpMode{
             throw new RuntimeException(e);
         }
         robot.claw.setPosition(constants.openClaw);
+        try {
+            TimeUnit.MILLISECONDS.sleep(250);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     void UpdateTelemetry(){
