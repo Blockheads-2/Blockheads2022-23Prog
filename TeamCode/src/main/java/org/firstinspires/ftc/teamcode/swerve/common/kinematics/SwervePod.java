@@ -30,7 +30,7 @@ public class SwervePod {
     }
     Side side;
 
-    GlobalPosSystem.WheelOrientation wheelOrientation;
+//    GlobalPosSystem.WheelOrientation wheelOrientation;
 
     //teleop
     private double currentW = 0;
@@ -467,17 +467,17 @@ public class SwervePod {
         return (Math.abs(rotClicksTarget) >= Math.abs(spinClicksTarget));
     }
 
-    public void setWheelOrientation(GlobalPosSystem.WheelOrientation orientation){
-        this.wheelOrientation = orientation;
-    }
+//    public void setWheelOrientation(GlobalPosSystem.WheelOrientation orientation){
+//        this.wheelOrientation = orientation;
+//    }
 
     public RevisedKinematics.DriveType getDriveType(){
         return driveType;
     }
 
     public double[] getOutput(){
-        power *= accelerator.getAccelerationFactor(Math.abs(power) * constants.POWER_LIMITER * direction, turnAmount);
-        spinClicksTarget *= accelerator.getAccelerationFactor(spinClicksTarget* direction, turnAmount);
+        power *= accelerator.getAccelerationFactor(Math.abs(power) * constants.POWER_LIMITER, turnAmount);
+        spinClicksTarget *= accelerator.getAccelerationFactor(Math.abs(spinClicksTarget), turnAmount);
 
         if (power > constants.POWER_LIMITER) power = constants.POWER_LIMITER;
         else if (power < -constants.POWER_LIMITER) power = -constants.POWER_LIMITER;

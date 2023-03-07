@@ -107,14 +107,14 @@ public class FinalBaseDrive extends OpMode{
         reset = new Reset(robot, posSystem);
         kinematics.grabTelemetry(telemetry);
 
+        PodL.getAccelerator().actuallyAccelerate(true);
+        PodR.getAccelerator().actuallyAccelerate(true);
+
         robot.setInternalPIDFCoef(internalKPR, internalKIR, internalKDR, internalKFR, internalKPL, internalKIL, internalKDL, internalKFL);
 
         moveArmToInit();
 
         telemetry.addData("Say", "Hello Driver");
-
-//        gpsUpdateThread = new Thread(posSystem);
-//        gpsUpdateThread.start();
     }
 
     public void moveArmToInit(){
