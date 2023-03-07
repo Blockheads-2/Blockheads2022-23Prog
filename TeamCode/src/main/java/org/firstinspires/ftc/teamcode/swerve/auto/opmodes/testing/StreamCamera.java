@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.swerve.auto.opmodes.testing;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -11,6 +12,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
+@Autonomous(name = "Pole Detection Test", group = "Drive")
 public class StreamCamera {
     private OpenCvWebcam webcam;
     private CameraMasterJR opencv = null;

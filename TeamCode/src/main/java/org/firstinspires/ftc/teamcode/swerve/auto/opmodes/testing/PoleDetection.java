@@ -10,7 +10,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
-@Autonomous(name = "Pole Detection Test", group = "New")
+@Autonomous(name = "Pole Detection Test", group = "Drive")
 public class PoleDetection extends LinearOpMode {
 
     OpenCvCamera phoneCam;

@@ -30,7 +30,7 @@ public class CameraMaster extends OpenCvPipeline {
         Imgproc.cvtColor(input, rawHSV, Imgproc.COLOR_RGB2HSV);
 
         // Blur image to lessen noise
-        Imgproc.GaussianBlur(rawHSV, blurredHSV, new Size(15, 15), 0); // increase blur?
+        Imgproc.GaussianBlur(rawHSV, blurredHSV, new Size(15, 15), 0);
 
         // Threshold image, turning it into binary (only black and white). Now openCV knows what to get the contour, or shape, of.
         Core.inRange(blurredHSV, darkestJunctions, lightestJunctions, thresholded);
