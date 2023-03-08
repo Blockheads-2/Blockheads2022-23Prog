@@ -201,6 +201,9 @@ public class FinalBaseDrive extends OpMode{
 
 //        telemetry.addData("Throttle (Left)", PodL.getThrottle());
 //        telemetry.addData("Throttle (Right)", PodR.getThrottle());
+        telemetry.addData("Velocity Difference (Top) (Left - Right)", robot.topL.getVelocity() - robot.topR.getVelocity()); //ticks per second
+        telemetry.addData("Velocity Difference (Bottom) (Left - Right)", robot.botL.getVelocity() - robot.botR.getVelocity()); //ticks per second
+
 
         telemetry.addData("topL AVERAGE velocity", avgVelTopL / loopCount); //ticks per second
         telemetry.addData("botL AVERAGE velocity", avgVelBotL / loopCount); //ticks per second

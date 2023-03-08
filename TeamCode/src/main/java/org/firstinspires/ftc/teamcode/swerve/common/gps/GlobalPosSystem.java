@@ -55,8 +55,8 @@ public class GlobalPosSystem {
         prevMotorClicks[2] =  motorClicksPos[2];
         prevMotorClicks[3] =  motorClicksPos[3];
 
-        currentOrientation = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        lastOrientation = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+//        currentOrientation = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+//        lastOrientation = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
     }
 
     public void grabKinematics(RevisedKinematics k){
@@ -89,7 +89,7 @@ public class GlobalPosSystem {
 
     public void calculateHeader(){ //add this after implementing the extension hub onto the robot
         // Get current orientation
-        currentOrientation = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+//        currentOrientation = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         // Change in angle = current angle - previous angle
         double deltaAngle = currentOrientation.firstAngle - lastOrientation.firstAngle;
@@ -306,9 +306,9 @@ public class GlobalPosSystem {
     public void resetHeader(){
         positionArr[4] = 0;
 
-        currentOrientation = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        lastOrientation = currentOrientation;
-        currAngle = 0;
+//        currentOrientation = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+//        lastOrientation = currentOrientation;
+//        currAngle = 0;
     }
 
     public void hardResetGPS(){
