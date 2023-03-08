@@ -220,13 +220,13 @@ public class FinalBaseDrive extends OpMode{
             yvalue = 732;
             clawAngle = -0.27;
         }
-//        if (funnyIntake.is(Button.State.TAP)){
-//            xvalue = 435;
-//            yvalue = 0;
-//            clawAngle = 0.85;
-//            robot.claw.setPosition(constants.openClaw);
-//            clawClose = true;
-//        }
+        if (funnyIntake.is(Button.State.TAP)){
+            xvalue = 435;
+            yvalue = 0;
+            clawAngle = 0.85;
+            robot.claw.setPosition(constants.openClaw);
+            clawClose = true;
+        }
         if (funnyMacro.is(Button.State.HELD)){
             //Mid Position
             xvalue = 165;
@@ -292,16 +292,18 @@ public class FinalBaseDrive extends OpMode{
         xvalue += 30*(-gamepad2.left_stick_y);
         yvalue += 30*(-gamepad2.right_stick_y);
         triangle();
-        try {
-            TimeUnit.MILLISECONDS.sleep(500);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        robot.claw.setPosition(constants.openClaw);
-        try {
-            TimeUnit.MILLISECONDS.sleep(250);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        if (funnyMacro.is(Button.State.HELD)){
+            try {
+                TimeUnit.MILLISECONDS.sleep(500);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            robot.claw.setPosition(constants.openClaw);
+            try {
+                TimeUnit.MILLISECONDS.sleep(250);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -410,8 +412,8 @@ public class FinalBaseDrive extends OpMode{
         leftBumpy.update(gamepad2.left_bumper);
         rightBumpy.update(gamepad2.right_bumper);
         funnyHigh.update(gamepad2.b);
-        funnyIntake.update(gamepad2.a);
-        funnyMacro.update(gamepad2.right_stick_button);
+        funnyIntake.update(gamepad2.right_stick_button);
+        funnyMacro.update(gamepad2.a);
     }
 
     void DriveTrainPowerEncoder(){
