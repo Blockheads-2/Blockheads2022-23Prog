@@ -4,7 +4,9 @@ import android.view.View;
 
 //import com.acmerobotics.dashboard.FtcDashboard;
 //import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -96,6 +98,9 @@ public class FinalBaseDrive extends OpMode{
     public static double internalKDR = 0;
     public static double internalKFR = 0;
 
+    private final FtcDashboard dashboard = FtcDashboard.getInstance();
+    TelemetryPacket packet;
+
     @Override
     public void init() { //When "init" is clicked
         robot.init(hardwareMap);
@@ -111,6 +116,12 @@ public class FinalBaseDrive extends OpMode{
         PodR.getAccelerator().actuallyAccelerate(true);
 
         robot.setInternalPIDFCoef(internalKPR, internalKIR, internalKDR, internalKFR, internalKPL, internalKIL, internalKDL, internalKFL);
+        packet = new TelemetryPacket();
+        dashboard.setTelemetryTransmissionInterval(25);
+        packet.put("Velocity Difference (Top) (Left - Right)", 0); //ticks per second
+        packet.put("Velocity Difference (Bottom) (Left - Right)", 0); //ticks per second
+        dashboard.sendTelemetryPacket(packet);
+
 
         moveArmToInit();
 
@@ -225,6 +236,15 @@ public class FinalBaseDrive extends OpMode{
         telemetry.addData("Delta time loop (sec)", deltaMS / 1000.0);
 
         telemetry.update();
+
+        dashboard.setTelemetryTransmissionInterval(25);
+        packet.put("Velocity Difference (Top) (Left - Right)", robot.topL.getVelocity() - robot.topR.getVelocity()); //ticks per second
+        packet.put("Velocity Difference (Bottom) (Left - Right)", robot.botL.getVelocity() - robot.botR.getVelocity()); //ticks per second
+        packet.put("avg ratio between top velocities (Left : Right)", (avgVelTopL / loopCount) / (avgVelTopR / loopCount)); //ticks per second
+        packet.put("avg ratio between bottom velocities (Left : Right)", (avgVelBotL / loopCount) / (avgVelBotR / loopCount)); //ticks per second
+
+        dashboard.sendTelemetryPacket(packet);
+
     }
 
     void UpdateButton(){
