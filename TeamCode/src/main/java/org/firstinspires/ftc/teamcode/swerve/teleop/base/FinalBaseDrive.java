@@ -98,6 +98,8 @@ public class FinalBaseDrive extends OpMode{
     public static double internalKDR = 0;
     public static double internalKFR = 0;
 
+    public static double accelerationFactor = 1.5;
+
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
     TelemetryPacket packet;
 
@@ -114,6 +116,9 @@ public class FinalBaseDrive extends OpMode{
 
         PodL.getAccelerator().actuallyAccelerate(true);
         PodR.getAccelerator().actuallyAccelerate(true);
+
+        PodL.getAccelerator().setAccelFactor(accelerationFactor);
+        PodR.getAccelerator().setAccelFactor(accelerationFactor);
 
         robot.setInternalPIDFCoef(internalKPR, internalKIR, internalKDR, internalKFR, internalKPL, internalKIL, internalKDL, internalKFL);
         packet = new TelemetryPacket();
