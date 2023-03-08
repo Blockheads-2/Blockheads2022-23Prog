@@ -25,6 +25,8 @@ public class CameraMaster extends OpenCvPipeline {
     double junctionDistanceAttr = 0;
     int numOfContours=  0;
 
+    List<MatOfPoint> contours = new ArrayList<>();
+
     public Mat processFrame(Mat input) {
         // Convert image to HSV
         Imgproc.cvtColor(input, rawHSV, Imgproc.COLOR_RGB2HSV);
@@ -36,12 +38,21 @@ public class CameraMaster extends OpenCvPipeline {
         Core.inRange(blurredHSV, darkestJunctions, lightestJunctions, thresholded);
 
         // Find contours
-        List<MatOfPoint> contours = new ArrayList<>();
+//        List<MatOfPoint> contours = new ArrayList<>();
+        contours = new ArrayList<>();
         Imgproc.findContours(thresholded, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
         // Get distance and centroid of biggest junction
         if (!contours.isEmpty()) {
             MatOfPoint biggestContour = contours.get(0);
+
+
+            for (int i = contours.size()-1; i >= 0; i--){
+                if (Imgproc.contourArea(contours.get(i)) <= 7000){ // last tested was 5000
+                    contours.remove(i);
+                }
+            }
+
 
             for (MatOfPoint curContour : contours) {
                 if (Imgproc.contourArea(curContour) > Imgproc.contourArea(biggestContour)) {
@@ -64,6 +75,10 @@ public class CameraMaster extends OpenCvPipeline {
         return input;
     }
 
+    public List<MatOfPoint> getContours(){
+        return contours;
+    }
+
     public Point getJunctionPoint() {
         return junctionPointAttr;
     }
@@ -71,5 +86,5 @@ public class CameraMaster extends OpenCvPipeline {
     public double getJunctionDistance() {
         return junctionDistanceAttr; // this is in inches
     }
-    public double getAngle(){return Math.atan2(junctionPointAttr.x, junctionPointAttr.y);}
+    public double getAngle(){return Math.toDegrees(Math.atan2(junctionPointAttr.x, junctionPointAttr.y));}
 }
