@@ -4,6 +4,7 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
+import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -17,13 +18,18 @@ public class CameraMaster extends OpenCvPipeline {
 
     Scalar darkestJunctions = new Scalar(15, 100, 100);
     Scalar lightestJunctions = new Scalar(60, 255, 255);
+
     Mat rawHSV = new Mat();
     Mat blurredHSV = new Mat();
     Mat thresholded = new Mat();
-    int junctionNumAttr = 0;
-    Point junctionPointAttr = new Point();
+
+    MatOfPoint biggestContour;
+    int totalContours = 0;
+    Point junctionPoint = new Point();
     double junctionDistanceAttr = 0;
     int numOfContours=  0;
+
+    RotatedRect box = new RotatedRect();
 
     List<MatOfPoint> contours = new ArrayList<>();
 
@@ -32,7 +38,7 @@ public class CameraMaster extends OpenCvPipeline {
         Imgproc.cvtColor(input, rawHSV, Imgproc.COLOR_RGB2HSV);
 
         // Blur image to lessen noise
-        Imgproc.GaussianBlur(rawHSV, blurredHSV, new Size(15, 15), 0); // increase blur?
+        Imgproc.GaussianBlur(rawHSV, blurredHSV, new Size(15, 15), 0); // make box bigger
 
         // Threshold image, turning it into binary (only black and white). Now openCV knows what to get the contour, or shape, of.
         Core.inRange(blurredHSV, darkestJunctions, lightestJunctions, thresholded);
@@ -44,7 +50,7 @@ public class CameraMaster extends OpenCvPipeline {
 
         // Get distance and centroid of biggest junction
         if (!contours.isEmpty()) {
-            MatOfPoint biggestContour = contours.get(contours.size()-1);
+            biggestContour = contours.get(contours.size()-1);
 
 
             for (int i = contours.size()-1; i >= 0; i--){
@@ -62,17 +68,22 @@ public class CameraMaster extends OpenCvPipeline {
 //                }
 //            }
 
-            // Find centroid
-            Moments moments = Imgproc.moments(biggestContour);
-            Point junctionPoint = new Point(moments.get_m10() / moments.get_m00(), moments.get_m01() / moments.get_m00());
+            // Finds center / most concentrated part
+            Moments moments = Imgproc.moments(biggestContour); //an image moment is a certain particular weighted average (moment) of the image pixels' intensities, or a function of such moments
 
             //Assign attributes
-            junctionNumAttr = contours.size();
+            totalContours = contours.size();
             junctionDistanceAttr = 240000/Imgproc.contourArea(biggestContour);
-            junctionPointAttr = junctionPoint;
+            this.junctionPoint = new Point(moments.get_m10() / moments.get_m00(), moments.get_m01() / moments.get_m00());
+            Imgproc.boxPoints(box, biggestContour);
         }
 
         Imgproc.drawContours(input, contours, -1, new Scalar(0,255,0), 3);
+
+        List<MatOfPoint> biggestContourList = new ArrayList<>();
+        biggestContourList.add(biggestContour);
+
+        Imgproc.drawContours(input, biggestContourList, -1, new Scalar(255,0,0), 3);
 
         return input;
     }
@@ -82,11 +93,17 @@ public class CameraMaster extends OpenCvPipeline {
     }
 
     public Point getJunctionPoint() {
-        return junctionPointAttr;
+        return junctionPoint;
     }
-    public int getNumOfContours() {return junctionNumAttr;}
+    public int getNumOfContours() {return totalContours;}
     public double getJunctionDistance() {
         return junctionDistanceAttr; // this is in inches
     }
-    public double getAngle(){return Math.toDegrees(Math.atan2(junctionPointAttr.x, junctionPointAttr.y));}
+    public double getAngle(){return Math.toDegrees(Math.atan2(junctionPoint.x, junctionPoint.y));}
+    public MatOfPoint getBiggestContour(){
+        return biggestContour;
+    }
+    public RotatedRect getBox(){
+        return box;
+    }
 }

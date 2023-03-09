@@ -51,6 +51,12 @@ public class PoleDetection extends LinearOpMode {
             telemetry.addData("Number of Contours:", detector.getNumOfContours());
             telemetry.addData("Distance to Pole", detector.getJunctionDistance());
             telemetry.addData("Angle", detector.getAngle());
+            telemetry.addData("center.x", detector.getBox().center.x);
+            telemetry.addData("center.y", detector.getBox().center.y);
+            telemetry.addData("size.width", detector.getBox().size.width);
+            telemetry.addData("size.height", detector.getBox().size.height);
+            telemetry.addData("angle", detector.getBox().angle);
+            
             telemetry.update();
         }
 
