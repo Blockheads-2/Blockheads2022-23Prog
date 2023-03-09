@@ -278,11 +278,20 @@ public class FinalBaseDrive extends OpMode{
 //        } else {
 //            robot.setInternalPIDFCoef(10, 0, 0, 0);
 //        }
-        
-        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + (int)(targetClicks[0]));
-        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + (int)(targetClicks[1]));
-        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + (int)(targetClicks[2]));
-        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() + (int)(targetClicks[3]));
+
+        int targetClicksTop = (Math.abs(targetClicks[0]) + Math.abs(targetClicks[2])) / 2;
+        int targetClicksBot = (Math.abs(targetClicks[1]) + Math.abs(targetClicks[3])) / 2;
+        if (PodL.getDriveType() == RevisedKinematics.DriveType.LINEAR){
+            robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + (targetClicksTop * (targetClicks[0] > 0 ? 1 : -1)));
+            robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + (targetClicksBot * (targetClicks[1] > 0 ? 1 : -1)));
+            robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + (targetClicksTop * (targetClicks[2] > 0 ? 1 : -1)));
+            robot.botR.setTargetPosition(robot.botR.getCurrentPosition() + (targetClicksBot * (targetClicks[3] > 0 ? 1 : -1)));
+        } else {
+            robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + (int)(targetClicks[0]));
+            robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + (int)(targetClicks[1]));
+            robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + (int)(targetClicks[2]));
+            robot.botR.setTargetPosition(robot.botR.getCurrentPosition() + (int)(targetClicks[3]));
+        }
 
         motorPower = kinematics.getPower();
         robot.topL.setVelocity(motorPower[0] * constants.MAX_VELOCITY_DT);

@@ -44,7 +44,7 @@ public class CameraMaster extends OpenCvPipeline {
 
         // Get distance and centroid of biggest junction
         if (!contours.isEmpty()) {
-            MatOfPoint biggestContour = contours.get(0);
+            MatOfPoint biggestContour = contours.get(contours.size()-1);
 
 
             for (int i = contours.size()-1; i >= 0; i--){
@@ -53,12 +53,14 @@ public class CameraMaster extends OpenCvPipeline {
                 }
             }
 
-
-            for (MatOfPoint curContour : contours) {
-                if (Imgproc.contourArea(curContour) > Imgproc.contourArea(biggestContour)) {
-                    biggestContour = curContour;
-                }
-            }
+//            for (int i = contours.size()-1; i >= 0; i--){
+//                for (int j = i-1; j >= 0; j--){
+//                    if (contours.size() > 1 && Imgproc.contourArea(contours.get(i)) < Imgproc.contourArea(contours.get(j))) {
+//                        contours.remove(i);
+//                        break;
+//                    }
+//                }
+//            }
 
             // Find centroid
             Moments moments = Imgproc.moments(biggestContour);
