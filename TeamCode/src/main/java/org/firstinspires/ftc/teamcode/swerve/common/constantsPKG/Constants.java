@@ -18,8 +18,8 @@ public class Constants {
     //30~70 clicks per loop at a spin click factor of 140.
     //95 clicks per loop, 30 clicks per second at a spin factor of 300 (right trigger used)
 
-    public double accelTime = 1.5; //outputs 100% of the calculated power within ~1 second
-    public double accelTimeAuto = 2; //outputs 100% of the calculated power within ~2.5 seconds
+    public double accelTime = 2; //outputs 100% of the calculated power within
+    public double accelTimeAuto = 2.5; //outputs 100% of the calculated power within
 
     public double CLICKS_PER_BLUE_REV = 537.7; //clicks per rev of motors
     public double WHEEL_DIAMETER = 92 / 25.4; //3.622 inches
