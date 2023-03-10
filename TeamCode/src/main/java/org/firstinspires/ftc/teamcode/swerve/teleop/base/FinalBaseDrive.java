@@ -2,6 +2,11 @@ package org.firstinspires.ftc.teamcode.swerve.teleop.base;
 
 import android.view.View;
 
+//import com.acmerobotics.dashboard.FtcDashboard;
+//import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -17,10 +22,10 @@ import org.firstinspires.ftc.teamcode.swerve.common.kinematics.RevisedKinematics
 import org.firstinspires.ftc.teamcode.swerve.common.kinematics.SwervePod;
 import org.firstinspires.ftc.teamcode.swerve.common.pid.ArmPID;
 import java.util.concurrent.TimeUnit;
-import org.firstinspires.ftc.teamcode.swerve.common.pid.HeaderControlPID;
 
 
 @TeleOp(name="Final BaseDrive", group="Drive")
+@Config
 //@Disabled
 public class FinalBaseDrive extends OpMode{
     /* Declare OpMode members. */
@@ -52,12 +57,6 @@ public class FinalBaseDrive extends OpMode{
 
     SwervePod PodL = new SwervePod(constants.initDirectionLeft, SwervePod.Side.LEFT);
     SwervePod PodR = new SwervePod(constants.initDirectionRight, SwervePod.Side.RIGHT);
-
-    private enum TelemetryData{
-        LEFT,
-        RIGHT
-    }
-    TelemetryData tData = TelemetryData.LEFT;
 
     Button resetHeader = new Button();
     Button y = new Button();
@@ -98,6 +97,29 @@ public class FinalBaseDrive extends OpMode{
      * robot. Note that you won't see anything change on the Driver Station, only on the Robot Controller. */
     View relativeLayout;
 
+    int loopCount = 0;
+    double avgVelTopL = 0;
+    double avgVelBotL = 0;
+    double avgVelTopR = 0;
+    double avgVelBotR = 0;
+
+    double avgDifferenceBetweenTops = 0;
+    double avgDifferenceBetweenBottoms = 0;
+
+    public static double internalKPL = 10;
+    public static double internalKIL = 0;
+    public static double internalKDL = 0;
+    public static double internalKFL = 0;
+    public static double internalKPR = 10;
+    public static double internalKIR = 0;
+    public static double internalKDR = 0;
+    public static double internalKFR = 0;
+
+    public static double accelerationFactor = 1.5;
+
+    private final FtcDashboard dashboard = FtcDashboard.getInstance();
+    TelemetryPacket packet;
+
     @Override
     public void init() { //When "init" is clicked
         robot.init(hardwareMap);
@@ -109,12 +131,23 @@ public class FinalBaseDrive extends OpMode{
         reset = new Reset(robot, posSystem);
         kinematics.grabTelemetry(telemetry);
 
+        PodL.getAccelerator().actuallyAccelerate(true);
+        PodR.getAccelerator().actuallyAccelerate(true);
+
+        PodL.getAccelerator().setAccelFactor(accelerationFactor);
+        PodR.getAccelerator().setAccelFactor(accelerationFactor);
+
+        robot.setInternalPIDFCoef(internalKPR, internalKIR, internalKDR, internalKFR, internalKPL, internalKIL, internalKDL, internalKFL);
+        packet = new TelemetryPacket();
+        dashboard.setTelemetryTransmissionInterval(25);
+        packet.put("Velocity Difference (Top) (Left - Right)", 0); //ticks per second
+        packet.put("Velocity Difference (Bottom) (Left - Right)", 0); //ticks per second
+        dashboard.sendTelemetryPacket(packet);
+
+
         moveArmToInit();
 
         telemetry.addData("Say", "Hello Driver");
-
-//        gpsUpdateThread = new Thread(posSystem);
-//        gpsUpdateThread.start();
     }
 
     public void moveArmToInit(){
@@ -136,7 +169,6 @@ public class FinalBaseDrive extends OpMode{
 
     @Override
     public void init_loop() { //Loop between "init" and "start"
-
         robot.abl.setPower(0.7);
         robot.abr.setPower(0.7);
         robot.at.setPower(0.7);
@@ -163,15 +195,16 @@ public class FinalBaseDrive extends OpMode{
         robot.abr.setPower(0.7);
         robot.at.setPower(0.7);
 
-        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.setRunMode(DcMotor.RunMode.RUN_TO_POSITION); //leave it in RUN_TO_POSITION for the entirety
+        robot.setWheelRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setWheelRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.setWheelRunMode(DcMotor.RunMode.RUN_TO_POSITION); //leave it in RUN_TO_POSITION for the entirety
 
         loopTime.reset();
     }
 
     @Override
     public void loop() { //Loop between "start" and "stop"
+        loopCount++;
         UpdatePlayer1();
         UpdatePlayer2();
         UpdateButton();
@@ -308,92 +341,47 @@ public class FinalBaseDrive extends OpMode{
     }
 
     void UpdateTelemetry(){
-//        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
-//        telemetry.addData("Leftstick X", gamepad1.left_stick_x);
-//        telemetry.addData("Leftstick Y", -gamepad1.left_stick_y);
-//        telemetry.addData("Rightstick X", gamepad1.right_stick_x);
-//        telemetry.addData("Rightstick Y", -gamepad1.right_stick_y);
-//        telemetry.addData("right trigger", gamepad1.right_trigger);
-//        telemetry.addData("left trigger", -gamepad1.left_trigger);
-
-//        telemetry.addData("Arm top pos", robot.at.getCurrentPosition());
-//        telemetry.addData("Arm bot pos", robot.abl.getCurrentPosition());
-        telemetry.addData("Arm servo pos", robot.armServo.getPosition());
-
-//        telemetry.addData("Splining Special Condition", posSystem.specialSpliningCondition(PodL.getPole(), PodR.getPole()));
-        telemetry.addData("Wheel Orientation L", posSystem.getWheelOrientation()[0]);
-        telemetry.addData("Wheel Orientation R", posSystem.getWheelOrientation()[1]);
-        telemetry.addData("IsAlligned", posSystem.isAlligned(PodL.getPole(), PodR.getPole()));
-        telemetry.addData("Eligible for turning", posSystem.eligibleForTurning(PodL.getPole(), PodR.getPole()));
-        telemetry.addData("First movement", kinematics.firstMovement);
-        telemetry.addData("Drive Type", kinematics.getDriveType());
-        telemetry.addData("Spin Direction L", PodL.getSpinDirection());
-        telemetry.addData("Spin Direction R", PodR.getSpinDirection());
-
+        telemetry.addData("Conventional Joystick Power (Left joystick)", Math.sqrt(Math.pow(gamepad1.left_stick_x, 2) + Math.pow(-gamepad1.left_stick_y, 2)));
         telemetry.addData("Init Pole L?", PodL.getPole());
         telemetry.addData("Init Pole R?", PodR.getPole());
 
         telemetry.addData("X pos", posSystem.getPositionArr()[0]);
         telemetry.addData("Y pos", posSystem.getPositionArr()[1]);
-        telemetry.addData("Distance travelled Right", posSystem.distanceTravelledR);
-        telemetry.addData("Distance travelled Left", posSystem.distanceTravelledL);
-
-        telemetry.addData("Left W",  posSystem.getLeftWheelW());
-        telemetry.addData("Right W", posSystem.getRightWheelW());
         telemetry.addData("Optimized Left W", PodL.getOptimizedCurrentW());
         telemetry.addData("Optimized Right W", PodR.getOptimizedCurrentW());
-        telemetry.addData("robotic centric L", PodL.getRobotCentricCurrentW());
-        telemetry.addData("robotic centric R", PodR.getRobotCentricCurrentW());
-
-//        telemetry.addData("Non left wheel Left W", PodL.nonRightStickCurrentW);
-//        telemetry.addData("Non right wheel Right W", PodR.nonRightStickCurrentW);
-//        telemetry.addData("R reference point", PodR.controlHeaderReference);
         telemetry.addData("R", posSystem.getPositionArr()[4]);
-//
-        telemetry.addData("target", kinematics.target);
-        telemetry.addData("Turn Amount (Left)", PodL.getTurnAmount());
-        telemetry.addData("Turn Amount (Right)", PodR.getTurnAmount());
-        telemetry.addData("Throttle (Left)", PodL.getThrottle());
-        telemetry.addData("Throttle (Right)", PodR.getThrottle());
-//        telemetry.addData("error L", PodL.controlHeader.error);
-//        telemetry.addData("error R", PodR.controlHeader.error);
-//        telemetry.addData("error L arc", PodL.controlHeader.biggerArc);
-//        telemetry.addData("error R arc", PodR.controlHeader.biggerArc);
 
-        telemetry.addData("topL clicks", robot.topL.getCurrentPosition());
-        telemetry.addData("botL clicks", robot.botL.getCurrentPosition());
-        telemetry.addData("topR clicks", robot.topR.getCurrentPosition());
-        telemetry.addData("botR clicks", robot.botR.getCurrentPosition());
+//        telemetry.addData("Throttle (Left)", PodL.getThrottle());
+//        telemetry.addData("Throttle (Right)", PodR.getThrottle());
 
-
-        telemetry.addData("Left Spin Clicks Target", PodL.getOutput()[0]);
-        telemetry.addData("Left Rotate Clicks target",  PodL.getOutput()[1]);
-        telemetry.addData("Right Spin clicks target", PodR.getOutput()[0]);
-        telemetry.addData("Right Rotate clicks target",  PodR.getOutput()[1]);
-//        telemetry.addData("topL velocity", robot.topL.getVelocity()); //ticks per second
-//        telemetry.addData("botL velocity", robot.botL.getVelocity()); //ticks per second
-//        telemetry.addData("topR velocity", robot.topR.getVelocity());
-//        telemetry.addData("botR velocity", robot.botR.getVelocity());
-
-
-        telemetry.addData("Power TopL", robot.topL.getPower());
-        telemetry.addData("Power BotL", robot.botL.getPower());
-        telemetry.addData("Power TopR", robot.topR.getPower());
-        telemetry.addData("Power BotR", robot.botR.getPower());
-        telemetry.addData("Clicks Target TopL", robot.topL.getTargetPosition() - robot.topL.getCurrentPosition());
-        telemetry.addData("Clicks Target BotL",robot.botL.getTargetPosition() - robot.botL.getCurrentPosition());
-        telemetry.addData("Clicks Target TopR", robot.topR.getTargetPosition() - robot.topR.getCurrentPosition());
-        telemetry.addData("Clicks Target BotR",robot.botR.getTargetPosition() - robot.botR.getCurrentPosition());
+        telemetry.addData("topL AVERAGE velocity", avgVelTopL / loopCount); //ticks per second
+        telemetry.addData("botL AVERAGE velocity", avgVelBotL / loopCount); //ticks per second
+        telemetry.addData("topR AVERAGE velocity", avgVelTopR / loopCount); //ticks per second
+        telemetry.addData("botR AVERAGE velocity", avgVelBotR / loopCount); //ticks per second
+        telemetry.addData("avg ratio between top velocities (Left : Right)", (avgVelTopL / loopCount) / (avgVelTopR / loopCount)); //ticks per second
+        telemetry.addData("avg ratio between bottom velocities (Left : Right)", (avgVelBotL / loopCount) / (avgVelBotR / loopCount)); //ticks per second
 
         telemetry.addData("Drive Type", kinematics.getDriveType());
-        telemetry.addData("Current Stack", stackClawPos);
 
-        telemetry.addData("Arm bottom position", robot.abl.getTargetPosition());
+        telemetry.addData("PIDF Coefficients topL", robot.topL.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
+        telemetry.addData("PIDF Coefficients botL", robot.botL.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
+        telemetry.addData("PIDF Coefficients topR", robot.topR.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
+        telemetry.addData("PIDF Coefficients botR", robot.botR.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
+        telemetry.addData("TopL Target Pos Tolerance", robot.topL.getTargetPositionTolerance());
+        telemetry.addData("TopR Target Pos Tolerance", robot.topR.getTargetPositionTolerance());
 
         telemetry.addData("Delta time loop (sec)", deltaMS / 1000.0);
 
         telemetry.update();
+
+        dashboard.setTelemetryTransmissionInterval(25);
+        packet.put("Velocity Difference (Top) (Left - Right)", robot.topL.getVelocity() - robot.topR.getVelocity()); //ticks per second
+        packet.put("Velocity Difference (Bottom) (Left - Right)", robot.botL.getVelocity() - robot.botR.getVelocity()); //ticks per second
+        packet.put("avg ratio between top velocities (Left : Right)", (avgVelTopL / loopCount) / (avgVelTopR / loopCount)); //ticks per second
+        packet.put("avg ratio between bottom velocities (Left : Right)", (avgVelBotL / loopCount) / (avgVelBotR / loopCount)); //ticks per second
+
+        dashboard.sendTelemetryPacket(packet);
+
     }
 
     void UpdateButton(){
@@ -420,6 +408,27 @@ public class FinalBaseDrive extends OpMode{
         kinematics.logic((gamepad1.left_stick_x*0.75), (-gamepad1.left_stick_y*0.75), gamepad1.right_stick_x, -gamepad1.right_stick_y, gamepad1.right_trigger, -gamepad1.left_trigger); //wheelAllignment is one loop late.
 
         targetClicks = kinematics.getClicks();
+
+//        if (PodL.rotPriority() || PodR.rotPriority()){
+//            robot.setInternalPIDFCoef(15, 0, 0, 0);
+//        } else {
+//            robot.setInternalPIDFCoef(10, 0, 0, 0);
+//        }
+
+//        int targetClicksTop = (Math.abs(targetClicks[0]) + Math.abs(targetClicks[2])) / 2;
+//        int targetClicksBot = (Math.abs(targetClicks[1]) + Math.abs(targetClicks[3])) / 2;
+//        if (PodL.getDriveType() == RevisedKinematics.DriveType.LINEAR){
+//            robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + (targetClicksTop * (targetClicks[0] > 0 ? 1 : -1)));
+//            robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + (targetClicksBot * (targetClicks[1] > 0 ? 1 : -1)));
+//            robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + (targetClicksTop * (targetClicks[2] > 0 ? 1 : -1)));
+//            robot.botR.setTargetPosition(robot.botR.getCurrentPosition() + (targetClicksBot * (targetClicks[3] > 0 ? 1 : -1)));
+//        } else {
+//            robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + (int)(targetClicks[0]));
+    //        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + (int)(targetClicks[1]));
+    //        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + (int)(targetClicks[2]));
+    //        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() + (int)(targetClicks[3]));
+//        }
+
         robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + (int)(targetClicks[0]));
         robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + (int)(targetClicks[1]));
         robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + (int)(targetClicks[2]));
@@ -431,26 +440,13 @@ public class FinalBaseDrive extends OpMode{
         robot.topR.setVelocity(motorPower[2] * constants.MAX_VELOCITY_DT);
         robot.botR.setVelocity(motorPower[3] * constants.MAX_VELOCITY_DT);
 
-//        outputL = PodL.getOutput();
-//        outputR = PodR.getOutput();
-//
-//        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + (int)(outputL[0] + outputL[1]));
-//        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + (int)(-outputL[0] + outputL[1]));
-//        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + (int)(outputR[0] + outputR[1]));
-//        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() + (int)(-outputR[0] + outputR[1]));
-//
-//        robot.topL.setVelocity(outputL[2] * outputL[3] * constants.MAX_VELOCITY_DT);
-//        robot.botL.setVelocity(outputL[2] * outputL[3] * constants.MAX_VELOCITY_DT);
-//        robot.topR.setVelocity(outputR[2] * outputR[3] * constants.MAX_VELOCITY_DT);
-//        robot.botR.setVelocity(outputR[2] * outputR[3] * constants.MAX_VELOCITY_DT);
-
-//        robot.topL.setPower(outputL[2] * outputL[3]);
-//        robot.botL.setPower(outputL[2] * outputL[3]);
-//        robot.topR.setPower(outputR[2] * outputR[3]);
-//        robot.botR.setPower(outputR[2] * outputR[3]);
-
         deltaMS = loopTime.milliseconds() - prevMS;
         prevMS = loopTime.milliseconds();
+
+        avgVelTopL += robot.topL.getVelocity();
+        avgVelBotL += robot.botL.getVelocity();
+        avgVelTopR += robot.topR.getVelocity();
+        avgVelBotR += robot.botR.getVelocity();
     }
 
     void ArmPresets(){

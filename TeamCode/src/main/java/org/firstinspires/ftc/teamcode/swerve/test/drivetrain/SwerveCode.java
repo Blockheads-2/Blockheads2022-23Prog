@@ -70,8 +70,8 @@ public class SwerveCode extends OpMode{
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();
 
-        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.setWheelRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setWheelRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     @Override

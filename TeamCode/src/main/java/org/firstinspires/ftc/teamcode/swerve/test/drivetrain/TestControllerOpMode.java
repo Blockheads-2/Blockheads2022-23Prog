@@ -45,8 +45,8 @@ public class TestControllerOpMode extends OpMode{
 
     @Override
     public void init_loop() { //Loop between "init" and "start"
-        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.setWheelRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setWheelRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     @Override
@@ -72,6 +72,8 @@ public class TestControllerOpMode extends OpMode{
     void UpdateTelemetry(){
         telemetry.addData("X gamepad", gamepad1.left_stick_x);
         telemetry.addData("Y gamepad", -gamepad1.left_stick_y);
+        telemetry.addData("Conventional Power", joystickTracker.getConventionalPower(gamepad1.left_stick_x, -gamepad1.left_stick_y));
+        telemetry.addData("Manipulated Power", joystickTracker.getPower(gamepad1.left_stick_x, -gamepad1.left_stick_y));
         telemetry.addData("Target", target);
         telemetry.addData("Current", current);
         telemetry.addData("Turn Amount", turnAmount);
@@ -121,11 +123,9 @@ public class TestControllerOpMode extends OpMode{
         double right_stick_x = gamepad1.right_stick_x; //returns a value between [-1, 1]
         double right_stick_y = -gamepad1.right_stick_y; //returns a value between [-1, 1]
 
-        joystickTracker.trackJoystickL(left_stick_x, left_stick_y);
+        joystickTracker.trackJoystickL(left_stick_x, -left_stick_y);
 
-        target = Math.toDegrees(Math.atan2(left_stick_x, left_stick_y));
-        if (left_stick_x == 0 && left_stick_y == 0) target = 0;
-        else if (left_stick_x==0 && left_stick_y < 0) target=180;
+        target = joystickTracker.getAngle(left_stick_x, -left_stick_y);
 
         turnAmount = wheelOptimization(target, current);
 

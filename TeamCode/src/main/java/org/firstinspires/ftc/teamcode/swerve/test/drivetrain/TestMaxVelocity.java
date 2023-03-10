@@ -70,8 +70,8 @@ public class TestMaxVelocity extends OpMode{
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();
 
-        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.setWheelRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setWheelRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     @Override
@@ -123,7 +123,7 @@ public class TestMaxVelocity extends OpMode{
         telemetry.addData("botL clicks", robot.botL.getCurrentPosition());
         telemetry.addData("topR clicks", robot.topR.getCurrentPosition());
         telemetry.addData("botR clicks", robot.botR.getCurrentPosition());
-        
+
         telemetry.addData("Power topL", robot.topL.getPower());
         telemetry.addData("Power botL", robot.botL.getPower());
         telemetry.addData("Power topR", robot.topR.getPower());
@@ -163,8 +163,8 @@ public class TestMaxVelocity extends OpMode{
         double alpha = 1;
         double beta = 1;
 
-        int distanceTopL = (int) (gamepad1.left_stick_y * 200 * beta);
-        int distanceBotL = (int) (-gamepad1.left_stick_y * 200 * beta);
+        int distanceTopL = (int) (gamepad1.left_stick_y * constants.SPIN_CLICK_FACTOR);
+        int distanceBotL = (int) (-gamepad1.left_stick_y * constants.SPIN_CLICK_FACTOR);
         int distanceTopR = distanceTopL;
         int distanceBotR = distanceBotL;
 

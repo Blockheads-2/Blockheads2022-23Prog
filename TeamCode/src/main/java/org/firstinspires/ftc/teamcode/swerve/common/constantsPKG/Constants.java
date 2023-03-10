@@ -11,7 +11,7 @@ public class Constants {
     public double RPM = 1150 * LOAD_ON; //690.  Not very accurate so don't rely on this number.
     public double RPS = RPM / 60.0; //11.5 ish motor revolutions per second, with load
     public double POWER_LIMITER = 1.0; //0.8 : 100
-    public double RIGHT_SIDE_LIMITER = 1; //right side is a heavier than left side.  Heavier = faster cuz more normal force.
+    public double RIGHT_SIDE_LIMITER = 1.0; //right side is a heavier than left side.  Heavier = faster cuz more normal force.  //0.8
     public double RIGHT_SIDE_LIMITER_AUTO = 0.7; //0.7
     public int SPIN_CLICK_FACTOR = 140;
 
@@ -24,14 +24,14 @@ public class Constants {
     public double CLICKS_PER_BLUE_REV = 537.7; //clicks per rev of motors
     public double WHEEL_DIAMETER = 92 / 25.4; //3.622 inches
     public double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER; //11.37899 inches
-    public double MAX_VELOCITY_DT = 2000; // unit is clicks/sec
+    public double MAX_VELOCITY_DT = 2100; // unit is clicks/sec
+
     public double clickTOLERANCE = 10; //number of clicks or degrees the robot can be off by
 //    public double clickToleranceAuto = 12; //~1/3rd worth of error for translation.  ~2 degrees worth of error for rotation.
     public double clickToleranceAuto = 10; //for testing with dashboard
     public double degreeTOLERANCE = 3;
-    public double allignmentTolerance = 13;
+    public double allignmentTolerance = 5;
 
-    public double pointedWheels = 35;
 
 
     //control hub to arm: 16 cm
@@ -73,6 +73,9 @@ public class Constants {
     public int initDirectionLeft = -1;
 
     public double autoStopConditionTime = 0.5;
+
+    public int pointedWheelsTolerance = 35;
+    public int slantedOrientation = pointedWheelsTolerance - 20;
 
 
     /* starting:
@@ -155,7 +158,6 @@ public class Constants {
     public double horizontalDistanceOdo = 6.25;
     public double midDistanceOdo = 3.0;
 
-
     //Triangle
     public double bottomMotorAnglePerClick = 0.0681676;
     public double topMotorAnglePerClick = 0.163297;
@@ -165,4 +167,10 @@ public class Constants {
     public double maxClicks = 1065;
     public double armServoParallel = 0.3636;
     public double anglePerUnit = 30/0.1;
+
+    //Camera constants
+    public int CAMERA_WIDTH = 1920;
+    public int CAMERA_HEIGHT = 1080;
+    public int CAMERA_WIDTH_OLD = 720;
+    public int CAMERA_HEIGHT_OLD = 1280;
 }

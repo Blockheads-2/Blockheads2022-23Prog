@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode.swerve.common;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -149,8 +150,8 @@ public class HardwareDrive
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
-        setRunMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        setRunMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        setWheelRunMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        setWheelRunMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
     }
 
     public void setMotorPower(double power){
@@ -173,12 +174,27 @@ public class HardwareDrive
         }
     }
 
-    public void setRunMode(DcMotorEx.RunMode runState){
+    public void setWheelRunMode(DcMotorEx.RunMode runState){
         botL.setMode(runState);
         topL.setMode(runState);
         topR.setMode(runState);
         botR.setMode(runState);
         //make sure to not add arm here
+    }
+
+    public void setInternalPIDFCoef(double kpR, double kiR, double kdR, double kfR, double kpL, double kiL, double kdL, double kfL){
+        PIDFCoefficients coefR = new PIDFCoefficients(kpR, kiR, kdR, kfR);
+        PIDFCoefficients coefL = new PIDFCoefficients(kpL, kiL, kdL, kfL);
+
+        topL.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, coefL);
+        botL.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, coefL);
+        topR.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, coefR);
+        botR.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, coefR);
+
+        topL.setPositionPIDFCoefficients(kpL);
+        botL.setPositionPIDFCoefficients(kpL);
+        topR.setPositionPIDFCoefficients(kpR);
+        botR.setPositionPIDFCoefficients(kpR);
     }
 
     public boolean wheelsAreBusy(){

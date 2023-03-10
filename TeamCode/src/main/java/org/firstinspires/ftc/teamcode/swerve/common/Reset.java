@@ -85,6 +85,7 @@ public class Reset {
             robot.topL.setPower(power);
             robot.botR.setPower(power);
             robot.topR.setPower(power);
+            globalPosSystem.setPoles(true, true);
         }
     }
 
@@ -131,6 +132,7 @@ public class Reset {
             if (resetDone){
                 if (stopTimer.seconds() > 1.5){
                     resetDone = true;
+                    globalPosSystem.setPoles(true, true);
                 } else resetDone = false;
             } else {
                 stopTimer.reset();

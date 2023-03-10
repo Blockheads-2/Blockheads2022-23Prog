@@ -11,8 +11,6 @@ import org.firstinspires.ftc.teamcode.swerve.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.swerve.common.kinematics.RevisedKinematics;
 import org.firstinspires.ftc.teamcode.swerve.common.kinematics.SwervePod;
 
-import java.util.HashMap;
-
 public class GlobalPosSystem {
 
     Constants constants = new Constants();
@@ -32,13 +30,17 @@ public class GlobalPosSystem {
     Orientation currentOrientation;
     double currAngle = 0;
 
+    private boolean initPoleL = true;
+    private boolean initPoleR = true;
+
     private boolean updateGPS = true;
     
-    public enum WheelOrientation{
-        FRONT,
-        BACK,
-    }
-    private WheelOrientation[] wheelOrientation = new WheelOrientation[2];
+//    public enum WheelOrientation{
+//        FRONT,
+//        BACK,
+//    }
+//    private WheelOrientation[] wheelOrientation = new WheelOrientation[2];
+
 
     public GlobalPosSystem(HardwareDrive robot) {
         this.robot = robot;
@@ -68,6 +70,11 @@ public class GlobalPosSystem {
 //        positionArr[2] = clamp(positionArr[2] +  positionArr[4]);
 //        positionArr[3] = clamp(positionArr[3] + positionArr[4]);
         calculateRobot();
+    }
+
+    public void setPoles(boolean initPoleL, boolean initPoleR){
+        this.initPoleL = initPoleL;
+        this.initPoleR = initPoleR;
     }
 
     public void calculateWheel(){
@@ -108,7 +115,7 @@ public class GlobalPosSystem {
         double translationalInchesR = (topR - botR) / 2.0;
         translationalInchesR *= constants.INCHES_PER_CLICK * constants.initDirectionRight;
         distanceTravelledR += translationalInchesR;
-        double currentAngleR = positionArr[3];
+        double currentAngleR = (initPoleR ? positionArr[3] : conventionalClamp(positionArr[3] + 180));
 
         //left
         int topL = motorClicksPos[0] - prevMotorClicks[0]; //change in top left
@@ -116,10 +123,11 @@ public class GlobalPosSystem {
         double translationalInchesL = (topL - botL) / 2.0;
         translationalInchesL *= constants.INCHES_PER_CLICK * constants.initDirectionLeft;
         distanceTravelledL += translationalInchesL;
-        double currentAngleL = positionArr[2];
+        double currentAngleL = (initPoleL ? positionArr[2] : conventionalClamp(positionArr[2] + 180));
 
-//        double splineOrientation = 0.0;
-        double baseAngle = clamp(currentAngleL + currentAngleR) / 2.0;
+        double currentR = toConventional(positionArr[4]);
+        double baseAngle = conventionalClamp((currentAngleL + currentAngleR) / 2);
+        baseAngle = conventionalClamp(currentR + baseAngle);
         baseAngle = Math.toRadians(baseAngle);
         double hypotenuse = (translationalInchesL + translationalInchesR) / 2.0;
 
@@ -143,23 +151,70 @@ public class GlobalPosSystem {
         positionArr[1] += (hypotenuse * Math.cos(baseAngle));
     }
 
-    public void calculateWheelOrientation(SwervePod podL, SwervePod podR){
-        double optimizedCurrentWL = positionArr[2];
-//        double optimizedCurrentWR = positionArr[3];
-        if (!podL.getPole()) optimizedCurrentWL = clamp(positionArr[2] + 180); //direction wheel is moving in
-//        if (!initPoleR) optimizedCurrentWR = clamp(positionArr[3] + 180);
+//    public void calculateWheelOrientation(SwervePod podL, SwervePod podR){
+//        double optimizedCurrentWL = positionArr[2];
+////        double optimizedCurrentWR = positionArr[3];
+//        if (!podL.getPole()) optimizedCurrentWL = clamp(positionArr[2] + 180); //direction wheel is moving in
+////        if (!initPoleR) optimizedCurrentWR = clamp(positionArr[3] + 180);
+//
+//        double newRobotHeader = clamp(positionArr[4] - clamp(90 - optimizedCurrentWL));
+//
+//        wheelOrientation[0] = (Math.abs(newRobotHeader) <= 90 ? WheelOrientation.BACK : WheelOrientation.FRONT); //left
+//        wheelOrientation[1] = (Math.abs(newRobotHeader) <= 90 ? WheelOrientation.FRONT : WheelOrientation.BACK); //right
+//
+//        podL.setWheelOrientation(wheelOrientation[0]);
+//        podR.setWheelOrientation(wheelOrientation[1]);
+//    }
 
-        double newRobotHeader = clamp(positionArr[4] - clamp(90 - optimizedCurrentWL));
+//    public WheelOrientation[] getWheelOrientation(){
+//        return wheelOrientation;
+//    }
 
-        wheelOrientation[0] = (Math.abs(newRobotHeader) <= 90 ? WheelOrientation.BACK : WheelOrientation.FRONT); //left
-        wheelOrientation[1] = (Math.abs(newRobotHeader) <= 90 ? WheelOrientation.FRONT : WheelOrientation.BACK); //right
+    int loopCount = 0;
+    double avgVelTopL = 0;
+    double avgVelBotL = 0;
+    double avgVelTopR = 0;
+    double avgVelBotR = 0;
+    double sumTopL = 0;
+    double sumBotL = 0;
+    double sumTopR = 0;
+    double sumBotR = 0;
 
-        podL.setWheelOrientation(wheelOrientation[0]);
-        podR.setWheelOrientation(wheelOrientation[1]);
+    double[] avgDiffBetweenMotors = new double[2]; //left, right
+    public void calculateThrottleDifference(boolean reset){
+        if (reset){
+            loopCount = 0;
+            avgDiffBetweenMotors[0] = 0;
+            avgDiffBetweenMotors[1] = 0;
+            avgVelTopL=0;
+            avgVelBotL=0;
+            avgVelTopR=0;
+            avgVelBotR=0;
+            sumTopL = 0;
+            sumBotL = 0;
+            sumTopR = 0;
+            sumBotR = 0;
+            avgDiffBetweenMotors[0] = 1;
+            avgDiffBetweenMotors[1] = 1;
+            return;
+        }
+        loopCount++;
+        sumTopL += Math.abs(robot.topL.getVelocity());
+        sumBotL += Math.abs(robot.botL.getVelocity());
+        sumTopR += Math.abs(robot.topR.getVelocity());
+        sumBotR += Math.abs(robot.botR.getVelocity());
+
+        avgVelTopL = sumTopL / loopCount;
+        avgVelBotL = sumBotL / loopCount;
+        avgVelTopR = sumTopR / loopCount;
+        avgVelBotR = sumBotR / loopCount;
+
+        avgDiffBetweenMotors[0] = avgVelTopL / avgVelTopR;
+        avgDiffBetweenMotors[1] = avgVelBotL / avgVelBotR;
     }
 
-    public WheelOrientation[] getWheelOrientation(){
-        return wheelOrientation;
+    public double[] getAvgDiffBetweenMotors(){
+        return avgDiffBetweenMotors;
     }
 
     public void update ( double x, double y, double leftWheelW, double rightWheelW, double robotR){
@@ -214,17 +269,29 @@ public class GlobalPosSystem {
                 isAlligned(initPoleL, initPoleR));
     }
 
-    public boolean specialSpliningCondition(boolean initPoleL, boolean initPoleR){
+    public boolean specialSpliningCondition(boolean initPoleL, boolean initPoleR, boolean specialSpliningCycle){
         double robotCentricCurrentL = positionArr[2];
         double robotCentricCurrentR = positionArr[3];
         if (!initPoleL) robotCentricCurrentL = clamp(positionArr[2] + 180);
         if (!initPoleR) robotCentricCurrentR = clamp(positionArr[3] + 180);
 
-        return ((Math.abs(robotCentricCurrentL - 90) <= 35 && Math.abs(robotCentricCurrentR - 90) <= constants.pointedWheels) ||
-                (Math.abs(robotCentricCurrentL + 90) <= 35 && Math.abs(robotCentricCurrentR + 90) <= constants.pointedWheels));
+        if (specialSpliningCycle){ //"unslanting" the slanted orientation
+            double theoreticalCurrentL = clamp(0 - positionArr[4]);
+            double theoreticalCurrentR = clamp(0 - positionArr[4]);
+
+            return specialSpliningCondition(theoreticalCurrentL, theoreticalCurrentR); //if the unslanted position is still a special splining condition, then keep returning true.  Otherwise, return false.
+        } else {
+            return ((Math.abs(robotCentricCurrentL - 90) <= constants.pointedWheelsTolerance && Math.abs(robotCentricCurrentR - 90) <= constants.pointedWheelsTolerance) ||
+                    (Math.abs(robotCentricCurrentL + 90) <= constants.pointedWheelsTolerance && Math.abs(robotCentricCurrentR + 90) <= constants.pointedWheelsTolerance));
+        }
     }
 
-    public boolean isAlligned(double optimizedCurrentWL, double optimizedCurrentWR){
+    public boolean specialSpliningCondition(double currL, double currR) {
+        return ((Math.abs(currL - 90) <= constants.pointedWheelsTolerance && Math.abs(currR - 90) <= constants.pointedWheelsTolerance) ||
+                (Math.abs(currL + 90) <= constants.pointedWheelsTolerance && Math.abs(currR + 90) <= constants.pointedWheelsTolerance));
+    }
+
+        public boolean isAlligned(double optimizedCurrentWL, double optimizedCurrentWR){
         double error = SwervePod.changeAngle(optimizedCurrentWL, optimizedCurrentWR);
 
         return (Math.abs(error) <= constants.allignmentTolerance);
@@ -234,11 +301,6 @@ public class GlobalPosSystem {
         return (Math.abs(robotCentricCurrentL) <= constants.allignmentTolerance &&
                 Math.abs(robotCentricCurrentR) <= constants.allignmentTolerance &&
                 isAlligned(optimizedCurrentWL, optimizedCurrentWR));
-    }
-
-    public boolean specialSpliningCondition(double robotCentricCurrentL, double robotCentricCurrentR){
-        return ((Math.abs(robotCentricCurrentL - 90) <= 15 && Math.abs(robotCentricCurrentR - 90) <= 15) ||
-                (Math.abs(robotCentricCurrentL + 90) <= 15 && Math.abs(robotCentricCurrentR + 90) <= 15));
     }
 
     public void resetHeader(){
@@ -257,8 +319,8 @@ public class GlobalPosSystem {
         positionArr[2]=0;
         positionArr[3]=0;
 
-        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.setWheelRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setWheelRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         motorClicksPos[0] = robot.topL.getCurrentPosition();
         motorClicksPos[1] = robot.botL.getCurrentPosition();
@@ -313,6 +375,29 @@ public class GlobalPosSystem {
         } else if (degrees > 180){
             degrees = -180 + (Math.abs(degrees) - 180);
         }
+        return degrees;
+    }
+
+    public static double conventionalClamp(double degrees){
+        if (Math.abs(degrees) >= 360) degrees %= 360;
+
+        if (degrees < 0){
+            degrees = 360 - Math.abs(degrees);
+        }
+
+        return degrees;
+    }
+
+    public static double toConventional(double degrees){
+        if (Math.abs(degrees) >= 360) degrees %= 360;
+
+        if (degrees >= 0) {
+            degrees += 90;
+            degrees = 180 - degrees;
+        } else if (degrees < 0){
+            degrees = Math.abs(degrees) + 90;
+        }
+
         return degrees;
     }
 

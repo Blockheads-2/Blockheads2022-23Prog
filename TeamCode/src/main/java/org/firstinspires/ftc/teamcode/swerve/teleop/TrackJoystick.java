@@ -75,6 +75,15 @@ public class TrackJoystick {
         else if (gap < 100) gap = 100;
     }
 
+    public double getPower(double x, double y){
+        //joystick range of micromovement is [0,
+        return 0;
+    }
+
+    public double getConventionalPower(double x, double y){
+        return Math.sqrt(Math.pow(x,2) + Math.pow(y,2));
+    }
+
     public double getGapTime(){
         return gap;
     }

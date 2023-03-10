@@ -96,6 +96,7 @@ public class RevisedKinematics {
         this.lt = lt;
 
         //telling the pods where it is
+        posSystem.setPoles(PodL.getPole(), PodR.getPole());
         posSystem.calculatePos();
         PodL.setCurrents(posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
         PodR.setCurrents(posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);
@@ -114,25 +115,27 @@ public class RevisedKinematics {
             PodR.forceSetRotClicks(0);
         }
 
-        posSystem.calculateWheelOrientation(PodL, PodR);
+//        posSystem.calculateWheelOrientation(PodL, PodR);
         boolean shouldTurn = (lx == 0 && ly == 0) && (rx != 0); //possible problem: the robot will "jitter" if its turning and then becomes not eligible for turning (may have to increase tolerance?)
         boolean shouldSpline = (lx != 0 || ly != 0) && (rx != 0);
         boolean eligibleForTurning = posSystem.eligibleForTurning(PodL.getPole(), PodR.getPole());
-        boolean specialSpliningCondition = posSystem.specialSpliningCondition(PodL.getPole(), PodR.getPole());
+        boolean specialSpliningCondition = posSystem.specialSpliningCondition(PodL.getPole(), PodR.getPole(), PodL.getSlantedCycle());
         telemetry.addData("Special Splining Condition?", specialSpliningCondition);
 
         //determining spin clicks and spin power
         double power = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
 
-        type = PodL.setSpinClicksAndPower(power, rt, shouldTurn, eligibleForTurning, shouldSpline, specialSpliningCondition, rx, posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledR());
-        type = PodR.setSpinClicksAndPower(power, rt, shouldTurn, eligibleForTurning, shouldSpline, specialSpliningCondition, rx, posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledR());
+        type = PodL.setSpinClicksAndPower(power, rt, lt, shouldTurn, eligibleForTurning, shouldSpline, specialSpliningCondition, rx, posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledR());
+        type = PodR.setSpinClicksAndPower(power, rt, lt, shouldTurn, eligibleForTurning, shouldSpline, specialSpliningCondition, rx, posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledR());
 
-//        PodL.setThrottleUsingPodLReference(PodR, shouldTurn, shouldSpline);
+        //calculating the throttle difference between the wheels.  Uses these values to then keep the wheels running at the same speed later on.
+//        posSystem.calculateThrottleDifference(type == DriveType.LINEAR);
 
         //resetting modules when:
         // - the driver has not given controller input AND the wheels aren't alligned,
         // - the wheels aren't alligned with 0 degrees AND the driver is trying to turn.
         if (type == DriveType.STOP){
+//            posSystem.calculateThrottleDifference(true);
             if (!posSystem.isAlligned(PodL.getPole(), PodR.getPole())){
                 PodL.setRotClicks(0);
                 PodR.setRotClicks(0);
@@ -186,9 +189,9 @@ public class RevisedKinematics {
 //        posSystem.setOptimizedCurrentW(PodR.optimizedCurrentW, PodL.optimizedCurrentW);
 
         //4) determining distance travel amount and power based on that
-        PodL.autoLogic(posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledR(), posSystem.specialSpliningCondition(PodL.getPole(), PodR.getPole()));
+        PodL.autoLogic(posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledR());
         //for some reason, we negate the negative clicks for the left topL encoder
-        PodR.autoLogic(posSystem.getDistanceTravelledR(), posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledR(), posSystem.specialSpliningCondition(PodL.getPole(), PodR.getPole()));
+        PodR.autoLogic(posSystem.getDistanceTravelledR(), posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledR());
 
         outputL = PodL.getOutputAuto();
         outputR = PodR.getOutputAuto();
@@ -218,6 +221,7 @@ public class RevisedKinematics {
     public void turn(double finalAngle, double speed){
         this.finalAngle = finalAngle;
 
+        posSystem.setPoles(PodL.getPole(), PodR.getPole());
         posSystem.calculatePos();
         PodL.setCurrents(posSystem.getLeftWheelW(), posSystem.getPositionArr()[4]);
         PodR.setCurrents(posSystem.getRightWheelW(), posSystem.getPositionArr()[4]);
@@ -229,6 +233,17 @@ public class RevisedKinematics {
 
         outputL = PodL.getOutputAuto();
         outputR = PodR.getOutputAuto();
+    }
+
+    public double getTimeOutTurn(double finalAngle, double speed){
+        posSystem.calculatePos();
+        double deltaAngle = SwervePod.changeAngle(finalAngle, posSystem.getPositionArr()[4]);
+        double distance = Math.toRadians(deltaAngle) * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER;
+
+        //rate = distance / time
+        //time = distance / rate
+        double rate = speed * constants.MAX_VELOCITY_DT;
+        return ((distance / rate) + 3);
     }
 
     public void armLogicAuto(ArmType aType, double[] armClicks, double clawAngle, double claw){
@@ -431,6 +446,11 @@ public class RevisedKinematics {
 //        int avgClicks = (int)((leftClicks + rightClicks) / 2.0);
 
         int[] clicks = new int[4];
+//        telemetry.addData("Header Correction Throttle top motors left:",  PodL.headerCorrectionTop(posSystem.getAvgDiffBetweenMotors()[0]));
+//        telemetry.addData("Header Correction Throttle bottom motors left:",  PodL.headerCorrectionBottom(posSystem.getAvgDiffBetweenMotors()[1]));
+//        telemetry.addData("Header Correction Throttle top motors right:",  PodR.headerCorrectionTop(posSystem.getAvgDiffBetweenMotors()[0]));
+//        telemetry.addData("Header Correction Throttle bottom motors right:",  PodR.headerCorrectionBottom(posSystem.getAvgDiffBetweenMotors()[1]));
+
         clicks[0] = (int)(outputL[0] - outputL[1]); //left
         clicks[1] = (int)(-outputL[0] - outputL[1]); //left
         clicks[2] = (int)(outputR[0] + outputR[1]); //right
