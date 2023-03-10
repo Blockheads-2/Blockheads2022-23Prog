@@ -114,9 +114,13 @@ public class SwervePod {
     }
 
     //for spin power and spin clicks
-    public RevisedKinematics.DriveType setSpinClicksAndPower(double powerFactor, double trigger, boolean turn, boolean eligibleForTurning, boolean spline, boolean specialSpliningCondition, double rightStickX, double distanceTravelledL, double distanceTravelledR){ //teleop
+    public RevisedKinematics.DriveType setSpinClicksAndPower(double powerFactor, double rightTrigger, double leftTrigger, boolean turn, boolean eligibleForTurning, boolean spline, boolean specialSpliningCondition, double rightStickX, double distanceTravelledL, double distanceTravelledR){ //teleop
         this.power = powerFactor;
-        this.spinClicksTarget = (power * (constants.SPIN_CLICK_FACTOR * (1.0 + (trigger))));
+        if (rightTrigger > 0){
+            this.spinClicksTarget = (power * (constants.SPIN_CLICK_FACTOR * (1.0 + (rightTrigger))));
+        } else {
+            this.spinClicksTarget = power * constants.SPIN_CLICK_FACTOR / (1.0 + (Math.abs(leftTrigger)));
+        }
         this.throttle = 1.0;
 
         if (turn) {
@@ -125,7 +129,12 @@ public class SwervePod {
                 if (rightStickX < 0 && side == Side.LEFT) direction *= -1;
                 else if (rightStickX >= 0 && side == Side.RIGHT) direction *= -1;
 
-                this.spinClicksTarget = Math.abs(rightStickX) * constants.SPIN_CLICK_FACTOR;
+                if (rightTrigger > 0){
+                    this.spinClicksTarget = (Math.abs(rightStickX) * (constants.SPIN_CLICK_FACTOR * (1.0 + (rightTrigger))));
+                } else {
+                    this.spinClicksTarget = Math.abs(rightStickX) * constants.SPIN_CLICK_FACTOR / (1.0 + (Math.abs(leftTrigger)));
+                }
+
                 power = rightStickX;
 
                 driveType = RevisedKinematics.DriveType.TURN;

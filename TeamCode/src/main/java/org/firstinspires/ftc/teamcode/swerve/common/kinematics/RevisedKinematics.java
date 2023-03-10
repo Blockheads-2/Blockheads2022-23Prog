@@ -125,8 +125,8 @@ public class RevisedKinematics {
         //determining spin clicks and spin power
         double power = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
 
-        type = PodL.setSpinClicksAndPower(power, rt, shouldTurn, eligibleForTurning, shouldSpline, specialSpliningCondition, rx, posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledR());
-        type = PodR.setSpinClicksAndPower(power, rt, shouldTurn, eligibleForTurning, shouldSpline, specialSpliningCondition, rx, posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledR());
+        type = PodL.setSpinClicksAndPower(power, rt, lt, shouldTurn, eligibleForTurning, shouldSpline, specialSpliningCondition, rx, posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledR());
+        type = PodR.setSpinClicksAndPower(power, rt, lt, shouldTurn, eligibleForTurning, shouldSpline, specialSpliningCondition, rx, posSystem.getDistanceTravelledL(), posSystem.getDistanceTravelledR());
 
         //calculating the throttle difference between the wheels.  Uses these values to then keep the wheels running at the same speed later on.
 //        posSystem.calculateThrottleDifference(type == DriveType.LINEAR);

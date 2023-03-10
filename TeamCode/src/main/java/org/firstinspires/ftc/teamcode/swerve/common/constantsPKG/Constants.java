@@ -153,8 +153,11 @@ public class Constants {
     public double midDistanceOdo = 3.0;
 
     //Camera constants
-    public int WIDTH = 1920;
-    public int HEIGHT = 1080;
+    public int CAMERA_WIDTH = 1920;
+    public int CAMERA_HEIGHT = 1080;
+
+    public int CAMERA_WIDTH_OLD = 720;
+    public int CAMERA_HEIGHT_OLD = 1280;
     public double[] LOW_HSV_YELLOW;
     public double[] HIGH_HSV_YELLOW;
 }

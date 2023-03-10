@@ -47,7 +47,7 @@ public class AutoHub implements Runnable{
     public static double kd = 0;
 
     public static double internalKP = 10;
-    public static double internalKI = 0.049988;
+    public static double internalKI = 0;
     public static double internalKD = 0;
     public static double internalKF = 0;
 
