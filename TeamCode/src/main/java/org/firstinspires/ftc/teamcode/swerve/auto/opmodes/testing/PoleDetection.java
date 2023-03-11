@@ -19,7 +19,7 @@ public class PoleDetection extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        CameraMaster detector = new CameraMaster();
+        CameraMaster detector = new CameraMaster(telemetry);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         phoneCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);

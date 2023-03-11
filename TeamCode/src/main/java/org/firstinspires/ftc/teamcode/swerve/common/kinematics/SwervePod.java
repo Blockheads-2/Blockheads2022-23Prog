@@ -413,7 +413,7 @@ public class SwervePod {
         robotCentricSetRotClicks(0);
 
         double turnAmountLeft = SwervePod.changeAngle(finalAngle, currentR);
-        distance = Math.toRadians(turnAmountLeft) * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER;
+        distance = Math.toRadians(turnAmountLeft) * (constants.DISTANCE_BETWEEN_MODULE_AND_CENTER);
 
         direction = (initPole ? initDirection : -initDirection) * (side == Side.RIGHT ? -1 : 1) * (distance < 0 ? -1 : 1);
 

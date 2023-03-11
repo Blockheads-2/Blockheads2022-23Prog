@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.swerve.auto.cv;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.swerve.common.constantsPKG.Constants;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -38,6 +39,16 @@ public class CameraMaster extends OpenCvPipeline {
     RotatedRect box = new RotatedRect();
 
     List<MatOfPoint> contours = new ArrayList<>();
+
+    Telemetry telemetry;
+
+    public CameraMaster(){
+
+    }
+
+    public CameraMaster(Telemetry t){
+        this.telemetry = t;
+    }
 
     public Mat processFrame(Mat input) {
         // Convert image to HSV
@@ -90,6 +101,8 @@ public class CameraMaster extends OpenCvPipeline {
             alpha = junctionPoint.x - (constants.CAMERA_WIDTH / 2.0);
             beta = (constants.CAMERA_HEIGHT - junctionPoint.y);
 //            Imgproc.boxPoints(box, biggestContour);
+
+            SpitTelemetry();
         }
 
         Imgproc.drawContours(input, contours, -1, new Scalar(0,255,0), 3);
@@ -98,6 +111,7 @@ public class CameraMaster extends OpenCvPipeline {
         biggestContourList.add(biggestContour);
 
         Imgproc.drawContours(input, biggestContourList, -1, new Scalar(255,0,0), 3);
+
 
         return input;
     }
@@ -114,6 +128,7 @@ public class CameraMaster extends OpenCvPipeline {
 //        return junctionDistanceAttr; // this is in inches
 //    }
     public double getAngle(){return Math.toDegrees(Math.atan2(alpha, beta));}
+
     public MatOfPoint getBiggestContour(){
         return biggestContour;
     }
@@ -126,5 +141,16 @@ public class CameraMaster extends OpenCvPipeline {
 
     public double getBeta(){
         return beta;
+    }
+
+    public void SpitTelemetry(){
+        telemetry.addData("Pole Position X", getJunctionPoint().x);
+        telemetry.addData("Pole Position Y", getJunctionPoint().y);
+        telemetry.addData("Number of Contours:", getNumOfContours());
+        telemetry.addData("Alpha", getAlpha());
+        telemetry.addData("Beta", getBeta());
+        telemetry.addData("Angle", getAngle());
+
+        telemetry.update();
     }
 }

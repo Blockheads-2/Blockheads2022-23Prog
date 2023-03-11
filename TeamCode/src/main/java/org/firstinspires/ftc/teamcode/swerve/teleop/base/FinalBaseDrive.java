@@ -110,15 +110,15 @@ public class FinalBaseDrive extends OpMode{
     public static double internalKIL = 0;
     public static double internalKDL = 0;
     public static double internalKFL = 0;
-    public static double internalKPR = 10;
+    public static double internalKPR = 7;
     public static double internalKIR = 0;
     public static double internalKDR = 0;
     public static double internalKFR = 0;
 
-    public static double accelerationFactor = 1.5;
+    public static double accelerationFactor = 2;
 
-    private final FtcDashboard dashboard = FtcDashboard.getInstance();
-    TelemetryPacket packet;
+//    private final FtcDashboard dashboard = FtcDashboard.getInstance();
+//    TelemetryPacket packet;
 
     @Override
     public void init() { //When "init" is clicked
@@ -138,11 +138,11 @@ public class FinalBaseDrive extends OpMode{
         PodR.getAccelerator().setAccelFactor(accelerationFactor);
 
         robot.setInternalPIDFCoef(internalKPR, internalKIR, internalKDR, internalKFR, internalKPL, internalKIL, internalKDL, internalKFL);
-        packet = new TelemetryPacket();
-        dashboard.setTelemetryTransmissionInterval(25);
-        packet.put("Velocity Difference (Top) (Left - Right)", 0); //ticks per second
-        packet.put("Velocity Difference (Bottom) (Left - Right)", 0); //ticks per second
-        dashboard.sendTelemetryPacket(packet);
+//        packet = new TelemetryPacket();
+//        dashboard.setTelemetryTransmissionInterval(25);
+//        packet.put("Velocity Difference (Top) (Left - Right)", 0); //ticks per second
+//        packet.put("Velocity Difference (Bottom) (Left - Right)", 0); //ticks per second
+//        dashboard.sendTelemetryPacket(packet);
 
 
         moveArmToInit();
@@ -374,13 +374,13 @@ public class FinalBaseDrive extends OpMode{
 
         telemetry.update();
 
-        dashboard.setTelemetryTransmissionInterval(25);
-        packet.put("Velocity Difference (Top) (Left - Right)", robot.topL.getVelocity() - robot.topR.getVelocity()); //ticks per second
-        packet.put("Velocity Difference (Bottom) (Left - Right)", robot.botL.getVelocity() - robot.botR.getVelocity()); //ticks per second
-        packet.put("avg ratio between top velocities (Left : Right)", (avgVelTopL / loopCount) / (avgVelTopR / loopCount)); //ticks per second
-        packet.put("avg ratio between bottom velocities (Left : Right)", (avgVelBotL / loopCount) / (avgVelBotR / loopCount)); //ticks per second
-
-        dashboard.sendTelemetryPacket(packet);
+//        dashboard.setTelemetryTransmissionInterval(25);
+//        packet.put("Velocity Difference (Top) (Left - Right)", robot.topL.getVelocity() - robot.topR.getVelocity()); //ticks per second
+//        packet.put("Velocity Difference (Bottom) (Left - Right)", robot.botL.getVelocity() - robot.botR.getVelocity()); //ticks per second
+//        packet.put("avg ratio between top velocities (Left : Right)", (avgVelTopL / loopCount) / (avgVelTopR / loopCount)); //ticks per second
+//        packet.put("avg ratio between bottom velocities (Left : Right)", (avgVelBotL / loopCount) / (avgVelBotR / loopCount)); //ticks per second
+//
+//        dashboard.sendTelemetryPacket(packet);
 
     }
 

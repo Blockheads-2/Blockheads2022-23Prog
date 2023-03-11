@@ -24,12 +24,12 @@ public class Constants {
     public double CLICKS_PER_BLUE_REV = 537.7; //clicks per rev of motors
     public double WHEEL_DIAMETER = 92 / 25.4; //3.622 inches
     public double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER; //11.37899 inches
-    public double MAX_VELOCITY_DT = 2100; // unit is clicks/sec
+    public double MAX_VELOCITY_DT = 2200; // unit is clicks/sec
 
     public double clickTOLERANCE = 10; //number of clicks or degrees the robot can be off by
 //    public double clickToleranceAuto = 12; //~1/3rd worth of error for translation.  ~2 degrees worth of error for rotation.
     public double clickToleranceAuto = 10; //for testing with dashboard
-    public double degreeTOLERANCE = 3;
+    public double degreeTOLERANCE = 5;
     public double allignmentTolerance = 5;
 
 
@@ -149,7 +149,8 @@ public class Constants {
     //Claw Position
     public double clawUp = 0.2;
     public double clawDown = 0.8;
-    public double openClaw = 0;
+    public double clawPartiallyDown = 0.65;
+    public double openClaw = 0.1;
     public double closeClaw = 0.9;
 
     //Distance Between swerve module and Center
@@ -173,4 +174,8 @@ public class Constants {
     public int CAMERA_HEIGHT = 1080;
     public int CAMERA_WIDTH_OLD = 720;
     public int CAMERA_HEIGHT_OLD = 1280;
+
+    public double DISTANCE_BETWEEN_MODULE_AND_CAMERA = 5; //5 inches ish
+    public double MID_POLE_HEIGHT_FROM_CLAW_BASE = 500; //500 mm from claw-base to top of mid-sized pole.
+    public double X_FOR_MID_POLE = 220; //22 cm ish
 }

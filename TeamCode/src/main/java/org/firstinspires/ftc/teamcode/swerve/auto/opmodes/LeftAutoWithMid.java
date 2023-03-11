@@ -7,7 +7,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.swerve.auto.cv.CameraMaster;
 import org.firstinspires.ftc.teamcode.swerve.common.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.swerve.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.swerve.common.gps.GlobalPosSystem;
@@ -65,7 +67,10 @@ public class LeftAutoWithMid  extends LinearOpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+        CameraMaster detector = new CameraMaster();
         camera.setPipeline(aprilTagDetectionPipeline);
+
+//        camera.setPipeline(aprilTagDetectionPipeline);
 
         telemetry.addData("Status", "Waiting on Camera");
         telemetry.update();
@@ -75,7 +80,7 @@ public class LeftAutoWithMid  extends LinearOpMode {
             @Override
             public void onOpened()
             {
-                camera.startStreaming(1280,720, OpenCvCameraRotation.UPSIDE_DOWN);
+                camera.startStreaming(constants.CAMERA_WIDTH, constants.CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -139,38 +144,31 @@ public class LeftAutoWithMid  extends LinearOpMode {
         dispatch.resetArmEncoderPos();
         dispatch.resetGPS();
 
+        camera.setPipeline(detector);
+
         waitForStart();
 
-//        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.6, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
-//        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 10, 0, 0.5, RevisedKinematics.ArmType.MID, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
-//        dispatch.fastTurn(90, 0.4);
+        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 31, 0, 0.5, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
 
-        //30 or 32
-        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 30, 0, 0.5, RevisedKinematics.ArmType.MID, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
-        dispatch.Turn(45, 0.4);
-        dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0, RevisedKinematics.ArmType.HOLD, constants.armServoLow, dispatch.getArmClicks()[4]);
-        dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0, RevisedKinematics.ArmType.HOLD, constants.armServoLow, constants.openClaw);
+        dispatch.fastHone(detector, 1);
+        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, -90, 0.8, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
+        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,5,0, 0.4, RevisedKinematics.ArmType.MID, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
+        dispatch.claw(true);
 
         switch (aprilTagId) {
             case 0: {
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 180, 0.6, RevisedKinematics.ArmType.HOLD, constants.armServoLow, constants.openClaw);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,5,0, 0.6, RevisedKinematics.ArmType.HOLD, constants.armServoLow, constants.openClaw);
-
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, -90, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.openClaw);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,30,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.openClaw);
+                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, -90, 0.8, RevisedKinematics.ArmType.LOW, 0.5, constants.openClaw);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,30,0, 0.5, RevisedKinematics.ArmType.HOLD, 0.5, constants.openClaw);
 
                 break;
             }
             case 1: {
-                //nothing
+
                 break;
             }
             case 2: {
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 180, 0.6, RevisedKinematics.ArmType.HOLD, constants.armServoLow, constants.openClaw);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,5,0, 0.6, RevisedKinematics.ArmType.HOLD, constants.armServoLow, constants.openClaw);
-
-                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.openClaw);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,27,0, 0.6, RevisedKinematics.ArmType.HOLD, 0.5, constants.openClaw);
+                dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.8, RevisedKinematics.ArmType.LOW, 0.5, constants.openClaw);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,27,0, 0.5, RevisedKinematics.ArmType.HOLD, 0.5, constants.openClaw);
 
                 break;
             }
