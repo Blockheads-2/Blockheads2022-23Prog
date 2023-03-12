@@ -76,10 +76,10 @@ public class SwervePod {
         this.telemetry = t;
     }
 
-    TelemetryPacket packet;
-    public void grabDashboard(TelemetryPacket t){
-        packet = t;
-    }
+//    TelemetryPacket packet;
+//    public void grabDashboard(TelemetryPacket t){
+//        packet = t;
+//    }
 
     public void setPID(double kp, double ki, double kd){
         pid.setTargets(kp, ki, kd);
@@ -105,6 +105,11 @@ public class SwervePod {
 
     public void robotCentricSetRotClicks(double target){
         turnAmount = wheelOptimization(target, currentW);
+        rotClicksTarget = turnAmount * constants.CLICKS_PER_DEGREE;
+    }
+
+    public void nonOptimizationSetRotClicks(double target){ //robot centric as well.
+        turnAmount = nonWheelOptimization(target, currentW);
         rotClicksTarget = turnAmount * constants.CLICKS_PER_DEGREE;
     }
 
@@ -216,6 +221,16 @@ public class SwervePod {
         }
     }
 
+    public double nonWheelOptimization(double target, double currentW){
+        double turnAmount = changeAngle(target, currentW);
+        initPole = true;
+        direction = initDirection;
+        optimizedCurrentW = fieldCentricCurrentW;
+        robotCentricCurrentW = this.currentW;
+
+        return turnAmount;
+    }
+
     public double wheelOptimization(double target, double currentW){
         double target2 = (target < 0 ? target + 360 : target);
         double current2 = (currentW < 0 ? currentW + 360 : currentW);
@@ -278,7 +293,7 @@ public class SwervePod {
 
         this.driveType = driveType;
         if (this.driveType == RevisedKinematics.DriveType.SNAP || this.driveType == RevisedKinematics.DriveType.CONSTANT_SPLINE) this.finalAngle = finalAngle;
-        else if (this.driveType == RevisedKinematics.DriveType.LINEAR) finalAngle = (initPole ? fieldCentricCurrentW : clamp(fieldCentricCurrentW + 180));
+        else if (this.driveType == RevisedKinematics.DriveType.LINEAR) this.finalAngle = (initPole ? fieldCentricCurrentW : clamp(fieldCentricCurrentW + 180));
         else this.finalAngle = (initPole ? currentW : clamp(currentW + 180));
 
         //target position
@@ -304,7 +319,7 @@ public class SwervePod {
         else if (driveType == RevisedKinematics.DriveType.TURN) setPID(constants.kpTurning, constants.kiTurning, constants.kdTurning, true);
         else setPID(constants.kpTranlation, constants.kiTranslation, constants.kdTranslation, false);
 
-        packet.put("Target Distance", linearMath.getDistance());
+//        packet.put("Target Distance", linearMath.getDistance());
 
 //        controlHeader.reset(distanceTravelledL, distanceTravelledR);
 
@@ -376,7 +391,7 @@ public class SwervePod {
                 turnMath.setPos(this.finalAngle, currentR, (side == Side.RIGHT));
                 telemetry.addData("Target distance", turnMath.getTargetDistance());
                 distance = turnMath.distanceRemaining(distanceRan);
-                packet.put("Target Distance", turnMath.getDistance());
+//                packet.put("Target Distance", turnMath.getDistance());
                 throttle = 1;
 
                 power = Math.abs(pid.update(distance)) * speed;
@@ -401,9 +416,10 @@ public class SwervePod {
     }
 
     public void setResetValues(){
-        robotCentricSetRotClicks(0);
+        nonOptimizationSetRotClicks(0);
+
         setSpinClicks(0);
-        power = 0.8;
+        power = 0.6;
         throttle = 1;
         direction = (initPole ? initDirection : -initDirection);
         driveType = RevisedKinematics.DriveType.RESET;
@@ -546,6 +562,10 @@ public class SwervePod {
 
     public double getThrottle(){
         return throttle;
+    }
+
+    public void switchInitDirection(){
+        this.initDirection *= -1;
     }
 
 }

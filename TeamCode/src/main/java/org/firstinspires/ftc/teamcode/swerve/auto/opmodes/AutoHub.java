@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.swerve.common.kinematics.SwervePod;
 import org.firstinspires.ftc.teamcode.swerve.common.pid.SnapSwerveModulePID;
 import org.firstinspires.ftc.teamcode.swerve.auto.Math.TurnMath;
 
-@Config
+//@Config
 public class AutoHub implements Runnable{
     LinearOpMode linearOpMode;
     HardwareDrive robot;
@@ -50,7 +50,7 @@ public class AutoHub implements Runnable{
     public static double internalKPL = 10;
     public static double internalKPR = 10;
 
-    private final FtcDashboard dashboard = FtcDashboard.getInstance();
+//    private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
     double topSegLength = 406; //406
     double botSegLength = 420; //420
@@ -74,7 +74,7 @@ public class AutoHub implements Runnable{
 
     View relativeLayout;
 
-    TelemetryPacket packet;
+//    TelemetryPacket packet;
 
 
     public AutoHub(LinearOpMode plinear){
@@ -102,19 +102,19 @@ public class AutoHub implements Runnable{
         linearOpMode.telemetry.addData("Status", "Resetting Encoders and Camera");
         linearOpMode.telemetry.update();
 
-        packet = new TelemetryPacket();
-        podL.grabDashboard(packet);
-        podR.grabDashboard(packet);
-        dashboard.setTelemetryTransmissionInterval(25);
+//        packet = new TelemetryPacket();
+//        podL.grabDashboard(packet);
+//        podR.grabDashboard(packet);
+//        dashboard.setTelemetryTransmissionInterval(25);
 
 //        packet.put("PowerR", powerR);
-        packet.put("PowerL", powerL);
+//        packet.put("PowerL", powerL);
 //        packet.put("Error R", podR.getPID().getError());
-        packet.put("Error L", podL.getPID().getError());
+//        packet.put("Error L", podL.getPID().getError());
 //        packet.put("Distance Travelled R", posSystem.getDistanceTravelledR());
-        packet.put("Distance Travelled L", posSystem.getDistanceTravelledL());
-        packet.put("Left W",  posSystem.getLeftWheelW());
-        packet.put("Robot Header", posSystem.getPositionArr()[4]);
+//        packet.put("Distance Travelled L", posSystem.getDistanceTravelledL());
+//        packet.put("Left W",  posSystem.getLeftWheelW());
+//        packet.put("Robot Header", posSystem.getPositionArr()[4]);
 
 //        packet.put("Error at", kinematics.atPID.getError());
 //        packet.put("Target at", kinematics.atPID.getTarget());
@@ -124,19 +124,19 @@ public class AutoHub implements Runnable{
 
 //        packet.put("Error abr", kinematics.abrPID.getError());
 //        packet.put("Target abr", kinematics.abrPID.getTarget());
-        packet.put("TimeOut", timeoutS);
+//        packet.put("TimeOut", timeoutS);
 
 
-        packet.put("delta time", deltaMS);
+//        packet.put("delta time", deltaMS);
 
-        dashboard.sendTelemetryPacket(packet);
+//        dashboard.sendTelemetryPacket(packet);
 
         loopTime.reset();
 
         robot.setWheelRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.setWheelRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        robot.setInternalPIDFCoef(internalKPR, 0, 0, 0, internalKPL, 0, 0, 0);
+//        robot.setInternalPIDFCoef(10, 0, 0, 0, 10, 0, 0, 0);
 
         robot.setWheelRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.setWheelRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -183,9 +183,7 @@ public class AutoHub implements Runnable{
     ElapsedTime runTime = new ElapsedTime();
     double timeoutS = 0;
     public void Move(RevisedKinematics.DriveType movementType, double x, double y, double finalAngle, double speed, RevisedKinematics.ArmType armMovementType, double clawAngle, double claw){
-        robot.setInternalPIDFCoef(internalKPR, 0, 0, 0, internalKPL, 0, 0, 0);
-
-//        if (movementType == RevisedKinematics.DriveType.LINEAR) robot.setInternalPIDFCoef(3, 0, 0, 0, 5, 0, 0, 0);
+        if (movementType == RevisedKinematics.DriveType.LINEAR) robot.setInternalPIDFCoef(3, 0, 0, 0, 5, 0, 0, 0);
 
         UpdateTelemetry();
 
@@ -268,6 +266,10 @@ public class AutoHub implements Runnable{
 //            robot.botL.setVelocity(speed * constants.MAX_VELOCITY_DT);
 //            robot.topR.setVelocity(speed * constants.MAX_VELOCITY_DT);
 //            robot.botR.setVelocity(speed * constants.MAX_VELOCITY_DT);
+//            robot.topL.setPower(motorPower[0]);
+//            robot.botL.setPower(motorPower[1]);
+//            robot.topR.setPower(motorPower[2]);
+//            robot.botR.setPower(motorPower[3]);
 
             robot.at.setPower(armOutput[0]);
             robot.abl.setPower(armOutput[1]);
@@ -300,6 +302,8 @@ public class AutoHub implements Runnable{
     }
 
     public void reset(){
+        robot.setInternalPIDFCoef(10, 0, 0, 0, 10, 0, 0, 0);
+
         podL.getAccelerator().resetAccelerationAuto();
         podR.getAccelerator().resetAccelerationAuto();
 
@@ -314,6 +318,8 @@ public class AutoHub implements Runnable{
 
         if (kinematics.getDriveType() != RevisedKinematics.DriveType.SNAP){
             while (linearOpMode.opModeIsActive() && (targetNotMet)){
+                linearOpMode.telemetry.update();
+
                 posSystem.setPoles(podL.getPole(), podR.getPole());
                 posSystem.calculatePos();
                 kinematics.resetAuto();
@@ -336,6 +342,10 @@ public class AutoHub implements Runnable{
                 robot.botL.setVelocity(motorPower[1] * constants.MAX_VELOCITY_DT);
                 robot.topR.setVelocity(motorPower[2] * constants.MAX_VELOCITY_DT);
                 robot.botR.setVelocity(motorPower[3] * constants.MAX_VELOCITY_DT);
+//            robot.topL.setPower(motorPower[0]);
+//            robot.botL.setPower(motorPower[1]);
+//            robot.topR.setPower(motorPower[2]);
+//            robot.botR.setPower(motorPower[3]);
 
                 targetNotMet = (Math.abs(robot.topL.getCurrentPosition() - targetTopL) > 2 ||
                         Math.abs(robot.botL.getCurrentPosition() - targetBotL) > 2 ||
@@ -348,21 +358,25 @@ public class AutoHub implements Runnable{
                     stopConditionTimer.reset();
                     targetNotMet = true;
                 }
+
+
             }
         }
 
-        robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        robot.topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public void fullReset(){
-        reset.resetAuto(false);
-        while (!reset.finishedReset()){
-            reset.resetAuto(true);
-        }
-        reset.resetAuto(false);
+        kinematics.setDriveType(RevisedKinematics.DriveType.RESET);
+        reset();
+//        reset.resetAuto(false);
+//        while (!reset.finishedReset()){
+//            reset.resetAuto(true);
+//        }
+//        reset.resetAuto(false);
         posSystem.resetHeader();
         posSystem.resetXY();
         posSystem.hardResetGPS();
@@ -384,7 +398,8 @@ public class AutoHub implements Runnable{
         kinematics.setTurnPID(constants.kpTurning, constants.kiTurning, constants.kdTurning);
 
         kinematics.turn(finalAngle, speed);
-        timeoutS = kinematics.getTimeOutTurn(finalAngle, speed);
+//        timeoutS = kinematics.getTimeOutTurn(finalAngle, speed);
+        timeoutS = 6;
 
         int targetTopL = robot.topL.getCurrentPosition() + targetClicks[0];
         int targetBotL = robot.botL.getCurrentPosition() + targetClicks[1];
@@ -430,7 +445,11 @@ public class AutoHub implements Runnable{
 //            robot.topL.setVelocity(motorPower[0] * constants.MAX_VELOCITY_DT);
 //            robot.botL.setVelocity(motorPower[1] * constants.MAX_VELOCITY_DT);
 //            robot.topR.setVelocity(motorPower[2] * constants.MAX_VELOCITY_DT);
-//            robot.botR.setVelocity(motorPower[3] * constants.MAX_VELOCITY_DT);
+//            robot.botR.setVelocity(motorPower[3] * constants.MAX_VELOCITY_DT)
+//            robot.topL.setPower(motorPower[0]);
+//            robot.botL.setPower(motorPower[1]);
+//            robot.topR.setPower(motorPower[2]);
+//            robot.botR.setPower(motorPower[3]);
 
             UpdateTelemetry();
             deltaMS = loopTime.milliseconds() - prevMS;
@@ -445,8 +464,8 @@ public class AutoHub implements Runnable{
             }
 
             if (runTime.seconds() > timeoutS){
-//                turn = false;
-//                break;
+                turn = false;
+                break;
             }
 
         }
@@ -491,6 +510,8 @@ public class AutoHub implements Runnable{
 
         kinematics.turn(finalAngle, speed);
 
+        timeoutS = 6;
+
         int targetTopL = robot.topL.getCurrentPosition() + targetClicks[0];
         int targetBotL = robot.botL.getCurrentPosition() + targetClicks[1];
         int targetTopR = robot.topR.getCurrentPosition() + targetClicks[2];
@@ -507,6 +528,9 @@ public class AutoHub implements Runnable{
         robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         boolean turn = true;
+
+        runTime.reset();
+
         while (turn && linearOpMode.opModeIsActive()){
             kinematics.turn(finalAngle, speed);
 
@@ -549,6 +573,11 @@ public class AutoHub implements Runnable{
 //            robot.botL.setVelocity(motorPower[1] * constants.MAX_VELOCITY_DT);
 //            robot.topR.setVelocity(motorPower[2] * constants.MAX_VELOCITY_DT);
 //            robot.botR.setVelocity(motorPower[3] * constants.MAX_VELOCITY_DT);
+
+            if (runTime.seconds() > timeoutS){
+                turn = false;
+                break;
+            }
 
             UpdateTelemetry();
             deltaMS = loopTime.milliseconds() - prevMS;
@@ -633,6 +662,18 @@ public class AutoHub implements Runnable{
         }
     }
 
+    public void Brake(){
+//        robot.setWheelRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.topL.setPower(0);
+        robot.botL.setPower(0);
+        robot.topR.setPower(0);
+        robot.botR.setPower(0);
+        robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+
     public void UpdateTelemetry(){
         linearOpMode.telemetry.addData("PIDF Coefficients topL", robot.topL.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
         linearOpMode.telemetry.addData("PIDF Coefficients botL", robot.botL.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
@@ -680,17 +721,21 @@ public class AutoHub implements Runnable{
 
         linearOpMode.telemetry.addData("Delta time loop (sec)", deltaMS / 1000.0);
 
-//        packet.put("PowerR", powerR);
-        packet.put("PowerL", powerL);
-//        packet.put("Error R", podR.getPID().getError());
-        packet.put("Error L", podL.getPID().getError());
-//        packet.put("Distance Travelled R", posSystem.getDistanceTravelledR());
-        packet.put("Distance Travelled L", posSystem.getDistanceTravelledL());
-        packet.put("Distance Remaining (L)", podL.getDistance());
-        packet.put("Distance Remaining (R)", podR.getDistance());
+        linearOpMode.telemetry.addData("Target Clicks TopL", kinematics.getClicks()[0]);
+        linearOpMode.telemetry.addData("Target Clicks BotL", kinematics.getClicks()[1]);
 
-        packet.put("Left W",  posSystem.getLeftWheelW());
-        packet.put("Robot Header", posSystem.getPositionArr()[4]);
+
+//        packet.put("PowerR", powerR);
+//        packet.put("PowerL", powerL);
+//        packet.put("Error R", podR.getPID().getError());
+//        packet.put("Error L", podL.getPID().getError());
+//        packet.put("Distance Travelled R", posSystem.getDistanceTravelledR());
+//        packet.put("Distance Travelled L", posSystem.getDistanceTravelledL());
+//        packet.put("Distance Remaining (L)", podL.getDistance());
+//        packet.put("Distance Remaining (R)", podR.getDistance());
+
+//        packet.put("Left W",  posSystem.getLeftWheelW());
+//        packet.put("Robot Header", posSystem.getPositionArr()[4]);
 
 //        packet.put("Error at", kinematics.atPID.getError());
 //        packet.put("Target at", kinematics.atPID.getTarget());
@@ -700,17 +745,17 @@ public class AutoHub implements Runnable{
 
 //        packet.put("Error abr", kinematics.abrPID.getError());
 //        packet.put("Target abr", kinematics.abrPID.getTarget());
-        packet.put("TimeOut", timeoutS);
+//        packet.put("TimeOut", timeoutS);
 
 
-        packet.put("delta time", deltaMS / 1000.0);
-        packet.put("InitPole R", podR.getPole());
-        packet.put("InitPole L", podL.getPole());
-        packet.put("Drive Type", kinematics.getDriveType());
-        packet.put("Timer", timer.seconds());
+//        packet.put("delta time", deltaMS / 1000.0);
+//        packet.put("InitPole R", podR.getPole());
+//        packet.put("InitPole L", podL.getPole());
+//        packet.put("Drive Type", kinematics.getDriveType());
+//        packet.put("Timer", timer.seconds());
 
 //        packet.put("Right W", posSystem.getRightWheelW());
-        dashboard.sendTelemetryPacket(packet);
+//        dashboard.sendTelemetryPacket(packet);
 
         linearOpMode.telemetry.update();
     }

@@ -147,28 +147,33 @@ public class LeftAuto  extends LinearOpMode {
 
         switch (aprilTagId) {
             case 0: {
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 31, 0, 0.5, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 34, 0, 0.5, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
                 dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, -90, 0.8, RevisedKinematics.ArmType.HOLD, 0.5, constants.openClaw);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,30,0, 0.5, RevisedKinematics.ArmType.HOLD, 0.5, constants.openClaw);
+
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,35,0, 0.5, RevisedKinematics.ArmType.HOLD, 0.5, constants.openClaw);
 
                 break;
             }
             case 1: {
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 31, 0, 0.5, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
-
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 35, 0, 0.5, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
                 break;
             }
             case 2: {
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 31, 0, 0.5, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 34, 0, 0.5, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
+
                 dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.8, RevisedKinematics.ArmType.HOLD, 0.5, constants.openClaw);
-                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,27,0, 0.5, RevisedKinematics.ArmType.HOLD, 0.5, constants.openClaw);
+                dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0,35,0, 0.5, RevisedKinematics.ArmType.HOLD, 0.5, constants.openClaw);
 
                 break;
             }
         }
 
+        dispatch.Brake();
         dispatch.resetToZero();
-        dispatch.fullReset();
-        dispatch.resetGPS();
+
+//        dispatch.reset();
+////        dispatch.fullReset();
+//        dispatch.resetGPS();
+//        dispatch.Brake();
     }
 }

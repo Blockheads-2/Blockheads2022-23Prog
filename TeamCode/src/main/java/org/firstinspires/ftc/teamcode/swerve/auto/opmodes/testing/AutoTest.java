@@ -40,6 +40,7 @@ public class AutoTest extends LinearOpMode {
 
         while (!opModeIsActive()) { //checks if play hasn't been pressed (in init stage)
             dispatch.UpdateTelemetry();
+//            dispatch.moveToInit();
         }
 //        dispatch.resetArmEncoderPos();
 
@@ -61,11 +62,13 @@ public class AutoTest extends LinearOpMode {
 
 //        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, AutoHub.distance2, 0, AutoHub.powerTranslate, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
 //        dispatch.Move(RevisedKinematics.DriveType.STOP, 0, 0, 0, 0, RevisedKinematics.ArmType.HOLD, constants.armServoMid, constants.openClaw);
+        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 90, 0.6, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
+//        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 40, 0, 0.5, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
 
-        dispatch.Move(RevisedKinematics.DriveType.SNAP, 0, 0, 135, 0.6, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
+//        dispatch.resetToZero();
         dispatch.fullReset();
-
-
+        dispatch.Brake();
+//        dispatch.reset();
 //        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 30, 0, 0.6, RevisedKinematics.ArmType.MID, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);
 //        dispatch.Turn(135, 0.3);
 //        dispatch.Move(RevisedKinematics.DriveType.LINEAR, 0, 6, 0, 0.6, RevisedKinematics.ArmType.HOLD, dispatch.getArmClicks()[3], dispatch.getArmClicks()[4]);

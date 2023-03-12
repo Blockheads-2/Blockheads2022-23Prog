@@ -465,6 +465,10 @@ public class RevisedKinematics {
         return type;
     }
 
+    public void setDriveType(DriveType t){
+        this.type = t;
+    }
+
     public boolean noMovementRequests(){
         return (lx==0 && ly==0 && rx==0 && ry==0);
     }

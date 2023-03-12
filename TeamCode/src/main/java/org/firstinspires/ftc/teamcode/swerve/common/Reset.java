@@ -95,7 +95,7 @@ public class Reset {
         int rotateL = -(int)(globalPosSystem.getLeftWheelW() * constants.CLICKS_PER_DEGREE); //total rotation of left module
         int rotateR = (int)(globalPosSystem.getRightWheelW() * constants.CLICKS_PER_DEGREE); //total rotation of right module
 
-        rotateL %= constants.CLICKS_PER_PURPLE_REV;
+        rotateL %= constants.CLICKS_PER_PURPLE_REV; //i think there's a problem with this modular function (modding negative numbers is done differently w/ java for some reason?)
         rotateR %= constants.CLICKS_PER_PURPLE_REV;
 
         int topLTarget = (int)((robot.topL.getCurrentPosition() - rotateL));

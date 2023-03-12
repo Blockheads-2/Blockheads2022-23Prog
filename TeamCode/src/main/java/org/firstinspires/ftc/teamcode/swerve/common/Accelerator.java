@@ -32,7 +32,7 @@ public class Accelerator {
         }
 
         if (actuallyAccelerate && Math.abs(turnAmount) < 12) {
-            accelerationFactor = (Math.pow(accelerationTimer.seconds(), 0.5) / accelTime) + 0.2;
+            accelerationFactor = (Math.pow(accelerationTimer.seconds(), 0.5) / accelTime) + 0.3;
             if (accelerationFactor > 1) accelerationFactor = 1;
             else if (accelerationFactor < -1) accelerationFactor = -1;
         }
@@ -44,7 +44,7 @@ public class Accelerator {
     public double getAccelerationFactor(){ //auto
         double accelerationFactor = 1;
         if (actuallyAccelerate) {
-            accelerationFactor = (Math.pow(accelerationTimer.seconds(), 0.5) / accelTime) + 0.2;
+            accelerationFactor = (Math.pow(accelerationTimer.seconds(), 0.5) / accelTime) + 0.3;
             if (accelerationFactor > 1) accelerationFactor = 1;
             else if (accelerationFactor < -1) accelerationFactor = -1;
         }
